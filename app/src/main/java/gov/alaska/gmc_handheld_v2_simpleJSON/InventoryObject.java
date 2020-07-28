@@ -16,11 +16,9 @@ public class InventoryObject {
     private int displayWeight = 9; //used to control display order
 
 
-
     public InventoryObject(String key, Object value) {
         this.key = key;
         this.value = value;
-
     }
 
     public InventoryObject(String key, Object value, InventoryObject parent) {
@@ -38,6 +36,7 @@ public class InventoryObject {
         this.parent = parent;
         this.displayWeight = displayWeight;
     }
+
 
     public String getKey() {
         return key;

@@ -162,20 +162,24 @@ public class LookupBuildTree {
 
                 if (mInputJson.has("intervalUnit")) {
                     JSONObject tempObj = mInputJson.getJSONObject("intervalUnit");
-                    if (tempObj.has("abbr"))
+                    if (tempObj.has("abbr")) {
                         unitAbbr = mInputJson.getJSONObject("intervalUnit").get("abbr").toString();
+                        invObj.setValue(invObj.getValue() + " " + unitAbbr);
+                    }
                 } else if (unitAbbr == null)
-                    invObj.setValue(invObj.getValue() + " " + unitAbbr);
+                    invObj.setValue(invObj.getValue());
                 invObj.addChildToParent(parent);
                 return invObj;
             case "intervalTop":
                 invObj = new InventoryObject("Interval Top", val, parent, 1005);
                 if (mInputJson.has("intervalUnit")) {
                     JSONObject tempObj = mInputJson.getJSONObject("intervalUnit");
-                    if (tempObj.has("abbr"))
+                    if (tempObj.has("abbr")) {
                         unitAbbr = mInputJson.getJSONObject("intervalUnit").get("abbr").toString();
+                        invObj.setValue(invObj.getValue() + " " + unitAbbr);
+                    }
                 } else if (unitAbbr == null)
-                    invObj.setValue(invObj.getValue() + " " + unitAbbr);
+                    invObj.setValue(invObj.getValue());
 
                 invObj.addChildToParent(parent);
                 return invObj;
