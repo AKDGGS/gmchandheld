@@ -55,7 +55,7 @@ public class Audit extends BaseActivity {
                     et.getText().clear();
                     if(auditingList.contains(result)){
                         Toast.makeText(getApplicationContext(),"Already in list",Toast.LENGTH_SHORT).show();
-                    }else if(result == null || result.trim().equals("")) {
+                    }else if(result.trim().equals("")) {
                         Toast.makeText(getApplicationContext(),"Empty",Toast.LENGTH_SHORT).show();
                     }else{
                         auditingList.add(result);

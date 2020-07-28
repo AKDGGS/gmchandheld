@@ -35,10 +35,10 @@ public class LookupBuildTree {
         return displayDict;
     }
 
-    //*********************************************************************************************
+//*********************************************************************************************
 
     private static void createNodes(JSONObject mInputJson
-            , InventoryObject root)  throws JSONException {
+            , InventoryObject root) throws JSONException {
 
         for (Iterator<String> it = mInputJson.keys(); it.hasNext(); ) {
             String keyObject = it.next();
@@ -48,28 +48,28 @@ public class LookupBuildTree {
 
             if (!(val instanceof JSONArray) && !(val instanceof JSONObject))
                 if (parent != null)
-                    modifyNodes(keyObject, val, parent, mInputJson, root);
+                    modifyNodes(keyObject, val, parent, mInputJson);
 
             switch (val.getClass().getSimpleName()) {
                 case "JSONObject":
-                    parent = modifyNodes(keyObject, val, parent, mInputJson, root);
+                    parent = modifyNodes(keyObject, val, parent, mInputJson);
                     createNodes((JSONObject) val, parent);
                     break;
                 case "JSONArray":
                     if (((JSONArray) val).get(0) instanceof String || ((JSONArray) val).get(0).getClass().isPrimitive()) {//checks if the array contains objects --> used for keywords
                         StringBuilder sb = new StringBuilder();
 
-                        for(int i = 0; i < ((JSONArray) val).length(); i++){
+                        for (int i = 0; i < ((JSONArray) val).length(); i++) {
                             sb.append(((JSONArray) val).get(i));
-                            if(i < ((JSONArray) val).length() - 1){
+                            if (i < ((JSONArray) val).length() - 1) {
                                 sb.append(", ");
                             }
                         }
 
-                        modifyNodes(keyObject, sb, parent, mInputJson, root);
+                        modifyNodes(keyObject, sb, parent, mInputJson);
 
                     } else {
-                        parent = modifyNodes(keyObject, val, parent, mInputJson, root);
+                        parent = modifyNodes(keyObject, val, parent, mInputJson);
                         for (int i = 0; i < ((JSONArray) val).length(); i++) {
                             createNodes((JSONObject) ((JSONArray) val).get(i), parent);
                         }
@@ -79,120 +79,114 @@ public class LookupBuildTree {
         }
     }
 
-    //*********************************************************************************************
+//*********************************************************************************************
 
     private static InventoryObject modifyNodes(String key, Object val,
                                                InventoryObject parent,
-                                               JSONObject mInputJson,
-                                               InventoryObject root) throws JSONException {
-        InventoryObject temp;
+                                               JSONObject mInputJson) throws JSONException {
+        InventoryObject invObj;
         String unitAbbr = null;
+
         switch (key) {
             case "abbr":
-                temp = new InventoryObject("Abbr", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Abbr", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "APINumber":
-                temp = new InventoryObject("API Number", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("API Number", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "barcode":
-                temp = new InventoryObject("Barcode", val, parent, 1002);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Barcode", val, parent, 1002);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "boreholes":
-                temp = new InventoryObject("Boreholes", val, parent, 100);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Boreholes", val, parent, 100);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "boxNumber":
-                temp = new InventoryObject("Box Number", val, parent, 1000);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Box Number", val, parent, 1000);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "class":
-                temp = new InventoryObject("Class", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Class", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "collection":
-                temp = new InventoryObject("Collection", val, parent, 900);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Collection", val, parent, 900);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "completionDate":
-                temp = new InventoryObject("Completion Date", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Completion Date", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "completionStatus":
-                temp = new InventoryObject("Completion Status", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Completion Status", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "containerPath":
-                temp = new InventoryObject("Container Path", val, parent, 1001);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Container Path", val, parent, 1001);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "coreNumber":
-                temp = new InventoryObject("Core Number", val, parent, 1003);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Core Number", val, parent, 1003);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "current":
-                temp = new InventoryObject("Current", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Current", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "elevation":
-                temp = new InventoryObject("Elevation", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Elevation", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "elevationUnit":
-                temp = new InventoryObject("Elevation Unit", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Elevation Unit", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "federal":
-                temp = new InventoryObject("Federal", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Federal", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "ID":
                 if ("myRoot".equals(parent.getKey())) {
-                    temp = new InventoryObject("ID", val, parent, 10000);
-                    temp.setParentChildRelationship(parent);
-                    return temp;
+                    invObj = new InventoryObject("ID", val, parent, 10000);
                 } else {
-                    temp = new InventoryObject("ID", val, parent);
-                    temp.setDisplayWeight(parent.getDisplayWeight());
-                    temp.setParentChildRelationship(parent);
-                    return temp;
+                    invObj = new InventoryObject("ID", val, parent);
+                    invObj.setDisplayWeight(parent.getDisplayWeight());
                 }
+                invObj.addChildToParent(parent);
+                return invObj;
             case "intervalBottom":
-                temp = new InventoryObject("Interval Bottom", val, parent, 1005);
+                invObj = new InventoryObject("Interval Bottom", val, parent, 1005);
 
                 if (mInputJson.has("intervalUnit")) {
                     JSONObject tempObj = mInputJson.getJSONObject("intervalUnit");
                     if (tempObj.has("abbr"))
                         unitAbbr = mInputJson.getJSONObject("intervalUnit").get("abbr").toString();
-                }
-
-                if (unitAbbr != null)
-                    temp.setValue(temp.getValue() + " " + unitAbbr);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                } else if (unitAbbr == null)
+                    invObj.setValue(invObj.getValue() + " " + unitAbbr);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "intervalTop":
-                temp = new InventoryObject("Interval Top", val, parent, 1005);
+                invObj = new InventoryObject("Interval Top", val, parent, 1005);
                 if (mInputJson.has("intervalUnit")) {
                     JSONObject tempObj = mInputJson.getJSONObject("intervalUnit");
                     if (tempObj.has("abbr"))
                         unitAbbr = mInputJson.getJSONObject("intervalUnit").get("abbr").toString();
-                }
+                } else if (unitAbbr == null)
+                    invObj.setValue(invObj.getValue() + " " + unitAbbr);
 
-                if (unitAbbr != null)
-                    temp.setValue(temp.getValue() + " " + unitAbbr);
-
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj.addChildToParent(parent);
+                return invObj;
             case "intervalUnit":
                 return null;
             case "keywords":
-                temp = new InventoryObject("Keywords", val, parent, 950);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Keywords", val, parent, 950);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "measuredDepth":
-                temp = new InventoryObject("Measured Depth", val, parent, parent.getDisplayWeight() - 5);
+                invObj = new InventoryObject("Measured Depth", val, parent, parent.getDisplayWeight() - 5);
                 if (mInputJson.has("measuredUnit")) {
                     JSONObject tempObj = mInputJson.getJSONObject("measuredUnit");
                     if (tempObj.has("abbr"))
@@ -204,76 +198,76 @@ public class LookupBuildTree {
                 }
 
                 if (unitAbbr != null)
-                    temp.setValue(temp.getValue() + " " + unitAbbr);
+                    invObj.setValue(invObj.getValue() + " " + unitAbbr);
 
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj.addChildToParent(parent);
+                return invObj;
 
             case "measuredDepthUnit":
                 return null;
             case "name":
-                temp = new InventoryObject("Name", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Name", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "number":
-                temp = new InventoryObject("Number", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Number", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "onshore":
-                temp = new InventoryObject("Onshore", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Onshore", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "operators":
-                temp = new InventoryObject("Operators", val, parent, parent.getDisplayWeight() - 10);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Operators", val, parent, parent.getDisplayWeight() - 10);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "outcrops":
-                temp = new InventoryObject("Outcrops", val, parent, 100);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Outcrops", val, parent, 100);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "permitStatus":
-                temp = new InventoryObject("Permit Status", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Permit Status", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "prospect":
-                temp = new InventoryObject("Prospect", val, parent);
-                temp.setParentChildRelationship(parent);
+                invObj = new InventoryObject("Prospect", val, parent);
+                invObj.addChildToParent(parent);
                 return new InventoryObject("Prospect", val, parent);
             case "remark":
             case "remarks":
                 if ("myRoot".equals(parent.getKey())) {
-                    temp = new InventoryObject("Remark", val, parent, 950);
-                    temp.setParentChildRelationship(parent);
-                    return temp;
+                    invObj = new InventoryObject("Remark", val, parent, 950);
+                    invObj.addChildToParent(parent);
+                    return invObj;
                 } else {
-                    temp = new InventoryObject("Remark", val, parent);
-                    temp.setParentChildRelationship(parent);
+                    invObj = new InventoryObject("Remark", val, parent);
+                    invObj.addChildToParent(parent);
                 }
             case "setNumber":
-                temp = new InventoryObject("Set Number", val, parent, 950);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Set Number", val, parent, 950);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "shotline":
-                temp = new InventoryObject("Shotline", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Shotline", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "shotpoints":
-                temp = new InventoryObject("Shotpoints", val, parent, 100);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Shotpoints", val, parent, 100);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "spudDate":
-                temp = new InventoryObject("Spud Date", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Spud Date", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "type":
-                temp = new InventoryObject("Type", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Type", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "unit":
                 return null;
 
             case "verticalDepth":
-                temp = new InventoryObject("Vertical Depth", val, parent, parent.getDisplayWeight() - 1);
+                invObj = new InventoryObject("Vertical Depth", val, parent, parent.getDisplayWeight() - 1);
 
                 if (mInputJson.has("unit")) {
                     JSONObject tempObj = mInputJson.getJSONObject("unit");
@@ -282,37 +276,34 @@ public class LookupBuildTree {
                 }
 
                 if (unitAbbr != null)
-                    temp.setValue(temp.getValue() + " " + unitAbbr);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                    invObj.setValue(invObj.getValue() + " " + unitAbbr);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "wellNumber":
-                temp = new InventoryObject("Well Number", val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Well Number", val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
             case "wells":
-                temp = new InventoryObject("Wells", val, parent, 100);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject("Wells", val, parent, 100);
+                invObj.addChildToParent(parent);
+                return invObj;
             default:
-                temp = new InventoryObject(key, val, parent);
-                temp.setParentChildRelationship(parent);
-                return temp;
+                invObj = new InventoryObject(key, val, parent);
+                invObj.addChildToParent(parent);
+                return invObj;
         }
     }
 
-    ////*********************************************************************************************
+//*********************************************************************************************
 
     private static void processForDisplay(InventoryObject mRoot, ArrayList<SpannableStringBuilder> displayList, InventoryObject root) {
+
         ArrayList<String> keyList = new ArrayList<>();  //list of all keys --> used with spannableStringBuilder to make all keys bold
-
-        for (InventoryObject n : mRoot.getChildren()) {
-            combineKeyValueStr(n, 0);  //contains the indent + key + value as a string
-        }
-
 
         Collections.sort(mRoot.getChildren(), new SortInventoryObjectList()); //sort externally
 
         for (InventoryObject n : mRoot.getChildren()) {
+            combineKeyValueStr(n, 0);  //contains the indent + key + value as a string
             if (n.getChildren().size() == 0) {
                 displayList.add(new SpannableStringBuilder(n.getKeyValueWithIndent()));
             } else {
@@ -327,14 +318,13 @@ public class LookupBuildTree {
                     }
                 }
             }
-        }
 
-        for (InventoryObject n : mRoot.getChildren()) {
             keyList.add(n.getKey());
             if (n.getChildren().size() > 0) {
                 getDescendants(n, keyList);
             }
         }
+
 
         for (SpannableStringBuilder s : displayList) {
             for (String k : keyList) {
@@ -353,6 +343,8 @@ public class LookupBuildTree {
         }
     }
 
+//*********************************************************************************************
+
     private static void getDescendants(InventoryObject parent, ArrayList<String> keyList) {
         if (parent.getChildren().size() == 0) {
             keyList.add(parent.getKey());
@@ -364,7 +356,7 @@ public class LookupBuildTree {
         }
     }
 
-    //*********************************************************************************************
+//*********************************************************************************************
 
     public static void combineKeyValueStr(InventoryObject n, int indent) {  //needed because of recursion
 
@@ -379,6 +371,8 @@ public class LookupBuildTree {
         }
     }
 
+//*********************************************************************************************
+
     private static String printIndent(int indent) {
 
         StringBuilder indentStr = new StringBuilder();
@@ -387,7 +381,6 @@ public class LookupBuildTree {
         }
         return indentStr.toString();
     }
-
 
 //*********************************************************************************************
 
@@ -417,7 +410,6 @@ public class LookupBuildTree {
                 }
         }
     }
-
 
     //*********************************************************************************************
 

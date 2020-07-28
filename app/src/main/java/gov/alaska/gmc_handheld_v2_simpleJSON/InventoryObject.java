@@ -89,9 +89,8 @@ public class InventoryObject {
     }
 
 
-    public void setParentChildRelationship( InventoryObject thisParent) {
+    public void addChildToParent(InventoryObject thisParent) {
         if (thisParent != null) {
-            parent = thisParent;
             thisParent.addChild(this);
         }
     }
