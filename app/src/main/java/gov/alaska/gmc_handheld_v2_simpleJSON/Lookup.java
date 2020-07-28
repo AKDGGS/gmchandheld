@@ -97,6 +97,7 @@ public class Lookup extends BaseActivity {
 
                             List<String> keyList = new ArrayList<>(keys);
 
+
                             expandableListView = findViewById(R.id.expandableListView);
                             listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
                             expandableListView.setAdapter(listAdapter);

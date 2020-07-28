@@ -32,13 +32,17 @@ public class LookupBuildTree {
         processForDisplay(root, displayList, root);
         fillDisplayDict(inputJson, displayList, displayDict);
 
+//        for(SpannableStringBuilder s: displayList){
+//            System.out.println(s.toString());
+//        }
+
         return displayDict;
     }
 
 //*********************************************************************************************
 
-    private static void createNodes(JSONObject mInputJson
-            , InventoryObject root) throws JSONException {
+    private static void createNodes(JSONObject mInputJson,
+                                    InventoryObject root) throws JSONException {
 
         for (Iterator<String> it = mInputJson.keys(); it.hasNext(); ) {
             String keyObject = it.next();
@@ -244,14 +248,24 @@ public class LookupBuildTree {
         Collections.sort(mRoot.getChildren(), new SortInventoryObjectList()); //sort externally
 
         for (InventoryObject n : mRoot.getChildren()) {
+
             combineKeyValueStr(n, 0);  //contains the indent + key + value as a string
+
+
             if (n.getChildren().size() == 0) {
                 displayList.add(new SpannableStringBuilder(n.getKeyValueWithIndent()));
+
             } else {
                 if (n.getParent() == root) {  //Groups children under the parent
                     Collections.sort(n.getChildren(), new SortInventoryObjectList()); //sorts internally
                     ArrayList<InventoryObject> tempArrList = new ArrayList<>();
                     tempArrList.add(n);
+
+                    System.out.println("************** 1 " +  n.getKeyValueWithIndent());
+
+                    if(n.getValue() instanceof  JSONArray) {
+                        System.out.println(((JSONArray) n.getValue()).length());
+                    }
 
                     for (InventoryObject nChild : n.getChildren()) {
                         String endCondition = n.getChildren().get(n.getChildren().size() - 1).getKey();
