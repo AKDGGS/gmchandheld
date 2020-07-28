@@ -1,6 +1,5 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.text.SpannableStringBuilder;
 
 import java.util.ArrayList;
 
@@ -10,16 +9,12 @@ public class InventoryObject {
     private Object value;
 
     private String keyValueWithIndent;
-    private SpannableStringBuilder groupSSB;
 
     private InventoryObject parent = null;
     private final ArrayList<InventoryObject> children = new ArrayList<>();
 
     private int displayWeight = 9; //used to control display order
 
-    private boolean display = true;  // controls if a parameter will be displayed within the concatenated group string.
-
-    private int groupID;
 
 
     public InventoryObject(String key, Object value) {
@@ -32,6 +27,16 @@ public class InventoryObject {
         this.key = key;
         this.value = value;
         this.parent = parent;
+        if(parent != null){
+            displayWeight = parent.getDisplayWeight();
+        }
+    }
+
+    public InventoryObject(String key, Object value, InventoryObject parent, int displayWeight) {
+        this.key = key;
+        this.value = value;
+        this.parent = parent;
+        this.displayWeight = displayWeight;
     }
 
     public String getKey() {
@@ -56,13 +61,6 @@ public class InventoryObject {
 
     public void setKeyValueWithIndent(String keyValueWithIndent) { this.keyValueWithIndent = keyValueWithIndent; }
 
-    public SpannableStringBuilder getGroupSSB() {
-        return groupSSB;
-    }
-
-    public void setGroupSSB(SpannableStringBuilder groupSSB) {
-        this.groupSSB = groupSSB;
-    }
 
     public InventoryObject getParent() {
         return parent;
@@ -90,23 +88,6 @@ public class InventoryObject {
         this.displayWeight = displayWeight;
     }
 
-
-    public boolean getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(boolean display) {
-        this.display = display;
-    }
-
-
-    public int getGroupID() {
-        return groupID;
-    }
-
-    public void setGroupID(int groupID) {
-        this.groupID = groupID;
-    }
 
     public void setParentChildRelationship( InventoryObject thisParent) {
         if (thisParent != null) {

@@ -12,7 +12,6 @@ public class SortInventoryObjectList implements Comparator<InventoryObject> {
 //        comparison = o1.getDisplayWeight().compareTo(o2.getDisplayWeight());
         comparison = o2.getDisplayWeight().compareTo(o1.getDisplayWeight());  //Changing the order reverses the ordering
 
-
         if (comparison == 0 && o1.getDisplayWeight() != null && o2.getDisplayWeight() != null) {
             comparison = o1.getDisplayWeight().compareTo(o2.getDisplayWeight());
         }

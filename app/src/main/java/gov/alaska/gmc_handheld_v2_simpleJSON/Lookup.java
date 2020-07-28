@@ -88,16 +88,8 @@ public class Lookup extends BaseActivity {
 
                             inputJSONObject = (JSONObject) jsonArray.get(0);
 
-                            System.out.println(inputJSONObject.get("barcode"));
-
-//                            if(inputJSONObject.getJSONArray("boreholes") != null)
-//                            System.out.println(inputJSONObject.getJSONArray("boreholes")
-//                                    .getJSONObject(0)
-//                                    .getJSONObject("prospect")
-//                                    .get("name"));
-
-//                            String containerPath = inputJSONObject.get("containerPath").toString();
-//                            getSupportActionBar().setTitle(containerPath);
+                            String containerPath = inputJSONObject.get("containerPath").toString();
+                            getSupportActionBar().setTitle(containerPath);
 
                             Map<String, List<SpannableStringBuilder>> displayDict;
                             displayDict = LookupBuildTree.setupDisplay(inputJSONObject);
@@ -158,34 +150,4 @@ public class Lookup extends BaseActivity {
         Intent intent = getIntent();
         return intent.getStringExtra(GetBarcode.EXTRA_TEXT);
     }
-
-//    private void setActionBar(ArrayList<InventoryObject> mArrayList) {
-//
-//        if (lookupBuildTree.isArray() && lookupDisplayStyle.getHeaderContainerType() == null) {
-//            if (mArrayList.size() > 0)
-//                getSupportActionBar().setSubtitle("Count: " + (mArrayList.size() - 1));
-//        } else {
-//            getSupportActionBar().setTitle(lookupDisplayStyle.getHeaderLocation());
-//            switch (lookupDisplayStyle.getHeaderContainerType()) {
-//                case "Shotpoints":
-//                    if (mArrayList.size() > 0)
-//                        getSupportActionBar().setSubtitle("Count: " + (mArrayList.size() - 1));
-//                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffaaaa"))); //red
-//                    break;
-//                case "Outcrops":
-//                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffffb4"))); //yellow
-//                    textViewHeader.setTextColor(Color.parseColor("#ff333333"));  //this makes the text a little darker than the other types, because yellow needs more contrast for readability.
-//                    break;
-//                case "Boreholes":
-//                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffcddfce"))); //green
-//                    break;
-//                case "Wells":
-//                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff92cbff"))); //blue
-//                    break;
-//                default:
-//                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffccd7df")));
-//            }
-//        }
-//    }
-
 }
