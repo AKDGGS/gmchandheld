@@ -25,6 +25,7 @@ public class InventoryObject {
         this.key = key;
         this.value = value;
         this.parent = parent;
+        parent.addChild(this);
         if(parent != null){
             displayWeight = parent.getDisplayWeight();
         }
@@ -34,6 +35,7 @@ public class InventoryObject {
         this.key = key;
         this.value = value;
         this.parent = parent;
+        parent.addChild(this);
         this.displayWeight = displayWeight;
     }
 

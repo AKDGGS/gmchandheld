@@ -26,7 +26,7 @@ public class LookupBuildTree {
         ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();  //used for the app display (expandable list)
         Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>(); //used for the app display (expandable list)
 
-        InventoryObject root = new InventoryObject("myRoot", null);
+        InventoryObject root = new InventoryObject(null, null);
 
         createNodes(inputJson, root);
         processForDisplay(root, displayList, root);
@@ -46,9 +46,9 @@ public class LookupBuildTree {
             InventoryObject parent = root;
             Object val = mInputJson.get(keyObject);
 
-            if (!(val instanceof JSONArray) && !(val instanceof JSONObject))
-                if (parent != null)
-                    modifyNodes(keyObject, val, parent, mInputJson);
+            if (!(val instanceof JSONArray) && !(val instanceof JSONObject) && parent != null) {
+                modifyNodes(keyObject, val, parent, mInputJson);
+            }
 
             switch (val.getClass().getSimpleName()) {
                 case "JSONObject":
@@ -89,73 +89,44 @@ public class LookupBuildTree {
 
         switch (key) {
             case "abbr":
-                invObj = new InventoryObject("Abbr", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Abbr", val, parent);
             case "APINumber":
-                invObj = new InventoryObject("API Number", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("API Number", val, parent);
             case "barcode":
-                invObj = new InventoryObject("Barcode", val, parent, 1002);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Barcode", val, parent, 1002);
             case "boreholes":
-                invObj = new InventoryObject("Boreholes", val, parent, 100);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Boreholes", val, parent, 100);
             case "boxNumber":
-                invObj = new InventoryObject("Box Number", val, parent, 1000);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Box Number", val, parent, 1000);
             case "class":
-                invObj = new InventoryObject("Class", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Class", val, parent);
             case "collection":
-                invObj = new InventoryObject("Collection", val, parent, 900);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Collection", val, parent, 900);
             case "completionDate":
-                invObj = new InventoryObject("Completion Date", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Completion Date", val, parent);
             case "completionStatus":
-                invObj = new InventoryObject("Completion Status", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Completion Status", val, parent);
             case "containerPath":
-                invObj = new InventoryObject("Container Path", val, parent, 1001);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Container Path", val, parent, 1001);
             case "coreNumber":
-                invObj = new InventoryObject("Core Number", val, parent, 1003);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Core Number", val, parent, 1003);
             case "current":
-                invObj = new InventoryObject("Current", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Current", val, parent);
+            case "description":
+                return new InventoryObject("Description", val, parent, 950);
             case "elevation":
-                invObj = new InventoryObject("Elevation", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Elevation", val, parent);
             case "elevationUnit":
-                invObj = new InventoryObject("Elevation Unit", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Elevation Unit", val, parent);
             case "federal":
-                invObj = new InventoryObject("Federal", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Federal", val, parent);
             case "ID":
-                if ("myRoot".equals(parent.getKey())) {
+                if (parent.getKey() == null) {
                     invObj = new InventoryObject("ID", val, parent, 10000);
                 } else {
                     invObj = new InventoryObject("ID", val, parent);
                     invObj.setDisplayWeight(parent.getDisplayWeight());
                 }
-                invObj.addChildToParent(parent);
                 return invObj;
             case "intervalBottom":
                 invObj = new InventoryObject("Interval Bottom", val, parent, 1005);
@@ -166,9 +137,9 @@ public class LookupBuildTree {
                         unitAbbr = mInputJson.getJSONObject("intervalUnit").get("abbr").toString();
                         invObj.setValue(invObj.getValue() + " " + unitAbbr);
                     }
-                } else if (unitAbbr == null)
+                } else if (unitAbbr == null) {
                     invObj.setValue(invObj.getValue());
-                invObj.addChildToParent(parent);
+                }
                 return invObj;
             case "intervalTop":
                 invObj = new InventoryObject("Interval Top", val, parent, 1005);
@@ -178,17 +149,14 @@ public class LookupBuildTree {
                         unitAbbr = mInputJson.getJSONObject("intervalUnit").get("abbr").toString();
                         invObj.setValue(invObj.getValue() + " " + unitAbbr);
                     }
-                } else if (unitAbbr == null)
+                } else if (unitAbbr == null) {
                     invObj.setValue(invObj.getValue());
-
-                invObj.addChildToParent(parent);
+                }
                 return invObj;
             case "intervalUnit":
                 return null;
             case "keywords":
-                invObj = new InventoryObject("Keywords", val, parent, 950);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Keywords", val, parent, 950);
             case "measuredDepth":
                 invObj = new InventoryObject("Measured Depth", val, parent, parent.getDisplayWeight() - 5);
                 if (mInputJson.has("measuredUnit")) {
@@ -201,72 +169,46 @@ public class LookupBuildTree {
                         unitAbbr = mInputJson.getJSONObject("unit").get("abbr").toString();
                 }
 
-                if (unitAbbr != null)
+                if (unitAbbr != null) {
                     invObj.setValue(invObj.getValue() + " " + unitAbbr);
-
-                invObj.addChildToParent(parent);
+                }
                 return invObj;
-
             case "measuredDepthUnit":
                 return null;
             case "name":
-                invObj = new InventoryObject("Name", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Name", val, parent);
             case "number":
-                invObj = new InventoryObject("Number", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Number", val, parent);
             case "onshore":
-                invObj = new InventoryObject("Onshore", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Onshore", val, parent);
             case "operators":
-                invObj = new InventoryObject("Operators", val, parent, parent.getDisplayWeight() - 10);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Operators", val, parent, parent.getDisplayWeight() - 10);
             case "outcrops":
-                invObj = new InventoryObject("Outcrops", val, parent, 100);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Outcrops", val, parent, 100);
             case "permitStatus":
-                invObj = new InventoryObject("Permit Status", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Permit Status", val, parent);
             case "prospect":
-                invObj = new InventoryObject("Prospect", val, parent);
-                invObj.addChildToParent(parent);
                 return new InventoryObject("Prospect", val, parent);
             case "remark":
             case "remarks":
-                if ("myRoot".equals(parent.getKey())) {
-                    invObj = new InventoryObject("Remark", val, parent, 950);
-                    invObj.addChildToParent(parent);
-                    return invObj;
+                if (parent.getKey() == null) {
+                    return new InventoryObject("Remark", val, parent, 950);
                 } else {
-                    invObj = new InventoryObject("Remark", val, parent);
-                    invObj.addChildToParent(parent);
+                    return new InventoryObject("Remark", val, parent);
                 }
+            case "sampleNumber":
+                return new InventoryObject("Sample Number", val, parent, 950);
             case "setNumber":
-                invObj = new InventoryObject("Set Number", val, parent, 950);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Set Number", val, parent, 950);
             case "shotline":
                 invObj = new InventoryObject("Shotline", val, parent);
-                invObj.addChildToParent(parent);
                 return invObj;
             case "shotpoints":
-                invObj = new InventoryObject("Shotpoints", val, parent, 100);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Shotpoints", val, parent, 100);
             case "spudDate":
-                invObj = new InventoryObject("Spud Date", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Spud Date", val, parent);
             case "type":
-                invObj = new InventoryObject("Type", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Type", val, parent);
             case "unit":
                 return null;
 
@@ -279,22 +221,17 @@ public class LookupBuildTree {
                         unitAbbr = mInputJson.getJSONObject("unit").get("abbr").toString();
                 }
 
-                if (unitAbbr != null)
+                if (unitAbbr != null) {
                     invObj.setValue(invObj.getValue() + " " + unitAbbr);
-                invObj.addChildToParent(parent);
+                }
+
                 return invObj;
             case "wellNumber":
-                invObj = new InventoryObject("Well Number", val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Well Number", val, parent);
             case "wells":
-                invObj = new InventoryObject("Wells", val, parent, 100);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject("Wells", val, parent, 100);
             default:
-                invObj = new InventoryObject(key, val, parent);
-                invObj.addChildToParent(parent);
-                return invObj;
+                return new InventoryObject(key, val, parent);
         }
     }
 
@@ -403,15 +340,17 @@ public class LookupBuildTree {
             for (int i = 0; i < tempArrList.size(); i++) {
                 sb.append(tempArrList.get(i).getKeyValueWithIndent()).append("\n");
             }
-            if (sb.length() > 0 && sb.charAt(sb.length() - 1) == '\n')
+            if (sb.length() > 0 && sb.charAt(sb.length() - 1) == '\n') {
                 sb.delete(sb.length() - 1, sb.length());
+            }
 
             tmpStrList.add(sb);
         } else {
-            if (n.getChildren().size() > 0)
+            if (n.getChildren().size() > 0) {
                 for (int i = 0; i < n.getChildren().size(); i++) {
                     fillDisplayList(n.getChildren().get(i), tmpStrList, endCondition, tempArrList);
                 }
+            }
         }
     }
 

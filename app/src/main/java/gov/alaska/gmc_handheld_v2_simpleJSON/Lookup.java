@@ -98,13 +98,12 @@ public class Lookup extends BaseActivity {
                             List<String> keyList = new ArrayList<>(keys);
 
                             expandableListView = findViewById(R.id.expandableListView);
-                            listAdapter = new MyExpListAdapter(Lookup.this, keyList, displayDict);
+                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
                             expandableListView.setAdapter(listAdapter);
 
 
                         } else if (jsonArray.length() > 1) {
 
-//                            lookupBuildTree.setArray(true); //Used to display the count in the display header
                             Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
                             List<String> keyList = new ArrayList<>();
 
@@ -127,7 +126,7 @@ public class Lookup extends BaseActivity {
 
 
                             expandableListView = findViewById(R.id.expandableListView);
-                            listAdapter = new MyExpListAdapter(Lookup.this, keyList, displayDict);
+                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
                             expandableListView.setAdapter(listAdapter);
                         }
 

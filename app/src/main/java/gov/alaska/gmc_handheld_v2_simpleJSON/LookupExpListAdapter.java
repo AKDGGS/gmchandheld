@@ -16,13 +16,13 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Map;
 
-public class MyExpListAdapter extends BaseExpandableListAdapter {
+public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
     final Context context;
     final List<String> inventoryLabels;
     final Map<String, List<SpannableStringBuilder>> inventoryDetailsDict;
 
-    public MyExpListAdapter(Context context, List<String> inventoryLabels, Map<String, List<SpannableStringBuilder>> inventoryDetailsDict) {
+    public LookupExpListAdapter(Context context, List<String> inventoryLabels, Map<String, List<SpannableStringBuilder>> inventoryDetailsDict) {
         this.context = context;
         this.inventoryLabels = inventoryLabels;
         this.inventoryDetailsDict = inventoryDetailsDict;
@@ -76,15 +76,14 @@ public class MyExpListAdapter extends BaseExpandableListAdapter {
 
         TextView txtParent = convertView.findViewById(R.id.txtParent);
 
-
-        if (inventoryDetailsDict.toString().contains("Shotpoints")) {
-            txtParent.setBackgroundColor(Color.parseColor("#ffff8a86"));
-        } else if (inventoryDetailsDict.toString().contains("Outcrops")) {
-            txtParent.setBackgroundColor(Color.parseColor("#ffffffb4"));
-        } else if (inventoryDetailsDict.toString().contains("Boreholes") | inventoryDetailsDict.toString().contains("Prospect")) {
-            txtParent.setBackgroundColor(Color.parseColor("#ffcddfce"));
-        } else if (inventoryDetailsDict.toString().contains("Wells")) {
+        if (inventoryDetailsDict.toString().contains("Wells")) {
             txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
+        }else if (inventoryDetailsDict.toString().contains("Boreholes") | inventoryDetailsDict.toString().contains("Prospect")) {
+            txtParent.setBackgroundColor(Color.parseColor("#ffcddfce"));
+        }else if (inventoryDetailsDict.toString().contains("Outcrops")) {
+            txtParent.setBackgroundColor(Color.parseColor("#ffffffb4"));
+        }else if (inventoryDetailsDict.toString().contains("Shotpoints")) {
+            txtParent.setBackgroundColor(Color.parseColor("#ffff8a86"));;
         }else{
             txtParent.setBackgroundColor(Color.TRANSPARENT);
         }
@@ -108,7 +107,7 @@ public class MyExpListAdapter extends BaseExpandableListAdapter {
 
         TextView txtChild = convertView.findViewById(R.id.txtChild);
 
-        if (topic.toString().contains("Boreholes")) {
+        if (topic.toString().contains("Boreholes") || topic.toString().contains("Outcrops") || topic.toString().contains("Shotpoints") || topic.toString().contains("Wells") ) {
 //            topic.setSpan(new ForegroundColorSpan(Color.RED), 0, topic.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 //            topic.setSpan(new BackgroundColorSpan(Color.RED), 0, topic.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             txtChild.setBackgroundColor(Color.parseColor("#fff1f4f7"));
