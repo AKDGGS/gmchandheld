@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">GMC_handheld_v2_simpleJSON</string>
+    <string name="lookup">Lookup</string>
+    <string name="add_container">add container</string>
+    <string name="help">Help</string>
+    <string name="summary">summary</string>
+    <string name="move">move</string>
+    <string name="recode">recode</string>
+    <string name="add_inventory">add inventory</string>
+    <string name="audit">audit</string>
+    <string name="what_is_being_audited">What is being audited?</string>
+</resources>
