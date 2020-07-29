@@ -3,11 +3,13 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -73,9 +75,17 @@ public class LookupBuildTree {
                         modifyNodes(keyObject, sb, parent, mInputJson);
 
                     } else {
-                        parent = modifyNodes(keyObject, val, parent, mInputJson);
-                        for (int i = 0; i < ((JSONArray) val).length(); i++) {
-                            createNodes((JSONObject) ((JSONArray) val).get(i), parent);
+                        if (((JSONArray) val).length() > 1 && ( keyObject.equals("boreholes") || keyObject.equals("outcrops") || keyObject.equals("shotpoints") || keyObject.equals("wells"))) {
+                            for (int i = 0; i < ((JSONArray) val).length(); i++) {
+                                parent = modifyNodes(keyObject + " " + ((JSONObject) ((JSONArray) val).get(i)).get("ID"), ((JSONArray) val).get(i), parent, mInputJson);
+                                createNodes((JSONObject) ((JSONArray) val).get(i), parent);
+                                parent = root;
+                            }
+                        } else {
+                            parent = modifyNodes(keyObject, val, parent, mInputJson);
+                            for (int i = 0; i < ((JSONArray) val).length(); i++) {
+                                createNodes((JSONObject) ((JSONArray) val).get(i), parent);
+                            }
                         }
                     }
                     break;
@@ -94,6 +104,8 @@ public class LookupBuildTree {
         switch (key) {
             case "abbr":
                 return new InventoryObject("Abbr", val, parent);
+            case "altNames":
+                return new InventoryObject("Alternative Names", val, parent);
             case "APINumber":
                 return new InventoryObject("API Number", val, parent);
             case "barcode":
@@ -186,6 +198,7 @@ public class LookupBuildTree {
             case "onshore":
                 return new InventoryObject("Onshore", val, parent);
             case "operators":
+                System.out.println("********** " + parent.getKey() + " " + parent.getDisplayWeight());
                 return new InventoryObject("Operators", val, parent, parent.getDisplayWeight() - 10);
             case "outcrops":
                 return new InventoryObject("Outcrops", val, parent, 100);
@@ -235,37 +248,40 @@ public class LookupBuildTree {
             case "wells":
                 return new InventoryObject("Wells", val, parent, 100);
             default:
+                key  = StringUtils.capitalize(key);
                 return new InventoryObject(key, val, parent);
         }
     }
 
 //*********************************************************************************************
 
-    private static void processForDisplay(InventoryObject mRoot, ArrayList<SpannableStringBuilder> displayList, InventoryObject root) {
+    private static void processForDisplay(InventoryObject mRoot, ArrayList<SpannableStringBuilder> displayList, InventoryObject root) throws JSONException {
 
         ArrayList<String> keyList = new ArrayList<>();  //list of all keys --> used with spannableStringBuilder to make all keys bold
 
-        Collections.sort(mRoot.getChildren(), new SortInventoryObjectList()); //sort externally
+        Collections.sort( mRoot.getChildren(), new SortInventoryObjectList() ); //sort externally
+
+        System.out.println( "Root: " + mRoot.getChildren().size());
+
+        for(InventoryObject nChild: mRoot.getChildren()) {
+            System.out.println(nChild.getKey() + " " + nChild.getDisplayWeight());
+        }
+        System.out.println();
 
         for (InventoryObject n : mRoot.getChildren()) {
 
             combineKeyValueStr(n, 0);  //contains the indent + key + value as a string
-
 
             if (n.getChildren().size() == 0) {
                 displayList.add(new SpannableStringBuilder(n.getKeyValueWithIndent()));
 
             } else {
                 if (n.getParent() == root) {  //Groups children under the parent
+
                     Collections.sort(n.getChildren(), new SortInventoryObjectList()); //sorts internally
+
                     ArrayList<InventoryObject> tempArrList = new ArrayList<>();
                     tempArrList.add(n);
-
-                    System.out.println("************** 1 " +  n.getKeyValueWithIndent());
-
-                    if(n.getValue() instanceof  JSONArray) {
-                        System.out.println(((JSONArray) n.getValue()).length());
-                    }
 
                     for (InventoryObject nChild : n.getChildren()) {
                         String endCondition = n.getChildren().get(n.getChildren().size() - 1).getKey();
