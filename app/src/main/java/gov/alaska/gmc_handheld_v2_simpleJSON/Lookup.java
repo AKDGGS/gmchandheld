@@ -99,8 +99,13 @@ public class Lookup extends BaseActivity {
 
 
                             expandableListView = findViewById(R.id.expandableListView);
+
                             listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
                             expandableListView.setAdapter(listAdapter);
+                            if (listAdapter.getGroupCount() == 1){
+                                expandableListView.expandGroup(0);
+                            }
+
 
 
                         } else if (jsonArray.length() > 1) {

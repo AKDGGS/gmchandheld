@@ -26,9 +26,8 @@ public class InventoryObject {
         this.value = value;
         this.parent = parent;
         parent.addChild(this);
-        if(parent != null){
-            displayWeight = parent.getDisplayWeight();
-        }
+        displayWeight = parent.getDisplayWeight();
+
     }
 
     public InventoryObject(String key, Object value, InventoryObject parent, int displayWeight) {
@@ -58,9 +57,13 @@ public class InventoryObject {
     }
 
 
-    public String getKeyValueWithIndent() { return keyValueWithIndent; }
+    public String getKeyValueWithIndent() {
+        return keyValueWithIndent;
+    }
 
-    public void setKeyValueWithIndent(String keyValueWithIndent) { this.keyValueWithIndent = keyValueWithIndent; }
+    public void setKeyValueWithIndent(String keyValueWithIndent) {
+        this.keyValueWithIndent = keyValueWithIndent;
+    }
 
 
     public InventoryObject getParent() {

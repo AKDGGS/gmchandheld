@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,15 +27,11 @@ public class LookupBuildTree {
         ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();  //used for the app display (expandable list)
         Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>(); //used for the app display (expandable list)
 
-        InventoryObject root = new InventoryObject(null, null);
+        InventoryObject invetoryRoot = new InventoryObject(null, null);
 
-        createNodes(inputJson, root);
-        processForDisplay(root, displayList, root);
+        createNodes(inputJson, invetoryRoot);
+        processForDisplay(invetoryRoot, displayList, invetoryRoot);
         fillDisplayDict(inputJson, displayList, displayDict);
-
-//        for(SpannableStringBuilder s: displayList){
-//            System.out.println(s.toString());
-//        }
 
         return displayDict;
     }
@@ -44,12 +39,12 @@ public class LookupBuildTree {
 //*********************************************************************************************
 
     private static void createNodes(JSONObject mInputJson,
-                                    InventoryObject root) throws JSONException {
+                                    InventoryObject inventoryRoot) throws JSONException {
 
         for (Iterator<String> it = mInputJson.keys(); it.hasNext(); ) {
             String keyObject = it.next();
 
-            InventoryObject parent = root;
+            InventoryObject parent = inventoryRoot;
             Object val = mInputJson.get(keyObject);
 
             if (!(val instanceof JSONArray) && !(val instanceof JSONObject) && parent != null) {
@@ -79,7 +74,7 @@ public class LookupBuildTree {
                             for (int i = 0; i < ((JSONArray) val).length(); i++) {
                                 parent = modifyNodes(keyObject + " " + ((JSONObject) ((JSONArray) val).get(i)).get("ID"), ((JSONArray) val).get(i), parent, mInputJson);
                                 createNodes((JSONObject) ((JSONArray) val).get(i), parent);
-                                parent = root;
+                                parent = inventoryRoot;
                             }
                         } else {
                             parent = modifyNodes(keyObject, val, parent, mInputJson);
@@ -153,7 +148,7 @@ public class LookupBuildTree {
                         unitAbbr = mInputJson.getJSONObject("intervalUnit").get("abbr").toString();
                         invObj.setValue(invObj.getValue() + " " + unitAbbr);
                     }
-                } else if (unitAbbr == null) {
+                } else {
                     invObj.setValue(invObj.getValue());
                 }
                 return invObj;
@@ -165,7 +160,7 @@ public class LookupBuildTree {
                         unitAbbr = mInputJson.getJSONObject("intervalUnit").get("abbr").toString();
                         invObj.setValue(invObj.getValue() + " " + unitAbbr);
                     }
-                } else if (unitAbbr == null) {
+                } else{
                     invObj.setValue(invObj.getValue());
                 }
                 return invObj;
@@ -198,7 +193,6 @@ public class LookupBuildTree {
             case "onshore":
                 return new InventoryObject("Onshore", val, parent);
             case "operators":
-                System.out.println("********** " + parent.getKey() + " " + parent.getDisplayWeight());
                 return new InventoryObject("Operators", val, parent, parent.getDisplayWeight() - 10);
             case "outcrops":
                 return new InventoryObject("Outcrops", val, parent, 100);
@@ -255,18 +249,11 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-    private static void processForDisplay(InventoryObject mRoot, ArrayList<SpannableStringBuilder> displayList, InventoryObject root) throws JSONException {
+    private static void processForDisplay(InventoryObject mRoot, ArrayList<SpannableStringBuilder> displayList, InventoryObject inventoryRoot){
 
         ArrayList<String> keyList = new ArrayList<>();  //list of all keys --> used with spannableStringBuilder to make all keys bold
 
         Collections.sort( mRoot.getChildren(), new SortInventoryObjectList() ); //sort externally
-
-        System.out.println( "Root: " + mRoot.getChildren().size());
-
-        for(InventoryObject nChild: mRoot.getChildren()) {
-            System.out.println(nChild.getKey() + " " + nChild.getDisplayWeight());
-        }
-        System.out.println();
 
         for (InventoryObject n : mRoot.getChildren()) {
 
@@ -276,7 +263,7 @@ public class LookupBuildTree {
                 displayList.add(new SpannableStringBuilder(n.getKeyValueWithIndent()));
 
             } else {
-                if (n.getParent() == root) {  //Groups children under the parent
+                if (n.getParent() == inventoryRoot) {  //Groups children under the parent
 
                     Collections.sort(n.getChildren(), new SortInventoryObjectList()); //sorts internally
 
