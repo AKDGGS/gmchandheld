@@ -58,8 +58,6 @@ public class Lookup extends BaseActivity {
 
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                JSONArray jsonArray;
-                JSONObject inputJSONObject;
 
                 ExpandableListView expandableListView;
                 ExpandableListAdapter listAdapter;
@@ -69,8 +67,6 @@ public class Lookup extends BaseActivity {
                     String rawJSON = response.body().string();
 
                     if (rawJSON.length() == 2) {
-//                        textViewHeader.setText("The URL didn't work.\nPlease enter another barcode.");
-
                         timer = new Timer();
                         timer.schedule(new TimerTask() {
                             @Override
@@ -82,60 +78,60 @@ public class Lookup extends BaseActivity {
                         }, 100);
 
                     } else {
-                        jsonArray = new JSONArray(rawJSON);
+                        JSONArray inputJson = new JSONArray((rawJSON));
 
-                        if (jsonArray.length() <= 1) {
 
-                            inputJSONObject = (JSONObject) jsonArray.get(0);
+                        if (inputJson.length() <= 1) {
 
-                            String containerPath = inputJSONObject.get("containerPath").toString();
-                            getSupportActionBar().setTitle(containerPath);
+//                            inputJSONObject = (JSONObject) jsonArray.get(0);
+
+//                            String containerPath = inputJSONObject.get("containerPath").toString();
+//                            getSupportActionBar().setTitle(containerPath);
 
                             Map<String, List<SpannableStringBuilder>> displayDict;
-                            displayDict = LookupBuildTree.setupDisplay(inputJSONObject);
-                            Set<String> keys = displayDict.keySet();
+                            displayDict = LookupBuildTree.setupDisplay(inputJson);
+//                            Set<String> keys = displayDict.keySet();
 
-                            List<String> keyList = new ArrayList<>(keys);
-
-
-                            expandableListView = findViewById(R.id.expandableListView);
-
-                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
-                            expandableListView.setAdapter(listAdapter);
-                            if (listAdapter.getGroupCount() == 1){
-                                expandableListView.expandGroup(0);
-                            }
+//                            List<String> keyList = new ArrayList<>(keys);
 
 
+//                            expandableListView = findViewById(R.id.expandableListView);
+//
+//                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
+//                            expandableListView.setAdapter(listAdapter);
+//                            if (listAdapter.getGroupCount() == 1){
+//                                expandableListView.expandGroup(0);
+//                            }
 
-                        } else if (jsonArray.length() > 1) {
-
-                            Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
-                            List<String> keyList = new ArrayList<>();
-
-                            String containerPath = "";
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                containerPath = jsonArray.getJSONObject(i).get("containerPath").toString();
-                                String barcode = jsonArray.getJSONObject(i).get("barcode").toString();
-                                String IDNumber = jsonArray.getJSONObject(i).get("ID").toString();
-                                keyList.add(barcode + "-" + IDNumber);
-
-                                Map<String, List<SpannableStringBuilder>> tmpDisplayDict;
-
-                                tmpDisplayDict = LookupBuildTree.setupDisplay(jsonArray.getJSONObject(i));
-                                displayDict.putAll(tmpDisplayDict);
-                            }
-                            System.out.println(displayDict.size());
-
-                            getSupportActionBar().setTitle(containerPath);
-                            getSupportActionBar().setSubtitle("Count: " + (displayDict.size()));
-
-
-                            expandableListView = findViewById(R.id.expandableListView);
-                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
-                            expandableListView.setAdapter(listAdapter);
                         }
-
+//                        else if (jsonArray.length() > 1) {
+//
+//                            Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
+//                            List<String> keyList = new ArrayList<>();
+//
+//                            String containerPath = "";
+//                            for (int i = 0; i < jsonArray.length(); i++) {
+//                                containerPath = jsonArray.getJSONObject(i).get("containerPath").toString();
+//                                String barcode = jsonArray.getJSONObject(i).get("barcode").toString();
+//                                String IDNumber = jsonArray.getJSONObject(i).get("ID").toString();
+//                                keyList.add(barcode + "-" + IDNumber);
+//
+//                                Map<String, List<SpannableStringBuilder>> tmpDisplayDict;
+//
+//                                tmpDisplayDict = LookupBuildTree.setupDisplay(jsonArray.getJSONObject(i));
+//                                displayDict.putAll(tmpDisplayDict);
+//                            }
+//                            System.out.println(displayDict.size());
+//
+//                            getSupportActionBar().setTitle(containerPath);
+//                            getSupportActionBar().setSubtitle("Count: " + (displayDict.size()));
+//
+//
+//                            expandableListView = findViewById(R.id.expandableListView);
+//                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
+//                            expandableListView.setAdapter(listAdapter);
+//                        }
+//
                     }
                 } catch (IOException |
                         JSONException e) {

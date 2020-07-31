@@ -5,46 +5,37 @@ import java.util.ArrayList;
 
 public class InventoryObject {
 
-    private String key;
+    private String name;
     private Object value;
+    private ArrayList<InventoryObject> children;
+    private int displayWeight;
 
-    private String keyValueWithIndent;
-
-    private InventoryObject parent = null;
-    private final ArrayList<InventoryObject> children = new ArrayList<>();
-
-    private int displayWeight = 9; //used to control display order
-
-
-    public InventoryObject(String key, Object value) {
-        this.key = key;
-        this.value = value;
+    public InventoryObject() {
+        this(null, null, 0);
     }
 
-    public InventoryObject(String key, Object value, InventoryObject parent) {
-        this.key = key;
-        this.value = value;
-        this.parent = parent;
-        parent.addChild(this);
-        displayWeight = parent.getDisplayWeight();
-
+    public InventoryObject(String name) {
+        this(name, null, 0);
     }
 
-    public InventoryObject(String key, Object value, InventoryObject parent, int displayWeight) {
-        this.key = key;
+    public InventoryObject(String name, Object value) {
+        this(name, value, 0);
+    }
+
+    public InventoryObject(String name, Object value, int displayWeight) {
+        this.name = name;
         this.value = value;
-        this.parent = parent;
-        parent.addChild(this);
         this.displayWeight = displayWeight;
+        children = new ArrayList<InventoryObject>();
     }
 
 
-    public String getKey() {
-        return key;
+    public String getName() {
+        return name;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setName(String name) {
+        this.name = name;
     }
 
 
@@ -57,30 +48,14 @@ public class InventoryObject {
     }
 
 
-    public String getKeyValueWithIndent() {
-        return keyValueWithIndent;
-    }
-
-    public void setKeyValueWithIndent(String keyValueWithIndent) {
-        this.keyValueWithIndent = keyValueWithIndent;
-    }
-
-
-    public InventoryObject getParent() {
-        return parent;
-    }
-
-    public void setParent(InventoryObject parent) {
-        this.parent = parent;
-    }
-
-
     public ArrayList<InventoryObject> getChildren() {
         return children;
     }
 
     public void addChild(InventoryObject child) {
-        this.children.add(child);
+        if (child != null) {
+            this.children.add(child);
+        }
     }
 
 
@@ -91,12 +66,4 @@ public class InventoryObject {
     public void setDisplayWeight(Integer displayWeight) {
         this.displayWeight = displayWeight;
     }
-
-
-    public void addChildToParent(InventoryObject thisParent) {
-        if (thisParent != null) {
-            thisParent.addChild(this);
-        }
-    }
-
 }
