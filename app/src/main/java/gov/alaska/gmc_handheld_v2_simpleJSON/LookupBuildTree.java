@@ -21,20 +21,15 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupBuildTree {
 
-    public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONArray inputJson) throws JSONException {
+    public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONObject inputJson) throws JSONException {
 
         ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();  //used for the app display (expandable list)
         Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>(); //used for the app display (expandable list)
 
-
         try {
-            JSONObject jo = (JSONObject) inputJson.get(0);
-
-            InventoryObject root = parseTree(null, null, jo);
+            InventoryObject root = parseTree(null, null, inputJson);
             processForDisplay(root, displayList);
-            fillDisplayDict(jo, displayList, displayDict);
-
-
+            fillDisplayDict(inputJson, displayList, displayDict);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -139,9 +134,9 @@ public class LookupBuildTree {
                 return getUnit(parent, name, o, "intervalUnit");
             case "measuredDepth":
                 JSONObject pjo = (JSONObject) parent;
-                if(pjo.has("measuredDepthUnit")) {
+                if (pjo.has("measuredDepthUnit")) {
                     return getUnit(parent, name, o, "measuredDepthUnit");
-                }else {
+                } else {
                     return getUnit(parent, name, o, "unit"); //I think I ran across one test case where the measuredDepthUnit was missing, but unit was present.
                 }
             case "verticalDepth":

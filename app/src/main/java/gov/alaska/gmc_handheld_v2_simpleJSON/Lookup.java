@@ -1,10 +1,13 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+
+import androidx.annotation.RequiresApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,6 +59,7 @@ public class Lookup extends BaseActivity {
         call.enqueue(new Callback<ResponseBody>() {
             Timer timer;
 
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
@@ -83,13 +87,15 @@ public class Lookup extends BaseActivity {
 
                         if (inputJson.length() <= 1) {
 
-//                            inputJSONObject = (JSONObject) jsonArray.get(0);
+                            JSONObject inputJSONObject = (JSONObject) inputJson.get(0);
 
-//                            String containerPath = inputJSONObject.get("containerPath").toString();
-//                            getSupportActionBar().setTitle(containerPath);
+                            if(((JSONObject)inputJson.get(0)).has("containerPath")) {
+                                String containerPath = ((JSONObject) inputJson.get(0)).get("containerPath").toString();
+                                getSupportActionBar().setTitle(containerPath);
+                            }
 
                             Map<String, List<SpannableStringBuilder>> displayDict;
-                            displayDict = LookupBuildTree.setupDisplay(inputJson);
+                            displayDict = LookupBuildTree.setupDisplay(inputJSONObject);
                             Set<String> keys = displayDict.keySet();
 
                             List<String> keyList = new ArrayList<>(keys);
@@ -104,34 +110,32 @@ public class Lookup extends BaseActivity {
                             }
 
                         }
-//                        else if (jsonArray.length() > 1) {
-//
-//                            Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
-//                            List<String> keyList = new ArrayList<>();
-//
-//                            String containerPath = "";
-//                            for (int i = 0; i < jsonArray.length(); i++) {
-//                                containerPath = jsonArray.getJSONObject(i).get("containerPath").toString();
-//                                String barcode = jsonArray.getJSONObject(i).get("barcode").toString();
-//                                String IDNumber = jsonArray.getJSONObject(i).get("ID").toString();
-//                                keyList.add(barcode + "-" + IDNumber);
-//
-//                                Map<String, List<SpannableStringBuilder>> tmpDisplayDict;
-//
-//                                tmpDisplayDict = LookupBuildTree.setupDisplay(jsonArray.getJSONObject(i));
-//                                displayDict.putAll(tmpDisplayDict);
-//                            }
-//                            System.out.println(displayDict.size());
-//
-//                            getSupportActionBar().setTitle(containerPath);
-//                            getSupportActionBar().setSubtitle("Count: " + (displayDict.size()));
-//
-//
-//                            expandableListView = findViewById(R.id.expandableListView);
-//                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
-//                            expandableListView.setAdapter(listAdapter);
-//                        }
-//
+                        else if (inputJson.length() > 1) {
+
+                            Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
+                            List<String> keyList = new ArrayList<>();
+
+                            String containerPath = "";
+
+                            for (int i = 0; i < inputJson.length(); i++) {
+
+                                JSONObject inputJSONObject = (JSONObject) inputJson.get(i);
+
+                                containerPath = inputJson.getJSONObject(i).get("containerPath").toString();
+                                String barcode = inputJson.getJSONObject(i).get("barcode").toString();
+                                String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
+                                keyList.add(barcode + "-" + IDNumber);
+
+                                displayDict.putAll(LookupBuildTree.setupDisplay(inputJSONObject));
+                            }
+
+                            getSupportActionBar().setTitle(containerPath);
+                            getSupportActionBar().setSubtitle("Count: " + (displayDict.size()));
+
+                            expandableListView = findViewById(R.id.expandableListView);
+                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
+                            expandableListView.setAdapter(listAdapter);
+                        }
                     }
                 } catch (IOException |
                         JSONException e) {
