@@ -340,11 +340,13 @@ public class LookupBuildTree {
             for (InventoryObject nChild : n.getChildren()) {
                 // Checks if the array is an array of the parent type.
                 // Is the array an array of one well or of many wells?
+                String prefix = "";
                 if (nChild.getName().equals(n.getName())) {
                     sb.append(n.getName()).append("\n");
                     for (InventoryObject nGrandChild : nChild.getChildren()) {
                         sb.append(printInventoryObject(nGrandChild, 1));  //depth is 1 since we know all of these are children.
                     }
+
                     if(n.getChildren().size() > 1) {
                         sb.append("\n");
                     }else if (sb.length() > 1) {
