@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -91,7 +92,7 @@ public class Lookup extends BaseActivity {
 
                             if(((JSONObject)inputJson.get(0)).has("containerPath")) {
                                 String containerPath = ((JSONObject) inputJson.get(0)).get("containerPath").toString();
-                                getSupportActionBar().setTitle(containerPath);
+                                Objects.requireNonNull(getSupportActionBar()).setTitle(containerPath);
                             }
 
                             Map<String, List<SpannableStringBuilder>> displayDict;
@@ -129,7 +130,7 @@ public class Lookup extends BaseActivity {
                                 displayDict.putAll(LookupBuildTree.setupDisplay(inputJSONObject));
                             }
 
-                            getSupportActionBar().setTitle(containerPath);
+                            Objects.requireNonNull(getSupportActionBar()).setTitle(containerPath);
                             getSupportActionBar().setSubtitle("Count: " + (displayDict.size()));
 
                             expandableListView = findViewById(R.id.expandableListView);

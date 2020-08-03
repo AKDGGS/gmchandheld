@@ -21,7 +21,7 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupBuildTree {
 
-    public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONObject inputJson) throws JSONException {
+    public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONObject inputJson) {
 
         ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();  //used for the app display (expandable list)
         Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>(); //used for the app display (expandable list)
@@ -33,8 +33,6 @@ public class LookupBuildTree {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         return displayDict;
     }
 
@@ -81,7 +79,6 @@ public class LookupBuildTree {
         for (Iterator<String> it = o.keys(); it.hasNext(); ) {
             String key = it.next();
             io.addChild(parseTree(o, key, o.get(key)));
-
         }
         return io;
     }
@@ -168,7 +165,6 @@ public class LookupBuildTree {
         return new InventoryObject(name, o.toString());
 
     }
-
 
 //*********************************************************************************************
 
@@ -311,9 +307,9 @@ public class LookupBuildTree {
                     break;
                 default:
                     o.setDisplayWeight(0);
-
             }
         }
+
         if (!o.getChildren().isEmpty()) {
             for (InventoryObject c : o.getChildren()) {
                 setInventoryObjectKeyOrValues(c);
@@ -350,7 +346,7 @@ public class LookupBuildTree {
 
                 } else {
                     if (nChild.getName().equals(n.getChildren().get(0).getName())) {
-                        sb.append(n.getName() + "\n");
+                        sb.append(n.getName()).append("\n");
                     }
                     sb.append(printInventoryObject(nChild, 1)); //depth is 1 since we know all of these are children
                 }
@@ -372,7 +368,7 @@ public class LookupBuildTree {
 //*********************************************************************************************
 
     //Used in getStringForDisplay
-    private static String printInventoryObject(InventoryObject o, int depth) throws Exception {
+    private static String printInventoryObject(InventoryObject o, int depth) {
 
         StringBuilder sb = new StringBuilder();
         // Handle indentation
