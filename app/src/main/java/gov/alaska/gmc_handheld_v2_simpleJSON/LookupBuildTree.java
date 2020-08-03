@@ -171,16 +171,16 @@ public class LookupBuildTree {
     private static void setInventoryObjectKeyOrValues(InventoryObject o) {
         if (o.getName() != null) {
             switch (o.getName()) {
+                // Higher the displayWeight, the higher a priority an key has.
+                // Items are sorted internally first, and the externally in processForDisplay()
 
                 case "altNames":
                     o.setName("Alternative Names");
                     break;
-
                 case "APINumber":
                     o.setName("API Number");
                     o.setDisplayWeight(95);
                     break;
-
                 case "barcode":
                     o.setName("Barcode");
                     o.setDisplayWeight(1000);
@@ -190,6 +190,7 @@ public class LookupBuildTree {
                     break;
                 case "boxNumber":
                     o.setName("Box Number");
+                    o.setDisplayWeight(950);
                     break;
                 case "class":
                     o.setName("Class");
@@ -231,9 +232,11 @@ public class LookupBuildTree {
                     break;
                 case "intervalBottom":
                     o.setName("Interval Bottom");
+                    o.setDisplayWeight(900);
                     break;
                 case "intervalTop":
                     o.setName("Interval Top");
+                    o.setDisplayWeight(900);
                     break;
                 case "keywords":
                     o.setName("Keywords");
@@ -258,7 +261,6 @@ public class LookupBuildTree {
                     o.setName("Operators");
                     o.setDisplayWeight(50);
                     break;
-
                 case "outcrops":
                     o.setName("Outcrops");
                     break;
@@ -310,6 +312,7 @@ public class LookupBuildTree {
             }
         }
 
+        // Checks all of the children of the root.
         if (!o.getChildren().isEmpty()) {
             for (InventoryObject c : o.getChildren()) {
                 setInventoryObjectKeyOrValues(c);
@@ -342,7 +345,11 @@ public class LookupBuildTree {
                     for (InventoryObject nGrandChild : nChild.getChildren()) {
                         sb.append(printInventoryObject(nGrandChild, 1));  //depth is 1 since we know all of these are children.
                     }
-                    sb.append("\n");
+                    if(n.getChildren().size() > 1) {
+                        sb.append("\n");
+                    }else if (sb.length() > 1) {
+                        sb.setLength(sb.length() - 1);
+                    }
 
                 } else {
                     if (nChild.getName().equals(n.getChildren().get(0).getName())) {

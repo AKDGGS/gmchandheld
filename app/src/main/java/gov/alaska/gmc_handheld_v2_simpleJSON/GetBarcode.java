@@ -42,7 +42,6 @@ public class GetBarcode extends BaseActivity {
                     Intent intent = getIntent();
                     String buttonPushed = intent.getStringExtra(MainActivity.EXTRA_TEXT);
 
-                    assert buttonPushed != null;
                     switch(buttonPushed){
                         case "Help":
 //                            openLookup();
