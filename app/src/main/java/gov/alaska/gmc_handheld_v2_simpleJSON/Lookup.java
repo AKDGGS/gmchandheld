@@ -90,18 +90,18 @@ public class Lookup extends BaseActivity {
 
                             Map<String, List<SpannableStringBuilder>> displayDict;
                             displayDict = LookupBuildTree.setupDisplay(inputJson);
-//                            Set<String> keys = displayDict.keySet();
+                            Set<String> keys = displayDict.keySet();
 
-//                            List<String> keyList = new ArrayList<>(keys);
+                            List<String> keyList = new ArrayList<>(keys);
 
 
-//                            expandableListView = findViewById(R.id.expandableListView);
-//
-//                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
-//                            expandableListView.setAdapter(listAdapter);
-//                            if (listAdapter.getGroupCount() == 1){
-//                                expandableListView.expandGroup(0);
-//                            }
+                            expandableListView = findViewById(R.id.expandableListView);
+
+                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
+                            expandableListView.setAdapter(listAdapter);
+                            if (listAdapter.getGroupCount() == 1){
+                                expandableListView.expandGroup(0);
+                            }
 
                         }
 //                        else if (jsonArray.length() > 1) {
