@@ -32,7 +32,7 @@ public class LookupBuildTree {
 
                 JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
                 InventoryObject root = parseTree(null, null, inputJsonObject);
-                processForDisplay(root, displayList);
+                processForDisplay(root, 0, displayList);
                 displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
             }
         } catch (Exception e) {
@@ -68,39 +68,58 @@ public class LookupBuildTree {
 
     private static InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
 
-
+        InventoryObject io = null;
         if (name != null) {
-            System.out.println("Object: " + name + " " +  o);
             switch (name) {
-                case "collection":
-                    name = "Collection";
-                    break;
-                case "operators":
-                    name = "Operators";
-                    break;
-                case "type":
-                    name = "Type";
-                    break;
-                case "wells":
-                    name = "Wells";
-                    break;
                 // Explicitly ignore these
                 case "elevationUnit":
                 case "intervalUnit":
                 case "measuredDepthUnit":
                 case "unit":
                     return null;
+
+                //Create these nodes
+                case "boreholes":
+                    io = new InventoryObject("Boreholes", 100);
+                    break;
+                case "collection":
+                    io = new InventoryObject("Collection", null, 500);
+                    break;
+                case "operators":
+                    io = new InventoryObject("Operators", null, 50);
+                    break;
+                case "outcrops":
+                    io = new InventoryObject("Outcrops", null, 100);
+                    break;
+                case "prospect":
+                    io = new InventoryObject("Prospect");
+                    break;
+                case "shotline":
+                    io =  new InventoryObject("Shotline", o);
+                    break;
+                case "shotpoints":
+                    io = new InventoryObject("Shotpoints", null, 50);
+                    break;
+                case "type":
+                    io = new InventoryObject("Type");
+                    break;
+                case "wells":
+                    io = new InventoryObject("Wells", null, 100);
+                    break;
+                default:
+                    io = new InventoryObject(name);
             }
         }
 
-        InventoryObject io = new InventoryObject(name);
+        if (name == null) {
+            io = new InventoryObject(name);
+        }
 
         for (Iterator<String> it = o.keys(); it.hasNext(); ) {
             String key = it.next();
             io.addChild(parseTree(o, key, o.get(key)));
         }
 
-        io.setDisplayWeight(1000);
         return io;
     }
 
@@ -108,15 +127,10 @@ public class LookupBuildTree {
 //*********************************************************************************************
 
     private static InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
+        InventoryObject io = null;
+
         if (name != null) {
-            System.out.println("Array: " + name + " " + a);
             switch (name) {
-                case "operators":
-                    name = "Operators";
-                    break;
-                case "wells":
-                    name = "Wells";
-                    break;
                 case "keywords": {
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < a.length(); i++) {
@@ -127,18 +141,40 @@ public class LookupBuildTree {
                             sb.append(a.get(i));
                         }
                     }
-                    return new InventoryObject("Keywords", sb.toString());
+                    return new InventoryObject("Keywords", sb.toString(), 800);
                 }
+
+                //Create these nodes
+                case "boreholes":
+                    io = new InventoryObject("Boreholes", null,100);
+                    break;
+                case "operators":
+                    io = new InventoryObject("Operators", null, 50);
+                    break;
+                case "outcrops":
+                    io = new InventoryObject("Outcrops", null, 100);
+                    break;
+                case "shotpoints":
+                    io = new InventoryObject("Shotpoints", null, 100);
+                    break;
+                case "wells":
+                    io = new InventoryObject("Wells", null, 100);
+                    break;
+                default:
+                    io = new InventoryObject(name);
             }
         }
 
-        InventoryObject io = new InventoryObject(name);
+        if (name == null) {
+            io = new InventoryObject(name);
+        }
+
+
 
         for (int i = 0; i < a.length(); i++) {
             io.addChild(parseTree(a, name, a.get(i)));
         }
 
-        io.setDisplayWeight(1000);
         return io;
     }
 
@@ -161,14 +197,10 @@ public class LookupBuildTree {
                 return new InventoryObject("API Number", o, 95);
             case "barcode":
                 return new InventoryObject("Barcode", o, 1000);
-            case "boreholes":
-                return new InventoryObject("Boreholes", o);
             case "boxNumber":
                 return new InventoryObject("Box Number", o, 950);
             case "class":
                 return new InventoryObject("Class", o);
-            case "collection":
-                return new InventoryObject("Collection", o, 500);
             case "completionDate":
                 return new InventoryObject("Completion Date", o, 69);
             case "completionStatus":
@@ -181,116 +213,85 @@ public class LookupBuildTree {
                 return new InventoryObject("Current", o);
             case "description":
                 return new InventoryObject("Description", o);
-            case "elevation":
-//                    o.setName("Elevation");
-                return new InventoryObject("Elevation", o, 900);
+            case "elevation": {
+                JSONObject pjo = (JSONObject) parent;
+                if (pjo.has("elevationUnit") && pjo.getJSONObject("elevationUnit").has("abbr")) {
+                    String val = o + " " + pjo.getJSONObject("elevationUnit").get("abbr");
+                    return new InventoryObject("Elevation", val, 900);
+                } else {
+                    return new InventoryObject("Elevation", o, 900);
+                }
+            }
             case "federal":
                 return new InventoryObject("Federal", o, 70);
             case "ID":
                 return new InventoryObject("ID", o, 1000);
-            case "intervalBottom":
-                return new InventoryObject("Interval Bottom", o, 900);
-            case "intervalTop":
-                return new InventoryObject("Interval Top", o, 900);
+            case "intervalBottom": {
+                JSONObject pjo = (JSONObject) parent;
+                if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
+                    String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr");
+                    return new InventoryObject("Interval Bottom", val, 902);
+                } else {
+                    return new InventoryObject("Interval Bottom", o, 902);
+                }
+            }
+            case "intervalTop": {
+                JSONObject pjo = (JSONObject) parent;
+                if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
+                    String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr");
+                    return new InventoryObject("Interval Top", val, 902);
+                } else {
+                    return new InventoryObject("Interval Top", o, 902);
+                }
+            }
             case "keywords":
                 return new InventoryObject("Keywords", o, 600);
-            case "measuredDepth":
-//                    o.setName("Measured Depth");
-//                    o.setDisplayWeight(75);
-//                    JSONObject pjo = (JSONObject) parent;
-//                    if (pjo.has("measuredDepthUnit")) {
-//                        return getUnit(parent, name, o, "measuredDepthUnit");
-//                    } else {
-//                        return getUnit(parent, name, o, "unit"); //I think I ran across one test case where the measuredDepthUnit was missing, but unit was present.
-//                    }
-                return new InventoryObject("Measured Depth", o, 75);
+            case "measuredDepth": {
+                JSONObject pjo = (JSONObject) parent;
+                if (pjo.has("measuredDepthUnit") && pjo.getJSONObject("measuredDepthUnit").has("abbr")) {
+                    String val = o + " " + pjo.getJSONObject("measuredDepthUnit").get("abbr");
+                    return new InventoryObject("Measured Depth", val, 75);
+                } else if (pjo.has("unit") && pjo.getJSONObject("unit").has("abbr")) {
+                    String val = o + " " + pjo.getJSONObject("unit").get("abbr");
+                    return new InventoryObject("Measured Depth", val, 75);
+                } else {
+                    return new InventoryObject("Measured Depth", o, 75);
+                }
+            }
             case "name":
                 return new InventoryObject("Name", o, 100);
             case "number":
                 return new InventoryObject("Number", o);
             case "onshore":
                 return new InventoryObject("Onshore", o, 70);
-            case "operators":
-                return new InventoryObject("Operators", o, 50);
-            case "outcrops":
-                return new InventoryObject("Outcrops", o);
             case "permitStatus":
                 return new InventoryObject("Permit Status", o, 70);
-            case "prospect":
-                return new InventoryObject("Prospect", o);
             case "remark":
                 return new InventoryObject("Remark", o, 900);
             case "sampleNumber":
                 return new InventoryObject("Sample Number", o);
             case "setNumber":
                 return new InventoryObject("Set Number", o);
-            case "shotline":
-                return new InventoryObject("Shotline", o);
-            case "shotpoints":
-                return new InventoryObject("Shotpoints", o);
             case "spudDate":
                 return new InventoryObject("Spud Date", o, 60);
             case "type":
                 return new InventoryObject("Type", o);
             case "verticalDepth":
-                return new InventoryObject("Vertical Depth", o, 80);
+            {
+                JSONObject pjo = (JSONObject) parent;
+                if (pjo.has("unit") && pjo.getJSONObject("unit").has("abbr")) {
+                    String val = o + " " + pjo.getJSONObject("unit").get("abbr");
+                    return new InventoryObject("Vertical Depth", val, 80);
+                } else {
+                    return new InventoryObject("Vertical Depth", o, 80);
+                }
+            }
             case "wellNumber":
                 return new InventoryObject("Well Number", o, 94);
-            case "wells":
-                return new InventoryObject("Wells", o, 100);
             default:
                 return new InventoryObject(name, o);
         }
 
-    }
-
-
-
-//*********************************************************************************************
-
-    // helper function that is used to append the abbr to depths.
-    private static InventoryObject getUnit(Object parent, String name, Object o, String
-            nameOfUnit) throws JSONException {
-        if (o instanceof Double && parent instanceof JSONObject) {
-            Double value = (Double) o;
-            JSONObject pjo = (JSONObject) parent;
-            if (pjo.has(nameOfUnit) && pjo.get(nameOfUnit) instanceof JSONObject) {
-                JSONObject unit = (JSONObject) pjo.get(nameOfUnit);
-                if (unit.has("abbr") && unit.get("abbr") instanceof String) {
-                    String abbr = (String) unit.get("abbr");
-                    return new InventoryObject(
-                            name, value.toString() + " " + abbr
-                    );
-                }
-            }
-        }
-
-        return new InventoryObject(name, o.toString());
-
-    }
-
-//*********************************************************************************************
-
-//    private static InventoryObject setInventoryObjectKeyOrValues(InventoryObject o) {
-//
-//
-//        // Checks all of the children of the root.
-//        if (!o.getChildren().isEmpty()) {
-//            for (InventoryObject c : o.getChildren()) {
-//                setInventoryObjectKeyOrValues(c);
-//            }
-//        }
-//    }
-
-    //*********************************************************************************************
-    public static void sortInventoryObjectsInternally(InventoryObject o) {
-
-        if (!o.getChildren().isEmpty()) {
-            Collections.sort(o.getChildren(), new SortInventoryObjectList());
-            for (InventoryObject c : o.getChildren()) {
-                sortInventoryObjectsInternally(c);
-            }
-        }
     }
 
     //*********************************************************************************************
@@ -311,8 +312,6 @@ public class LookupBuildTree {
 
                     if (n.getChildren().size() > 1) {
                         sb.append("\n");
-                    } else if (sb.length() > 1) {
-                        sb.setLength(sb.length() - 1);
                     }
 
                 } else {
@@ -328,7 +327,7 @@ public class LookupBuildTree {
         }
 
         //removes the final newline character
-        if (sb.length() > 1) {
+        if (sb.length() > 1 ) {
             sb.setLength(sb.length() - 1);
         }
         return (sb);
@@ -359,43 +358,98 @@ public class LookupBuildTree {
         return sb.toString();
     }
 
+//*********************************************************************************************
+
+    public static void sortInventoryObjectsInternally(InventoryObject o) {
+
+//        if(o.getName() != null && o.getChildren().size() == 0){
+//            System.out.println(o.getName());
+//        }
+        if (!o.getChildren().isEmpty()) {
+//            if (o.getName() != null) {
+//              System.out.println(o.getName());
+//            }
+
+            Collections.sort(o.getChildren(), new SortInventoryObjectList());
+            for (InventoryObject c : o.getChildren()) {
+                sortInventoryObjectsInternally(c);
+            }
+        }
+    }
 
 //*********************************************************************************************
 
     private static void processForDisplay(InventoryObject
-                                                  mRoot, ArrayList<SpannableStringBuilder> displayList) throws Exception {
+                                                  o, int depth, ArrayList<SpannableStringBuilder> displayList) throws Exception {
 
-        ArrayList<String> keyList = new ArrayList<>();  //list of all keys --> used with spannableStringBuilder to make all keys bold
+//        System.out.println(printInventoryObject(mRoot.getChildren().get(0), 0));
+//        displayList.add(printInventoryObject2( mRoot.getChildren().get(0), 0));
 
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        if(o.getName() != null  && o.getChildren().size() == 0){
 
-        sortInventoryObjectsInternally(mRoot);
+//            for (int i = 0; i < depth; i++) {
+//                ssb.append("    ");
+//            }
+            ssb.append(o.getName()).append(" ").append(o.getValue().toString());
+            int index = 0;
+            index = o.getName().indexOf(o.getName(), index);
+            ssb.setSpan(new StyleSpan(BOLD), index,index + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        Collections.sort(mRoot.getChildren(), new SortInventoryObjectList()); //sort externally
-
-        for (InventoryObject n : mRoot.getChildren()) {
-            displayList.add(new SpannableStringBuilder(getStringForDisplay(n)));
-
-            keyList.add(n.getName());
-            if (n.getChildren().size() > 0) {
-                getDescendants(n, keyList);
+            displayList.add(ssb);
+        }else{
+            if(o.getName() != null) {
+                ssb.append(o.getName());
+                displayList.add(ssb);
+            }
+            for(InventoryObject child : o.getChildren()) {
+                processForDisplay(child, depth + 1, displayList);
             }
         }
-
-        for (SpannableStringBuilder s : displayList) {
-            for (String k : keyList) {
-                if (s.toString().contains(k)) {
-                    int index = 0;
-                    while (index != -1) {
-                        index = s.toString().indexOf(k, index);
-                        if (index != -1) {
-                            s.setSpan(new StyleSpan(BOLD), index,
-                                    index + k.length() + 1, SPAN_EXCLUSIVE_EXCLUSIVE);
-                            index++;
-                        }
-                    }
-                }
-            }
-        }
+//        if (!o.getChildren().isEmpty()) {
+//            if (o.getName() != null) {
+//                System.out.println(o.getName());
+//            }
+//
+//            Collections.sort(o.getChildren(), new SortInventoryObjectList());
+//            for (InventoryObject c : o.getChildren()) {
+//                sortInventoryObjectsInternally(c);
+//            }
+//        }
+//
+//        System.out.println(o);
+//
+//
+//
+//        ArrayList<String> keyList = new ArrayList<>();  //list of all keys --> used with spannableStringBuilder to make all keys bold
+//
+//
+//        sortInventoryObjectsInternally(o);
+//
+//        for (InventoryObject n : o.getChildren()) {
+//            displayList.add(new SpannableStringBuilder(getStringForDisplay(n)));
+//
+//            keyList.add(n.getName());
+//            if (n.getChildren().size() > 0) {
+//                getDescendants(n, keyList);
+//            }
+//        }
+//
+//        for (SpannableStringBuilder s : displayList) {
+//            for (String k : keyList) {
+//                if (s.toString().contains(k)) {
+//                    int index = 0;
+//                    while (index != -1) {
+//                        index = s.toString().indexOf(k, index);
+//                        if (index != -1) {
+//                            s.setSpan(new StyleSpan(BOLD), index,
+//                                    index + k.length() + 1, SPAN_EXCLUSIVE_EXCLUSIVE);
+//                            index++;
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
 //*********************************************************************************************
@@ -415,8 +469,7 @@ public class LookupBuildTree {
 
     //*********************************************************************************************
 
-    private static Map<String, List<SpannableStringBuilder>> fillDisplayDict(JSONObject
-                                                                                     inputJson,
+    private static Map<String, List<SpannableStringBuilder>> fillDisplayDict(JSONObject inputJson,
                                                                              ArrayList<SpannableStringBuilder> displayList,
                                                                              Map<String, List<SpannableStringBuilder>> mDisplayDict) throws JSONException {
 

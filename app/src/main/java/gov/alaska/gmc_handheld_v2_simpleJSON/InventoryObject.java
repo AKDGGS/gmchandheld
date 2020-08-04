@@ -14,6 +14,7 @@ public class InventoryObject {
         this(null, null, 0);
     }
 
+
     public InventoryObject(String name) {
         this(name, null, 0);
     }
