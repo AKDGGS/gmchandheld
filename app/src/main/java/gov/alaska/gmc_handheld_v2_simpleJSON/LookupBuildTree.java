@@ -21,15 +21,22 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupBuildTree {
 
-    public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONObject inputJson) {
+    public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONArray inputJson) {
 
-        ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();  //used for the app display (expandable list)
         Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>(); //used for the app display (expandable list)
 
+
         try {
-            InventoryObject root = parseTree(null, null, inputJson);
-            processForDisplay(root, displayList);
-            fillDisplayDict(inputJson, displayList, displayDict);
+
+
+                for (int i = 0; i < inputJson.length(); i++) {
+                    ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();  //used for the app display (expandable list)
+                    Map<String, List<SpannableStringBuilder>> displayDictTemp = new HashMap<>();
+                    JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
+                    InventoryObject root = parseTree(null, null, inputJsonObject);
+                    processForDisplay(root, displayList);
+                    displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
+                }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -272,8 +279,7 @@ public class LookupBuildTree {
                     o.setName("Prospect");
                     break;
                 case "remark":
-                case "remarks":
-                    o.setName("Remarks");
+                    o.setName("Remark");
                     o.setDisplayWeight(900);
                     break;
                 case "sampleNumber":
@@ -452,7 +458,7 @@ public class LookupBuildTree {
 
     //*********************************************************************************************
 
-    private static void fillDisplayDict(JSONObject inputJson,
+    private static Map<String, List<SpannableStringBuilder>> fillDisplayDict(JSONObject inputJson,
                                         ArrayList<SpannableStringBuilder> displayList,
                                         Map<String, List<SpannableStringBuilder>> mDisplayDict) throws JSONException {
 
@@ -462,5 +468,6 @@ public class LookupBuildTree {
         String label = barcode + "-" + IDNumber;
 
         mDisplayDict.put(label, displayList);
+        return mDisplayDict;
     }
 }

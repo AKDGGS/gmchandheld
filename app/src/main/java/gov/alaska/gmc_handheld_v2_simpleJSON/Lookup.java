@@ -84,57 +84,26 @@ public class Lookup extends BaseActivity {
                     } else {
                         JSONArray inputJson = new JSONArray((rawJSON));
 
+                        Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
+                        List<String> keyList = new ArrayList<>();
 
-                        if (inputJson.length() <= 1) {
+                        String containerPath = "";
+                        for (int i = 0; i < inputJson.length(); i++) {
 
-                            JSONObject inputJSONObject = (JSONObject) inputJson.get(0);
+                            JSONObject inputJSONObject = (JSONObject) inputJson.get(i);
 
-                            if(((JSONObject)inputJson.get(0)).has("containerPath")) {
-                                String containerPath = ((JSONObject) inputJson.get(0)).get("containerPath").toString();
-                                getSupportActionBar().setTitle(containerPath);
-                            }
-
-                            Map<String, List<SpannableStringBuilder>> displayDict;
-                            displayDict = LookupBuildTree.setupDisplay(inputJSONObject);
-                            Set<String> keys = displayDict.keySet();
-
-                            List<String> keyList = new ArrayList<>(keys);
-
-
-                            expandableListView = findViewById(R.id.expandableListView);
-
-                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
-                            expandableListView.setAdapter(listAdapter);
-                            if (listAdapter.getGroupCount() == 1){
-                                expandableListView.expandGroup(0);
-                            }
-
+                            containerPath = inputJson.getJSONObject(i).get("containerPath").toString();
+                            String barcode = inputJson.getJSONObject(i).get("barcode").toString();
+                            String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
+                            keyList.add(barcode + "-" + IDNumber);
+                            displayDict.putAll(LookupBuildTree.setupDisplay(inputJson));
                         }
-                        else if (inputJson.length() > 1) {
 
-                            Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
-                            List<String> keyList = new ArrayList<>();
-
-                            String containerPath = "";
-
-                            for (int i = 0; i < inputJson.length(); i++) {
-
-                                JSONObject inputJSONObject = (JSONObject) inputJson.get(i);
-
-                                containerPath = inputJson.getJSONObject(i).get("containerPath").toString();
-                                String barcode = inputJson.getJSONObject(i).get("barcode").toString();
-                                String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
-                                keyList.add(barcode + "-" + IDNumber);
-
-                                displayDict.putAll(LookupBuildTree.setupDisplay(inputJSONObject));
-                            }
-
-                            getSupportActionBar().setTitle(containerPath);
-                            getSupportActionBar().setSubtitle("Count: " + (displayDict.size()));
-
-                            expandableListView = findViewById(R.id.expandableListView);
-                            listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
-                            expandableListView.setAdapter(listAdapter);
+                        expandableListView = findViewById(R.id.expandableListView);
+                        listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
+                        expandableListView.setAdapter(listAdapter);
+                        if (listAdapter.getGroupCount() == 1) {
+                            expandableListView.expandGroup(0);
                         }
                     }
                 } catch (IOException |
