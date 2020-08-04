@@ -25,18 +25,16 @@ public class LookupBuildTree {
 
         Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>(); //used for the app display (expandable list)
 
-
         try {
+            for (int i = 0; i < inputJson.length(); i++) {
+                ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();  //used for the app display (expandable list)
+                Map<String, List<SpannableStringBuilder>> displayDictTemp = new HashMap<>();
 
-
-                for (int i = 0; i < inputJson.length(); i++) {
-                    ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();  //used for the app display (expandable list)
-                    Map<String, List<SpannableStringBuilder>> displayDictTemp = new HashMap<>();
-                    JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
-                    InventoryObject root = parseTree(null, null, inputJsonObject);
-                    processForDisplay(root, displayList);
-                    displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
-                }
+                JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
+                InventoryObject root = parseTree(null, null, inputJsonObject);
+                processForDisplay(root, displayList);
+                displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,8 +68,22 @@ public class LookupBuildTree {
 
     private static InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
 
+
         if (name != null) {
+            System.out.println("Object: " + name + " " +  o);
             switch (name) {
+                case "collection":
+                    name = "Collection";
+                    break;
+                case "operators":
+                    name = "Operators";
+                    break;
+                case "type":
+                    name = "Type";
+                    break;
+                case "wells":
+                    name = "Wells";
+                    break;
                 // Explicitly ignore these
                 case "elevationUnit":
                 case "intervalUnit":
@@ -87,6 +99,8 @@ public class LookupBuildTree {
             String key = it.next();
             io.addChild(parseTree(o, key, o.get(key)));
         }
+
+        io.setDisplayWeight(1000);
         return io;
     }
 
@@ -95,7 +109,14 @@ public class LookupBuildTree {
 
     private static InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
         if (name != null) {
+            System.out.println("Array: " + name + " " + a);
             switch (name) {
+                case "operators":
+                    name = "Operators";
+                    break;
+                case "wells":
+                    name = "Wells";
+                    break;
                 case "keywords": {
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < a.length(); i++) {
@@ -106,7 +127,7 @@ public class LookupBuildTree {
                             sb.append(a.get(i));
                         }
                     }
-                    return new InventoryObject(name, sb.toString());
+                    return new InventoryObject("Keywords", sb.toString());
                 }
             }
         }
@@ -116,6 +137,8 @@ public class LookupBuildTree {
         for (int i = 0; i < a.length(); i++) {
             io.addChild(parseTree(a, name, a.get(i)));
         }
+
+        io.setDisplayWeight(1000);
         return io;
     }
 
@@ -128,33 +151,106 @@ public class LookupBuildTree {
         }
 
         switch (name) {
+            // Higher the displayWeight, the higher a priority an key has.
+            // Items are sorted internally first, and the externally in processForDisplay()
             case "abbr":
                 return null;
+            case "altNames":
+                return new InventoryObject("Alternative Names", o);
+            case "APINumber":
+                return new InventoryObject("API Number", o, 95);
+            case "barcode":
+                return new InventoryObject("Barcode", o, 1000);
+            case "boreholes":
+                return new InventoryObject("Boreholes", o);
+            case "boxNumber":
+                return new InventoryObject("Box Number", o, 950);
+            case "class":
+                return new InventoryObject("Class", o);
+            case "collection":
+                return new InventoryObject("Collection", o, 500);
+            case "completionDate":
+                return new InventoryObject("Completion Date", o, 69);
+            case "completionStatus":
+                return new InventoryObject("Completion Status", o, 69);
+            case "containerPath":
+                return new InventoryObject("Container Path", o, 1000);
+            case "coreNumber":
+                return new InventoryObject("Core Number", o, 900);
+            case "current":
+                return new InventoryObject("Current", o);
+            case "description":
+                return new InventoryObject("Description", o);
             case "elevation":
-                return getUnit(parent, name, o, "elevationUnit");
+//                    o.setName("Elevation");
+                return new InventoryObject("Elevation", o, 900);
+            case "federal":
+                return new InventoryObject("Federal", o, 70);
+            case "ID":
+                return new InventoryObject("ID", o, 1000);
             case "intervalBottom":
-                return getUnit(parent, name, o, "intervalUnit");
+                return new InventoryObject("Interval Bottom", o, 900);
             case "intervalTop":
-                return getUnit(parent, name, o, "intervalUnit");
+                return new InventoryObject("Interval Top", o, 900);
+            case "keywords":
+                return new InventoryObject("Keywords", o, 600);
             case "measuredDepth":
-                JSONObject pjo = (JSONObject) parent;
-                if (pjo.has("measuredDepthUnit")) {
-                    return getUnit(parent, name, o, "measuredDepthUnit");
-                } else {
-                    return getUnit(parent, name, o, "unit"); //I think I ran across one test case where the measuredDepthUnit was missing, but unit was present.
-                }
+//                    o.setName("Measured Depth");
+//                    o.setDisplayWeight(75);
+//                    JSONObject pjo = (JSONObject) parent;
+//                    if (pjo.has("measuredDepthUnit")) {
+//                        return getUnit(parent, name, o, "measuredDepthUnit");
+//                    } else {
+//                        return getUnit(parent, name, o, "unit"); //I think I ran across one test case where the measuredDepthUnit was missing, but unit was present.
+//                    }
+                return new InventoryObject("Measured Depth", o, 75);
+            case "name":
+                return new InventoryObject("Name", o, 100);
+            case "number":
+                return new InventoryObject("Number", o);
+            case "onshore":
+                return new InventoryObject("Onshore", o, 70);
+            case "operators":
+                return new InventoryObject("Operators", o, 50);
+            case "outcrops":
+                return new InventoryObject("Outcrops", o);
+            case "permitStatus":
+                return new InventoryObject("Permit Status", o, 70);
+            case "prospect":
+                return new InventoryObject("Prospect", o);
+            case "remark":
+                return new InventoryObject("Remark", o, 900);
+            case "sampleNumber":
+                return new InventoryObject("Sample Number", o);
+            case "setNumber":
+                return new InventoryObject("Set Number", o);
+            case "shotline":
+                return new InventoryObject("Shotline", o);
+            case "shotpoints":
+                return new InventoryObject("Shotpoints", o);
+            case "spudDate":
+                return new InventoryObject("Spud Date", o, 60);
+            case "type":
+                return new InventoryObject("Type", o);
             case "verticalDepth":
-                return getUnit(parent, name, o, "unit");
-
+                return new InventoryObject("Vertical Depth", o, 80);
+            case "wellNumber":
+                return new InventoryObject("Well Number", o, 94);
+            case "wells":
+                return new InventoryObject("Wells", o, 100);
             default:
                 return new InventoryObject(name, o);
         }
+
     }
+
+
 
 //*********************************************************************************************
 
     // helper function that is used to append the abbr to depths.
-    private static InventoryObject getUnit(Object parent, String name, Object o, String nameOfUnit) throws JSONException {
+    private static InventoryObject getUnit(Object parent, String name, Object o, String
+            nameOfUnit) throws JSONException {
         if (o instanceof Double && parent instanceof JSONObject) {
             Double value = (Double) o;
             JSONObject pjo = (JSONObject) parent;
@@ -175,156 +271,16 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-    private static void setInventoryObjectKeyOrValues(InventoryObject o) {
-        if (o.getName() != null) {
-            switch (o.getName()) {
-                // Higher the displayWeight, the higher a priority an key has.
-                // Items are sorted internally first, and the externally in processForDisplay()
-
-                case "altNames":
-                    o.setName("Alternative Names");
-                    break;
-                case "APINumber":
-                    o.setName("API Number");
-                    o.setDisplayWeight(95);
-                    break;
-                case "barcode":
-                    o.setName("Barcode");
-                    o.setDisplayWeight(1000);
-                    break;
-                case "boreholes":
-                    o.setName("Boreholes");
-                    break;
-                case "boxNumber":
-                    o.setName("Box Number");
-                    o.setDisplayWeight(950);
-                    break;
-                case "class":
-                    o.setName("Class");
-                    break;
-                case "collection":
-                    o.setName("Collection");
-                    o.setDisplayWeight(500);
-                    break;
-                case "completionDate":
-                    o.setName("Completion Date");
-                    o.setDisplayWeight(69);
-                    break;
-                case "completionStatus":
-                    o.setName("Completion Status");
-                    o.setDisplayWeight(69);
-                    break;
-                case "containerPath":
-                    o.setName("Container Path");
-                    o.setDisplayWeight(1000);
-                    break;
-                case "coreNumber":
-                    o.setName("Core Number");
-                    break;
-                case "current":
-                    o.setName("Current");
-                    break;
-                case "description":
-                    o.setName("Description");
-                    break;
-                case "elevation":
-                    o.setName("Elevation");
-                    break;
-                case "federal":
-                    o.setName("Federal");
-                    o.setDisplayWeight(70);
-                    break;
-                case "ID":
-                    o.setDisplayWeight(1000);
-                    break;
-                case "intervalBottom":
-                    o.setName("Interval Bottom");
-                    o.setDisplayWeight(900);
-                    break;
-                case "intervalTop":
-                    o.setName("Interval Top");
-                    o.setDisplayWeight(900);
-                    break;
-                case "keywords":
-                    o.setName("Keywords");
-                    o.setDisplayWeight(600);
-                    break;
-                case "measuredDepth":
-                    o.setName("Measured Depth");
-                    o.setDisplayWeight(75);
-                    break;
-                case "name":
-                    o.setName("Name");
-                    o.setDisplayWeight(100);
-                    break;
-                case "number":
-                    o.setName("Number");
-                    break;
-                case "onshore":
-                    o.setName("Onshore");
-                    o.setDisplayWeight(70);
-                    break;
-                case "operators":
-                    o.setName("Operators");
-                    o.setDisplayWeight(50);
-                    break;
-                case "outcrops":
-                    o.setName("Outcrops");
-                    break;
-                case "permitStatus":
-                    o.setName("Permit Status");
-                    o.setDisplayWeight(70);
-                    break;
-                case "prospect":
-                    o.setName("Prospect");
-                    break;
-                case "remark":
-                    o.setName("Remark");
-                    o.setDisplayWeight(900);
-                    break;
-                case "sampleNumber":
-                    o.setName("Sample Number");
-                    break;
-                case "setNumber":
-                    o.setName("Set Number");
-                    break;
-                case "shotline":
-                    o.setName("Shotline");
-                    break;
-                case "shotpoints":
-                    o.setName("Shotpoints");
-                    break;
-                case "spudDate":
-                    o.setName("Spud Date");
-                    o.setDisplayWeight(60);
-                    break;
-                case "type":
-                    o.setName("Type");
-                    break;
-                case "verticalDepth":
-                    o.setName("Vertical Depth");
-                    o.setDisplayWeight(80);
-                    break;
-                case "wellNumber":
-                    o.setName("Well Number");
-                    o.setDisplayWeight(94);
-                    break;
-                case "wells":
-                    o.setName("Wells");
-                    o.setDisplayWeight(100);
-                    break;
-                default:
-                    o.setDisplayWeight(0);
-            }
-        }
-
-        // Checks all of the children of the root.
-        if (!o.getChildren().isEmpty()) {
-            for (InventoryObject c : o.getChildren()) {
-                setInventoryObjectKeyOrValues(c);
-            }
-        }
-    }
+//    private static InventoryObject setInventoryObjectKeyOrValues(InventoryObject o) {
+//
+//
+//        // Checks all of the children of the root.
+//        if (!o.getChildren().isEmpty()) {
+//            for (InventoryObject c : o.getChildren()) {
+//                setInventoryObjectKeyOrValues(c);
+//            }
+//        }
+//    }
 
     //*********************************************************************************************
     public static void sortInventoryObjectsInternally(InventoryObject o) {
@@ -353,9 +309,9 @@ public class LookupBuildTree {
                         sb.append(printInventoryObject(nGrandChild, 1));  //depth is 1 since we know all of these are children.
                     }
 
-                    if(n.getChildren().size() > 1) {
+                    if (n.getChildren().size() > 1) {
                         sb.append("\n");
-                    }else if (sb.length() > 1) {
+                    } else if (sb.length() > 1) {
                         sb.setLength(sb.length() - 1);
                     }
 
@@ -406,11 +362,12 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-    private static void processForDisplay(InventoryObject mRoot, ArrayList<SpannableStringBuilder> displayList) throws Exception {
+    private static void processForDisplay(InventoryObject
+                                                  mRoot, ArrayList<SpannableStringBuilder> displayList) throws Exception {
 
         ArrayList<String> keyList = new ArrayList<>();  //list of all keys --> used with spannableStringBuilder to make all keys bold
 
-        setInventoryObjectKeyOrValues(mRoot);
+
         sortInventoryObjectsInternally(mRoot);
 
         Collections.sort(mRoot.getChildren(), new SortInventoryObjectList()); //sort externally
@@ -458,9 +415,10 @@ public class LookupBuildTree {
 
     //*********************************************************************************************
 
-    private static Map<String, List<SpannableStringBuilder>> fillDisplayDict(JSONObject inputJson,
-                                        ArrayList<SpannableStringBuilder> displayList,
-                                        Map<String, List<SpannableStringBuilder>> mDisplayDict) throws JSONException {
+    private static Map<String, List<SpannableStringBuilder>> fillDisplayDict(JSONObject
+                                                                                     inputJson,
+                                                                             ArrayList<SpannableStringBuilder> displayList,
+                                                                             Map<String, List<SpannableStringBuilder>> mDisplayDict) throws JSONException {
 
         String barcode = inputJson.get("barcode").toString();
         String IDNumber = inputJson.get("ID").toString();
