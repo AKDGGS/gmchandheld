@@ -38,7 +38,7 @@ public class LookupBuildTree
 
                 JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
                 InventoryObject root = parseTree(null, null, inputJsonObject);
-                processForDisplay(root, -1, displayList);
+                processForDisplay2(root, -1, displayList);  //depth is -1, because the first level is null.
                 displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
             }
         } catch (Exception e)
@@ -335,6 +335,8 @@ public class LookupBuildTree
 
     }
 
+
+
     //*********************************************************************************************
 
     private static SpannableStringBuilder getStringForDisplay(InventoryObject n)
@@ -428,6 +430,35 @@ public class LookupBuildTree
         return ssb;
     }
 
+    //*********************************************************************************************
+
+    private static void processForDisplay2(InventoryObject o,
+                                          int depth, ArrayList<SpannableStringBuilder> displayList)
+    {
+        Collections.sort(o.getChildren(), new SortInventoryObjectList());
+
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+
+            if(o.getName() != null) {
+                for (int i = 0; i < depth; i++)
+                {
+                    ssb.append("  ");
+                }
+                int lengthOfSsb = ssb.length();
+                if(o.getValue() != null)
+                {
+                    ssb.append(o.getName()).append(" ").append(o.getValue().toString());
+                }else{
+                    ssb.append(o.getName());
+                }
+                displayList.add(makeBold(ssb, o.getName(), lengthOfSsb));
+            }
+            for(InventoryObject child : o.getChildren())
+            {
+                processForDisplay2(child, depth + 1, displayList);
+            }
+//        }
+    }
 
 //*********************************************************************************************
 
