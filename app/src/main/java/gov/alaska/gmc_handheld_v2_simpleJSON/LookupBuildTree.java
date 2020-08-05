@@ -439,25 +439,48 @@ public class LookupBuildTree
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
 
-            if(o.getName() != null) {
-                for (int i = 0; i < depth; i++)
-                {
-                    ssb.append("  ");
-                }
-                int lengthOfSsb = ssb.length();
-                if(o.getValue() != null)
-                {
-                    ssb.append(o.getName()).append(" ").append(o.getValue().toString());
-                }else{
-                    ssb.append(o.getName());
-                }
-                displayList.add(makeBold(ssb, o.getName(), lengthOfSsb));
-            }
-            for(InventoryObject child : o.getChildren())
+        displayList.add(test(o, ssb, 0));
+//            if(o.getName() != null) {
+//                for (int i = 0; i < depth; i++)
+//                {
+//                    ssb.append("  ");
+//                }
+//                int lengthOfSsb = ssb.length();
+//                if(o.getValue() != null)
+//                {
+//                    ssb.append(o.getName()).append(" ").append(o.getValue().toString());
+//                }else{
+//                    ssb.append(o.getName());
+//                }
+//                displayList.add(makeBold(ssb, o.getName(), lengthOfSsb));
+//            }
+//            for(InventoryObject child : o.getChildren())
+//            {
+//                processForDisplay2(child, depth + 1, displayList);
+//            }
+    }
+
+    private static SpannableStringBuilder test(InventoryObject o, SpannableStringBuilder ssb, int depth){
+
+        if(o.getName() != null) {
+            for (int i = 0; i < depth; i++)
             {
-                processForDisplay2(child, depth + 1, displayList);
+                ssb.append("  ");
             }
-//        }
+            int lengthOfSsb = ssb.length();
+            if(o.getValue() != null)
+            {
+                ssb.append(o.getName()).append(" ").append(o.getValue().toString()).append("\n");
+            }else{
+                ssb.append(o.getName()).append("\n");
+            }
+            makeBold(ssb, o.getName(), lengthOfSsb);
+        }
+        for(InventoryObject child : o.getChildren())
+        {
+            test(child, ssb, depth + 1);
+        }
+        return ssb;
     }
 
 //*********************************************************************************************
