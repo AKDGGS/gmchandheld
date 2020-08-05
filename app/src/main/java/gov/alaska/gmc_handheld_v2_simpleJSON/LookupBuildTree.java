@@ -32,7 +32,7 @@ public class LookupBuildTree {
 
                 JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
                 InventoryObject root = parseTree(null, null, inputJsonObject);
-                processForDisplay(root, 0, displayList);
+                processForDisplay(root, -1, displayList);
                 displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
             }
         } catch (Exception e) {
@@ -360,114 +360,55 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-    public static void sortInventoryObjectsInternally(InventoryObject o) {
-
-//        if(o.getName() != null && o.getChildren().size() == 0){
-//            System.out.println(o.getName());
-//        }
-        if (!o.getChildren().isEmpty()) {
-//            if (o.getName() != null) {
-//              System.out.println(o.getName());
-//            }
-
-            Collections.sort(o.getChildren(), new SortInventoryObjectList());
-            for (InventoryObject c : o.getChildren()) {
-                sortInventoryObjectsInternally(c);
-            }
-        }
+    public static SpannableStringBuilder makeBold(SpannableStringBuilder ssb, String s, int depth, int lengthOfIndent){
+        int index = 0;
+        index = s.indexOf(s, index);
+        ssb.setSpan(new StyleSpan(BOLD), index + depth * lengthOfIndent,depth * lengthOfIndent + index + s.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+        return ssb;
     }
+
 
 //*********************************************************************************************
 
-    private static void processForDisplay(InventoryObject
-                                                  o, int depth, ArrayList<SpannableStringBuilder> displayList) throws Exception {
+    private static void processForDisplay(InventoryObject o,
+                                          int depth, ArrayList<SpannableStringBuilder> displayList)
+    {
 
-//        System.out.println(printInventoryObject(mRoot.getChildren().get(0), 0));
-//        displayList.add(printInventoryObject2( mRoot.getChildren().get(0), 0));
+        int lengthOfIndent = 2;
+
+        Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
-        if(o.getName() != null  && o.getChildren().size() == 0){
 
-//            for (int i = 0; i < depth; i++) {
-//                ssb.append("    ");
-//            }
-            ssb.append(o.getName()).append(" ").append(o.getValue().toString());
-            int index = 0;
-            index = o.getName().indexOf(o.getName(), index);
-            ssb.setSpan(new StyleSpan(BOLD), index,index + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            displayList.add(ssb);
-        }else{
-            if(o.getName() != null) {
-                ssb.append(o.getName());
-                displayList.add(ssb);
+        if(o.getName() != null  && o.getChildren().size() == 0)
+        {
+            for (int i = 0; i < depth; i++)
+            {
+                ssb.append("  ");
             }
-            for(InventoryObject child : o.getChildren()) {
+            ssb.append(o.getName()).append(" ").append(o.getValue().toString());
+
+            displayList.add(makeBold(ssb, o.getName(), depth, lengthOfIndent));
+        }else
+            {
+            if(o.getName() != null) {
+                for (int i = 0; i < depth; i++)
+                {
+                    ssb.append("  ");
+                }
+                ssb.append(o.getName());
+                displayList.add(makeBold(ssb, o.getName(), depth, lengthOfIndent));
+            }
+            for(InventoryObject child : o.getChildren())
+            {
                 processForDisplay(child, depth + 1, displayList);
             }
         }
-//        if (!o.getChildren().isEmpty()) {
-//            if (o.getName() != null) {
-//                System.out.println(o.getName());
-//            }
-//
-//            Collections.sort(o.getChildren(), new SortInventoryObjectList());
-//            for (InventoryObject c : o.getChildren()) {
-//                sortInventoryObjectsInternally(c);
-//            }
-//        }
-//
-//        System.out.println(o);
-//
-//
-//
-//        ArrayList<String> keyList = new ArrayList<>();  //list of all keys --> used with spannableStringBuilder to make all keys bold
-//
-//
-//        sortInventoryObjectsInternally(o);
-//
-//        for (InventoryObject n : o.getChildren()) {
-//            displayList.add(new SpannableStringBuilder(getStringForDisplay(n)));
-//
-//            keyList.add(n.getName());
-//            if (n.getChildren().size() > 0) {
-//                getDescendants(n, keyList);
-//            }
-//        }
-//
-//        for (SpannableStringBuilder s : displayList) {
-//            for (String k : keyList) {
-//                if (s.toString().contains(k)) {
-//                    int index = 0;
-//                    while (index != -1) {
-//                        index = s.toString().indexOf(k, index);
-//                        if (index != -1) {
-//                            s.setSpan(new StyleSpan(BOLD), index,
-//                                    index + k.length() + 1, SPAN_EXCLUSIVE_EXCLUSIVE);
-//                            index++;
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 
 //*********************************************************************************************
 
-    //Helper method used to get descendant keys to set them all to bold in the SpannableStringBuilder
-    private static void getDescendants(InventoryObject n, ArrayList<String> keyList) {
-        if (n.getChildren().size() == 0) {
-            keyList.add(n.getName());
-        } else {
-            keyList.add(n.getName());
-            for (InventoryObject nChild : n.getChildren()) {
-                getDescendants(nChild, keyList);
-            }
-        }
-    }
 
-
-    //*********************************************************************************************
 
     private static Map<String, List<SpannableStringBuilder>> fillDisplayDict(JSONObject inputJson,
                                                                              ArrayList<SpannableStringBuilder> displayList,
