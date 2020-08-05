@@ -437,9 +437,11 @@ public class LookupBuildTree
     {
         Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
-        SpannableStringBuilder ssb = new SpannableStringBuilder();
-
-        displayList.add(test(o, ssb, 0));
+        for(InventoryObject child: o.getChildren())
+        {
+            SpannableStringBuilder ssb = new SpannableStringBuilder();
+            displayList.add(test(child, ssb, 0));
+        }
 //            if(o.getName() != null) {
 //                for (int i = 0; i < depth; i++)
 //                {
