@@ -32,14 +32,14 @@ public class LookupBuildTree
         {
             for (int i = 0; i < inputJson.length(); i++)
             {
-                ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();  //used for
-                // the app display (expandable list)
+                //used for the app display (expandable list)
+                ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
                 Map<String, List<SpannableStringBuilder>> displayDictTemp = new HashMap<>();
 
                 JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
                 InventoryObject root = parseTree(null, null, inputJsonObject);
-                processForDisplay(root, -1, displayList);  //depth is -1, because the first level
-                // is null.
+                 //depth is -1, because the first level is null.
+                processForDisplay(root, -1, displayList);
                 displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
             }
         } catch (Exception e)
@@ -336,18 +336,6 @@ public class LookupBuildTree
 
     }
 
-
-//*********************************************************************************************
-
-    public static SpannableStringBuilder makeBold(SpannableStringBuilder ssb, String s, int start)
-    {
-        int index = 0;
-        index = s.indexOf(s, index);
-        ssb.setSpan(new StyleSpan(BOLD), index + start,
-                start + s.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-        return ssb;
-    }
-
     //*********************************************************************************************
 
     private static void processForDisplay(InventoryObject o,
@@ -389,7 +377,9 @@ public class LookupBuildTree
             {
                 ssb.append(o.getName()).append("\n");
             }
-            makeBold(ssb, o.getName(), lengthOfSsb);
+
+            ssb.setSpan(new StyleSpan(BOLD),  lengthOfSsb,
+                    lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 
         }
         for (int i = 0; i< o.getChildren().size(); i++)
@@ -415,8 +405,7 @@ public class LookupBuildTree
 
     private static Map<String, List<SpannableStringBuilder>> fillDisplayDict(JSONObject inputJson,
                                                                              ArrayList<SpannableStringBuilder> displayList,
-                                                                             Map<String,
-                                                                                     List<SpannableStringBuilder>> mDisplayDict) throws JSONException
+                                                                             Map<String, List<SpannableStringBuilder>> mDisplayDict) throws JSONException
     {
         String barcode = inputJson.get("barcode").toString();
         String IDNumber = inputJson.get("ID").toString();
