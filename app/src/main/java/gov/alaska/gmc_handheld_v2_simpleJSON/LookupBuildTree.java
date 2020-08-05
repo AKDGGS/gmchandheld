@@ -38,7 +38,8 @@ public class LookupBuildTree
 
                 JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
                 InventoryObject root = parseTree(null, null, inputJsonObject);
-                processForDisplay2(root, -1, displayList);  //depth is -1, because the first level is null.
+                processForDisplay(root, -1, displayList);  //depth is -1, because the first level
+                // is null.
                 displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
             }
         } catch (Exception e)
@@ -336,89 +337,6 @@ public class LookupBuildTree
     }
 
 
-
-    //*********************************************************************************************
-
-    private static SpannableStringBuilder getStringForDisplay(InventoryObject n)
-    {
-
-        SpannableStringBuilder ssb = new SpannableStringBuilder();
-        if (n.getChildren().size() > 0)
-        {
-            for (InventoryObject nChild : n.getChildren())
-            {
-                // Checks if the array is an array of the parent type.
-                // Is the array an array of one well or of many wells?
-
-                if (nChild.getName().equals(n.getName()))
-                {
-                    int lengthOfSsb = ssb.length();
-                    ssb.append(n.getName()).append("\n");
-                    makeBold(ssb, n.getName(), lengthOfSsb);
-                    for (InventoryObject nGrandChild : nChild.getChildren())
-                    {
-                        ssb.append(printInventoryObject(nGrandChild, 1));  //depth is 1 since we
-                        // know all of these are children.
-                    }
-
-                    if (n.getChildren().size() > 1)
-                    {
-                        ssb.append("\n");
-                    }
-
-                } else
-                {
-                    if (nChild.getName().equals(n.getChildren().get(0).getName()))
-                    {
-                        int lengthOfSsb = ssb.length();
-                        ssb.append(n.getName()).append("\n");
-                        makeBold(ssb, n.getName(), lengthOfSsb);
-                    }
-                    ssb.append(printInventoryObject(nChild, 1)); //depth is 1 since we know all of
-                    // these are children
-                }
-            }
-
-        } else
-        {
-            ssb.append(printInventoryObject(n, 0));
-        }
-
-        ssb.delete(ssb.length() - 1, ssb.length());
-        return ssb;
-    }
-
-
-//*********************************************************************************************
-
-    //Used in getStringForDisplay
-    private static SpannableStringBuilder printInventoryObject(InventoryObject o, int depth)
-    {
-        SpannableStringBuilder ssbTemp = new SpannableStringBuilder();
-        // Handle indentation
-        for (int i = 0; i < depth; i++)
-        {
-            ssbTemp.append("  ");
-        }
-
-        int lengthOfSsb = ssbTemp.length();
-        ssbTemp.append(o.getName());
-        makeBold(ssbTemp, o.getName(), lengthOfSsb);
-        ssbTemp.append(" = ");
-        if (!o.getChildren().isEmpty())
-        {
-            ssbTemp.append("\n");
-            for (InventoryObject c : o.getChildren())
-            {
-                ssbTemp.append(printInventoryObject(c, depth + 1));
-            }
-        } else
-        {
-            ssbTemp.append(o.getValue().toString()).append("\n");
-        }
-        return ssbTemp;
-    }
-
 //*********************************************************************************************
 
     public static SpannableStringBuilder makeBold(SpannableStringBuilder ssb, String s, int start)
@@ -432,84 +350,73 @@ public class LookupBuildTree
 
     //*********************************************************************************************
 
-    private static void processForDisplay2(InventoryObject o,
+    private static void processForDisplay(InventoryObject o,
                                           int depth, ArrayList<SpannableStringBuilder> displayList)
     {
         Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
-        for(InventoryObject child: o.getChildren())
+        for (InventoryObject child : o.getChildren())
         {
             SpannableStringBuilder ssb = new SpannableStringBuilder();
-            displayList.add(test(child, ssb, 0));
+
+            ssb = getStringForDisplay(child, ssb, 0);
+
+            if (ssb.length() > 0)
+            {
+                ssb.delete(ssb.length() - 1, ssb.length());
+            }
+
+            displayList.add(ssb);
         }
-//            if(o.getName() != null) {
-//                for (int i = 0; i < depth; i++)
-//                {
-//                    ssb.append("  ");
-//                }
-//                int lengthOfSsb = ssb.length();
-//                if(o.getValue() != null)
-//                {
-//                    ssb.append(o.getName()).append(" ").append(o.getValue().toString());
-//                }else{
-//                    ssb.append(o.getName());
-//                }
-//                displayList.add(makeBold(ssb, o.getName(), lengthOfSsb));
-//            }
-//            for(InventoryObject child : o.getChildren())
-//            {
-//                processForDisplay2(child, depth + 1, displayList);
-//            }
     }
 
-    private static SpannableStringBuilder test(InventoryObject o, SpannableStringBuilder ssb, int depth){
-
-        if(o.getName() != null) {
+    //*********************************************************************************************
+    private static SpannableStringBuilder getStringForDisplay(InventoryObject o,
+                                                              SpannableStringBuilder ssb, int depth)
+    {
+        if (o.getName() != null)
+        {
             for (int i = 0; i < depth; i++)
             {
                 ssb.append("  ");
             }
             int lengthOfSsb = ssb.length();
-            if(o.getValue() != null)
+            if (o.getValue() != null)
             {
                 ssb.append(o.getName()).append(" ").append(o.getValue().toString()).append("\n");
-            }else{
+
+            } else
+            {
                 ssb.append(o.getName()).append("\n");
             }
             makeBold(ssb, o.getName(), lengthOfSsb);
+
         }
-        for(InventoryObject child : o.getChildren())
+        for (int i = 0; i< o.getChildren().size(); i++)
         {
-            test(child, ssb, depth + 1);
+            if (o.getName().equals(o.getChildren().get(i).getName())
+                    && (o.getChildren().get(i).getName().equals("Boreholes")
+                    || o.getChildren().get(i).getName().equals("Outcrops")
+                    || o.getChildren().get(i).getName().equals("Shotpoints")
+                    || o.getChildren().get(i).getName().equals("Wells"))
+            && i > 0) //i adds as newline for arrays of wells/boreholes/etc... after the first one
+            {
+                ssb.append("\n");
+            }
+            getStringForDisplay(o.getChildren().get(i), ssb, depth + 1);
         }
+
         return ssb;
     }
 
-//*********************************************************************************************
-
-    private static void processForDisplay(InventoryObject o,
-                                          int depth,
-                                          ArrayList<SpannableStringBuilder> displayList)
-    {
-
-        Collections.sort(o.getChildren(), new SortInventoryObjectList());
-
-        if (o.getChildren().size() > 0)
-        {
-            for (InventoryObject child : o.getChildren())
-            {
-                displayList.add(getStringForDisplay(child));
-            }
-
-        }
-    }
 
 //*********************************************************************************************
 
 
     private static Map<String, List<SpannableStringBuilder>> fillDisplayDict(JSONObject inputJson,
                                                                              ArrayList<SpannableStringBuilder> displayList,
-                                                                             Map<String, List<SpannableStringBuilder>> mDisplayDict) throws JSONException
+                                                                             Map<String,
+                                                                                     List<SpannableStringBuilder>> mDisplayDict) throws JSONException
     {
         String barcode = inputJson.get("barcode").toString();
         String IDNumber = inputJson.get("ID").toString();
