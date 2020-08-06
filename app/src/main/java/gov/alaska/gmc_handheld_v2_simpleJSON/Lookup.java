@@ -1,11 +1,17 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.RequiresApi;
 
@@ -33,11 +39,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Lookup extends BaseActivity {
 
     private JsonPlaceHolderApi jsonPlaceHolderApi;
+    LookupBuildTree obj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.lookup);
+//        setContentView(R.layout.lookup);
+
+//        LookupBuildTree obj = new LookupBuildTree(this);
+
+        obj = new LookupBuildTree(this);
 
         // Current okhttp3 doesn't work with Android < 5, so using an old version (https://stackoverflow.com/questions/61245270/glide-okhttp-for-android-api-16-not-working#comment108349740_61245529)
         //Not all Android devices support TSL 1.2 (API >= 16 - API <18 and possibly other versions depending on the device)
@@ -63,8 +74,8 @@ public class Lookup extends BaseActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                ExpandableListView expandableListView;
-                ExpandableListAdapter listAdapter;
+//                ExpandableListView expandableListView;
+//                ExpandableListAdapter listAdapter;
 
                 try {
                     assert response.body() != null;
@@ -96,15 +107,21 @@ public class Lookup extends BaseActivity {
                             String barcode = inputJson.getJSONObject(i).get("barcode").toString();
                             String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
                             keyList.add(barcode + "-" + IDNumber);
-                            displayDict.putAll(LookupBuildTree.setupDisplay(inputJson));
+//                            displayDict.putAll(LookupBuildTree.setupDisplay(inputJson));
+
+                            obj.buildLookupLayout(inputJson, keyList);
+//                            LookupBuildTree lookupBuildTree = new LookupBuildTree();
+//
+//                            lookupBuildTree.buildLookupLayout(inputJson);
                         }
 
-                        expandableListView = findViewById(R.id.expandableListView);
-                        listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
-                        expandableListView.setAdapter(listAdapter);
-                        if (listAdapter.getGroupCount() == 1) {
-                            expandableListView.expandGroup(0);
-                        }
+
+//                        expandableListView = findViewById(R.id.expandableListView);
+//                        listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
+//                        expandableListView.setAdapter(listAdapter);
+//                        if (listAdapter.getGroupCount() == 1) {
+//                            expandableListView.expandGroup(0);
+//                        }
                     }
                 } catch (IOException |
                         JSONException e) {
@@ -124,4 +141,6 @@ public class Lookup extends BaseActivity {
         Intent intent = getIntent();
         return intent.getStringExtra(GetBarcode.EXTRA_TEXT);
     }
+
+
 }
