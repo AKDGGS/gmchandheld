@@ -4,13 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,7 +35,7 @@ public class LookupBuildTree {
 //*********************************************************************************************
 
 
-	public void buildLookupLayout(String rawJSON) throws JSONException {
+	public void buildLookupLayout(String rawJSON) throws Exception {
 		LinearLayout ll = new LinearLayout(mContext);
 		LinearLayout.LayoutParams llP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 		ll.setLayoutParams(llP);
@@ -51,23 +47,18 @@ public class LookupBuildTree {
 		expandableListView.setLayoutParams(expListParams);
 		ll.addView(expandableListView);
 
+		List<String> keyList = new ArrayList<>();
 
 		JSONArray inputJson = new JSONArray((rawJSON));
 
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
-		List<String> keyList = new ArrayList<>();
+		displayDict.putAll(setupDisplay(inputJson, keyList));
+
 
 		String containerPath = "";
 		for (int i = 0; i < inputJson.length(); i++) {
 
 			JSONObject inputJSONObject = (JSONObject) inputJson.get(i);
-
-			containerPath = inputJson.getJSONObject(i).get("containerPath").toString();
-			String barcode = inputJson.getJSONObject(i).get("barcode").toString();
-			String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
-			keyList.add(barcode + "-" + IDNumber);
-			displayDict.putAll(LookupBuildTree.setupDisplay(inputJson));
-
 		}
 
 
@@ -80,17 +71,21 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONArray inputJson) {
-//public static void setupDisplay(JSONArray inputJson) {
+	public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONArray inputJson, List<String> keyList) {
 
 		String containerPath = null;
-		List<String> keyList = new ArrayList<>();
 
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>(); //used for the
 		// app display (expandable list)
 
 		try {
 			for (int i = 0; i < inputJson.length(); i++) {
+
+				String barcode = inputJson.getJSONObject(i).get("barcode").toString();
+				String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
+				String label = barcode + "-" + IDNumber;
+				keyList.add(label);
+
 				//used for the app display (expandable list)
 				ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
 				Map<String, List<SpannableStringBuilder>> displayDictTemp = new HashMap<>();
@@ -101,10 +96,6 @@ public class LookupBuildTree {
 				processForDisplay(root, -1, displayList);
 				displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
 
-				containerPath = inputJson.getJSONObject(i).get("containerPath").toString();
-				String barcode = inputJson.getJSONObject(i).get("barcode").toString();
-				String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
-				keyList.add(barcode + "-" + IDNumber);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -373,6 +364,7 @@ public class LookupBuildTree {
 		Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
 		for (InventoryObject child : o.getChildren()) {
+
 			SpannableStringBuilder ssb = new SpannableStringBuilder();
 
 			ssb = getStringForDisplay(child, ssb, 0);
@@ -381,6 +373,7 @@ public class LookupBuildTree {
 				ssb.delete(ssb.length() - 1, ssb.length());
 			}
 
+
 			displayList.add(ssb);
 		}
 	}
@@ -388,6 +381,7 @@ public class LookupBuildTree {
 	//*********************************************************************************************
 	private static SpannableStringBuilder getStringForDisplay(InventoryObject o,
 															  SpannableStringBuilder ssb, int depth) {
+
 		if (o.getName() != null) {
 			for (int i = 0; i < depth; i++) {
 				ssb.append("  ");

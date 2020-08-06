@@ -95,6 +95,8 @@ public class Lookup extends BaseActivity {
                 } catch (IOException |
                         JSONException e) {
                     e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
