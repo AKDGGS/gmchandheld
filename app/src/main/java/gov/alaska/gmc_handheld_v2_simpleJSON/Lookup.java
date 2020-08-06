@@ -44,7 +44,6 @@ public class Lookup extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.lookup);
 
 //        LookupBuildTree obj = new LookupBuildTree(this);
 
@@ -74,8 +73,6 @@ public class Lookup extends BaseActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-//                ExpandableListView expandableListView;
-//                ExpandableListAdapter listAdapter;
 
                 try {
                     assert response.body() != null;
@@ -115,13 +112,6 @@ public class Lookup extends BaseActivity {
 //                            lookupBuildTree.buildLookupLayout(inputJson);
                         }
 
-
-//                        expandableListView = findViewById(R.id.expandableListView);
-//                        listAdapter = new LookupExpListAdapter(Lookup.this, keyList, displayDict);
-//                        expandableListView.setAdapter(listAdapter);
-//                        if (listAdapter.getGroupCount() == 1) {
-//                            expandableListView.expandGroup(0);
-//                        }
                     }
                 } catch (IOException |
                         JSONException e) {
