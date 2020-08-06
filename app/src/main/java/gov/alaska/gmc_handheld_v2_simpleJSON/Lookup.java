@@ -45,8 +45,6 @@ public class Lookup extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        LookupBuildTree obj = new LookupBuildTree(this);
-
         obj = new LookupBuildTree(this);
 
         // Current okhttp3 doesn't work with Android < 5, so using an old version (https://stackoverflow.com/questions/61245270/glide-okhttp-for-android-api-16-not-working#comment108349740_61245529)
@@ -90,27 +88,8 @@ public class Lookup extends BaseActivity {
                         }, 100);
 
                     } else {
-                        JSONArray inputJson = new JSONArray((rawJSON));
-
-                        Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
-                        List<String> keyList = new ArrayList<>();
-
-                        String containerPath = "";
-                        for (int i = 0; i < inputJson.length(); i++) {
-
-                            JSONObject inputJSONObject = (JSONObject) inputJson.get(i);
-
-                            containerPath = inputJson.getJSONObject(i).get("containerPath").toString();
-                            String barcode = inputJson.getJSONObject(i).get("barcode").toString();
-                            String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
-                            keyList.add(barcode + "-" + IDNumber);
-//                            displayDict.putAll(LookupBuildTree.setupDisplay(inputJson));
-
-                            obj.buildLookupLayout(inputJson, keyList);
-//                            LookupBuildTree lookupBuildTree = new LookupBuildTree();
-//
-//                            lookupBuildTree.buildLookupLayout(inputJson);
-                        }
+                        //Needs a better name than obj
+                        obj.buildLookupLayout(rawJSON);
 
                     }
                 } catch (IOException |
@@ -131,6 +110,4 @@ public class Lookup extends BaseActivity {
         Intent intent = getIntent();
         return intent.getStringExtra(GetBarcode.EXTRA_TEXT);
     }
-
-
 }

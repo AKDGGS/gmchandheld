@@ -39,7 +39,7 @@ public class LookupBuildTree {
 //*********************************************************************************************
 
 
-	public void buildLookupLayout(JSONArray inputJson, List<String> keyList) {
+	public void buildLookupLayout(String rawJSON) throws JSONException {
 		LinearLayout ll = new LinearLayout(mContext);
 		LinearLayout.LayoutParams llP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 		ll.setLayoutParams(llP);
@@ -51,9 +51,25 @@ public class LookupBuildTree {
 		expandableListView.setLayoutParams(expListParams);
 		ll.addView(expandableListView);
 
-//		List<String> keyList = new ArrayList<>();
+
+		JSONArray inputJson = new JSONArray((rawJSON));
+
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
-		displayDict = setupDisplay(inputJson);
+		List<String> keyList = new ArrayList<>();
+
+		String containerPath = "";
+		for (int i = 0; i < inputJson.length(); i++) {
+
+			JSONObject inputJSONObject = (JSONObject) inputJson.get(i);
+
+			containerPath = inputJson.getJSONObject(i).get("containerPath").toString();
+			String barcode = inputJson.getJSONObject(i).get("barcode").toString();
+			String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
+			keyList.add(barcode + "-" + IDNumber);
+			displayDict.putAll(LookupBuildTree.setupDisplay(inputJson));
+
+		}
+
 
 		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
 		expandableListView.setAdapter(listAdapter);
@@ -61,7 +77,6 @@ public class LookupBuildTree {
 		Activity activity = (Activity) mContext;
 		activity.setContentView(ll);
 	}
-
 
 //*********************************************************************************************
 
