@@ -1,30 +1,14 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.RequiresApi;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,13 +23,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Lookup extends BaseActivity {
 
     private JsonPlaceHolderApi jsonPlaceHolderApi;
-    LookupBuildTree obj;
+    LookupBuildTree LookupBuildTreeObj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        obj = new LookupBuildTree(this);
+        LookupBuildTreeObj = new LookupBuildTree(this);
 
         // Current okhttp3 doesn't work with Android < 5, so using an old version (https://stackoverflow.com/questions/61245270/glide-okhttp-for-android-api-16-not-working#comment108349740_61245529)
         //Not all Android devices support TSL 1.2 (API >= 16 - API <18 and possibly other versions depending on the device)
@@ -88,8 +72,8 @@ public class Lookup extends BaseActivity {
                         }, 100);
 
                     } else {
-                        //Needs a better name than obj
-                        obj.buildLookupLayout(rawJSON);
+                        //Needs a better name????
+                        LookupBuildTreeObj.buildLookupLayout(rawJSON);
 
                     }
                 } catch (IOException |

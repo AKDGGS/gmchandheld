@@ -54,14 +54,6 @@ public class LookupBuildTree {
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
 		displayDict.putAll(setupDisplay(inputJson, keyList));
 
-
-		String containerPath = "";
-		for (int i = 0; i < inputJson.length(); i++) {
-
-			JSONObject inputJSONObject = (JSONObject) inputJson.get(i);
-		}
-
-
 		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
 		expandableListView.setAdapter(listAdapter);
 
@@ -75,8 +67,7 @@ public class LookupBuildTree {
 
 		String containerPath = null;
 
-		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>(); //used for the
-		// app display (expandable list)
+		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
 
 		try {
 			for (int i = 0; i < inputJson.length(); i++) {
@@ -86,25 +77,32 @@ public class LookupBuildTree {
 				String label = barcode + "-" + IDNumber;
 				keyList.add(label);
 
-				//used for the app display (expandable list)
 				ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
-				Map<String, List<SpannableStringBuilder>> displayDictTemp = new HashMap<>();
 
 				JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
 				InventoryObject root = parseTree(null, null, inputJsonObject);
-				//depth is -1, because the first level is null.
-				processForDisplay(root, -1, displayList);
-				displayDict.putAll(fillDisplayDict(inputJsonObject, displayList, displayDictTemp));
+
+				Collections.sort(root.getChildren(), new SortInventoryObjectList());
+
+				for (InventoryObject child : root.getChildren()) {
+
+					SpannableStringBuilder ssb = new SpannableStringBuilder();
+
+					ssb = getStringForDisplay(child, ssb, 0);
+
+					if (ssb.length() > 0) {
+						ssb.delete(ssb.length() - 1, ssb.length());
+					}
+					displayList.add(ssb);
+				}
+
+				displayDict.put(label, displayList);
 
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-
 		return displayDict;
-
-
 	}
 
 
@@ -233,7 +231,6 @@ public class LookupBuildTree {
 			}
 		}
 
-
 		for (int i = 0; i < a.length(); i++) {
 			io.addChild(parseTree(a, name, a.get(i)));
 		}
@@ -357,26 +354,6 @@ public class LookupBuildTree {
 
 	}
 
-	//*********************************************************************************************
-
-	private static void processForDisplay(InventoryObject o,
-										  int depth, ArrayList<SpannableStringBuilder> displayList) {
-		Collections.sort(o.getChildren(), new SortInventoryObjectList());
-
-		for (InventoryObject child : o.getChildren()) {
-
-			SpannableStringBuilder ssb = new SpannableStringBuilder();
-
-			ssb = getStringForDisplay(child, ssb, 0);
-
-			if (ssb.length() > 0) {
-				ssb.delete(ssb.length() - 1, ssb.length());
-			}
-
-
-			displayList.add(ssb);
-		}
-	}
 
 	//*********************************************************************************************
 	private static SpannableStringBuilder getStringForDisplay(InventoryObject o,
@@ -392,11 +369,9 @@ public class LookupBuildTree {
 				ssb.append(" ");
 				ssb.append(o.getValue().toString());
 				ssb.append("\n");
-
 			} else {
 				ssb.append(o.getName()).append("\n");
 			}
-
 			ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 					lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -414,24 +389,6 @@ public class LookupBuildTree {
 			}
 			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1);
 		}
-
 		return ssb;
-	}
-
-
-//*********************************************************************************************
-
-
-	private static Map<String, List<SpannableStringBuilder>> fillDisplayDict(JSONObject inputJson,
-																			 ArrayList<SpannableStringBuilder> displayList,
-																			 Map<String,
-																					 List<SpannableStringBuilder>> mDisplayDict) throws JSONException {
-		String barcode = inputJson.get("barcode").toString();
-		String IDNumber = inputJson.get("ID").toString();
-
-		String label = barcode + "-" + IDNumber;
-
-		mDisplayDict.put(label, displayList);
-		return mDisplayDict;
 	}
 }
