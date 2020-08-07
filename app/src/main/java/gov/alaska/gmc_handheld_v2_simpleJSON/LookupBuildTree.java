@@ -68,7 +68,7 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONArray inputJson, List<String> keyList) {
+	public Map<String, List<SpannableStringBuilder>> setupDisplay(JSONArray inputJson, List<String> keyList) {
 
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
 
@@ -87,10 +87,12 @@ public class LookupBuildTree {
 				JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
 				InventoryObject root = parseTree(null, null, inputJsonObject);
 
+				// Sorts Externally -- top most level
+				// Children are recursively sorted in getStringForDisplay.
+
 				Collections.sort(root.getChildren(), new SortInventoryObjectList());
 
 				for (InventoryObject child : root.getChildren()) {
-
 					// Each child of root get's it own spannableStringBuilder.  This groups children
 					// with their parent in the display.
 
@@ -117,7 +119,7 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private static InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
+	private InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
 
 		switch (o.getClass().getName()) {
 			case "org.json.JSONObject":
@@ -140,7 +142,7 @@ public class LookupBuildTree {
 
 	//*********************************************************************************************
 
-	private static InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
+	private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
 
 		String newName = "";
 		InventoryObject io = null;
@@ -225,7 +227,7 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private static InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
+	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
 		InventoryObject io = null;
 
 		if (name == null) {
@@ -275,7 +277,7 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private static InventoryObject handleSimple(Object parent, String name, Object o) throws JSONException {
+	private InventoryObject handleSimple(Object parent, String name, Object o) throws JSONException {
 		// Simple values should always have a name
 		if (name == null) {
 			return null;
@@ -390,7 +392,7 @@ public class LookupBuildTree {
 
 
 	//*********************************************************************************************
-	private static SpannableStringBuilder getStringForDisplay(InventoryObject o,
+	private SpannableStringBuilder getStringForDisplay(InventoryObject o,
 															  SpannableStringBuilder ssb, int depth) {
 
 		if (o.getName() != null) {
@@ -399,6 +401,7 @@ public class LookupBuildTree {
 			}
 			int lengthOfSsb = ssb.length();
 			if (o.getValue() != null) {
+
 				ssb.append(o.getName());
 				ssb.append(" ");
 				ssb.append(o.getValue().toString());
@@ -411,7 +414,7 @@ public class LookupBuildTree {
 		}
 
 		for (int i = 0; i < o.getChildren().size(); i++) {
-
+			Collections.sort(o.getChildren(), new SortInventoryObjectList());
 			InventoryObject child = o.getChildren().get(i);
 
 			// Adds a new line after the first element of an array of elements handled by handleObject().

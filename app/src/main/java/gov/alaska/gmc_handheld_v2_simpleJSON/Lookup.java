@@ -31,9 +31,7 @@ public class Lookup extends BaseActivity {
 
         LookupBuildTreeObj = new LookupBuildTree(this);
 
-        // Checks the API level
-        System.out.println(android.os.Build.VERSION.SDK_INT);
-
+        // Gets the API level
         int APILevel = android.os.Build.VERSION.SDK_INT;
         if( APILevel < 18) {
             // Current okhttp3 doesn't work with Android < 5, so using an old version (https://stackoverflow.com/questions/61245270/glide-okhttp-for-android-api-16-not-working#comment108349740_61245529)
