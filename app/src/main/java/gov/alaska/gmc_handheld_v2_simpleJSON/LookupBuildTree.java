@@ -146,7 +146,7 @@ public class LookupBuildTree {
 				//Create these nodes
 				case "boreholes":
 					if(o.has( "ID")) {
-						newName = "Boreholes " + o.get("ID");
+						newName = "Borehole " + o.get("ID");
 						io = new InventoryObject(newName, 100);
 					}else {
 						io = new InventoryObject("Boreholes", 100);
@@ -172,19 +172,14 @@ public class LookupBuildTree {
 					}
 					break;
 				case "prospect":
-					if(o.has( "ID")) {
-						newName = "Prospect " + o.get("ID");
-						io = new InventoryObject(newName, null, 0);
-					}else{
 						io = new InventoryObject("Prospect", null, 0);
-					}
 					break;
 				case "shotline":
 					io = new InventoryObject("Shotline");
 					break;
 				case "shotpoints":
 					if(o.has( "ID")) {
-						newName = "Shotpoints " + o.get("ID");
+						newName = "Shotpoint " + o.get("ID");
 						io = new InventoryObject(newName, null, 50);
 					}else{
 						io = new InventoryObject("Shotpoints", null, 50);
@@ -404,18 +399,16 @@ public class LookupBuildTree {
 					lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 
 		}
+		System.out.println(o.getName());
+
 		for (int i = 0; i < o.getChildren().size(); i++) {
 
 			InventoryObject child = o.getChildren().get(i);
-			//i adds a newline for arrays of wells/boreholes/etc... after the first one
-			if (i > 0 && o.getName().equals(child.getName())
-					&& (child.getName().equals("Boreholes")
-					|| child.getName().equals("Outcrops")
-					|| child.getName().equals("Shotpoints")
-					|| child.getName().equals("Wells"))
-			) {
-				ssb.append("\n");
-			}
+
+			if (i > 0 && child.getName().contains(o.getName().substring(0, o.getName().length() - 1))){
+						ssb.append("\n");
+				}
+			
 			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1);
 		}
 		return ssb;
