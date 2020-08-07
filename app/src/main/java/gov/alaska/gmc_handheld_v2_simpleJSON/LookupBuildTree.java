@@ -34,7 +34,6 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-
 	public void buildLookupLayout(String rawJSON) throws Exception {
 		LinearLayout ll = new LinearLayout(mContext);
 		LinearLayout.LayoutParams llP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -64,8 +63,6 @@ public class LookupBuildTree {
 //*********************************************************************************************
 
 	public static Map<String, List<SpannableStringBuilder>> setupDisplay(JSONArray inputJson, List<String> keyList) {
-
-		String containerPath = null;
 
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
 
@@ -133,6 +130,7 @@ public class LookupBuildTree {
 
 	private static InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
 
+		String newName = "";
 		InventoryObject io = null;
 		if (name == null) {
 			io = new InventoryObject(name);
@@ -147,31 +145,61 @@ public class LookupBuildTree {
 
 				//Create these nodes
 				case "boreholes":
-					io = new InventoryObject("Boreholes", 100);
+					if(o.has( "ID")) {
+						newName = "Boreholes " + o.get("ID");
+						io = new InventoryObject(newName, 100);
+					}else {
+						io = new InventoryObject("Boreholes", 100);
+					}
 					break;
 				case "collection":
 					io = new InventoryObject("Collection", null, 500);
 					break;
 				case "operators":
-					io = new InventoryObject("Operators", null, 50);
+					if(o.has( "ID")) {
+						newName = "Operator " + o.get("ID");
+						io = new InventoryObject(newName, null, 50);
+					}else {
+						io = new InventoryObject("Operator", null, 50);
+					}
 					break;
 				case "outcrops":
-					io = new InventoryObject("Outcrops", null, 100);
+					if(o.has( "ID")) {
+						newName = "Outcrop " + o.get("ID");
+						io = new InventoryObject(newName, null, 100);
+					}else {
+						io = new InventoryObject("Outcrop", null, 100);
+					}
 					break;
 				case "prospect":
-					io = new InventoryObject("Prospect");
+					if(o.has( "ID")) {
+						newName = "Prospect " + o.get("ID");
+						io = new InventoryObject(newName, null, 0);
+					}else{
+						io = new InventoryObject("Prospect", null, 0);
+					}
 					break;
 				case "shotline":
-					io = new InventoryObject("Shotline", o);
+					io = new InventoryObject("Shotline");
 					break;
 				case "shotpoints":
-					io = new InventoryObject("Shotpoints", null, 50);
+					if(o.has( "ID")) {
+						newName = "Shotpoints " + o.get("ID");
+						io = new InventoryObject(newName, null, 50);
+					}else{
+						io = new InventoryObject("Shotpoints", null, 50);
+					}
 					break;
 				case "type":
 					io = new InventoryObject("Type");
 					break;
 				case "wells":
-					io = new InventoryObject("Wells", null, 100);
+					if(o.has( "ID")) {
+						newName = "Well " + o.get("ID");
+						io = new InventoryObject(newName, null, 100);
+					}else{
+						io = new InventoryObject("Wells", null, 100);
+					}
 					break;
 				default:
 					io = new InventoryObject(name);
@@ -377,6 +405,7 @@ public class LookupBuildTree {
 
 		}
 		for (int i = 0; i < o.getChildren().size(); i++) {
+
 			InventoryObject child = o.getChildren().get(i);
 			//i adds a newline for arrays of wells/boreholes/etc... after the first one
 			if (i > 0 && o.getName().equals(child.getName())
