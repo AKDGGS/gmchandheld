@@ -31,14 +31,28 @@ public class Lookup extends BaseActivity {
 
         LookupBuildTreeObj = new LookupBuildTree(this);
 
-        // Current okhttp3 doesn't work with Android < 5, so using an old version (https://stackoverflow.com/questions/61245270/glide-okhttp-for-android-api-16-not-working#comment108349740_61245529)
-        //Not all Android devices support TSL 1.2 (API >= 16 - API <18 and possibly other versions depending on the device)
-        //Works with http, but not https with API 16
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://maps.dggs.alaska.gov/gmc/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        // Checks the API level
+        System.out.println(android.os.Build.VERSION.SDK_INT);
+
+        int APILevel = android.os.Build.VERSION.SDK_INT;
+        if( APILevel < 18) {
+            // Current okhttp3 doesn't work with Android < 5, so using an old version (https://stackoverflow.com/questions/61245270/glide-okhttp-for-android-api-16-not-working#comment108349740_61245529)
+            //Not all Android devices support TSL 1.2 (API >= 16 - API <18 and possibly other versions depending on the device)
+            //Works with http, but not https with API 16
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://maps.dggs.alaska.gov/gmc/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        }else{
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://maps.dggs.alaska.gov/gmc/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+
+        }
+
 
         processRawJSON();
     }
