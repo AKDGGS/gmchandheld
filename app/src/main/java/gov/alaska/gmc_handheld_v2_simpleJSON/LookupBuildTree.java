@@ -35,16 +35,23 @@ public class LookupBuildTree {
 //*********************************************************************************************
 
 	public void buildLookupLayout(String rawJSON) throws Exception {
-		LinearLayout ll = new LinearLayout(mContext);
-		LinearLayout.LayoutParams llP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-		ll.setLayoutParams(llP);
-		ll.setOrientation(LinearLayout.VERTICAL);
 
+		// Constructs the layout for lookupBuildTree
+		LinearLayout linearLayout = new LinearLayout(mContext);
+		LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+		linearLayout.setLayoutParams(linearLayoutParams);
+		linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+		// Constructs the expandableList
 		LinearLayout.LayoutParams expListParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
 		ExpandableListView expandableListView = new ExpandableListView(mContext.getApplicationContext());
 		expandableListView.setLayoutParams(expListParams);
-		ll.addView(expandableListView);
+		linearLayout.addView(expandableListView);
+
+		Activity activity = (Activity) mContext;
+		activity.setContentView(linearLayout);
+
 
 		List<String> keyList = new ArrayList<>();
 
@@ -56,8 +63,7 @@ public class LookupBuildTree {
 		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
 		expandableListView.setAdapter(listAdapter);
 
-		Activity activity = (Activity) mContext;
-		activity.setContentView(ll);
+
 	}
 
 //*********************************************************************************************
@@ -69,11 +75,13 @@ public class LookupBuildTree {
 		try {
 			for (int i = 0; i < inputJson.length(); i++) {
 
+				// Fills the keyList used to construct the expandableList.
 				String barcode = inputJson.getJSONObject(i).get("barcode").toString();
 				String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
 				String label = barcode + "-" + IDNumber;
 				keyList.add(label);
 
+				// Creates an displaylist for each element in inputJson.
 				ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
 
 				JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
@@ -83,11 +91,15 @@ public class LookupBuildTree {
 
 				for (InventoryObject child : root.getChildren()) {
 
+					// Each child of root get's it own spannableStringBuilder.  This groups children
+					// with their parent in the display.
+
 					SpannableStringBuilder ssb = new SpannableStringBuilder();
 
 					ssb = getStringForDisplay(child, ssb, 0);
 
 					if (ssb.length() > 0) {
+						// Deletes the last new line character from the ssb.
 						ssb.delete(ssb.length() - 1, ssb.length());
 					}
 					displayList.add(ssb);
@@ -367,7 +379,6 @@ public class LookupBuildTree {
 					return new InventoryObject("Vertical Depth", val, 80);
 				}
 				return new InventoryObject("Vertical Depth", o, 80);
-
 			}
 			case "wellNumber":
 				return new InventoryObject("Well Number", o, 94);
@@ -397,18 +408,19 @@ public class LookupBuildTree {
 			}
 			ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 					lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-
 		}
-		System.out.println(o.getName());
 
 		for (int i = 0; i < o.getChildren().size(); i++) {
 
 			InventoryObject child = o.getChildren().get(i);
 
-			if (i > 0 && child.getName().contains(o.getName().substring(0, o.getName().length() - 1))){
+			// Adds a new line after the first element of an array of elements handled by handleObject().
+			if (i > 0
+					&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
+					&& (!o.getName().equals("ID"))){
 						ssb.append("\n");
 				}
-			
+
 			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1);
 		}
 		return ssb;
