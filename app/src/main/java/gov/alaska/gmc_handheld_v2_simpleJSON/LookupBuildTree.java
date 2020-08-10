@@ -60,21 +60,19 @@ public class LookupBuildTree {
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
 
 		InventoryObject root = parseTree(null, null, inputJson);
-		ArrayList<SpannableStringBuilder> displayList = null;
 
-		if(root.getChildren().size() == 1){
-			displayList = new ArrayList<>();
+		ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
 
-			displayDict.putAll(printChildren(root, displayDict, displayList, keyList));
-		}else{
-			for(InventoryObject n: root.getChildren()){
-				displayList = new ArrayList<>();
+		SpannableStringBuilder ssb = new SpannableStringBuilder();
 
-				displayDict.putAll(printChildren(n, displayDict, displayList, keyList));
-			}
+		int i = 0;
+		System.out.println(getStringForDisplay(root, ssb, 0, displayList, i));
 
-		}
-		
+
+//		for(SpannableStringBuilder s : displayList){
+//			System.out.println(s);
+//		}
+
 		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
 		expandableListView.setAdapter(listAdapter);
 	}
@@ -96,7 +94,7 @@ public class LookupBuildTree {
 
 			if (ch.getName() != null) {
 				SpannableStringBuilder ssb = new SpannableStringBuilder();
-				displayList.add(getStringForDisplay(ch, ssb, 0));
+//				displayList.add(getStringForDisplay(ch, ssb, 0));
 			} else if (n.getName() == null & ch.getChildren().size() > 0) {
 				printChildren(ch, displayDict, displayList, keyList);
 			}
@@ -113,9 +111,11 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private SpannableStringBuilder getStringForDisplay(InventoryObject o,
-													   SpannableStringBuilder ssb, int depth) {
+//	private ArrayList<SpannableStringBuilder> getStringForDisplay(InventoryObject o,
+//																  SpannableStringBuilder ssb, int depth, ArrayList<SpannableStringBuilder> displayList, int j ) {
 
+	private SpannableStringBuilder getStringForDisplay(InventoryObject o,
+																  SpannableStringBuilder ssb, int depth, ArrayList<SpannableStringBuilder> displayList, int j ) {
 		if (o.getName() != null) {
 			for (int i = 0; i < depth; i++) {
 				ssb.append("  ");
@@ -135,19 +135,28 @@ public class LookupBuildTree {
 		}
 
 		for (int i = 0; i < o.getChildren().size(); i++) {
+
 			Collections.sort(o.getChildren(), new SortInventoryObjectList());
 			InventoryObject child = o.getChildren().get(i);
 
 			// Adds a new line after the first element of an array of elements handled by handleObject().
 			if (i > 0
+					&& child.getName() != null
+					&& o.getName() != null
 					&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
 					&& (!o.getName().equals("ID"))) {
 				ssb.append("\n");
 			}
 
-			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1);
+			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1, displayList, j++);
 		}
+
+//		System.out.println(j + " " + ssb);
+//		displayList.add(ssb);
+		ssb.append("     ")
+				.append(Integer.toString(j));
 		return ssb;
+//		return displayList;
 	}
 
 
