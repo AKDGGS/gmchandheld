@@ -60,14 +60,23 @@ public class LookupBuildTree {
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
 
 		InventoryObject root = parseTree(null, null, inputJson);
+		ArrayList<SpannableStringBuilder> displayList = null;
 
-		ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
+		if(root.getChildren().size() == 1){
+			displayList = new ArrayList<>();
 
-		displayDict.putAll(printChildren(root, displayDict, displayList, keyList));
+			displayDict.putAll(printChildren(root, displayDict, displayList, keyList));
+		}else{
+			for(InventoryObject n: root.getChildren()){
+				displayList = new ArrayList<>();
 
-		System.out.println(displayDict);
-//		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
-//		expandableListView.setAdapter(listAdapter);
+				displayDict.putAll(printChildren(n, displayDict, displayList, keyList));
+			}
+
+		}
+		
+		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
+		expandableListView.setAdapter(listAdapter);
 	}
 
 
@@ -94,9 +103,10 @@ public class LookupBuildTree {
 		}
 		if (barcode != null && ID != null) {
 			keyList.add(barcode + "-" + ID);
+			displayDict.put(barcode + "-" + ID, displayList);
 		}
 
-		displayDict.put(barcode + "-" + ID, displayList);
+
 		return displayDict;
 	}
 
