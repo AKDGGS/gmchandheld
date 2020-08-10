@@ -58,62 +58,86 @@ public class LookupBuildTree {
 		JSONArray inputJson = new JSONArray((rawJSON));
 
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
-		displayDict.putAll(setupDisplay(inputJson, keyList));
 
-		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
-		expandableListView.setAdapter(listAdapter);
+		InventoryObject root = parseTree(null, null, inputJson);
 
+		ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
 
+		displayDict.putAll(printChildren(root, displayDict, displayList, keyList));
+
+		System.out.println(displayDict);
+//		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
+//		expandableListView.setAdapter(listAdapter);
 	}
+
+
+	public Map<String, List<SpannableStringBuilder>> printChildren(InventoryObject n, Map<String, List<SpannableStringBuilder>> displayDict, ArrayList<SpannableStringBuilder> displayList, List<String> keyList) {
+
+		String barcode = null;
+		String ID = null;
+		for (InventoryObject ch : n.getChildren()) {
+
+			if (ch.getName() != null && ch.getName().equals("Barcode")) {
+				barcode = ch.getValue().toString();
+			}
+
+			if (n.getName() == null && ch.getName() != null && ch.getName().equals("ID")) {
+				ID = ch.getValue().toString();
+			}
+
+			if (ch.getName() != null) {
+				SpannableStringBuilder ssb = new SpannableStringBuilder();
+				displayList.add(getStringForDisplay(ch, ssb, 0));
+			} else if (n.getName() == null & ch.getChildren().size() > 0) {
+				printChildren(ch, displayDict, displayList, keyList);
+			}
+		}
+		if (barcode != null && ID != null) {
+			keyList.add(barcode + "-" + ID);
+		}
+
+		displayDict.put(barcode + "-" + ID, displayList);
+		return displayDict;
+	}
+
 
 //*********************************************************************************************
 
-	public Map<String, List<SpannableStringBuilder>> setupDisplay(JSONArray inputJson, List<String> keyList) {
+	private SpannableStringBuilder getStringForDisplay(InventoryObject o,
+													   SpannableStringBuilder ssb, int depth) {
 
-		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
-
-		try {
-			for (int i = 0; i < inputJson.length(); i++) {
-
-				// Fills the keyList used to construct the expandableList.
-				String barcode = inputJson.getJSONObject(i).get("barcode").toString();
-				String IDNumber = inputJson.getJSONObject(i).get("ID").toString();
-				String label = barcode + "-" + IDNumber;
-				keyList.add(label);
-
-				// Creates an displaylist for each element in inputJson.
-				ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
-
-				JSONObject inputJsonObject = (JSONObject) inputJson.get(i);
-				InventoryObject root = parseTree(null, null, inputJsonObject);
-
-				// Sorts Externally -- top most level
-				// Children are recursively sorted in getStringForDisplay.
-
-				Collections.sort(root.getChildren(), new SortInventoryObjectList());
-
-				for (InventoryObject child : root.getChildren()) {
-					// Each child of root get's it own spannableStringBuilder.  This groups children
-					// with their parent in the display.
-
-					SpannableStringBuilder ssb = new SpannableStringBuilder();
-
-					ssb = getStringForDisplay(child, ssb, 0);
-
-					if (ssb.length() > 0) {
-						// Deletes the last new line character from the ssb.
-						ssb.delete(ssb.length() - 1, ssb.length());
-					}
-					displayList.add(ssb);
-				}
-
-				displayDict.put(label, displayList);
-
+		if (o.getName() != null) {
+			for (int i = 0; i < depth; i++) {
+				ssb.append("  ");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			int lengthOfSsb = ssb.length();
+			if (o.getValue() != null) {
+
+				ssb.append(o.getName());
+				ssb.append(" ");
+				ssb.append(o.getValue().toString());
+				ssb.append("\n");
+			} else {
+				ssb.append(o.getName()).append("\n");
+			}
+			ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
+					lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
-		return displayDict;
+
+		for (int i = 0; i < o.getChildren().size(); i++) {
+			Collections.sort(o.getChildren(), new SortInventoryObjectList());
+			InventoryObject child = o.getChildren().get(i);
+
+			// Adds a new line after the first element of an array of elements handled by handleObject().
+			if (i > 0
+					&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
+					&& (!o.getName().equals("ID"))) {
+				ssb.append("\n");
+			}
+
+			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1);
+		}
+		return ssb;
 	}
 
 
@@ -159,10 +183,10 @@ public class LookupBuildTree {
 
 				//Create these nodes
 				case "boreholes":
-					if(o.has( "ID")) {
+					if (o.has("ID")) {
 						newName = "Borehole " + o.get("ID");
 						io = new InventoryObject(newName, 100);
-					}else {
+					} else {
 						io = new InventoryObject("Boreholes", 100);
 					}
 					break;
@@ -170,32 +194,32 @@ public class LookupBuildTree {
 					io = new InventoryObject("Collection", null, 500);
 					break;
 				case "operators":
-					if(o.has( "ID")) {
+					if (o.has("ID")) {
 						newName = "Operator " + o.get("ID");
 						io = new InventoryObject(newName, null, 50);
-					}else {
+					} else {
 						io = new InventoryObject("Operator", null, 50);
 					}
 					break;
 				case "outcrops":
-					if(o.has( "ID")) {
+					if (o.has("ID")) {
 						newName = "Outcrop " + o.get("ID");
 						io = new InventoryObject(newName, null, 100);
-					}else {
+					} else {
 						io = new InventoryObject("Outcrop", null, 100);
 					}
 					break;
 				case "prospect":
-						io = new InventoryObject("Prospect", null, 0);
+					io = new InventoryObject("Prospect", null, 0);
 					break;
 				case "shotline":
 					io = new InventoryObject("Shotline");
 					break;
 				case "shotpoints":
-					if(o.has( "ID")) {
+					if (o.has("ID")) {
 						newName = "Shotpoint " + o.get("ID");
 						io = new InventoryObject(newName, null, 50);
-					}else{
+					} else {
 						io = new InventoryObject("Shotpoints", null, 50);
 					}
 					break;
@@ -203,10 +227,10 @@ public class LookupBuildTree {
 					io = new InventoryObject("Type");
 					break;
 				case "wells":
-					if(o.has( "ID")) {
+					if (o.has("ID")) {
 						newName = "Well " + o.get("ID");
 						io = new InventoryObject(newName, null, 100);
-					}else{
+					} else {
 						io = new InventoryObject("Wells", null, 100);
 					}
 					break;
@@ -391,41 +415,4 @@ public class LookupBuildTree {
 	}
 
 
-	//*********************************************************************************************
-	private SpannableStringBuilder getStringForDisplay(InventoryObject o,
-															  SpannableStringBuilder ssb, int depth) {
-
-		if (o.getName() != null) {
-			for (int i = 0; i < depth; i++) {
-				ssb.append("  ");
-			}
-			int lengthOfSsb = ssb.length();
-			if (o.getValue() != null) {
-
-				ssb.append(o.getName());
-				ssb.append(" ");
-				ssb.append(o.getValue().toString());
-				ssb.append("\n");
-			} else {
-				ssb.append(o.getName()).append("\n");
-			}
-			ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
-					lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-		}
-
-		for (int i = 0; i < o.getChildren().size(); i++) {
-			Collections.sort(o.getChildren(), new SortInventoryObjectList());
-			InventoryObject child = o.getChildren().get(i);
-
-			// Adds a new line after the first element of an array of elements handled by handleObject().
-			if (i > 0
-					&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
-					&& (!o.getName().equals("ID"))){
-						ssb.append("\n");
-				}
-
-			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1);
-		}
-		return ssb;
-	}
 }
