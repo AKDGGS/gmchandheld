@@ -1,6 +1,5 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
@@ -74,6 +73,7 @@ public class LookupBuildTree{
 
 		if(inputJson.getJSONObject(0).get("containerPath") != null) {
 			((AppCompatActivity) mContext).getSupportActionBar().setTitle(inputJson.getJSONObject(0).get("containerPath").toString());
+
 			if(inputJson.length() > 1) {
 				((AppCompatActivity) mContext).getSupportActionBar().setSubtitle("Count: " + inputJson.length());
 			}
@@ -88,7 +88,7 @@ public class LookupBuildTree{
 													   SpannableStringBuilder ssb, int depth) {
 
 		// This function deals with the children of the each container and their descendants.
-		// So, GMC-000076260 has 12 children at the next depth.  And some of 12 have additional descendants.
+		// So, GMC-000076260 has 12 children at the next depth.  And some of the 12 descendants have additional descendants.
 		// And, each of the 32 containers in PAL-840 has 9 children at the next depth.
 		// All descendants are grouped to immediate children of the container.
 
@@ -185,7 +185,6 @@ public class LookupBuildTree{
 			keyList.add(ID);
 			displayDict.put(ID, displayList);
 		}
-
 	}
 
 
@@ -287,7 +286,6 @@ public class LookupBuildTree{
 			}
 		}
 
-
 		for (Iterator<String> it = o.keys(); it.hasNext(); ) {
 			String key = it.next();
 			io.addChild(parseTree(o, key, o.get(key)));
@@ -343,7 +341,6 @@ public class LookupBuildTree{
 		for (int i = 0; i < a.length(); i++) {
 			io.addChild(parseTree(a, name, a.get(i)));
 		}
-
 		return io;
 	}
 
@@ -389,7 +386,6 @@ public class LookupBuildTree{
 					return new InventoryObject("Elevation", val, 900);
 				}
 				return new InventoryObject("Elevation", o, 900);
-
 			}
 			case "federal":
 				return new InventoryObject("Federal", o, 70);
@@ -402,7 +398,6 @@ public class LookupBuildTree{
 					return new InventoryObject("Interval Bottom", val, 902);
 				}
 				return new InventoryObject("Interval Bottom", o, 902);
-
 			}
 			case "intervalTop": {
 				JSONObject pjo = (JSONObject) parent;
@@ -411,7 +406,6 @@ public class LookupBuildTree{
 					return new InventoryObject("Interval Top", val, 902);
 				}
 				return new InventoryObject("Interval Top", o, 902);
-
 			}
 			case "keywords":
 				return new InventoryObject("Keywords", o, 600);
@@ -426,7 +420,6 @@ public class LookupBuildTree{
 					return new InventoryObject("Measured Depth", val, 75);
 				}
 				return new InventoryObject("Measured Depth", o, 75);
-
 			}
 			case "name":
 				return new InventoryObject("Name", o, 100);
@@ -459,8 +452,5 @@ public class LookupBuildTree{
 			default:
 				return new InventoryObject(name, o);
 		}
-
 	}
-
-
 }
