@@ -2,7 +2,6 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.widget.ExpandableListAdapter;
@@ -27,7 +26,7 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupBuildTree {
 
-	private Context mContext;
+	private final Context mContext;
 
 	public LookupBuildTree(Context mContext) {
 		this.mContext = mContext;
@@ -39,12 +38,14 @@ public class LookupBuildTree {
 
 		// Constructs the layout for lookupBuildTree
 		LinearLayout linearLayout = new LinearLayout(mContext);
-		LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+		LinearLayout.LayoutParams linearLayoutParams = new LinearLayout
+				.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 		linearLayout.setLayoutParams(linearLayoutParams);
 		linearLayout.setOrientation(LinearLayout.VERTICAL);
 
 		// Constructs the expandableList
-		LinearLayout.LayoutParams expListParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		LinearLayout.LayoutParams expListParams = new LinearLayout
+				.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
 		ExpandableListView expandableListView = new ExpandableListView(mContext.getApplicationContext());
 		expandableListView.setLayoutParams(expListParams);
@@ -58,16 +59,28 @@ public class LookupBuildTree {
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
 
 		JSONArray inputJson = new JSONArray((rawJSON));
-		InventoryObject root = parseTree(null, null, inputJson);
-		printChildren(root, displayDict, displayList, keyList);
 
+		InventoryObject root = parseTree(null, null, inputJson);
+		if(root != null) {
+			processForDisplay(root, displayDict, displayList, keyList);
+		}
+
+
+		//This executes what appears on screen
 		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
 		expandableListView.setAdapter(listAdapter);
 	}
 
+//*********************************************************************************************
 
 	private SpannableStringBuilder getStringForDisplay(InventoryObject o,
 													   SpannableStringBuilder ssb, int depth) {
+
+		// This function deals with the children of the each container and their descendants.
+		// So, GMC-000076260 has 12 children at the next depth.  And some of 12 have additional descendants.
+		// And, each of the 32 containers in PAL-840 has 9 children at the next depth.
+		// All descendants are grouped to immediate children of the container.
+
 		if (o.getName() != null) {
 			for (int i = 0; i < depth; i++) {
 				ssb.append("  ");
@@ -87,10 +100,14 @@ public class LookupBuildTree {
 		}
 
 		for (int i = 0; i < o.getChildren().size(); i++) {
+			// Sorts internally.
 			Collections.sort(o.getChildren(), new SortInventoryObjectList());
+
 			InventoryObject child = o.getChildren().get(i);
 
 			// Adds a new line after the first element of an array of elements handled by handleObject().
+			//Applies to Wells/Operators/etc...that have more than 1 element.
+			//Used to improve readability.
 			if (i > 0
 					&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
 					&& (!o.getName().equals("ID"))){
@@ -103,16 +120,22 @@ public class LookupBuildTree {
 		return ssb;
 	}
 
+//*********************************************************************************************
 
-	public Map<String, List<SpannableStringBuilder>> printChildren(InventoryObject n, Map<String, List<SpannableStringBuilder>> displayDict, ArrayList<SpannableStringBuilder> displayList, List<String> keyList) {
+	public void processForDisplay(InventoryObject n, Map<String, List<SpannableStringBuilder>> displayDict, ArrayList<SpannableStringBuilder> displayList, List<String> keyList) {
+		// This function deals with the root level and the children of root.
+		// The first two depths consist of null names and values, but both have children.
+		// Root has the number of containers the in the container.
+		// So, GMC-000076260 has 1 container while PAL-840 has 32 containers.
 
 		String barcode = null;
 		String ID = null;
 
+		// sorts externally
 		Collections.sort(n.getChildren(), new SortInventoryObjectList());
 		
 		for (InventoryObject ch : n.getChildren()) {
-
+			//Used to define the label for the expandableList.
 			if (ch.getName() != null && ch.getName().equals("Barcode")) {
 				barcode = ch.getValue().toString();
 			}
@@ -122,8 +145,15 @@ public class LookupBuildTree {
 			}
 
 			if (ch.getName() != null) {
+				// Each container defined below has its own displayList.
+				// Each non-null name at the first depth below the container gets a SpannableStringBuilder
 				SpannableStringBuilder ssb = new SpannableStringBuilder();
-				ssb = getStringForDisplay(ch, ssb, 0);
+
+				// getStringForDisplay() processes the string for display.
+				// It makes keys bold and it groups children with parents.
+				getStringForDisplay(ch, ssb, 0);
+
+				//Removes a trailing "\n"
 				if (ssb.length() > 0) {
 					ssb.delete(ssb.length() - 1, ssb.length());
 				}
@@ -131,9 +161,9 @@ public class LookupBuildTree {
 				displayList.add(ssb);
 
 			} else if (n.getName() == null & ch.getChildren().size() > 0) {
+				// Creates a new displayList for each container.  GMC-000076260 consists of one container.  PAL-840 consists of 32 containers.
 				displayList = new ArrayList<>();
-				printChildren(ch, displayDict, displayList, keyList);
-
+				processForDisplay(ch, displayDict, displayList, keyList);
 			}
 		}
 
@@ -145,7 +175,6 @@ public class LookupBuildTree {
 			displayDict.put(ID, displayList);
 		}
 
-		return displayDict;
 	}
 
 
@@ -176,8 +205,8 @@ public class LookupBuildTree {
 
 	private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
 
-		String newName = "";
-		InventoryObject io = null;
+		String newName;
+		InventoryObject io;
 		if (name == null) {
 			io = new InventoryObject(name);
 		} else {
@@ -260,7 +289,7 @@ public class LookupBuildTree {
 //*********************************************************************************************
 
 	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
-		InventoryObject io = null;
+		InventoryObject io;
 
 		if (name == null) {
 			io = new InventoryObject(name);

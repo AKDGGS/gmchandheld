@@ -7,7 +7,7 @@ public class InventoryObject {
 
     private String name;
     private Object value;
-    private ArrayList<InventoryObject> children;
+    private final ArrayList<InventoryObject> children;
     private int displayWeight;
 
     public InventoryObject() {
@@ -27,7 +27,7 @@ public class InventoryObject {
         this.name = name;
         this.value = value;
         this.displayWeight = displayWeight;
-        children = new ArrayList<InventoryObject>();
+        children = new ArrayList<>();
     }
 
 
