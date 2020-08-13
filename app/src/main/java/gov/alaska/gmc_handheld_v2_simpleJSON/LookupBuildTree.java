@@ -2,6 +2,7 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.widget.ExpandableListAdapter;
@@ -52,70 +53,21 @@ public class LookupBuildTree {
 		Activity activity = (Activity) mContext;
 		activity.setContentView(linearLayout);
 
-
+		ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
 		List<String> keyList = new ArrayList<>();
-
-		JSONArray inputJson = new JSONArray((rawJSON));
-
 		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
 
+		JSONArray inputJson = new JSONArray((rawJSON));
 		InventoryObject root = parseTree(null, null, inputJson);
-
-		ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
-
-		SpannableStringBuilder ssb = new SpannableStringBuilder();
-
-		int i = 0;
-		System.out.println(getStringForDisplay(root, ssb, 0, displayList, i));
-
-
-//		for(SpannableStringBuilder s : displayList){
-//			System.out.println(s);
-//		}
+		printChildren(root, displayDict, displayList, keyList);
 
 		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
 		expandableListView.setAdapter(listAdapter);
 	}
 
 
-	public Map<String, List<SpannableStringBuilder>> printChildren(InventoryObject n, Map<String, List<SpannableStringBuilder>> displayDict, ArrayList<SpannableStringBuilder> displayList, List<String> keyList) {
-
-		String barcode = null;
-		String ID = null;
-		for (InventoryObject ch : n.getChildren()) {
-
-			if (ch.getName() != null && ch.getName().equals("Barcode")) {
-				barcode = ch.getValue().toString();
-			}
-
-			if (n.getName() == null && ch.getName() != null && ch.getName().equals("ID")) {
-				ID = ch.getValue().toString();
-			}
-
-			if (ch.getName() != null) {
-				SpannableStringBuilder ssb = new SpannableStringBuilder();
-//				displayList.add(getStringForDisplay(ch, ssb, 0));
-			} else if (n.getName() == null & ch.getChildren().size() > 0) {
-				printChildren(ch, displayDict, displayList, keyList);
-			}
-		}
-		if (barcode != null && ID != null) {
-			keyList.add(barcode + "-" + ID);
-			displayDict.put(barcode + "-" + ID, displayList);
-		}
-
-
-		return displayDict;
-	}
-
-
-//*********************************************************************************************
-
-//	private ArrayList<SpannableStringBuilder> getStringForDisplay(InventoryObject o,
-//																  SpannableStringBuilder ssb, int depth, ArrayList<SpannableStringBuilder> displayList, int j ) {
-
 	private SpannableStringBuilder getStringForDisplay(InventoryObject o,
-																  SpannableStringBuilder ssb, int depth, ArrayList<SpannableStringBuilder> displayList, int j ) {
+													   SpannableStringBuilder ssb, int depth) {
 		if (o.getName() != null) {
 			for (int i = 0; i < depth; i++) {
 				ssb.append("  ");
@@ -135,28 +87,65 @@ public class LookupBuildTree {
 		}
 
 		for (int i = 0; i < o.getChildren().size(); i++) {
-
 			Collections.sort(o.getChildren(), new SortInventoryObjectList());
 			InventoryObject child = o.getChildren().get(i);
 
 			// Adds a new line after the first element of an array of elements handled by handleObject().
 			if (i > 0
-					&& child.getName() != null
-					&& o.getName() != null
 					&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
-					&& (!o.getName().equals("ID"))) {
+					&& (!o.getName().equals("ID"))){
 				ssb.append("\n");
 			}
 
-			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1, displayList, j++);
+			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1);
 		}
 
-//		System.out.println(j + " " + ssb);
-//		displayList.add(ssb);
-		ssb.append("     ")
-				.append(Integer.toString(j));
 		return ssb;
-//		return displayList;
+	}
+
+
+	public Map<String, List<SpannableStringBuilder>> printChildren(InventoryObject n, Map<String, List<SpannableStringBuilder>> displayDict, ArrayList<SpannableStringBuilder> displayList, List<String> keyList) {
+
+		String barcode = null;
+		String ID = null;
+
+		Collections.sort(n.getChildren(), new SortInventoryObjectList());
+		
+		for (InventoryObject ch : n.getChildren()) {
+
+			if (ch.getName() != null && ch.getName().equals("Barcode")) {
+				barcode = ch.getValue().toString();
+			}
+
+			if (n.getName() == null && ch.getName() != null && ch.getName().equals("ID")) {
+				ID = ch.getValue().toString();
+			}
+
+			if (ch.getName() != null) {
+				SpannableStringBuilder ssb = new SpannableStringBuilder();
+				ssb = getStringForDisplay(ch, ssb, 0);
+				if (ssb.length() > 0) {
+					ssb.delete(ssb.length() - 1, ssb.length());
+				}
+
+				displayList.add(ssb);
+
+			} else if (n.getName() == null & ch.getChildren().size() > 0) {
+				displayList = new ArrayList<>();
+				printChildren(ch, displayDict, displayList, keyList);
+
+			}
+		}
+
+		if (barcode != null && ID != null) {
+			keyList.add(barcode + "-" + ID);
+			displayDict.put(barcode + "-" + ID, displayList);
+		}else if(ID != null){
+			keyList.add(ID);
+			displayDict.put(ID, displayList);
+		}
+
+		return displayDict;
 	}
 
 
