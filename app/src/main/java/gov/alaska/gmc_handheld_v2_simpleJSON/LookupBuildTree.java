@@ -1,5 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
@@ -7,6 +8,8 @@ import android.text.style.StyleSpan;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +27,7 @@ import gov.alaska.gmc_handheld_v2_simpleJSON.comparators.SortInventoryObjectList
 import static android.graphics.Typeface.BOLD;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
-public class LookupBuildTree {
+public class LookupBuildTree{
 
 	private final Context mContext;
 
@@ -49,6 +52,8 @@ public class LookupBuildTree {
 
 		ExpandableListView expandableListView = new ExpandableListView(mContext.getApplicationContext());
 		expandableListView.setLayoutParams(expListParams);
+		// removes the down arrow indicator for the expandable list
+		expandableListView.setGroupIndicator(null);
 		linearLayout.addView(expandableListView);
 
 		Activity activity = (Activity) mContext;
@@ -65,8 +70,14 @@ public class LookupBuildTree {
 			processForDisplay(root, displayDict, displayList, keyList);
 		}
 
+		//What appears on the screen
 
-		//This executes what appears on screen
+		if(inputJson.getJSONObject(0).get("containerPath") != null) {
+			((AppCompatActivity) mContext).getSupportActionBar().setTitle(inputJson.getJSONObject(0).get("containerPath").toString());
+			if(inputJson.length() > 1) {
+				((AppCompatActivity) mContext).getSupportActionBar().setSubtitle("Count: " + inputJson.length());
+			}
+		}
 		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
 		expandableListView.setAdapter(listAdapter);
 	}
