@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.RequiresApi;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -111,27 +112,35 @@ public class Lookup extends BaseActivity {
                         expandableListView.setGroupIndicator(null);
                         linearLayout.addView(expandableListView);
 
-                        Activity activity = (Activity) Lookup.this;
+                        Activity activity = Lookup.this;
                         activity.setContentView(linearLayout);
 
                         LookupBuildTreeObj = new LookupBuildTree();
-//                        //Needs a better name????
-                        LookupBuildTreeObj.buildLookupLayout(rawJSON);
+//                        LookupBuildTreeObj.buildLookupLayout(rawJSON);
 
+                        JSONArray inputJson = new JSONArray((rawJSON));
 
-                        System.out.println(LookupBuildTreeObj.getDisplayDict());
-                        System.out.println(LookupBuildTreeObj.getKeyList());
+                        InventoryObject root = LookupBuildTreeObj.parseTree(null, null, inputJson);
+                        if (root != null) {
+                            try {
+                                LookupBuildTreeObj.processForDisplay(root, LookupBuildTreeObj.getDisplayDict(), null, LookupBuildTreeObj.getKeyList());
+                            } catch (Exception e) {
+                                LookupBuildTreeObj.getDisplayDict().put("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.", null);
+                                LookupBuildTreeObj.getKeyList().add("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.");
+                            }
+                        }
 
                         //What appears on the screen
+                        //Action Bar
+                         if (LookupBuildTreeObj.getContainerPath() != null) {
+                            Lookup.this.getSupportActionBar().setTitle(LookupBuildTreeObj.getContainerPath());
 
-//                        if (inputJson.getJSONObject(0).get("containerPath") != null) {
-//                            ((AppCompatActivity) mContext).getSupportActionBar().setTitle(inputJson.getJSONObject(0).get("containerPath").toString());
-//
-//                            if (inputJson.length() > 1) {
-//                                ((AppCompatActivity) mContext).getSupportActionBar().setSubtitle("Count: " + inputJson.length());
-//                            }
-//                        }
+                            if (LookupBuildTreeObj.getDisplayDict().size() > 1) {
+                                Lookup.this.getSupportActionBar().setSubtitle("Count: " + LookupBuildTreeObj.getDisplayDict().size());
+                            }
+                        }
 
+                         //Expandable list
                         ExpandableListAdapter listAdapter = new LookupExpListAdapter(Lookup.this, LookupBuildTreeObj.getKeyList(), LookupBuildTreeObj.getDisplayDict());
                         expandableListView.setAdapter(listAdapter);
 

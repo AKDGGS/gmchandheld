@@ -21,86 +21,50 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupBuildTree {
 
-//	private final Context mContext;
-
-//	public LookupBuildTree(Context mContext) {
-//		this.mContext = mContext;
-//	}
 	private ArrayList<SpannableStringBuilder> DisplayList;
 	private List<String> KeyList;
 	private Map<String, List<SpannableStringBuilder>> DisplayDict;
 
-	public LookupBuildTree(){
+	private String containerPath;
+
+	public LookupBuildTree() {
 		DisplayList = new ArrayList<>();
 		KeyList = new ArrayList<>();
 		DisplayDict = new HashMap<>();
 	}
 
-	public ArrayList<SpannableStringBuilder> getDisplayList(){
+	public ArrayList<SpannableStringBuilder> getDisplayList() {
 		return DisplayList;
 	}
 
-	public List<String> getKeyList(){
+	public List<String> getKeyList() {
 		return KeyList;
 	}
 
-	public Map<String, List<SpannableStringBuilder>> getDisplayDict(){
+	public Map<String, List<SpannableStringBuilder>> getDisplayDict() {
 		return DisplayDict;
+	}
+
+	public String getContainerPath() {
+		return containerPath;
 	}
 
 //*********************************************************************************************
 
-	public void buildLookupLayout(String rawJSON) throws Exception {
-
-//		// Constructs the layout for lookupBuildTree
-//		LinearLayout linearLayout = new LinearLayout(mContext);
-//		LinearLayout.LayoutParams linearLayoutParams = new LinearLayout
-//				.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-//		linearLayout.setLayoutParams(linearLayoutParams);
-//		linearLayout.setOrientation(LinearLayout.VERTICAL);
+//	public void buildLookupLayout(String rawJSON) throws Exception {
 //
-//		// Constructs the expandableList
-//		LinearLayout.LayoutParams expListParams = new LinearLayout
-//				.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//		JSONArray inputJson = new JSONArray((rawJSON));
 //
-//		ExpandableListView expandableListView = new ExpandableListView(mContext.getApplicationContext());
-//		expandableListView.setLayoutParams(expListParams);
-//		// removes the down arrow indicator for the expandable list
-//		expandableListView.setGroupIndicator(null);
-//		linearLayout.addView(expandableListView);
-//
-//		Activity activity = (Activity) mContext;
-//		activity.setContentView(linearLayout);
-
-
-//		List<String> keyList = new ArrayList<>();
-//		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
-
-		JSONArray inputJson = new JSONArray((rawJSON));
-
-		InventoryObject root = parseTree(null, null, inputJson);
-		if (root != null) {
-			try {
-				processForDisplay(root, getDisplayDict(), null, getKeyList());
-			} catch (Exception e) {
-				getDisplayDict().put("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.", null);
-				getKeyList().add("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.");
-			}
-		}
-
-		//What appears on the screen
-//
-//		if (inputJson.getJSONObject(0).get("containerPath") != null) {
-//			((AppCompatActivity) mContext).getSupportActionBar().setTitle(inputJson.getJSONObject(0).get("containerPath").toString());
-//
-//			if (inputJson.length() > 1) {
-//				((AppCompatActivity) mContext).getSupportActionBar().setSubtitle("Count: " + inputJson.length());
+//		InventoryObject root = parseTree(null, null, inputJson);
+//		if (root != null) {
+//			try {
+//				processForDisplay(root, getDisplayDict(), null, getKeyList());
+//			} catch (Exception e) {
+//				getDisplayDict().put("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.", null);
+//				getKeyList().add("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.");
 //			}
 //		}
-//
-//		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
-//		expandableListView.setAdapter(listAdapter);
-	}
+//	}
 
 //*********************************************************************************************
 
@@ -175,6 +139,10 @@ public class LookupBuildTree {
 				ID = ch.getValue().toString();
 			}
 
+			if("Container Path".equals(ch.getName())){
+				containerPath = ch.getValue().toString();
+			}
+
 			if (ch.getName() != null) {
 				// Each container defined below has its own displayList.
 				// Each non-null name at the first depth below the container gets a SpannableStringBuilder
@@ -210,7 +178,7 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
+	public InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
 
 		switch (o.getClass().getName()) {
 			case "org.json.JSONObject":
