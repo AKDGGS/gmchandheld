@@ -28,14 +28,14 @@ public class LookupBuildTree {
 	private String containerPath;
 
 	public LookupBuildTree() {
-		DisplayList = new ArrayList<>();
+//		DisplayList = new ArrayList<>();
 		KeyList = new ArrayList<>();
 		DisplayDict = new HashMap<>();
 	}
 
-	public ArrayList<SpannableStringBuilder> getDisplayList() {
-		return DisplayList;
-	}
+//	public ArrayList<SpannableStringBuilder> getDisplayList() {
+//		return DisplayList;
+//	}
 
 	public List<String> getKeyList() {
 		return KeyList;
@@ -58,12 +58,13 @@ public class LookupBuildTree {
 		InventoryObject root = parseTree(null, null, inputJson);
 		if (root != null) {
 			try {
-				processForDisplay(root, getDisplayDict(), null, getKeyList());
+				processForDisplay(root, null);
 			} catch (Exception e) {
 				getDisplayDict().put("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.", null);
 				getKeyList().add("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.");
 			}
 		}
+
 	}
 
 //*********************************************************************************************
@@ -117,7 +118,7 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	public void processForDisplay(InventoryObject n, Map<String, List<SpannableStringBuilder>> displayDict, ArrayList<SpannableStringBuilder> displayList, List<String> keyList) {
+	public void processForDisplay(InventoryObject n,  ArrayList<SpannableStringBuilder> displayList) {
 		// This function deals with the root level and the children of root.
 		// The first two depths consist of null names and values, but both have children.
 		// Root has the number of containers the in the container.
@@ -162,16 +163,16 @@ public class LookupBuildTree {
 			} else if (n.getName() == null & ch.getChildren().size() > 0) {
 				// Creates a new displayList for each container.  GMC-000076260 consists of one container.  PAL-840 consists of 32 containers.
 				displayList = new ArrayList<>();
-				processForDisplay(ch, displayDict, displayList, keyList);
+				processForDisplay(ch, displayList);
 			}
 		}
 
 		if (barcode != null && ID != null) {
-			keyList.add(barcode + "-" + ID);
-			displayDict.put(barcode + "-" + ID, displayList);
+			getKeyList().add(barcode + "-" + ID);
+			getDisplayDict().put(barcode + "-" + ID, displayList);
 		} else if (ID != null) {
-			keyList.add(ID);
-			displayDict.put(ID, displayList);
+			getKeyList().add(ID);
+			getDisplayDict().put(ID, displayList);
 		}
 	}
 

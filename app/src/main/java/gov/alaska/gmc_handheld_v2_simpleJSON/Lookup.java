@@ -28,15 +28,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Lookup extends BaseActivity {
 
     private JsonPlaceHolderApi jsonPlaceHolderApi;
-    LookupBuildTree LookupBuildTreeObj;
-    Context context = this;
-    ExpandableListView expandableListView;
+    public LookupBuildTree LookupBuildTreeObj;
+    private Context context = this;
+    private ExpandableListView expandableListView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
 
         // Gets the API level
         int APILevel = android.os.Build.VERSION.SDK_INT;
