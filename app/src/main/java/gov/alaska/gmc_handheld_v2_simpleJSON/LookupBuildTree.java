@@ -20,22 +20,17 @@ import static android.graphics.Typeface.BOLD;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupBuildTree {
-
-	private ArrayList<SpannableStringBuilder> DisplayList;
+	
 	private List<String> KeyList;
 	private Map<String, List<SpannableStringBuilder>> DisplayDict;
 
 	private String containerPath;
 
 	public LookupBuildTree() {
-//		DisplayList = new ArrayList<>();
 		KeyList = new ArrayList<>();
 		DisplayDict = new HashMap<>();
 	}
 
-//	public ArrayList<SpannableStringBuilder> getDisplayList() {
-//		return DisplayList;
-//	}
 
 	public List<String> getKeyList() {
 		return KeyList;
