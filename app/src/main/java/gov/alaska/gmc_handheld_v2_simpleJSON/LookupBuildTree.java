@@ -1,14 +1,7 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.app.Activity;
-import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,60 +19,87 @@ import gov.alaska.gmc_handheld_v2_simpleJSON.comparators.SortInventoryObjectList
 import static android.graphics.Typeface.BOLD;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
-public class LookupBuildTree{
+public class LookupBuildTree {
 
-	private final Context mContext;
+//	private final Context mContext;
 
-	public LookupBuildTree(Context mContext) {
-		this.mContext = mContext;
+//	public LookupBuildTree(Context mContext) {
+//		this.mContext = mContext;
+//	}
+	private ArrayList<SpannableStringBuilder> DisplayList;
+	private List<String> KeyList;
+	private Map<String, List<SpannableStringBuilder>> DisplayDict;
+
+	public LookupBuildTree(){
+		DisplayList = new ArrayList<>();
+		KeyList = new ArrayList<>();
+		DisplayDict = new HashMap<>();
+	}
+
+	public ArrayList<SpannableStringBuilder> getDisplayList(){
+		return DisplayList;
+	}
+
+	public List<String> getKeyList(){
+		return KeyList;
+	}
+
+	public Map<String, List<SpannableStringBuilder>> getDisplayDict(){
+		return DisplayDict;
 	}
 
 //*********************************************************************************************
 
 	public void buildLookupLayout(String rawJSON) throws Exception {
 
-		// Constructs the layout for lookupBuildTree
-		LinearLayout linearLayout = new LinearLayout(mContext);
-		LinearLayout.LayoutParams linearLayoutParams = new LinearLayout
-				.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-		linearLayout.setLayoutParams(linearLayoutParams);
-		linearLayout.setOrientation(LinearLayout.VERTICAL);
+//		// Constructs the layout for lookupBuildTree
+//		LinearLayout linearLayout = new LinearLayout(mContext);
+//		LinearLayout.LayoutParams linearLayoutParams = new LinearLayout
+//				.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+//		linearLayout.setLayoutParams(linearLayoutParams);
+//		linearLayout.setOrientation(LinearLayout.VERTICAL);
+//
+//		// Constructs the expandableList
+//		LinearLayout.LayoutParams expListParams = new LinearLayout
+//				.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//
+//		ExpandableListView expandableListView = new ExpandableListView(mContext.getApplicationContext());
+//		expandableListView.setLayoutParams(expListParams);
+//		// removes the down arrow indicator for the expandable list
+//		expandableListView.setGroupIndicator(null);
+//		linearLayout.addView(expandableListView);
+//
+//		Activity activity = (Activity) mContext;
+//		activity.setContentView(linearLayout);
 
-		// Constructs the expandableList
-		LinearLayout.LayoutParams expListParams = new LinearLayout
-				.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-		ExpandableListView expandableListView = new ExpandableListView(mContext.getApplicationContext());
-		expandableListView.setLayoutParams(expListParams);
-		// removes the down arrow indicator for the expandable list
-		expandableListView.setGroupIndicator(null);
-		linearLayout.addView(expandableListView);
-
-		Activity activity = (Activity) mContext;
-		activity.setContentView(linearLayout);
-
-		ArrayList<SpannableStringBuilder> displayList = new ArrayList<>();
-		List<String> keyList = new ArrayList<>();
-		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
+//		List<String> keyList = new ArrayList<>();
+//		Map<String, List<SpannableStringBuilder>> displayDict = new HashMap<>();
 
 		JSONArray inputJson = new JSONArray((rawJSON));
 
 		InventoryObject root = parseTree(null, null, inputJson);
-		if(root != null) {
-			processForDisplay(root, displayDict, displayList, keyList);
+		if (root != null) {
+			try {
+				processForDisplay(root, getDisplayDict(), null, getKeyList());
+			} catch (Exception e) {
+				getDisplayDict().put("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.", null);
+				getKeyList().add("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.");
+			}
 		}
 
 		//What appears on the screen
-
-		if(inputJson.getJSONObject(0).get("containerPath") != null) {
-			((AppCompatActivity) mContext).getSupportActionBar().setTitle(inputJson.getJSONObject(0).get("containerPath").toString());
-
-			if(inputJson.length() > 1) {
-				((AppCompatActivity) mContext).getSupportActionBar().setSubtitle("Count: " + inputJson.length());
-			}
-		}
-		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
-		expandableListView.setAdapter(listAdapter);
+//
+//		if (inputJson.getJSONObject(0).get("containerPath") != null) {
+//			((AppCompatActivity) mContext).getSupportActionBar().setTitle(inputJson.getJSONObject(0).get("containerPath").toString());
+//
+//			if (inputJson.length() > 1) {
+//				((AppCompatActivity) mContext).getSupportActionBar().setSubtitle("Count: " + inputJson.length());
+//			}
+//		}
+//
+//		ExpandableListAdapter listAdapter = new LookupExpListAdapter(mContext, keyList, displayDict);
+//		expandableListView.setAdapter(listAdapter);
 	}
 
 //*********************************************************************************************
@@ -118,10 +138,10 @@ public class LookupBuildTree{
 
 			// Adds a new line after the first element of an array of elements handled by handleObject().
 			//Applies to Wells/Operators/etc...that have more than 1 element.
-			//Used to improve readability.
+			//Used to improve display readability.
 			if (i > 0
 					&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
-					&& (!o.getName().equals("ID"))){
+					&& (!o.getName().equals("ID"))) {
 				ssb.append("\n");
 			}
 
@@ -144,14 +164,14 @@ public class LookupBuildTree{
 
 		// sorts externally
 		Collections.sort(n.getChildren(), new SortInventoryObjectList());
-		
+
 		for (InventoryObject ch : n.getChildren()) {
 			//Used to define the label for the expandableList.
-			if (ch.getName() != null && ch.getName().equals("Barcode")) {
+			if ("Barcode".equals(ch.getName())) {
 				barcode = ch.getValue().toString();
 			}
 
-			if (n.getName() == null && ch.getName() != null && ch.getName().equals("ID")) {
+			if (n.getName() == null && "ID".equals(ch.getName())) {
 				ID = ch.getValue().toString();
 			}
 
@@ -181,7 +201,7 @@ public class LookupBuildTree{
 		if (barcode != null && ID != null) {
 			keyList.add(barcode + "-" + ID);
 			displayDict.put(barcode + "-" + ID, displayList);
-		}else if(ID != null){
+		} else if (ID != null) {
 			keyList.add(ID);
 			displayDict.put(ID, displayList);
 		}
@@ -380,10 +400,12 @@ public class LookupBuildTree{
 			case "description":
 				return new InventoryObject("Description", o);
 			case "elevation": {
-				JSONObject pjo = (JSONObject) parent;
-				if (pjo.has("elevationUnit") && pjo.getJSONObject("elevationUnit").has("abbr")) {
-					String val = o + " " + pjo.getJSONObject("elevationUnit").get("abbr");
-					return new InventoryObject("Elevation", val, 900);
+				if (parent instanceof JSONObject) {
+					JSONObject pjo = (JSONObject) parent;
+					if (pjo.has("elevationUnit") && pjo.getJSONObject("elevationUnit").has("abbr")) {
+						String val = o + " " + pjo.getJSONObject("elevationUnit").get("abbr");
+						return new InventoryObject("Elevation", val, 900);
+					}
 				}
 				return new InventoryObject("Elevation", o, 900);
 			}
@@ -392,32 +414,38 @@ public class LookupBuildTree{
 			case "ID":
 				return new InventoryObject("ID", o, 1000);
 			case "intervalBottom": {
-				JSONObject pjo = (JSONObject) parent;
-				if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
-					String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr");
-					return new InventoryObject("Interval Bottom", val, 902);
+				if (parent instanceof JSONObject) {
+					JSONObject pjo = (JSONObject) parent;
+					if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
+						String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr");
+						return new InventoryObject("Interval Bottom", val, 902);
+					}
 				}
 				return new InventoryObject("Interval Bottom", o, 902);
 			}
 			case "intervalTop": {
-				JSONObject pjo = (JSONObject) parent;
-				if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
-					String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr");
-					return new InventoryObject("Interval Top", val, 902);
+				if (parent instanceof JSONObject) {
+					JSONObject pjo = (JSONObject) parent;
+					if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
+						String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr");
+						return new InventoryObject("Interval Top", val, 902);
+					}
 				}
 				return new InventoryObject("Interval Top", o, 902);
 			}
 			case "keywords":
 				return new InventoryObject("Keywords", o, 600);
 			case "measuredDepth": {
-				JSONObject pjo = (JSONObject) parent;
-				if (pjo.has("measuredDepthUnit") && pjo.getJSONObject("measuredDepthUnit").has(
-						"abbr")) {
-					String val = o + " " + pjo.getJSONObject("measuredDepthUnit").get("abbr");
-					return new InventoryObject("Measured Depth", val, 75);
-				} else if (pjo.has("unit") && pjo.getJSONObject("unit").has("abbr")) {
-					String val = o + " " + pjo.getJSONObject("unit").get("abbr");
-					return new InventoryObject("Measured Depth", val, 75);
+				if (parent instanceof JSONObject) {
+					JSONObject pjo = (JSONObject) parent;
+					if (pjo.has("measuredDepthUnit") && pjo.getJSONObject("measuredDepthUnit").has(
+							"abbr")) {
+						String val = o + " " + pjo.getJSONObject("measuredDepthUnit").get("abbr");
+						return new InventoryObject("Measured Depth", val, 75);
+					} else if (pjo.has("unit") && pjo.getJSONObject("unit").has("abbr")) {
+						String val = o + " " + pjo.getJSONObject("unit").get("abbr");
+						return new InventoryObject("Measured Depth", val, 75);
+					}
 				}
 				return new InventoryObject("Measured Depth", o, 75);
 			}
@@ -440,10 +468,12 @@ public class LookupBuildTree{
 			case "type":
 				return new InventoryObject("Type", o);
 			case "verticalDepth": {
-				JSONObject pjo = (JSONObject) parent;
-				if (pjo.has("unit") && pjo.getJSONObject("unit").has("abbr")) {
-					String val = o + " " + pjo.getJSONObject("unit").get("abbr");
-					return new InventoryObject("Vertical Depth", val, 80);
+				if (parent instanceof JSONObject) {
+					JSONObject pjo = (JSONObject) parent;
+					if (pjo.has("unit") && pjo.getJSONObject("unit").has("abbr")) {
+						String val = o + " " + pjo.getJSONObject("unit").get("abbr");
+						return new InventoryObject("Vertical Depth", val, 80);
+					}
 				}
 				return new InventoryObject("Vertical Depth", o, 80);
 			}

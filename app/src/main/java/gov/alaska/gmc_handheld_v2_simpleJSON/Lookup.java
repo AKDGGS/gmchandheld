@@ -1,8 +1,13 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.RequiresApi;
 
@@ -24,12 +29,14 @@ public class Lookup extends BaseActivity {
 
     private JsonPlaceHolderApi jsonPlaceHolderApi;
     LookupBuildTree LookupBuildTreeObj;
+    Context context = this;
+    ExpandableListView expandableListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LookupBuildTreeObj = new LookupBuildTree(this);
+
 
         // Gets the API level
         int APILevel = android.os.Build.VERSION.SDK_INT;
@@ -83,9 +90,51 @@ public class Lookup extends BaseActivity {
                             }
                         }, 100);
 
+                        
                     } else {
-                        //Needs a better name????
+
+                        // Constructs the layout for lookupBuildTree
+
+                        LinearLayout linearLayout = new LinearLayout(Lookup.this);
+                        LinearLayout.LayoutParams linearLayoutParams = new LinearLayout
+                                .LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                        linearLayout.setLayoutParams(linearLayoutParams);
+                        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+                        // Constructs the expandableList
+                        LinearLayout.LayoutParams expListParams = new LinearLayout
+                                .LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        ExpandableListView expandableListView = new ExpandableListView(Lookup.this.getApplicationContext());
+                        expandableListView.setLayoutParams(expListParams);
+                        // removes the down arrow indicator for the expandable list
+                        expandableListView.setGroupIndicator(null);
+                        linearLayout.addView(expandableListView);
+
+                        Activity activity = (Activity) Lookup.this;
+                        activity.setContentView(linearLayout);
+
+                        LookupBuildTreeObj = new LookupBuildTree();
+//                        //Needs a better name????
                         LookupBuildTreeObj.buildLookupLayout(rawJSON);
+
+
+                        System.out.println(LookupBuildTreeObj.getDisplayDict());
+                        System.out.println(LookupBuildTreeObj.getKeyList());
+
+                        //What appears on the screen
+
+//                        if (inputJson.getJSONObject(0).get("containerPath") != null) {
+//                            ((AppCompatActivity) mContext).getSupportActionBar().setTitle(inputJson.getJSONObject(0).get("containerPath").toString());
+//
+//                            if (inputJson.length() > 1) {
+//                                ((AppCompatActivity) mContext).getSupportActionBar().setSubtitle("Count: " + inputJson.length());
+//                            }
+//                        }
+
+                        ExpandableListAdapter listAdapter = new LookupExpListAdapter(Lookup.this, LookupBuildTreeObj.getKeyList(), LookupBuildTreeObj.getDisplayDict());
+                        expandableListView.setAdapter(listAdapter);
+
 
                     }
                 } catch (IOException |
