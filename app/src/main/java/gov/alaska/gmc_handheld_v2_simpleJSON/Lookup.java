@@ -57,12 +57,10 @@ public class Lookup extends BaseActivity {
             jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
         }
-
-
-        processRawJSON();
+        getJSON();
     }
 
-    private void processRawJSON() {
+    private void getJSON() {
         String BARCODE;  //retrieved from user input used to call dggs
         BARCODE = get_container_barcode();
 
@@ -94,7 +92,6 @@ public class Lookup extends BaseActivity {
                     } else {
 
                         // Constructs the layout for lookupBuildTree
-
                         LinearLayout linearLayout = new LinearLayout(Lookup.this);
                         LinearLayout.LayoutParams linearLayoutParams = new LinearLayout
                                 .LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -130,8 +127,6 @@ public class Lookup extends BaseActivity {
                          //Expandable list
                         ExpandableListAdapter listAdapter = new LookupExpListAdapter(Lookup.this, LookupBuildTreeObj.getKeyList(), LookupBuildTreeObj.getDisplayDict());
                         expandableListView.setAdapter(listAdapter);
-
-
                     }
                 } catch (IOException |
                         JSONException e) {
