@@ -1,13 +1,11 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.RequiresApi;
 
@@ -36,7 +34,7 @@ public class Lookup extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.lookup);
         // Gets the API level
         int APILevel = android.os.Build.VERSION.SDK_INT;
         if( APILevel < 18) {
@@ -63,6 +61,7 @@ public class Lookup extends BaseActivity {
         String BARCODE;  //retrieved from user input used to call dggs
         BARCODE = get_container_barcode();
 
+
         Call<ResponseBody> call = jsonPlaceHolderApi.getInventory(BARCODE);
         call.enqueue(new Callback<ResponseBody>() {
             Timer timer;
@@ -70,7 +69,8 @@ public class Lookup extends BaseActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                ExpandableListView expandableListView;
+                ExpandableListAdapter listAdapter;
 
                 try {
                     assert response.body() != null;
@@ -90,25 +90,6 @@ public class Lookup extends BaseActivity {
                         
                     } else {
 
-                        // Constructs the layout for lookupBuildTree
-                        LinearLayout linearLayout = new LinearLayout(Lookup.this);
-                        LinearLayout.LayoutParams linearLayoutParams = new LinearLayout
-                                .LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                        linearLayout.setLayoutParams(linearLayoutParams);
-                        linearLayout.setOrientation(LinearLayout.VERTICAL);
-
-                        // Constructs the expandableList
-                        LinearLayout.LayoutParams expListParams = new LinearLayout
-                                .LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                        ExpandableListView expandableListView = new ExpandableListView(Lookup.this.getApplicationContext());
-                        expandableListView.setLayoutParams(expListParams);
-                        // removes the down arrow indicator for the expandable list
-                        expandableListView.setGroupIndicator(null);
-                        linearLayout.addView(expandableListView);
-
-                        Activity activity = Lookup.this;
-                        activity.setContentView(linearLayout);
 
                         LookupBuildTreeObj = new LookupBuildTree();
                         LookupBuildTreeObj.processRawJSON(rawJSON);
@@ -123,9 +104,12 @@ public class Lookup extends BaseActivity {
                             }
                         }
 
-                         //Expandable list
-                        ExpandableListAdapter listAdapter = new LookupExpListAdapter(Lookup.this, LookupBuildTreeObj.getKeyList(), LookupBuildTreeObj.getDisplayDict());
+                        expandableListView = findViewById(R.id.expandableListView);
+                        listAdapter = new LookupExpListAdapter(Lookup.this, LookupBuildTreeObj.getKeyList() , LookupBuildTreeObj.getDisplayDict());
                         expandableListView.setAdapter(listAdapter);
+                        if (listAdapter.getGroupCount() == 1) {
+                            expandableListView.expandGroup(0);
+                        }
                     }
                 } catch (IOException |
                         JSONException e) {

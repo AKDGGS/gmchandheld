@@ -20,7 +20,7 @@ import static android.graphics.Typeface.BOLD;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupBuildTree {
-	
+
 	private List<String> KeyList;
 	private Map<String, List<SpannableStringBuilder>> DisplayDict;
 
