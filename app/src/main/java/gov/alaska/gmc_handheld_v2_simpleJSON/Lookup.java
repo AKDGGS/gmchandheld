@@ -1,6 +1,5 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,9 +26,6 @@ public class Lookup extends BaseActivity {
 
     private JsonPlaceHolderApi jsonPlaceHolderApi;
     public LookupBuildTree LookupBuildTreeObj;
-    private Context context = this;
-    private ExpandableListView expandableListView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +85,6 @@ public class Lookup extends BaseActivity {
 
                         
                     } else {
-
 
                         LookupBuildTreeObj = new LookupBuildTree();
                         LookupBuildTreeObj.processRawJSON(rawJSON);
