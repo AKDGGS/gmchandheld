@@ -55,8 +55,8 @@ public class LookupBuildTree {
 			try {
 				processForDisplay(root, null);
 			} catch (Exception e) {
-				getDisplayDict().put("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.", null);
-				getKeyList().add("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.");
+				getDisplayDict().put("Something has gone wrong. Please try again. If the problem persists, please note the barcode and contact IT.", null);
+				getKeyList().add("Something has gone wrong. Please try again. If the problem persists, please note the barcode and contact IT.");
 			}
 		}
 
