@@ -51,20 +51,20 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-//	public void buildLookupLayout(String rawJSON) throws Exception {
-//
-//		JSONArray inputJson = new JSONArray((rawJSON));
-//
-//		InventoryObject root = parseTree(null, null, inputJson);
-//		if (root != null) {
-//			try {
-//				processForDisplay(root, getDisplayDict(), null, getKeyList());
-//			} catch (Exception e) {
-//				getDisplayDict().put("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.", null);
-//				getKeyList().add("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.");
-//			}
-//		}
-//	}
+	public void processRawJSON(String rawJSON) throws Exception {
+
+		JSONArray inputJson = new JSONArray((rawJSON));
+
+		InventoryObject root = parseTree(null, null, inputJson);
+		if (root != null) {
+			try {
+				processForDisplay(root, getDisplayDict(), null, getKeyList());
+			} catch (Exception e) {
+				getDisplayDict().put("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.", null);
+				getKeyList().add("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.");
+			}
+		}
+	}
 
 //*********************************************************************************************
 

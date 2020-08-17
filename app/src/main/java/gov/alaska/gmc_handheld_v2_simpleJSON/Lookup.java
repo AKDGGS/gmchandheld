@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.RequiresApi;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -116,19 +115,7 @@ public class Lookup extends BaseActivity {
                         activity.setContentView(linearLayout);
 
                         LookupBuildTreeObj = new LookupBuildTree();
-//                        LookupBuildTreeObj.buildLookupLayout(rawJSON);
-
-                        JSONArray inputJson = new JSONArray((rawJSON));
-
-                        InventoryObject root = LookupBuildTreeObj.parseTree(null, null, inputJson);
-                        if (root != null) {
-                            try {
-                                LookupBuildTreeObj.processForDisplay(root, LookupBuildTreeObj.getDisplayDict(), null, LookupBuildTreeObj.getKeyList());
-                            } catch (Exception e) {
-                                LookupBuildTreeObj.getDisplayDict().put("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.", null);
-                                LookupBuildTreeObj.getKeyList().add("Something has gone wrong. Please try again and if the problem persists, please note the barcode and contact IT.");
-                            }
-                        }
+                        LookupBuildTreeObj.processRawJSON(rawJSON);
 
                         //What appears on the screen
                         //Action Bar
