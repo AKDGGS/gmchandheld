@@ -8,12 +8,13 @@
         android:id="@+id/txtChild"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="child text"
-        android:textSize="25sp"
+        android:lineSpacingExtra="2dp"
         android:paddingStart="20dp"
-        android:paddingRight="20dp"
         android:paddingLeft="20dp"
-        android:lineSpacingExtra="2dp"/>
+        android:paddingRight="20dp"
+        android:text="child text"
+        android:textColor="#000000"
+        android:textSize="25sp" />
 
 
 </LinearLayout>

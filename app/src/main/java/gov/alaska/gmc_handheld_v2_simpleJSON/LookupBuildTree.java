@@ -64,7 +64,7 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private SpannableStringBuilder getStringForDisplay(InventoryObject o,
+	private SpannableStringBuilder getStringForDisplay( InventoryObject o,
 													   SpannableStringBuilder ssb, int depth) {
 
 		// This function deals with the children of the each container and their descendants.
@@ -72,7 +72,9 @@ public class LookupBuildTree {
 		// And, each of the 32 containers in PAL-840 has 9 children at the next depth.
 		// All descendants are grouped to immediate children of the container.
 
+
 		if (o.getName() != null) {
+
 			for (int i = 0; i < depth; i++) {
 				ssb.append("  ");
 			}
@@ -90,36 +92,54 @@ public class LookupBuildTree {
 					lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
 
+
+
 		for (int i = 0; i < o.getChildren().size(); i++) {
 			// Sorts internally.
 			Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
 			InventoryObject child = o.getChildren().get(i);
 
-			// Adds a new line after the first element of an array of elements handled by handleObject().
-			//Applies to Wells/Operators/etc...that have more than 1 element.
-			//Used to improve display readability.
-			if (i > 0
-					&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
-					&& (!o.getName().equals("ID"))) {
-				ssb.append("\n");
+			if(child.getName() != null){
+
+			}
+			if ((ssb.toString().contains("Collection") || ssb.toString().contains("Type")) && child.getName().equals("Name")) {
+				ssb.delete(ssb.length() - 1, ssb.length());
+				ssb.append(" ")
+						.append(child.getValue().toString())
+						.append("\n");
+
+			}else{
+
+				// Adds a new line after the first element of an array of elements handled by handleObject().
+				//Applies to Wells/Operators/etc...that have more than 1 element.
+				//Used to improve display readability.
+				if (i > 0
+						&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
+						&& (!o.getName().equals("ID"))) {
+					ssb.append("\n");
+				}
+
+
+				if (!"ID".equals(child.getName())) {
+					getStringForDisplay(child, ssb, depth + 1);
+				}
 			}
 
-			getStringForDisplay(o.getChildren().get(i), ssb, depth + 1);
 		}
+
 
 		return ssb;
 	}
 
 //*********************************************************************************************
 
-	public void processForDisplay(InventoryObject n,  ArrayList<SpannableStringBuilder> displayList) {
+	public void processForDisplay(InventoryObject n, ArrayList<SpannableStringBuilder> displayList) {
 		// This function deals with the root level and the children of root.
 		// The first two depths consist of null names and values, but both have children.
 		// Root has the number of containers the in the container.
 		// So, GMC-000076260 has 1 container while PAL-840 has 32 containers.
 
-		String barcode = null;
 		String ID = null;
 
 		// sorts externally
@@ -127,16 +147,9 @@ public class LookupBuildTree {
 
 		for (InventoryObject ch : n.getChildren()) {
 			//Used to define the label for the expandableList.
-			if ("Barcode".equals(ch.getName())) {
-				barcode = ch.getValue().toString();
-			}
 
 			if (n.getName() == null && "ID".equals(ch.getName())) {
 				ID = ch.getValue().toString();
-			}
-
-			if("Container Path".equals(ch.getName())){
-				containerPath = ch.getValue().toString();
 			}
 
 			if (ch.getName() != null) {
@@ -162,12 +175,10 @@ public class LookupBuildTree {
 			}
 		}
 
-		if (barcode != null && ID != null) {
-			getKeyList().add(barcode + "-" + ID);
-			getDisplayDict().put(barcode + "-" + ID, displayList);
-		} else if (ID != null) {
-			getKeyList().add(ID);
-			getDisplayDict().put(ID, displayList);
+		if (ID != null) {
+			String label = "Inventory ID " + ID;
+			getKeyList().add(label);
+			getDisplayDict().put(label, displayList);
 		}
 	}
 
@@ -216,7 +227,7 @@ public class LookupBuildTree {
 				case "boreholes":
 					if (o.has("ID")) {
 						newName = "Borehole " + o.get("ID");
-						io = new InventoryObject(newName, 100);
+						io = new InventoryObject(newName, null, 100);
 					} else {
 						io = new InventoryObject("Boreholes", 100);
 					}
@@ -241,10 +252,20 @@ public class LookupBuildTree {
 					}
 					break;
 				case "prospect":
-					io = new InventoryObject("Prospect", null, 0);
+					if (o.has("ID")) {
+						newName = "Prospect " + o.get("ID");
+						io = new InventoryObject(newName, null, 0);
+					} else {
+						io = new InventoryObject("Prospect", null, 0);
+					}
 					break;
 				case "shotline":
-					io = new InventoryObject("Shotline");
+					if (o.has("ID")) {
+						newName = "Shotline " + o.get("ID");
+						io = new InventoryObject(newName);
+					} else {
+						io = new InventoryObject("Shotline");
+					}
 					break;
 				case "shotpoints":
 					if (o.has("ID")) {
@@ -281,7 +302,8 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
+	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws
+			Exception {
 		InventoryObject io;
 
 		if (name == null) {
@@ -330,7 +352,8 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private InventoryObject handleSimple(Object parent, String name, Object o) throws JSONException {
+	private InventoryObject handleSimple(Object parent, String name, Object o) throws
+			JSONException {
 		// Simple values should always have a name
 		if (name == null) {
 			return null;
@@ -356,7 +379,7 @@ public class LookupBuildTree {
 			case "completionStatus":
 				return new InventoryObject("Completion Status", o, 69);
 			case "containerPath":
-				return new InventoryObject("Container Path", o, 1000);
+				return new InventoryObject("Container", o, 1000);
 			case "coreNumber":
 				return new InventoryObject("Core Number", o, 900);
 			case "current":
@@ -424,9 +447,9 @@ public class LookupBuildTree {
 			case "remark":
 				return new InventoryObject("Remark", o, 900);
 			case "sampleNumber":
-				return new InventoryObject("Sample Number", o);
+				return new InventoryObject("Sample Number", o, 70);
 			case "setNumber":
-				return new InventoryObject("Set Number", o);
+				return new InventoryObject("Set Number", o, 1000);
 			case "spudDate":
 				return new InventoryObject("Spud Date", o, 60);
 			case "type":

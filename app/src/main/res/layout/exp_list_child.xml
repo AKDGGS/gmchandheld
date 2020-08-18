@@ -8,10 +8,11 @@
         android:id="@+id/txtChild"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="child text"
         android:paddingStart="10dp"
+        android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:paddingLeft="10dp" />
+        android:text="child text"
+        android:textColor="#000000" />
 
 
 </LinearLayout>
