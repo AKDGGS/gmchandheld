@@ -102,8 +102,15 @@ public class Lookup extends BaseActivity {
 						expandableListView = findViewById(R.id.expandableListView);
 						listAdapter = new LookupExpListAdapter(Lookup.this, LookupBuildTreeObj.getKeyList(), LookupBuildTreeObj.getDisplayDict());
 						expandableListView.setAdapter(listAdapter);
-						if (listAdapter.getGroupCount() == 1) {
-							expandableListView.expandGroup(0);
+
+
+						if (listAdapter.getGroupCount() >= 1) {
+							//expands only the first element
+//							expandableListView.expandGroup(0);
+							//expands all
+							for (int i = 0; i< listAdapter.getGroupCount(); i++) {
+								expandableListView.expandGroup(i);
+							}
 						}
 					}
 				} catch (IOException |

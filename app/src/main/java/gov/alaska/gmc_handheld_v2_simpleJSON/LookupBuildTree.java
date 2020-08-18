@@ -80,16 +80,55 @@ public class LookupBuildTree {
 			}
 			int lengthOfSsb = ssb.length();
 			if (o.getValue() != null) {
+				switch (o.getName()){
+					case "Current":
+						if(true == (boolean) o.getValue()){
+							ssb.append("Current")
+									.append("\n");
+						}else{
+							ssb.append("Not Current");
+							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Current".length(),
+									lengthOfSsb + "Not Current".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+							ssb.append("\n");
+						}
+						break;
+					case "Federal":
+						if(true == (boolean) o.getValue()){
+							ssb.append("Federal")
+									.append("\n");
+						}else{
+							ssb.append("Non-Federal");
+							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Federal".length(),
+									lengthOfSsb + "Non-Federal".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+							ssb.append("\n");
+						}
+						break;
+					case "Onshore":
+						if(true == (boolean) o.getValue()){
+							ssb.append("Onshore")
+									.append("\n");
+						}else{
+							ssb.append("Offshore");
+							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Onshore".length(),
+									lengthOfSsb + "Offshore".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+							ssb.append("\n");
+						}
+						break;
 
-				ssb.append(o.getName());
-				ssb.append(" ");
-				ssb.append(o.getValue().toString());
-				ssb.append("\n");
+					default:
+						ssb.append(o.getName());
+						ssb.append(" ");
+						ssb.append(o.getValue().toString());
+						ssb.append("\n");
+						break;
+				}
+
 			} else {
 				ssb.append(o.getName()).append("\n");
 			}
 			ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 					lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+
 		}
 
 
@@ -100,32 +139,31 @@ public class LookupBuildTree {
 
 			InventoryObject child = o.getChildren().get(i);
 
-			if(child.getName() != null){
+			if(child.getName() != null) {
 
-			}
-			if ((ssb.toString().contains("Collection") || ssb.toString().contains("Type")) && child.getName().equals("Name")) {
-				ssb.delete(ssb.length() - 1, ssb.length());
-				ssb.append(" ")
-						.append(child.getValue().toString())
-						.append("\n");
+				if ((ssb.toString().contains("Collection") || ssb.toString().contains("Type")) && child.getName().equals("Name")) {
+					ssb.delete(ssb.length() - 1, ssb.length());
+					ssb.append(" ")
+							.append(child.getValue().toString())
+							.append("\n");
 
-			}else{
+				} else {
 
-				// Adds a new line after the first element of an array of elements handled by handleObject().
-				//Applies to Wells/Operators/etc...that have more than 1 element.
-				//Used to improve display readability.
-				if (i > 0
-						&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
-						&& (!o.getName().equals("ID"))) {
-					ssb.append("\n");
+					// Adds a new line after the first element of an array of elements handled by handleObject().
+					//Applies to Wells/Operators/etc...that have more than 1 element.
+					//Used to improve display readability.
+					if (i > 0
+							&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
+							&& (!o.getName().equals("ID"))) {
+						ssb.append("\n");
+					}
+
+
+					if (!"ID".equals(child.getName())) {
+						getStringForDisplay(child, ssb, depth + 1);
+					}
 				}
-
-
-				if (!"ID".equals(child.getName())) {
-					getStringForDisplay(child, ssb, depth + 1);
-				}
 			}
-
 		}
 
 
