@@ -74,8 +74,10 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		}
 
 		TextView txtParent = convertView.findViewById(R.id.txtParent);
-
-		if (inventoryDetailsDict.toString().contains("Wells")) {
+		if (inventoryDetailsDict.toString().contains("Boreholes") && inventoryDetailsDict.toString().contains("Outcrops")  ) {
+			txtParent.setBackgroundColor(Color.parseColor("#ffb2b1ba"));
+		} else
+			if (inventoryDetailsDict.toString().contains("Wells")) {
 			txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
 		} else if (inventoryDetailsDict.toString().contains("Boreholes") | inventoryDetailsDict.toString().contains("Prospect")) {
 			txtParent.setBackgroundColor(Color.parseColor("#ffcddfce"));
@@ -107,14 +109,35 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 
 		//Testing the code below depends on Chris.
-
-		if (getChild(groupPosition, childPosition).toString().contains("Well")) {
+		if (inventoryDetailsDict.toString().contains("Boreholes") && inventoryDetailsDict.toString().contains("Outcrops")){
 			if (childPosition % 2 != 0) {
-				txtChild.setBackgroundColor(Color.parseColor("#c892cbff"));
-			} else {
-				txtChild.setBackgroundColor(Color.parseColor("#6492cbff"));
+				txtChild.setBackgroundColor(Color.parseColor("#fff3f5fe"));
+			}else{
+				txtChild.setBackgroundColor(Color.parseColor("#ffd9dddf"));
 			}
-		} else if (inventoryDetailsDict.toString().contains("Boreholes") | inventoryDetailsDict.toString().contains("Prospect")) {
+		}else
+		if (inventoryDetailsDict.toString().contains("Wells")) {
+			if (childPosition % 2 != 0) {
+				txtChild.setBackgroundColor(Color.parseColor("#ffb4dcff"));
+			}else{
+				txtChild.setBackgroundColor(Color.parseColor("#ffd2eaff"));
+			}
+		}
+
+//		} else if (getChild(groupPosition, childPosition).toString().contains("Borehole")) {
+//			txtChild.setBackgroundColor(Color.parseColor("#c8cddfce"));
+//
+//		} else if (getChild(groupPosition, childPosition).toString().contains("Outcrop")) {
+//			txtChild.setBackgroundColor(Color.parseColor("#ffffffb4"));
+//		} else {
+//			if (childPosition % 2 != 0) {
+//				txtChild.setBackgroundColor(Color.parseColor("#ffd9dddf"));
+//			} else {
+//				txtChild.setBackgroundColor(Color.parseColor("#fff3f5fe"));
+//			}
+//		}
+
+		else if (inventoryDetailsDict.toString().contains("Boreholes") | inventoryDetailsDict.toString().contains("Prospect")) {
             if (childPosition % 2 != 0) {
                 txtChild.setBackgroundColor(Color.parseColor("#c8cddfce"));
             }else{

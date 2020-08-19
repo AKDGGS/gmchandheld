@@ -64,15 +64,16 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private SpannableStringBuilder getStringForDisplay( InventoryObject o,
-													   SpannableStringBuilder ssb, int depth) {
+	private SpannableStringBuilder getStringForDisplay(InventoryObject o, int depth, ArrayList<SpannableStringBuilder> displayList) {
 
 		// This function deals with the children of the each container and their descendants.
 		// So, GMC-000076260 has 12 children at the next depth.  And some of the 12 descendants have additional descendants.
 		// And, each of the 32 containers in PAL-840 has 9 children at the next depth.
 		// All descendants are grouped to immediate children of the container.
+//		Sorts internally.
+		Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
-
+		SpannableStringBuilder ssb = new SpannableStringBuilder();
 		if (o.getName() != null) {
 
 			for (int i = 0; i < depth; i++) {
@@ -80,66 +81,65 @@ public class LookupBuildTree {
 			}
 			int lengthOfSsb = ssb.length();
 			if (o.getValue() != null) {
-				switch (o.getName()){
-					case "Current":
-						if(true == (boolean) o.getValue()){
-							ssb.append("Current")
-									.append("\n");
-						}else{
-							ssb.append("Not Current");
-							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Current".length(),
-									lengthOfSsb + "Not Current".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-							ssb.append("\n");
-						}
-						break;
-					case "Federal":
-						if(true == (boolean) o.getValue()){
-							ssb.append("Federal")
-									.append("\n");
-						}else{
-							ssb.append("Non-Federal");
-							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Federal".length(),
-									lengthOfSsb + "Non-Federal".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-							ssb.append("\n");
-						}
-						break;
-					case "Onshore":
-						if(true == (boolean) o.getValue()){
-							ssb.append("Onshore")
-									.append("\n");
-						}else{
-							ssb.append("Offshore");
-							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Onshore".length(),
-									lengthOfSsb + "Offshore".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-							ssb.append("\n");
-						}
-						break;
+				switch (o.getName()) {
+//					case "Current":
+//						if(true == (boolean) o.getValue()){
+//							ssb.append("Current")
+//									.append("\n");
+//						}else{
+//							ssb.append("Not Current");
+//							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Current".length(),
+//									lengthOfSsb + "Not Current".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+//							ssb.append("\n");
+//						}
+//						break;
+//					case "Federal":
+//						if(true == (boolean) o.getValue()){
+//							ssb.append("Federal")
+//									.append("\n");
+//						}else{
+//							ssb.append("Non-Federal");
+//							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Federal".length(),
+//									lengthOfSsb + "Non-Federal".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+//							ssb.append("\n");
+//						}
+//						break;
+//					case "Onshore":
+//						if(true == (boolean) o.getValue()){
+//							ssb.append("Onshore")
+//									.append("\n");
+//						}else{
+//							ssb.append("Offshore");
+//							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Onshore".length(),
+//									lengthOfSsb + "Offshore".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+//							ssb.append("\n");
+//						}
+//						break;
 
 					default:
 						ssb.append(o.getName());
 						ssb.append(" ");
 						ssb.append(o.getValue().toString());
 						ssb.append("\n");
+						displayList.add(ssb);
 						break;
 				}
 
 			} else {
 				ssb.append(o.getName()).append("\n");
+				displayList.add(ssb);
 			}
 			ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 					lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 
 		}
 
-
-
 		for (int i = 0; i < o.getChildren().size(); i++) {
-			// Sorts internally.
-			Collections.sort(o.getChildren(), new SortInventoryObjectList());
-
 			InventoryObject child = o.getChildren().get(i);
 
-			if(child.getName() != null) {
+
+
+			if (child.getName() != null) {
 
 				if ((ssb.toString().contains("Collection") || ssb.toString().contains("Type")) && child.getName().equals("Name")) {
 					ssb.delete(ssb.length() - 1, ssb.length());
@@ -148,23 +148,20 @@ public class LookupBuildTree {
 							.append("\n");
 
 				} else {
-
-					// Adds a new line after the first element of an array of elements handled by handleObject().
-					//Applies to Wells/Operators/etc...that have more than 1 element.
-					//Used to improve display readability.
-					if (i > 0
-							&& child.getName().contains(o.getName().substring(0, o.getName().length() - 1))
-							&& (!o.getName().equals("ID"))) {
-						ssb.append("\n");
-					}
-
-
 					if (!"ID".equals(child.getName())) {
-						getStringForDisplay(child, ssb, depth + 1);
+						getStringForDisplay(child, depth + 1, displayList);
 					}
 				}
 			}
 		}
+
+		//Removes a trailing "\n"
+		if (ssb.length() > 0) {
+			ssb.delete(ssb.length() - 1, ssb.length());
+		}
+
+
+//		displayList.add(ssb);
 
 
 		return ssb;
@@ -197,14 +194,17 @@ public class LookupBuildTree {
 
 				// getStringForDisplay() processes the string for display.
 				// It makes keys bold and it groups children with parents.
-				getStringForDisplay(ch, ssb, 0);
+//				getStringForDisplay(ch, ssb, 0);
+				getStringForDisplay(ch, 0, displayList);
+
 
 				//Removes a trailing "\n"
 				if (ssb.length() > 0) {
 					ssb.delete(ssb.length() - 1, ssb.length());
 				}
 
-				displayList.add(ssb);
+//					displayList.add(ssb);
+
 
 			} else if (n.getName() == null & ch.getChildren().size() > 0) {
 				// Creates a new displayList for each container.  GMC-000076260 consists of one container.  PAL-840 consists of 32 containers.
@@ -319,9 +319,9 @@ public class LookupBuildTree {
 				case "wells":
 					if (o.has("ID")) {
 						newName = "Well " + o.get("ID");
-						io = new InventoryObject(newName, null, 100);
+						io = new InventoryObject(newName, null, 1000);
 					} else {
-						io = new InventoryObject("Wells", null, 100);
+						io = new InventoryObject("Wells", null, 1000);
 					}
 					break;
 				default:
