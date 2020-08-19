@@ -31,6 +31,8 @@ public class Lookup extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup);
+
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		// Gets the API level
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {

@@ -64,7 +64,7 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private SpannableStringBuilder getStringForDisplay(InventoryObject o, int depth, ArrayList<SpannableStringBuilder> displayList) {
+	private void getStringForDisplay(InventoryObject o, int depth, ArrayList<SpannableStringBuilder> displayList) {
 
 		// This function deals with the children of the each container and their descendants.
 		// So, GMC-000076260 has 12 children at the next depth.  And some of the 12 descendants have additional descendants.
@@ -84,27 +84,27 @@ public class LookupBuildTree {
 				switch (o.getName()) {
 					case "Current":
 						lengthOfSsb = ssb.length();
-						if(true == (boolean) o.getValue()){
+						if (true == (boolean) o.getValue()) {
 							ssb.append("Current")
 									.append("\n");
 							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 									lengthOfSsb + "Current".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-						}else{
+						} else {
 							ssb.append("Not Current");
-							ssb.setSpan(new StyleSpan(BOLD), 0,
-									"Not Current".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
+									lengthOfSsb + "Not Current".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 							ssb.append("\n");
 						}
 						displayList.add(ssb);
 						break;
 					case "Federal":
 						lengthOfSsb = ssb.length();
-						if(true == (boolean) o.getValue()){
+						if (true == (boolean) o.getValue()) {
 							ssb.append("Federal")
 									.append("\n");
 							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 									lengthOfSsb + "Federal".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-						}else{
+						} else {
 							ssb.append("Non-Federal");
 							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 									lengthOfSsb + "Non-Federal".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -114,12 +114,12 @@ public class LookupBuildTree {
 						break;
 					case "Onshore":
 						lengthOfSsb = ssb.length();
-						if(true == (boolean) o.getValue()){
+						if (true == (boolean) o.getValue()) {
 							ssb.append("Onshore")
 									.append("\n");
 							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 									lengthOfSsb + "Onshore".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-						}else{
+						} else {
 							ssb.append("Offshore");
 							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 									lengthOfSsb + "Offshore".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -135,7 +135,7 @@ public class LookupBuildTree {
 						ssb.append(o.getValue().toString());
 						ssb.append("\n");
 						ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
-								lengthOfSsb  + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+								lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 						displayList.add(ssb);
 						break;
 				}
@@ -147,8 +147,6 @@ public class LookupBuildTree {
 						lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 				displayList.add(ssb);
 			}
-
-
 		}
 
 		for (int i = 0; i < o.getChildren().size(); i++) {
@@ -174,12 +172,6 @@ public class LookupBuildTree {
 		if (ssb.length() > 0) {
 			ssb.delete(ssb.length() - 1, ssb.length());
 		}
-
-
-//		displayList.add(ssb);
-
-
-		return ssb;
 	}
 
 //*********************************************************************************************
@@ -203,13 +195,9 @@ public class LookupBuildTree {
 			}
 
 			if (ch.getName() != null) {
-
 				// getStringForDisplay() processes the string for display.
 				// It makes keys bold and it groups children with parents.
-//				getStringForDisplay(ch, ssb, 0);
 				getStringForDisplay(ch, 0, displayList);
-
-
 
 			} else if (n.getName() == null & ch.getChildren().size() > 0) {
 				// Creates a new displayList for each container.  GMC-000076260 consists of one container.  PAL-840 consists of 32 containers.
@@ -446,7 +434,9 @@ public class LookupBuildTree {
 			case "intervalBottom": {
 				if (parent instanceof JSONObject) {
 					JSONObject pjo = (JSONObject) parent;
-					if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
+					if (pjo.has("intervalTop")){
+						return null;
+					}else if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
 						String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr");
 						return new InventoryObject("Interval Bottom", val, 902);
 					}
@@ -456,7 +446,10 @@ public class LookupBuildTree {
 			case "intervalTop": {
 				if (parent instanceof JSONObject) {
 					JSONObject pjo = (JSONObject) parent;
-					if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
+					if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr") && pjo.has("intervalBottom")) {
+						String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr") + " - " + pjo.get("intervalBottom") + " " + pjo.getJSONObject("intervalUnit").get("abbr");
+						return new InventoryObject("Interval", val, 902);
+					} else if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
 						String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr");
 						return new InventoryObject("Interval Top", val, 902);
 					}

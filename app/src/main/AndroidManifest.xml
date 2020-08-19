@@ -29,6 +29,7 @@
         <activity
             android:name="gov.alaska.gmc_handheld_v2_simpleJSON.Lookup"
             android:theme="@style/Theme.AppCompat.DayNight"
+            android:parentActivityName=".GetBarcode"
            />
 
         <activity
