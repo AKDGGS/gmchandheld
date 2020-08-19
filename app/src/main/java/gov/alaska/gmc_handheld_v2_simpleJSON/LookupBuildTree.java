@@ -79,65 +79,80 @@ public class LookupBuildTree {
 			for (int i = 0; i < depth; i++) {
 				ssb.append("  ");
 			}
-			int lengthOfSsb = ssb.length();
+			int lengthOfSsb;
 			if (o.getValue() != null) {
 				switch (o.getName()) {
-//					case "Current":
-//						if(true == (boolean) o.getValue()){
-//							ssb.append("Current")
-//									.append("\n");
-//						}else{
-//							ssb.append("Not Current");
-//							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Current".length(),
-//									lengthOfSsb + "Not Current".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-//							ssb.append("\n");
-//						}
-//						break;
-//					case "Federal":
-//						if(true == (boolean) o.getValue()){
-//							ssb.append("Federal")
-//									.append("\n");
-//						}else{
-//							ssb.append("Non-Federal");
-//							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Federal".length(),
-//									lengthOfSsb + "Non-Federal".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-//							ssb.append("\n");
-//						}
-//						break;
-//					case "Onshore":
-//						if(true == (boolean) o.getValue()){
-//							ssb.append("Onshore")
-//									.append("\n");
-//						}else{
-//							ssb.append("Offshore");
-//							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb - "Onshore".length(),
-//									lengthOfSsb + "Offshore".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-//							ssb.append("\n");
-//						}
-//						break;
+					case "Current":
+						lengthOfSsb = ssb.length();
+						if(true == (boolean) o.getValue()){
+							ssb.append("Current")
+									.append("\n");
+							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
+									lengthOfSsb + "Current".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+						}else{
+							ssb.append("Not Current");
+							ssb.setSpan(new StyleSpan(BOLD), 0,
+									"Not Current".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+							ssb.append("\n");
+						}
+						displayList.add(ssb);
+						break;
+					case "Federal":
+						lengthOfSsb = ssb.length();
+						if(true == (boolean) o.getValue()){
+							ssb.append("Federal")
+									.append("\n");
+							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
+									lengthOfSsb + "Federal".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+						}else{
+							ssb.append("Non-Federal");
+							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
+									lengthOfSsb + "Non-Federal".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+							ssb.append("\n");
+						}
+						displayList.add(ssb);
+						break;
+					case "Onshore":
+						lengthOfSsb = ssb.length();
+						if(true == (boolean) o.getValue()){
+							ssb.append("Onshore")
+									.append("\n");
+							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
+									lengthOfSsb + "Onshore".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+						}else{
+							ssb.append("Offshore");
+							ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
+									lengthOfSsb + "Offshore".length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+							ssb.append("\n");
+						}
+						displayList.add(ssb);
+						break;
 
 					default:
+						lengthOfSsb = ssb.length();
 						ssb.append(o.getName());
 						ssb.append(" ");
 						ssb.append(o.getValue().toString());
 						ssb.append("\n");
+						ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
+								lengthOfSsb  + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 						displayList.add(ssb);
 						break;
 				}
 
 			} else {
+				lengthOfSsb = ssb.length();
 				ssb.append(o.getName()).append("\n");
+				ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
+						lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 				displayList.add(ssb);
 			}
-			ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
-					lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+
 
 		}
 
 		for (int i = 0; i < o.getChildren().size(); i++) {
 			InventoryObject child = o.getChildren().get(i);
-
-
 
 			if (child.getName() != null) {
 
@@ -188,22 +203,12 @@ public class LookupBuildTree {
 			}
 
 			if (ch.getName() != null) {
-				// Each container defined below has its own displayList.
-				// Each non-null name at the first depth below the container gets a SpannableStringBuilder
-				SpannableStringBuilder ssb = new SpannableStringBuilder();
 
 				// getStringForDisplay() processes the string for display.
 				// It makes keys bold and it groups children with parents.
 //				getStringForDisplay(ch, ssb, 0);
 				getStringForDisplay(ch, 0, displayList);
 
-
-				//Removes a trailing "\n"
-				if (ssb.length() > 0) {
-					ssb.delete(ssb.length() - 1, ssb.length());
-				}
-
-//					displayList.add(ssb);
 
 
 			} else if (n.getName() == null & ch.getChildren().size() > 0) {
