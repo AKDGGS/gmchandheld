@@ -25,7 +25,7 @@ public class LookupBuildTree {
 	private List<String> KeyList;
 	private Map<String, List<SpannableStringBuilder>> DisplayDict;
 	private String barcode;
-	private String ID;
+	private int ID;
 
 	public LookupBuildTree() {
 		KeyList = new ArrayList<>();
@@ -40,6 +40,7 @@ public class LookupBuildTree {
 		return DisplayDict;
 	}
 
+
 	public String getBarcode() {
 		return barcode;
 	}
@@ -48,11 +49,11 @@ public class LookupBuildTree {
 		this.barcode = barcode;
 	}
 
-	public String getID() {
+	public int getID() {
 		return ID;
 	}
 
-	public void setID(String ID) {
+	public void setID(int ID) {
 		this.ID = ID;
 	}
 
@@ -66,18 +67,10 @@ public class LookupBuildTree {
 
 		if (root != null) {
 			try {
+					getStringForDisplay(root, 0, null, null, getDisplayDict());
 
-				// iterates through the top level nodes.  This level contains the number of containers in the inventory item.
-				// GMC-000076260 has 1 container.
-				// PAL-840 has 32 containers.
-				for (InventoryObject ch : root.getChildren()) {
-					LinkedList<SpannableStringBuilder> displayList = new LinkedList<>();
+					getDisplayDict();
 
-					getStringForDisplay(ch, 0, displayList);
-					String label = "ID: " + getID() + " / Barcode: " + getBarcode();
-					getKeyList().add(label);
-					getDisplayDict().put(label, displayList);
-				}
 			} catch (Exception e) {
 				getDisplayDict().put("Something has gone wrong. Please try again. If the problem persists, please note the barcode and contact IT.", null);
 				getKeyList().add("Something has gone wrong. Please try again. If the problem persists, please note the barcode and contact IT.");
@@ -88,13 +81,19 @@ public class LookupBuildTree {
 
 //*********************************************************************************************
 
-	private void getStringForDisplay(InventoryObject o, int depth, LinkedList<SpannableStringBuilder> displayList) {
+	private void getStringForDisplay(InventoryObject o, int depth, String currKey, LinkedList<SpannableStringBuilder> displayList, Map<String, List<SpannableStringBuilder>> dict) {
 
 		// This function deals with the children of the each container and their descendants.
 		// So, GMC-000076260 has 12 children at the next depth.  And some of the 12 descendants have additional descendants.
 		// And, each of the 32 containers in PAL-840 have 9 children at the next depth.
 
 		// Sorts internally.
+		if ( depth == 1){
+			currKey = o.getName();
+			getKeyList().add(currKey);
+			displayList = new LinkedList<>();
+		}
+
 		Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
 		SpannableStringBuilder ssb = new SpannableStringBuilder();
@@ -116,6 +115,7 @@ public class LookupBuildTree {
 					ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 							lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 					displayList.add(ssb);
+					dict.put(currKey, displayList);
 
 				} else {
 					lengthOfSsb = ssb.length();
@@ -123,6 +123,7 @@ public class LookupBuildTree {
 					ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 							lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 					displayList.add(ssb);
+					dict.put(currKey, displayList);
 				}
 			}
 		}
@@ -139,7 +140,7 @@ public class LookupBuildTree {
 				// Don't display the ID. The ID is either irrelevant or
 				// already displayed in the name
 				if (!"ID".equals(child.getName())) {
-					getStringForDisplay(child, depth + 1, displayList);
+					getStringForDisplay(child, depth + 1, currKey, displayList, dict);
 				}
 			}
 		}
@@ -178,9 +179,10 @@ public class LookupBuildTree {
 
 	private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
 
-		String newName;
 		InventoryObject io;
+
 		if (name == null) {
+			name = "ID " + o.opt("ID") + " / " + o.opt("barcode");
 			io = new InventoryObject(name);
 		} else {
 			switch (name) {
@@ -195,9 +197,9 @@ public class LookupBuildTree {
 				case "boreholes": {
 					String id = o.optString("ID");
 					if (id != null) {
-						io = new InventoryObject("Borehole (ID " + id + ")", null, 100);
+						io = new InventoryObject("Borehole ID " + id, null, 100);
 					} else {
-						io = new InventoryObject("Boreholes", 100);
+						io = new InventoryObject("Borehole", 100);
 					}
 					break;
 				}
@@ -206,22 +208,24 @@ public class LookupBuildTree {
 						return new InventoryObject("Collection", o.get("name"), 500);
 					}
 					return null;
-				case "operators":
+				case "operators": {
+					String newName;
 					if (o.has("current")) {
 						if (true == (boolean) o.get("current")) {
 							newName = "Operator " + "(Current)";
 						} else {
-							newName = "Operator " + "(Not Current)";
+							newName = "Operator " + "(Previous)";
 						}
 						io = new InventoryObject(newName, null, 50);
 					} else {
 						io = new InventoryObject("Operator", null, 50);
 					}
 					break;
+				}
 				case "outcrops": {
 					String id = o.optString("ID");
 					if (id != null) {
-						io = new InventoryObject("Outcrop (ID " + id + ")", null, 100);
+						io = new InventoryObject("Outcrop ID " + id, null, 100);
 					} else {
 						io = new InventoryObject("Outcrop", null, 100);
 					}
@@ -230,7 +234,7 @@ public class LookupBuildTree {
 				case "prospect": {
 					String id = o.optString("ID");
 					if (id != null) {
-						io = new InventoryObject("Prospect (ID " + id + ")", null, 0);
+						io = new InventoryObject("Prospect ID " + id, null, 0);
 					} else {
 						io = new InventoryObject("Prospect", null, 0);
 					}
@@ -239,7 +243,7 @@ public class LookupBuildTree {
 				case "shotline": {
 					String id = o.optString("ID");
 					if (id != null) {
-						io = new InventoryObject("Shotline (ID " + id + ")");
+						io = new InventoryObject("Shotline ID " + id);
 					} else {
 						io = new InventoryObject("Shotline");
 					}
@@ -247,8 +251,8 @@ public class LookupBuildTree {
 				}
 				case "shotpoints": {
 					String id = o.optString("ID");
-					if(id != null){
-						io = new InventoryObject("Shotpoints (ID " + id + ")", null, 50);
+					if (id != null) {
+						io = new InventoryObject("Shotpoints ID " + id, null, 50);
 					} else {
 						io = new InventoryObject("Shotpoints", null, 50);
 					}
@@ -261,8 +265,8 @@ public class LookupBuildTree {
 					return null;
 				case "wells":
 					String id = o.optString("ID");
-					if(id != null){
-						io = new InventoryObject("Well (ID " + id + ")", null, 1000);
+					if (id != null) {
+						io = new InventoryObject("Well ID " + id, null, 1000);
 					} else {
 						io = new InventoryObject("Wells", null, 1000);
 					}
@@ -410,7 +414,7 @@ public class LookupBuildTree {
 				if (parent instanceof JSONObject) {
 					JSONObject pjo = (JSONObject) parent;
 					if (pjo.has("barcode")) {
-						setID(o.toString());
+						setID((Integer) o);
 					}
 				}
 				return new InventoryObject("ID", o, 1000);
