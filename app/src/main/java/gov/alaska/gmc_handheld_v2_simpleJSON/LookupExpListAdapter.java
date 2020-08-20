@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,15 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 	final Context context;
 	final List<String> inventoryLabels;
 	final Map<String, List<SpannableStringBuilder>> inventoryDetailsDict;
+	private String type = null;
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	public LookupExpListAdapter(Context context, List<String> inventoryLabels, Map<String, List<SpannableStringBuilder>> inventoryDetailsDict) {
 		this.context = context;
@@ -73,20 +83,37 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			convertView = inflater.inflate(R.layout.exp_list_parent, null);
 		}
 
+		List<String> myList = Arrays.asList("Wells", "Outcrops", "Boreholes", "Shotpoints");
+		int count = 0;
+		for (String s : myList) {
+			if(inventoryDetailsDict.toString().contains(s)){
+				count++;
+				setType(s);
+			}
+		}
+
+		if(type == null || count > 1){
+			setType("No Type");
+		}
+
 		TextView txtParent = convertView.findViewById(R.id.txtParent);
-		if (inventoryDetailsDict.toString().contains("Boreholes") && inventoryDetailsDict.toString().contains("Outcrops")  ) {
-			txtParent.setBackgroundColor(Color.parseColor("#ffb2b1ba"));
-		} else
-			if (inventoryDetailsDict.toString().contains("Wells")) {
-			txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
-		} else if (inventoryDetailsDict.toString().contains("Boreholes") | inventoryDetailsDict.toString().contains("Prospect")) {
-			txtParent.setBackgroundColor(Color.parseColor("#ffcddfce"));
-		} else if (inventoryDetailsDict.toString().contains("Outcrops")) {
-			txtParent.setBackgroundColor(Color.parseColor("#ffffffb4"));
-		} else if (inventoryDetailsDict.toString().contains("Shotpoints")) {
-			txtParent.setBackgroundColor(Color.parseColor("#ffff8a86"));
-		} else {
-			txtParent.setBackgroundColor(Color.TRANSPARENT);
+
+
+		switch(getType()){
+			case "Wells":
+				txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
+				break;
+			case "Boreholes":
+				txtParent.setBackgroundColor(Color.parseColor("#ff78c67b"));
+				break;
+			case "Outcrops":
+				txtParent.setBackgroundColor(Color.parseColor("#ffffea4b")); //"#ffffff87"
+				break;
+			case "Shotpoints":
+				txtParent.setBackgroundColor(Color.parseColor("#ffff8a86"));
+				break;
+			default:
+				txtParent.setBackgroundColor(Color.parseColor("#ffb2b1ba") );
 		}
 
 		txtParent.setText(lang);
@@ -107,53 +134,45 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 		TextView txtChild = convertView.findViewById(R.id.txtChild);
 
-
-		//Testing the code below depends on Chris.
-		if (inventoryDetailsDict.toString().contains("Boreholes") && inventoryDetailsDict.toString().contains("Outcrops")){
-			if (childPosition % 2 != 0) {
-				txtChild.setBackgroundColor(Color.parseColor("#fff3f5fe"));
-			}else{
-				txtChild.setBackgroundColor(Color.parseColor("#ffd9dddf"));
-			}
-		}else
-		if (inventoryDetailsDict.toString().contains("Wells")) {
-			if (childPosition % 2 != 0) {
-				txtChild.setBackgroundColor(Color.parseColor("#ffb4dcff"));
-			}else{
-				txtChild.setBackgroundColor(Color.parseColor("#ffd2eaff"));
-			}
+		switch(getType()){
+			case "Boreholes":
+			case "Prospect":
+				if (childPosition % 2 != 0) {
+					txtChild.setBackgroundColor(Color.parseColor("#ffb2ddb4"));
+				}else{
+					txtChild.setBackgroundColor(Color.parseColor("#ffc3f1c5"));
+				}
+				break;
+			case "Wells":
+				if (childPosition % 2 != 0) {
+					txtChild.setBackgroundColor(Color.parseColor("#ffb9e0ff")); //Light blue
+				}else{
+					txtChild.setBackgroundColor(Color.parseColor("#ffd2ebff")); //very light blue
+				}
+				break;
+			case "Outcrops":
+				if (childPosition % 2 != 0) {
+					txtChild.setBackgroundColor(Color.parseColor("#fffff7b9"));
+				}else{
+					txtChild.setBackgroundColor(Color.parseColor("#fffff49b"));
+				}
+				break;
+			case "Shotpoints":
+				if (childPosition % 2 != 0) {
+					txtChild.setBackgroundColor(Color.parseColor("#ffffcecd"));
+				}else{
+					txtChild.setBackgroundColor(Color.parseColor("#ffffbab9"));
+				}
+				break;
+			case "No Type":
+				if (childPosition % 2 != 0) {
+					txtChild.setBackgroundColor(Color.parseColor("#ffeaedf4"));
+				}else{
+					txtChild.setBackgroundColor(Color.parseColor("#ffd8dae1"));
+				}
+				break;
 		}
 
-//		} else if (getChild(groupPosition, childPosition).toString().contains("Borehole")) {
-//			txtChild.setBackgroundColor(Color.parseColor("#c8cddfce"));
-//
-//		} else if (getChild(groupPosition, childPosition).toString().contains("Outcrop")) {
-//			txtChild.setBackgroundColor(Color.parseColor("#ffffffb4"));
-//		} else {
-//			if (childPosition % 2 != 0) {
-//				txtChild.setBackgroundColor(Color.parseColor("#ffd9dddf"));
-//			} else {
-//				txtChild.setBackgroundColor(Color.parseColor("#fff3f5fe"));
-//			}
-//		}
-
-		else if (inventoryDetailsDict.toString().contains("Boreholes") | inventoryDetailsDict.toString().contains("Prospect")) {
-            if (childPosition % 2 != 0) {
-                txtChild.setBackgroundColor(Color.parseColor("#c8cddfce"));
-            }else{
-                txtChild.setBackgroundColor(Color.parseColor("#64cddfce"));
-            }
-		} else if (inventoryDetailsDict.toString().contains("Outcrops")) {
-			txtChild.setBackgroundColor(Color.parseColor("#ffffffb4"));
-		} else if (inventoryDetailsDict.toString().contains("Shotpoints")) {
-            if (childPosition % 2 != 0) {
-                txtChild.setBackgroundColor(Color.parseColor("#7dff8a86"));
-            }else{
-                txtChild.setBackgroundColor(Color.parseColor("#32ff8a86"));
-            }
-		} else {
-			txtChild.setBackgroundColor(Color.TRANSPARENT);
-		}
 
 		int width = getScreenWidth();
 //        System.out.println("Width: " + width );
