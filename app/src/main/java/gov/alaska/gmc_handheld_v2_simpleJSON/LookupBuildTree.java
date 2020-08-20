@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,13 +25,12 @@ public class LookupBuildTree {
 	private List<String> KeyList;
 	private Map<String, List<SpannableStringBuilder>> DisplayDict;
 
-	private String containerPath;
+	private String label;
 
 	public LookupBuildTree() {
 		KeyList = new ArrayList<>();
 		DisplayDict = new HashMap<>();
 	}
-
 
 	public List<String> getKeyList() {
 		return KeyList;
@@ -40,10 +40,13 @@ public class LookupBuildTree {
 		return DisplayDict;
 	}
 
-	public String getContainerPath() {
-		return containerPath;
+	public String getLabel() {
+		return label;
 	}
 
+	public void setLabel(String label) {
+		this.label = label;
+	}
 //*********************************************************************************************
 
 	public void processRawJSON(String rawJSON) throws Exception {
@@ -51,20 +54,30 @@ public class LookupBuildTree {
 		JSONArray inputJson = new JSONArray((rawJSON));
 
 		InventoryObject root = parseTree(null, null, inputJson);
+
 		if (root != null) {
 			try {
-				processForDisplay(root, null);
+
+				// iterates through the top level nodes.  This level contains the number of containers in the inventory item.
+				// GMC-000076260 has 1 container.
+				// PAL-840 has 32 containers.
+				for(InventoryObject ch: root.getChildren()) {
+					LinkedList<SpannableStringBuilder> displayList= new LinkedList<>();
+
+					getStringForDisplay(ch, 0, displayList);
+					getDisplayDict().put(getLabel(), displayList);
+				}
 			} catch (Exception e) {
 				getDisplayDict().put("Something has gone wrong. Please try again. If the problem persists, please note the barcode and contact IT.", null);
 				getKeyList().add("Something has gone wrong. Please try again. If the problem persists, please note the barcode and contact IT.");
 			}
 		}
-
 	}
+
 
 //*********************************************************************************************
 
-	private void getStringForDisplay(InventoryObject o, int depth, ArrayList<SpannableStringBuilder> displayList) {
+	private void getStringForDisplay(InventoryObject o, int depth, LinkedList<SpannableStringBuilder> displayList) {
 
 		// This function deals with the children of the each container and their descendants.
 		// So, GMC-000076260 has 12 children at the next depth.  And some of the 12 descendants have additional descendants.
@@ -76,6 +89,10 @@ public class LookupBuildTree {
 		SpannableStringBuilder ssb = new SpannableStringBuilder();
 		if (o.getName() != null) {
 
+			if("Barcode".equals(o.getName())){
+				getKeyList().add(o.getValue().toString());
+				setLabel(o.getValue().toString());
+			}
 			for (int i = 0; i < depth; i++) {
 				ssb.append("  ");
 			}
@@ -153,13 +170,11 @@ public class LookupBuildTree {
 			InventoryObject child = o.getChildren().get(i);
 
 			if (child.getName() != null) {
-
 				if ((ssb.toString().contains("Collection") || ssb.toString().contains("Type")) && child.getName().equals("Name")) {
 					ssb.delete(ssb.length() - 1, ssb.length());
 					ssb.append(" ")
 							.append(child.getValue().toString())
 							.append("\n");
-
 				} else {
 					if (!"ID".equals(child.getName())) {
 						getStringForDisplay(child, depth + 1, displayList);
@@ -173,46 +188,6 @@ public class LookupBuildTree {
 			ssb.delete(ssb.length() - 1, ssb.length());
 		}
 	}
-
-//*********************************************************************************************
-
-	public void processForDisplay(InventoryObject n, ArrayList<SpannableStringBuilder> displayList) {
-		// This function deals with the root level and the children of root.
-		// The first two depths consist of null names and values, but both have children.
-		// Root has the number of containers the in the container.
-		// So, GMC-000076260 has 1 container while PAL-840 has 32 containers.
-
-		String ID = null;
-
-		// sorts externally
-		Collections.sort(n.getChildren(), new SortInventoryObjectList());
-
-		for (InventoryObject ch : n.getChildren()) {
-			//Used to define the label for the expandableList.
-
-			if (n.getName() == null && "ID".equals(ch.getName())) {
-				ID = ch.getValue().toString();
-			}
-
-			if (ch.getName() != null) {
-				// getStringForDisplay() processes the string for display.
-				// It makes keys bold and it groups children with parents.
-				getStringForDisplay(ch, 0, displayList);
-
-			} else if (n.getName() == null & ch.getChildren().size() > 0) {
-				// Creates a new displayList for each container.  GMC-000076260 consists of one container.  PAL-840 consists of 32 containers.
-				displayList = new ArrayList<>();
-				processForDisplay(ch, displayList);
-			}
-		}
-
-		if (ID != null) {
-			String label = "Inventory ID " + ID;
-			getKeyList().add(label);
-			getDisplayDict().put(label, displayList);
-		}
-	}
-
 
 //*********************************************************************************************
 
@@ -434,9 +409,9 @@ public class LookupBuildTree {
 			case "intervalBottom": {
 				if (parent instanceof JSONObject) {
 					JSONObject pjo = (JSONObject) parent;
-					if (pjo.has("intervalTop")){
+					if (pjo.has("intervalTop")) {
 						return null;
-					}else if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
+					} else if (pjo.has("intervalUnit") && pjo.getJSONObject("intervalUnit").has("abbr")) {
 						String val = o + " " + pjo.getJSONObject("intervalUnit").get("abbr");
 						return new InventoryObject("Interval Bottom", val, 902);
 					}
