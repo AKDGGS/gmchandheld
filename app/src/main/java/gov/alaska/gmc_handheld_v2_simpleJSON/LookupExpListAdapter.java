@@ -104,10 +104,10 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
 				break;
 			case "Boreholes":
-				txtParent.setBackgroundColor(Color.parseColor("#ff78c67b"));
+				txtParent.setBackgroundColor(Color.parseColor("#ff63ba00")); //Green
 				break;
 			case "Outcrops":
-				txtParent.setBackgroundColor(Color.parseColor("#ffffea4b")); //"#ffffff87"
+				txtParent.setBackgroundColor(Color.parseColor("#ffe6b101")); // yellow-orange
 				break;
 			case "Shotpoints":
 				txtParent.setBackgroundColor(Color.parseColor("#ffff8a86"));
@@ -138,9 +138,9 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			case "Boreholes":
 			case "Prospect":
 				if (childPosition % 2 != 0) {
-					txtChild.setBackgroundColor(Color.parseColor("#ffb2ddb4"));
+					txtChild.setBackgroundColor(Color.parseColor("#ffa9d479")); // darker green
 				}else{
-					txtChild.setBackgroundColor(Color.parseColor("#ffc3f1c5"));
+					txtChild.setBackgroundColor(Color.parseColor("#ffbdd4a2")); //lighter green
 				}
 				break;
 			case "Wells":
@@ -152,9 +152,9 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				break;
 			case "Outcrops":
 				if (childPosition % 2 != 0) {
-					txtChild.setBackgroundColor(Color.parseColor("#fffff7b9"));
+					txtChild.setBackgroundColor(Color.parseColor("#ffe6cb71")); //ochre
 				}else{
-					txtChild.setBackgroundColor(Color.parseColor("#fffff49b"));
+					txtChild.setBackgroundColor(Color.parseColor("#ffead698")); //pale ochre
 				}
 				break;
 			case "Shotpoints":
