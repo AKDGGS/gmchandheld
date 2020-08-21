@@ -7,7 +7,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.LeadingMarginSpan;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -166,6 +165,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				}
 				break;
 			case "No Type":
+			default:
 				if (childPosition % 2 != 0) {
 					txtChild.setBackgroundColor(Color.parseColor("#fff3f6f8"));
 				} else {
@@ -174,19 +174,29 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				break;
 		}
 
-		DisplayMetrics dm = context.getResources().getDisplayMetrics();
-		int densityDpi = dm.densityDpi;
-
+//		DisplayMetrics dm = context.getResources().getDisplayMetrics();
+//		int densityDpi = dm.densityDpi;
+//
 //		System.out.println(densityDpi);
 
+
+//		System.out.println(14 * context.getResources().getDisplayMetrics().scaledDensity);
+
+
+
+		// 14 comes from the text size in exp_list_child.
 		if (!Character.isWhitespace(topic.charAt(3))) {
-			txtChild.setText(createIndentedText(topic, 0, 30));
+//			int lenTopic = topic.toString().split(" ")[3].length();
+			txtChild.setText(createIndentedText(topic, 0, 14 * 2));
 		} else if (!Character.isWhitespace(topic.charAt(6))) {
-			txtChild.setText(createIndentedText(topic, 0, 60));
+//			System.out.println(topic.toString().split(" ")[6]);
+//			int lenTopic = topic.toString().split(" ")[6].length() + 1;
+			txtChild.setText(createIndentedText(topic, 0, 14 * 3));
 		} else if (!Character.isWhitespace(topic.charAt(9))) {
-			txtChild.setText(createIndentedText(topic, 0, 90));
+//			int lenTopic = topic.toString().split(" ")[9].length() + 1;
+			txtChild.setText(createIndentedText(topic, 0, 14 * 4));
 		} else {
-			txtChild.setText(topic);
+			txtChild.setText(createIndentedText(topic, 0, 90));
 		}
 
 		return convertView;

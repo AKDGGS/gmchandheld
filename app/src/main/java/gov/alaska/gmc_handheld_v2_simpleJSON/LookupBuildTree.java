@@ -58,7 +58,7 @@ public class LookupBuildTree {
 		InventoryObject root = parseTree(null, null, inputJson);
 
 		if (root != null) {
-			//depth is set to -1 to prevent the an extra indentation for root.
+			//depth is set to -1 to prevent the extra indentation for root.
 					getStringForDisplay(root, -1, null, null, getDisplayDict());
 					getDisplayDict();
 		}
