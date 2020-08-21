@@ -7,6 +7,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.LeadingMarginSpan;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,20 +87,20 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		List<String> myList = Arrays.asList("Wells", "Outcrops", "Boreholes", "Shotpoints");
 		int count = 0;
 		for (String s : myList) {
-			if(inventoryDetailsDict.toString().contains(s)){
+			if (inventoryDetailsDict.toString().contains(s)) {
 				count++;
 				setType(s);
 			}
 		}
 
-		if(type == null || count > 1){
+		if (type == null || count > 1) {
 			setType("No Type");
 		}
 
 		TextView txtParent = convertView.findViewById(R.id.txtParent);
 
 
-		switch(getType()){
+		switch (getType()) {
 			case "Wells":
 				txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
 				break;
@@ -113,7 +114,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				txtParent.setBackgroundColor(Color.parseColor("#ffff8a86"));
 				break;
 			default:
-				txtParent.setBackgroundColor(Color.parseColor("#ffb2b1ba") );
+				txtParent.setBackgroundColor(Color.parseColor("#ffd9dddf"));
 		}
 
 		txtParent.setText(lang);
@@ -134,54 +135,60 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 		TextView txtChild = convertView.findViewById(R.id.txtChild);
 
-		switch(getType()){
+		switch (getType()) {
 			case "Boreholes":
 			case "Prospect":
 				if (childPosition % 2 != 0) {
 					txtChild.setBackgroundColor(Color.parseColor("#ffa9d479")); // darker green
-				}else{
+				} else {
 					txtChild.setBackgroundColor(Color.parseColor("#ffbdd4a2")); //lighter green
 				}
 				break;
 			case "Wells":
 				if (childPosition % 2 != 0) {
 					txtChild.setBackgroundColor(Color.parseColor("#ffb9e0ff")); //Light blue
-				}else{
+				} else {
 					txtChild.setBackgroundColor(Color.parseColor("#ffd2ebff")); //very light blue
 				}
 				break;
 			case "Outcrops":
 				if (childPosition % 2 != 0) {
 					txtChild.setBackgroundColor(Color.parseColor("#ffe6cb71")); //ochre
-				}else{
+				} else {
 					txtChild.setBackgroundColor(Color.parseColor("#ffead698")); //pale ochre
 				}
 				break;
 			case "Shotpoints":
 				if (childPosition % 2 != 0) {
 					txtChild.setBackgroundColor(Color.parseColor("#ffffcecd"));
-				}else{
+				} else {
 					txtChild.setBackgroundColor(Color.parseColor("#ffffbab9"));
 				}
 				break;
 			case "No Type":
 				if (childPosition % 2 != 0) {
-					txtChild.setBackgroundColor(Color.parseColor("#ffeaedf4"));
-				}else{
-					txtChild.setBackgroundColor(Color.parseColor("#ffd8dae1"));
+					txtChild.setBackgroundColor(Color.parseColor("#fff3f6f8"));
+				} else {
+					txtChild.setBackgroundColor(Color.parseColor("#fffcfdfe"));
 				}
 				break;
 		}
 
+		DisplayMetrics dm = context.getResources().getDisplayMetrics();
+		int densityDpi = dm.densityDpi;
 
-		int width = getScreenWidth();
-//        System.out.println("Width: " + width );
+//		System.out.println(densityDpi);
 
-		if (topic.length() > (80)) {
+		if (!Character.isWhitespace(topic.charAt(3))) {
 			txtChild.setText(createIndentedText(topic, 0, 30));
+		} else if (!Character.isWhitespace(topic.charAt(6))) {
+			txtChild.setText(createIndentedText(topic, 0, 60));
+		} else if (!Character.isWhitespace(topic.charAt(9))) {
+			txtChild.setText(createIndentedText(topic, 0, 90));
 		} else {
 			txtChild.setText(topic);
 		}
+
 		return convertView;
 	}
 

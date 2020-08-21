@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,17 +41,8 @@ public class LookupBuildTree {
 		return DisplayDict;
 	}
 
-
-	public String getBarcode() {
-		return barcode;
-	}
-
 	public void setBarcode(String barcode) {
 		this.barcode = barcode;
-	}
-
-	public int getID() {
-		return ID;
 	}
 
 	public void setID(int ID) {
@@ -66,29 +58,17 @@ public class LookupBuildTree {
 		InventoryObject root = parseTree(null, null, inputJson);
 
 		if (root != null) {
-			try {
-					getStringForDisplay(root, 0, null, null, getDisplayDict());
-
+			//depth is set to -1 to prevent the an extra indentation for root.
+					getStringForDisplay(root, -1, null, null, getDisplayDict());
 					getDisplayDict();
-
-			} catch (Exception e) {
-				getDisplayDict().put("Something has gone wrong. Please try again. If the problem persists, please note the barcode and contact IT.", null);
-				getKeyList().add("Something has gone wrong. Please try again. If the problem persists, please note the barcode and contact IT.");
-			}
 		}
 	}
-
 
 //*********************************************************************************************
 
 	private void getStringForDisplay(InventoryObject o, int depth, String currKey, LinkedList<SpannableStringBuilder> displayList, Map<String, List<SpannableStringBuilder>> dict) {
 
-		// This function deals with the children of the each container and their descendants.
-		// So, GMC-000076260 has 12 children at the next depth.  And some of the 12 descendants have additional descendants.
-		// And, each of the 32 containers in PAL-840 have 9 children at the next depth.
-
-		// Sorts internally.
-		if ( depth == 1){
+		if (depth == 0){
 			currKey = o.getName();
 			getKeyList().add(currKey);
 			displayList = new LinkedList<>();
@@ -97,12 +77,15 @@ public class LookupBuildTree {
 		Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
 		SpannableStringBuilder ssb = new SpannableStringBuilder();
-		if (o.getName() != null) {
+		if (o.getName() != null && o.getName() != currKey) {
 
 			//Barcode is not added to the displayList because it is in the Label
 			if (!"Barcode".equals(o.getName())) {
 				for (int i = 0; i < depth; i++) {
-					ssb.append("  ");
+					// Indentation is 3 spaces
+					// If this changes, you might need to change LookupExpListAdapter getChildView
+					// in order to deal with multiline indentations.
+					ssb.append("   ");
 				}
 				int lengthOfSsb;
 				if (o.getValue() != null) {
@@ -130,9 +113,7 @@ public class LookupBuildTree {
 
 		for (
 				int i = 0; i < o.getChildren().
-
 				size();
-
 				i++) {
 			InventoryObject child = o.getChildren().get(i);
 
@@ -339,6 +320,11 @@ public class LookupBuildTree {
 
 	private InventoryObject handleSimple(Object parent, String name, Object o) throws
 			JSONException {
+
+		NumberFormat nf = NumberFormat.getNumberInstance();
+		nf.setMinimumFractionDigits(0);
+		nf.setMaximumFractionDigits(1);
+
 		// Simple values should always have a name
 		if (name == null) {
 			return null;
@@ -371,13 +357,13 @@ public class LookupBuildTree {
 			case "current":
 				return null;
 			case "description":
-				return new InventoryObject("Description", o);
+				return new InventoryObject("Description", o, 600);
 			case "elevation": {
 				if (parent instanceof JSONObject) {
 					JSONObject pjo = (JSONObject) parent;
 
 					if (o instanceof Double) {
-						String val = o.toString();
+						String val = nf.format(o);
 						String abbr = "";
 
 						JSONObject u = pjo.optJSONObject("elevationUnit");
@@ -425,7 +411,7 @@ public class LookupBuildTree {
 						return null;
 					}
 					if (o instanceof Double) {
-						String val = o.toString();
+						String val = nf.format(o);
 						String abbr = "";
 
 						JSONObject iu = pjo.optJSONObject("intervalUnit");
@@ -442,7 +428,7 @@ public class LookupBuildTree {
 				if (parent instanceof JSONObject) {
 					JSONObject pjo = (JSONObject) parent;
 					if (o instanceof Double) {
-						String val = o.toString();
+						String val = nf.format(o);
 						String abbr = "";
 
 						JSONObject iu = pjo.optJSONObject("intervalUnit");
@@ -453,12 +439,13 @@ public class LookupBuildTree {
 
 						Double ib = pjo.optDouble("intervalBottom");
 						if (!ib.isNaN()) {
-							val += " - " + ib.toString();
+							String valBot = nf.format(ib);
+							val += " - " + valBot;
 							if (!"".equals(abbr)) {
 								val += " " + abbr;
 							}
 						}
-						return new InventoryObject("Interval Top", val, 902);
+						return new InventoryObject("Interval ", val, 902);
 					}
 				}
 				return new InventoryObject("Interval Top", o, 902);
@@ -470,7 +457,7 @@ public class LookupBuildTree {
 					JSONObject pjo = (JSONObject) parent;
 
 					if (o instanceof Double) {
-						String val = o.toString();
+						String val = nf.format(o);
 						String abbr = "";
 
 						JSONObject u = pjo.optJSONObject("measuredDepthUnit");
@@ -514,9 +501,12 @@ public class LookupBuildTree {
 			case "permitStatus":
 				return new InventoryObject("Permit Status", o, 70);
 			case "remark":
+				if(o.toString().contains("\n")){
+					o = o.toString().replace("\n", " ");
+				}
 				return new InventoryObject("Remark", o, 900);
 			case "sampleNumber":
-				return new InventoryObject("Sample Number", o, 70);
+				return new InventoryObject("Sample Number", o, 600);
 			case "setNumber":
 				return new InventoryObject("Set Number", o, 1000);
 			case "spudDate":
@@ -526,7 +516,7 @@ public class LookupBuildTree {
 					JSONObject pjo = (JSONObject) parent;
 
 					if (o instanceof Double) {
-						String val = o.toString();
+						String val = nf.format(o);
 						String abbr = "";
 
 						JSONObject u = pjo.optJSONObject("unit");
@@ -542,6 +532,8 @@ public class LookupBuildTree {
 			}
 			case "wellNumber":
 				return new InventoryObject("Well Number", o, 94);
+			case "year":
+				return new InventoryObject("Year", o);
 			default:
 				return new InventoryObject(name, o);
 		}
