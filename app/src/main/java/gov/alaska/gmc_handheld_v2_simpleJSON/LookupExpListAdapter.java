@@ -183,20 +183,23 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 //		System.out.println(14 * context.getResources().getDisplayMetrics().scaledDensity);
 
 
+//		System.out.println(txtChild.getTextSize());
+		// A value related to the size of the text.  It is not the font size, but related to it.
+		int textSize = (int) txtChild.getTextSize();
 
 		// 14 comes from the text size in exp_list_child.
 		if (!Character.isWhitespace(topic.charAt(3))) {
 //			int lenTopic = topic.toString().split(" ")[3].length();
-			txtChild.setText(createIndentedText(topic, 0, 14 * 2));
+			txtChild.setText(createIndentedText(topic, 0, textSize));
 		} else if (!Character.isWhitespace(topic.charAt(6))) {
 //			System.out.println(topic.toString().split(" ")[6]);
 //			int lenTopic = topic.toString().split(" ")[6].length() + 1;
-			txtChild.setText(createIndentedText(topic, 0, 14 * 3));
+			txtChild.setText(createIndentedText(topic, 0, textSize * 2));
 		} else if (!Character.isWhitespace(topic.charAt(9))) {
 //			int lenTopic = topic.toString().split(" ")[9].length() + 1;
-			txtChild.setText(createIndentedText(topic, 0, 14 * 4));
+			txtChild.setText(createIndentedText(topic, 0, textSize * 3));
 		} else {
-			txtChild.setText(createIndentedText(topic, 0, 90));
+			txtChild.setText(createIndentedText(topic, 0, textSize * 4));
 		}
 
 		return convertView;
