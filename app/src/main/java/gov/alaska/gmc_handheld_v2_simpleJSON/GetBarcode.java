@@ -23,7 +23,6 @@ public class GetBarcode extends BaseActivity {
     ArrayList<String> lookupHistory =  LookupHistoryHolder.getInstance().lookupHistory;
 	ArrayAdapter<String> adapter;
 
-	public static final String EXTRA_TEXT = "com.example.user_input_no_button.EXTRA_TEXT";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +33,10 @@ public class GetBarcode extends BaseActivity {
 		setSupportActionBar(toolbar);
 
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-		submit_button = (Button) findViewById(R.id.submit_button);
+		submit_button = findViewById(R.id.submit_button);
         listView = findViewById(R.id.listView);
 
-
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lookupHistory);
+		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lookupHistory);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -51,7 +49,6 @@ public class GetBarcode extends BaseActivity {
 
 		onButtonClick();
 		addKeyListener();
-
 	}
 
 
@@ -64,13 +61,7 @@ public class GetBarcode extends BaseActivity {
                 lookupHistory.add(0, barcode);
                 adapter.notifyDataSetChanged();
 
-				Intent intent = getIntent();
-				String buttonPushed = intent.getStringExtra(MainActivity.EXTRA_TEXT);
-
-				if (buttonPushed == null) {
-					buttonPushed = "Lookup";
-				}
-				switch (buttonPushed) {
+				switch (MainActivity.getButton_pushed()) {
 					case "Help":
 //                            openLookup();
 						break;
@@ -103,13 +94,7 @@ public class GetBarcode extends BaseActivity {
                     lookupHistory.add(0, barcode);
                     adapter.notifyDataSetChanged();
 
-					Intent intent = getIntent();
-					String buttonPushed = intent.getStringExtra(MainActivity.EXTRA_TEXT);
-
-					if (buttonPushed == null) {
-						buttonPushed = "Lookup";
-					}
-					switch (buttonPushed) {
+					switch (MainActivity.getButton_pushed()) {
 						case "Help":
 //                            openLookup();
 							break;
@@ -153,8 +138,6 @@ public class GetBarcode extends BaseActivity {
 
 		Intent intent = new Intent(this, Lookup.class);
 		intent.putExtra(EXTRA_TEXT, text);
-
-
 		startActivity(intent);
 	}
 

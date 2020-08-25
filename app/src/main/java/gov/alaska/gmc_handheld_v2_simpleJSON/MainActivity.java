@@ -10,7 +10,16 @@ import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends BaseActivity {
 
-    public static String button_pushed;
+    private static String button_pushed;
+
+    public static String getButton_pushed() {
+        return button_pushed;
+    }
+
+    public static void setButton_pushed(String button_pushed) {
+        MainActivity.button_pushed = button_pushed;
+    }
+
     public static final String EXTRA_TEXT = "com.example.user_input_no_button.EXTRA_TEXT";
 
     @Override

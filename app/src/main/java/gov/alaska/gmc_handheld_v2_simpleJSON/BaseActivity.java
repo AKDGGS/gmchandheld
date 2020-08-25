@@ -58,6 +58,7 @@ public class BaseActivity extends AppCompatActivity {
 
             case R.id.summary:
                 button_pushed = "Summary";
+                MainActivity.setButton_pushed("Summary");
                 Intent intent_summary = new Intent(this, GetBarcode.class);
                 intent_summary.putExtra(EXTRA_TEXT, button_pushed);
                 this.startActivity(intent_summary);
