@@ -53,6 +53,7 @@ public class GetBarcode extends BaseActivity {
 
 
 	public void onButtonClick() {
+
 		submit_button.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -67,7 +68,16 @@ public class GetBarcode extends BaseActivity {
 						break;
 					case "Summary":
 					case "Lookup":
-						openLookup();
+						Runnable runnable = new Runnable(){
+
+							@Override
+							public void run() {
+									openLookup();
+								}
+						};
+						Thread thread = new Thread(runnable);
+						thread.start();
+
 						break;
 					case "Move":
 						openMove();
