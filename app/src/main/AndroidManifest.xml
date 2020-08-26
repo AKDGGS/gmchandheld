@@ -11,32 +11,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="gov.alaska.gmc_handheld_v2_simpleJSON.BaseActivity"></activity>
-        <activity android:name="gov.alaska.gmc_handheld_v2_simpleJSON.Audit" />
 
-        <activity android:name="gov.alaska.gmc_handheld_v2_simpleJSON.AddInventory" />
-
-        <activity android:name="gov.alaska.gmc_handheld_v2_simpleJSON.Recode" />
-
-        <activity android:name="gov.alaska.gmc_handheld_v2_simpleJSON.Move" />
-
-        <activity android:name="gov.alaska.gmc_handheld_v2_simpleJSON.Summary" />
-
-        <activity android:name="gov.alaska.gmc_handheld_v2_simpleJSON.Help" />
-
-        <activity android:name="gov.alaska.gmc_handheld_v2_simpleJSON.AddContainer" />
-
+        <activity android:name=".BaseActivity" />
+        <activity android:name=".Audit" />
+        <activity android:name=".AddInventory" />
+        <activity android:name=".Recode" />
+        <activity android:name=".Move" />
+        <activity android:name=".Summary" />
+        <activity android:name=".Help" />
+        <activity android:name=".AddContainer" />
         <activity
-            android:name="gov.alaska.gmc_handheld_v2_simpleJSON.Lookup"
-            android:theme="@style/Theme.AppCompat.DayNight"
+            android:name=".Lookup"
             android:parentActivityName=".GetBarcode"
-           />
-
+            android:theme="@style/Theme.AppCompat.DayNight" />
         <activity
-            android:name="gov.alaska.gmc_handheld_v2_simpleJSON.GetBarcode"
-            android:parentActivityName="gov.alaska.gmc_handheld_v2_simpleJSON.MainActivity" />
-
-        <activity android:name="gov.alaska.gmc_handheld_v2_simpleJSON.MainActivity">
+            android:name=".GetBarcode"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

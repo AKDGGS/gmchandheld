@@ -125,7 +125,9 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-		SpannableStringBuilder topic = (SpannableStringBuilder) getChild(groupPosition, childPosition);
+
+//		SpannableStringBuilder topic = (SpannableStringBuilder) getChild(groupPosition, childPosition);
+		SpannableString topic = (SpannableString) getChild(groupPosition, childPosition);
 
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
