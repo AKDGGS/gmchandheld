@@ -19,9 +19,11 @@ public class LookupDisplay extends BaseActivity {
 		LookupBuildTree lookupBuildTreeObj;
 		lookupBuildTreeObj = Bridge.instance().lookupBuildTree;
 
+		Intent intent = getIntent();
+		String barcode = intent.getStringExtra("barcode");
 
-		if (getContainerBarcode() != null) {
-			LookupDisplay.this.getSupportActionBar().setTitle(getContainerBarcode());
+		if (barcode != null) {
+			LookupDisplay.this.getSupportActionBar().setTitle(barcode);
 
 			if (lookupBuildTreeObj.getKeyList().size() > 0) {
 				LookupDisplay.this.getSupportActionBar().setSubtitle(lookupBuildTreeObj.getKeyList().size() + " Result(s)");
@@ -42,8 +44,4 @@ public class LookupDisplay extends BaseActivity {
 		}
 	}
 
-	private String getContainerBarcode() {
-		Intent intent = getIntent();
-		return intent.getStringExtra("barcode");
-	}
 }
