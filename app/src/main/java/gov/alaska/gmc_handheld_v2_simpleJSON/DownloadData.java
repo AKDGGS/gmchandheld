@@ -2,7 +2,10 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,10 +16,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 
+import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+
 public class DownloadData extends AsyncTask<String, Void, String> {
 // https://www.youtube.com/watch?v=ARnLydTCRrE
 
-	LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
+	LinkedList<SpannableString> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
 	Context context;
 	String BARCODE;
 
@@ -63,9 +68,9 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 	@Override
 	protected void onPostExecute(String s) {
 
-		// a incorrect barcode returns an array with 3 characters.
+		// an incorrect barcode returns an array with 3 characters.
 		if (s.length() > 3) {
-			lookupHistory.add(0, BARCODE);
+			lookupHistory.add( 0, new SpannableString(BARCODE) );
 			LookupBuildTree LookupBuildTreeObj = null;
 			LookupBuildTreeObj = new LookupBuildTree();
 			try {
@@ -79,8 +84,12 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			Intent intent = new Intent(context, LookupDisplay.class);
 			intent.putExtra("barcode", BARCODE);
 			context.startActivity(intent);
-		}else{
-			lookupHistory.add(0, BARCODE + " Error!");
+		} else {
+			SpannableString ss = new SpannableString(BARCODE + " Error!");
+			ForegroundColorSpan foregroundSpan = new ForegroundColorSpan(Color.RED);
+			ss.setSpan(foregroundSpan, 0,
+					ss.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+			lookupHistory.add( 0,ss );
 			GetBarcode.adapter.notifyDataSetChanged();
 		}
 	}

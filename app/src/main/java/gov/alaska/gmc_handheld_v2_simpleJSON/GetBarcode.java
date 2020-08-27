@@ -3,6 +3,7 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,8 +21,8 @@ public class GetBarcode extends BaseActivity {
 	EditText barcodeInput;
 	Button submit_button;
 	ListView listView;
-	LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
-	public static ArrayAdapter<String> adapter;
+	LinkedList<SpannableString> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
+	public static ArrayAdapter<SpannableString> adapter;
 
 
 	@Override
