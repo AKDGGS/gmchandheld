@@ -54,8 +54,6 @@ public class DownloadDataBackground extends AsyncTask<String, Void, String> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 		return null;
 	}
 

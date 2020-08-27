@@ -68,15 +68,8 @@ public class GetBarcode extends BaseActivity {
 						break;
 					case "Summary":
 					case "Lookup":
-						Runnable runnable = new Runnable() {
 
-							@Override
-							public void run() {
-								openLookup();
-							}
-						};
-						Thread thread = new Thread(runnable);
-						thread.start();
+						openLookup();
 
 						break;
 					case "Move":
