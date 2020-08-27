@@ -118,7 +118,6 @@ public class GetBarcode extends BaseActivity {
 						default:
 							System.out.println("Error");
 					}
-//                    openLookup();
 					return true;
 
 				}
@@ -142,149 +141,12 @@ public class GetBarcode extends BaseActivity {
 	}
 
 	private void openLookup() {
-//		final LookupBuildTree[] LookupBuildTreeObj = new LookupBuildTree[0];
-		JsonPlaceHolderApi jsonPlaceHolderApi;
 		EditText editText1 = findViewById(R.id.editText1);
 		String BARCODE = editText1.getText().toString();
 
 		String websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + BARCODE;
 		DownloadDataBackground downloadClass = new DownloadDataBackground(GetBarcode.this);
 		downloadClass.execute(websiteURL);
-
-
-		System.out.println();
-
-
-		// Gets the API level
-//		int APILevel = android.os.Build.VERSION.SDK_INT;
-//		if (APILevel < 18) {
-//			// Current okhttp3 doesn't work with Android < 5, so using an old version (https://stackoverflow.com/questions/61245270/glide-okhttp-for-android-api-16-not-working#comment108349740_61245529)
-//			//Not all Android devices support TSL 1.2 (API >= 16 - API <18 and possibly other versions depending on the device)
-//			//Works with http, but not https with API 16
-//			Retrofit retrofit = new Retrofit.Builder()
-//					.baseUrl("http://maps.dggs.alaska.gov/gmc/")
-//					.addConverterFactory(GsonConverterFactory.create())
-//					.build();
-//			jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-//		} else {
-//			Retrofit retrofit = new Retrofit.Builder()
-//					.baseUrl("https://maps.dggs.alaska.gov/gmc/")
-//					.addConverterFactory(GsonConverterFactory.create())
-//					.build();
-//			jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-//
-//		}
-//
-//		Call<ResponseBody> call = jsonPlaceHolderApi.getInventory(BARCODE);
-//
-//		LookupBuildTree LookupBuildTreeObj = null;
-//		final Bundle bundle = new Bundle();
-//
-//		Response<ResponseBody> response = null;
-//		try {
-//
-//			response = call.execute();
-//			String rawJSON = response.body().string();
-//			LookupBuildTreeObj = new LookupBuildTree();
-//			LookupBuildTreeObj.processRawJSON(rawJSON);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//		Intent intent = new Intent(this, Lookup.class);
-//		intent.putExtra(EXTRA_TEXT, BARCODE);
-//		intent.putStringArrayListExtra("test", (ArrayList<String>) LookupBuildTreeObj.getKeyList());
-//
-//		HashMap<String, List<SpannableStringBuilder>> displayDict = (HashMap<String, List<SpannableStringBuilder>>) LookupBuildTreeObj.getDisplayDict();
-//
-////		System.out.println(LookupBuildTreeObj.getDisplayDict());
-////		System.out.println(displayDict);
-//
-//		intent.putExtra("map", displayDict);
-//		startActivity(intent);
-////
-//		startActivity(intent);
-
-
-//		System.out.println(result);
-
-//		call.enqueue(new Callback<ResponseBody>() {
-//			Timer timer;
-//
-//			LookupBuildTree LookupBuildTreeObj = new LookupBuildTree();
-//
-//			@RequiresApi(api = Build.VERSION_CODES.KITKAT)
-//			@Override
-//			public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//
-//				try {
-//					assert response.body() != null;
-//					String rawJSON = response.body().string();
-//
-//					if (rawJSON.length() == 2) {
-////						timer = new Timer();
-////						timer.schedule(new TimerTask() {
-////							@Override
-////							public void run() {
-////								Intent intent = new Intent(Lookup.this, MainActivity.class);
-////								startActivity(intent);
-////								finish();
-////							}
-////						}, 100);
-//
-//
-//					} else {
-//
-////						LookupBuildTreeObj = new LookupBuildTree();
-//						LookupBuildTreeObj.processRawJSON(rawJSON);
-//						System.out.println(LookupBuildTreeObj.getKeyList());
-////						System.out.println(LookupBuildTreeObj.getDisplayDict());
-//
-//
-//
-//
-////						//What appears on the screen
-////						//Action Bar
-////						if (getContainerBarcode() != null) {
-////							Lookup.this.getSupportActionBar().setTitle(getContainerBarcode());
-////
-////							if (LookupBuildTreeObj.getDisplayDict().size() > 0) {
-////								Lookup.this.getSupportActionBar().setSubtitle(LookupBuildTreeObj.getDisplayDict().size() + " Result(s)");
-////							}
-////						}
-////
-////						expandableListView = findViewById(R.id.expandableListView);
-////						listAdapter = new LookupExpListAdapter(Lookup.this, LookupBuildTreeObj.getKeyList(), LookupBuildTreeObj.getDisplayDict());
-////						expandableListView.setAdapter(listAdapter);
-////
-////
-////						if (listAdapter.getGroupCount() >= 1) {
-////							//expands only the first element
-//////							expandableListView.expandGroup(0);
-////							//expands all
-////							for (int i = 0; i< listAdapter.getGroupCount(); i++) {
-////								expandableListView.expandGroup(i);
-////							}
-////						}
-//					}
-//				} catch (IOException |
-//						JSONException e) {
-//					e.printStackTrace();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//
-//
-//			@Override
-//			public void onFailure(Call<ResponseBody> call, Throwable t) {
-//				System.out.println(t.getMessage());
-//			}
-//		});
-
-
 
 	}
 

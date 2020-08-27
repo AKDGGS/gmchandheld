@@ -69,13 +69,11 @@ public class DownloadDataBackground extends AsyncTask<String, Void, String> {
 			e.printStackTrace();
 		}
 
-		System.out.println(LookupBuildTreeObj.getKeyList().size());
-//		System.out.println(LookupBuildTreeObj.getDisplayDict());
+		Bridge.instance().lookupBuildTree = LookupBuildTreeObj;
 
 		Intent intent = new Intent(context, Lookup.class);
 		intent.putStringArrayListExtra("test", (ArrayList<String>) LookupBuildTreeObj.getKeyList());
 		context.startActivity(intent);
-
-
 	}
 }
+

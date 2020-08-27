@@ -22,34 +22,34 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupBuildTree{
 
-	private  List<String> KeyList;
-	private  Map<String, List<SpannableStringBuilder>> DisplayDict;
+	private  List<String> keyList;
+	private  Map<String, List<SpannableStringBuilder>> displayDict;
 	private String barcode;
 	private int ID;
 
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
 
 	public LookupBuildTree() {
-		KeyList = new ArrayList<>();
-		DisplayDict = new HashMap<>();
+		keyList = new ArrayList<>();
+		displayDict = new HashMap<>();
 		nf.setMinimumFractionDigits(0);
 		nf.setMaximumFractionDigits(1);
 	}
 
 	public void setKeyList(List<String> keyList) {
-		KeyList = keyList;
+		this.keyList = keyList;
 	}
 
 	public void setDisplayDict(Map<String, List<SpannableStringBuilder>> displayDict) {
-		DisplayDict = displayDict;
+		this.displayDict = displayDict;
 	}
 
 	public List<String> getKeyList() {
-		return KeyList;
+		return keyList;
 	}
 
 	public Map<String, List<SpannableStringBuilder>> getDisplayDict() {
-		return DisplayDict;
+		return displayDict;
 	}
 
 	public void setBarcode(String barcode) {

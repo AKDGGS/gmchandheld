@@ -32,15 +32,15 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+//    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+//    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 
     // Current okhttp3 won't work with Android < 5, so using an old version (https://stackoverflow.com/questions/61245270/glide-okhttp-for-android-api-16-not-working#comment108349740_61245529)
-    implementation("com.squareup.okhttp3:logging-interceptor:3.12.0")
+//    implementation("com.squareup.okhttp3:logging-interceptor:3.12.0")
 
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.android.volley:volley:1.1.1'
+//    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+//    implementation 'androidx.cardview:cardview:1.0.0'
+//    implementation 'com.android.volley:volley:1.1.1'
     implementation 'org.apache.commons:commons-lang3:3.0'
 
     implementation 'com.googlecode.json-simple:json-simple:1.1'
