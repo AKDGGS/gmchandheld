@@ -1,6 +1,5 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-
 import java.util.ArrayList;
 
 public class InventoryObject {
