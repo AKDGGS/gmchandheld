@@ -21,7 +21,7 @@
         <activity android:name=".Help" />
         <activity android:name=".AddContainer" />
         <activity
-            android:name=".Lookup"
+            android:name=".LookupDisplay"
             android:parentActivityName=".GetBarcode"
             android:theme="@style/Theme.AppCompat.DayNight" />
         <activity

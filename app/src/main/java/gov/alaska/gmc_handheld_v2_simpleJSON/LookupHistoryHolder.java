@@ -1,10 +1,10 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class LookupHistoryHolder {
 // https://stackoverflow.com/a/51344957
-	final ArrayList<String> lookupHistory = new ArrayList<>();
+	final LinkedList<String> lookupHistory = new LinkedList<>();
 
 	private LookupHistoryHolder() {
 	}

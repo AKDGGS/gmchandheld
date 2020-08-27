@@ -13,14 +13,14 @@ import android.widget.ListView;
 
 import androidx.appcompat.widget.Toolbar;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class GetBarcode extends BaseActivity {
 
 	EditText barcodeInput;
 	Button submit_button;
 	ListView listView;
-	ArrayList<String> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
+	LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
 	ArrayAdapter<String> adapter;
 
 
@@ -42,7 +42,7 @@ public class GetBarcode extends BaseActivity {
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Intent intent = new Intent(GetBarcode.this, Lookup.class);
+				Intent intent = new Intent(GetBarcode.this, LookupDisplay.class);
 				intent.putExtra(EXTRA_TEXT, listView.getItemAtPosition(position).toString());
 				startActivity(intent);
 			}
@@ -114,7 +114,7 @@ public class GetBarcode extends BaseActivity {
 		String BARCODE = editText1.getText().toString();
 
 		String websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + BARCODE;
-		DownloadDataBackground downloadClass = new DownloadDataBackground(GetBarcode.this);
+		DownloadData downloadClass = new DownloadData(GetBarcode.this);
 		downloadClass.execute(websiteURL);
 
 	}

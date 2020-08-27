@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
-public class Lookup extends BaseActivity {
+public class LookupDisplay extends BaseActivity {
 	ExpandableListView expandableListView;
 	ExpandableListAdapter listAdapter;
 
@@ -19,7 +19,7 @@ public class Lookup extends BaseActivity {
 		lookupBuildTreeObj = Bridge.instance().lookupBuildTree;
 
 		expandableListView = findViewById(R.id.expandableListView);
-		listAdapter = new LookupExpListAdapter(Lookup.this, lookupBuildTreeObj.getKeyList(), lookupBuildTreeObj.getDisplayDict());
+		listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupBuildTreeObj.getKeyList(), lookupBuildTreeObj.getDisplayDict());
 		expandableListView.setAdapter(listAdapter);
 
 		if (listAdapter.getGroupCount() >= 1) {

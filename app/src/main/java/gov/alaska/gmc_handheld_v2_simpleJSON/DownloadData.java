@@ -12,12 +12,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class DownloadDataBackground extends AsyncTask<String, Void, String> {
+public class DownloadData extends AsyncTask<String, Void, String> {
 // https://www.youtube.com/watch?v=ARnLydTCRrE
 
 	Context context;
 
-	public DownloadDataBackground(Context context) {
+	public DownloadData(Context context) {
 		this.context = context;
 	}
 
@@ -68,7 +68,7 @@ public class DownloadDataBackground extends AsyncTask<String, Void, String> {
 
 		Bridge.instance().lookupBuildTree = LookupBuildTreeObj;
 
-		Intent intent = new Intent(context, Lookup.class);
+		Intent intent = new Intent(context, LookupDisplay.class);
 		context.startActivity(intent);
 	}
 }

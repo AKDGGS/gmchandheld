@@ -149,7 +149,7 @@ public class LookupBuildTree{
 		InventoryObject io;
 
 		if (name == null) {
-			if ("" != o.optString("ID")) {
+			if (!"".equals(o.optString("ID"))) {
 				String newName = "ID " + o.optInt("ID");
 				if (!"".equals(o.optString("barcode"))) {
 					newName += " / " + o.optString("barcode");
