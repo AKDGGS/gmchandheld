@@ -60,9 +60,6 @@ public class GetBarcode extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				String barcode = barcodeInput.getText().toString();
-//				lookupHistory.add(0, barcode);
-//				adapter.notifyDataSetChanged();
 
 				switch (MainActivity.getButton_pushed()) {
 					case "Summary":
@@ -83,13 +80,9 @@ public class GetBarcode extends BaseActivity {
 		barcodeInput.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-				// if keydown and "enter" is pressed
+				// if "enter" is pressed
 				if ((event.getAction() == KeyEvent.ACTION_DOWN)
 						&& (keyCode == KeyEvent.KEYCODE_ENTER)) {
-
-					String barcode = barcodeInput.getText().toString();
-//					lookupHistory.add(0, barcode);
-//					adapter.notifyDataSetChanged();
 
 					switch (MainActivity.getButton_pushed()) {
 						case "Summary":
