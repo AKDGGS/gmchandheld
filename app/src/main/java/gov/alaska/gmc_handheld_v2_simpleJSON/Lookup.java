@@ -15,7 +15,7 @@ public class Lookup extends BaseActivity {
 
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-		LookupBuildTree lookupBuildTreeObj = new LookupBuildTree();
+		LookupBuildTree lookupBuildTreeObj;
 		lookupBuildTreeObj = Bridge.instance().lookupBuildTree;
 
 		expandableListView = findViewById(R.id.expandableListView);

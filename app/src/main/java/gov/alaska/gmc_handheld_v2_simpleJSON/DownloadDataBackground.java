@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
 public class DownloadDataBackground extends AsyncTask<String, Void, String> {
 // https://www.youtube.com/watch?v=ARnLydTCRrE
@@ -70,7 +69,6 @@ public class DownloadDataBackground extends AsyncTask<String, Void, String> {
 		Bridge.instance().lookupBuildTree = LookupBuildTreeObj;
 
 		Intent intent = new Intent(context, Lookup.class);
-		intent.putStringArrayListExtra("test", (ArrayList<String>) LookupBuildTreeObj.getKeyList());
 		context.startActivity(intent);
 	}
 }

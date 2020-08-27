@@ -34,7 +34,8 @@ public class GetBarcode extends BaseActivity {
 
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		submit_button = findViewById(R.id.submit_button);
-		listView = findViewById(R.id.listView);
+		listView = findViewById(R.id.listViewGetBarcodeHistory);
+
 
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lookupHistory);
 		listView.setAdapter(adapter);
@@ -63,17 +64,9 @@ public class GetBarcode extends BaseActivity {
 				adapter.notifyDataSetChanged();
 
 				switch (MainActivity.getButton_pushed()) {
-					case "Help":
-//                            openLookup();
-						break;
 					case "Summary":
 					case "Lookup":
-
 						openLookup();
-
-						break;
-					case "Move":
-						openMove();
 						break;
 					default:
 						System.out.println("Error");
@@ -98,15 +91,9 @@ public class GetBarcode extends BaseActivity {
 					adapter.notifyDataSetChanged();
 
 					switch (MainActivity.getButton_pushed()) {
-						case "Help":
-//                            openLookup();
-							break;
 						case "Summary":
 						case "Lookup":
 							openLookup();
-							break;
-						case "Move":
-							openMove();
 							break;
 						default:
 							System.out.println("Error");
@@ -122,17 +109,6 @@ public class GetBarcode extends BaseActivity {
 	}
 
 
-	private void openSummary() {
-		EditText editText1 = findViewById(R.id.editText1);
-		String text = editText1.getText().toString();
-
-		Intent intent = new Intent(this, Summary.class);
-		intent.putExtra(EXTRA_TEXT, text);
-
-
-		startActivity(intent);
-	}
-
 	private void openLookup() {
 		EditText editText1 = findViewById(R.id.editText1);
 		String BARCODE = editText1.getText().toString();
@@ -143,15 +119,4 @@ public class GetBarcode extends BaseActivity {
 
 	}
 
-	private void openMove() {
-
-		EditText editText1 = findViewById(R.id.editText1);
-		String text = editText1.getText().toString();
-
-		Intent intent = new Intent(this, Move.class);
-		intent.putExtra(EXTRA_TEXT, text);
-
-
-		startActivity(intent);
-	}
 }
