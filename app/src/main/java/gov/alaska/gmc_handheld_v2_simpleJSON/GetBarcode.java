@@ -21,7 +21,7 @@ public class GetBarcode extends BaseActivity {
 	Button submit_button;
 	ListView listView;
 	LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
-	ArrayAdapter<String> adapter;
+	public static ArrayAdapter<String> adapter;
 
 
 	@Override
@@ -33,6 +33,7 @@ public class GetBarcode extends BaseActivity {
 		setSupportActionBar(toolbar);
 
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
+
 		submit_button = findViewById(R.id.submit_button);
 		listView = findViewById(R.id.listViewGetBarcodeHistory);
 
@@ -60,8 +61,8 @@ public class GetBarcode extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				String barcode = barcodeInput.getText().toString();
-				lookupHistory.add(0, barcode);
-				adapter.notifyDataSetChanged();
+//				lookupHistory.add(0, barcode);
+//				adapter.notifyDataSetChanged();
 
 				switch (MainActivity.getButton_pushed()) {
 					case "Summary":
@@ -87,8 +88,8 @@ public class GetBarcode extends BaseActivity {
 						&& (keyCode == KeyEvent.KEYCODE_ENTER)) {
 
 					String barcode = barcodeInput.getText().toString();
-					lookupHistory.add(0, barcode);
-					adapter.notifyDataSetChanged();
+//					lookupHistory.add(0, barcode);
+//					adapter.notifyDataSetChanged();
 
 					switch (MainActivity.getButton_pushed()) {
 						case "Summary":
@@ -114,7 +115,7 @@ public class GetBarcode extends BaseActivity {
 		String BARCODE = editText1.getText().toString();
 
 		String websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + BARCODE;
-		DownloadData downloadClass = new DownloadData(GetBarcode.this);
+		DownloadData downloadClass = new DownloadData(GetBarcode.this, BARCODE);
 		downloadClass.execute(websiteURL);
 
 	}

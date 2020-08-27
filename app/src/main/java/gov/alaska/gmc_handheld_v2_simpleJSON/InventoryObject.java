@@ -13,7 +13,6 @@ public class InventoryObject {
         this(null, null, 0);
     }
 
-
     public InventoryObject(String name) {
         this(name, null, 0);
     }
@@ -28,7 +27,6 @@ public class InventoryObject {
         this.displayWeight = displayWeight;
         children = new ArrayList<>();
     }
-
 
     public String getName() {
         return name;
