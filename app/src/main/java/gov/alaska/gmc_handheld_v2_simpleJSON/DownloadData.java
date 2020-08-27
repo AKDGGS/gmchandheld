@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.LinkedList;
 
@@ -36,32 +37,44 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 		String url = strings[0];
 		InputStream inputStream;
 
-		try {
-			URL myURL = new URL(url);
-			HttpURLConnection connection = (HttpURLConnection) myURL.openConnection();
-			connection.setReadTimeout(10000);
-			connection.setConnectTimeout(200000);
-			connection.setRequestMethod("GET");
-			connection.connect();
+		// Retry code: https://stackoverflow.com/a/37443321
+		HttpURLConnection connection = null;
+		int tries = 0;
+		int maxRetries = 5;
 
-			inputStream = connection.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		do {
+			try {
+				URL myURL = new URL(url);
+				connection = (HttpURLConnection) myURL.openConnection();
+				connection.setReadTimeout(10000);
+				connection.setConnectTimeout(200000);
+				connection.setRequestMethod("GET");
+				connection.connect();
 
-			StringBuilder builder = new StringBuilder();
-			String line;
+				inputStream = connection.getInputStream();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-			while ((line = reader.readLine()) != null) {
-				builder.append(line + "\n");
+				StringBuilder builder = new StringBuilder();
+				String line;
+
+				while ((line = reader.readLine()) != null) {
+					builder.append(line + "\n");
+				}
+				inputStream.close();
+				reader.close();
+				return builder.toString();
+
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (SocketTimeoutException e) {
+				++tries;
+				if (maxRetries < tries) {
+					return null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			inputStream.close();
-			reader.close();
-			return builder.toString();
-
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} while (connection == null);
 		return null;
 	}
 
@@ -70,7 +83,7 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 
 		// an incorrect barcode returns an array with 3 characters.
 		if (s.length() > 3) {
-			lookupHistory.add( 0, new SpannableString(BARCODE) );
+			lookupHistory.add(0, new SpannableString(BARCODE));
 			LookupBuildTree LookupBuildTreeObj = null;
 			LookupBuildTreeObj = new LookupBuildTree();
 			try {
@@ -89,7 +102,7 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			ForegroundColorSpan foregroundSpan = new ForegroundColorSpan(Color.RED);
 			ss.setSpan(foregroundSpan, 0,
 					ss.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-			lookupHistory.add( 0,ss );
+			lookupHistory.add(0, ss);
 			GetBarcode.adapter.notifyDataSetChanged();
 		}
 	}
