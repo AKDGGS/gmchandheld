@@ -108,10 +108,17 @@ public class GetBarcode extends BaseActivity {
 		EditText editText1 = findViewById(R.id.editText1);
 		String BARCODE = editText1.getText().toString();
 
-		String websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + BARCODE;
-		DownloadData downloadClass = new DownloadData(GetBarcode.this, BARCODE);
-		downloadClass.execute(websiteURL);
+		String websiteURL;
+
+		int APILevel = android.os.Build.VERSION.SDK_INT;
+		if (APILevel < 18) {
+			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + BARCODE;
+		}else{
+			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + BARCODE;
+		}
+			DownloadData downloadClass = new DownloadData(GetBarcode.this, BARCODE);
+			downloadClass.execute(websiteURL);
+
+		}
 
 	}
-
-}
