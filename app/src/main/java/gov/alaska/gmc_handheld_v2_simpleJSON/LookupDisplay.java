@@ -1,5 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -18,6 +19,15 @@ public class LookupDisplay extends BaseActivity {
 		LookupBuildTree lookupBuildTreeObj;
 		lookupBuildTreeObj = Bridge.instance().lookupBuildTree;
 
+
+		if (getContainerBarcode() != null) {
+			LookupDisplay.this.getSupportActionBar().setTitle(getContainerBarcode());
+
+			if (lookupBuildTreeObj.getKeyList().size() > 0) {
+				LookupDisplay.this.getSupportActionBar().setSubtitle(lookupBuildTreeObj.getKeyList().size() + " Result(s)");
+			}
+		}
+
 		expandableListView = findViewById(R.id.expandableListView);
 		listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupBuildTreeObj.getKeyList(), lookupBuildTreeObj.getDisplayDict());
 		expandableListView.setAdapter(listAdapter);
@@ -30,5 +40,10 @@ public class LookupDisplay extends BaseActivity {
 				expandableListView.expandGroup(i);
 			}
 		}
+	}
+
+	private String getContainerBarcode() {
+		Intent intent = getIntent();
+		return intent.getStringExtra("barcode");
 	}
 }

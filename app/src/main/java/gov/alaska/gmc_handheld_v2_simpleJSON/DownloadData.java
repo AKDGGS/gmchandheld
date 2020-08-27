@@ -3,8 +3,6 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,8 +17,6 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 // https://www.youtube.com/watch?v=ARnLydTCRrE
 
 	LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
-	ArrayAdapter<String> adapter;
-	ListView listView;
 	Context context;
 	String BARCODE;
 
@@ -81,6 +77,7 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			Bridge.instance().lookupBuildTree = LookupBuildTreeObj;
 
 			Intent intent = new Intent(context, LookupDisplay.class);
+			intent.putExtra("barcode", BARCODE);
 			context.startActivity(intent);
 		}else{
 			lookupHistory.add(0, BARCODE + " Error!");
