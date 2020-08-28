@@ -105,4 +105,6 @@ public class GetBarcode extends BaseActivity {
 		DownloadData downloadClass = new DownloadData(GetBarcode.this, BARCODE);
 		downloadClass.execute(BARCODE);
 		}
+
+		//testing branch
 	}
