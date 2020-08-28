@@ -64,7 +64,7 @@ public class LookupBuildTree{
 
 	public void processRawJSON(String rawJSON) throws Exception {
 
-		JSONArray inputJson = new JSONArray((rawJSON));
+		JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
 
 		InventoryObject root = parseTree(null, null, inputJson);
 

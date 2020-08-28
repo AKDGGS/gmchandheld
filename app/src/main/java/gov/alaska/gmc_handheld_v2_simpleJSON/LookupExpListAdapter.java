@@ -22,14 +22,14 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 	final Context context;
 	final List<String> inventoryLabels;
 	final Map<String, List<SpannableStringBuilder>> inventoryDetailsDict;
-	private String type = null;
+	private String inventoryObjType = null;
 
-	public String getType() {
-		return type;
+	public String getInventoryObjType() {
+		return inventoryObjType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setInventoryObjType(String inventoryObjType) {
+		this.inventoryObjType = inventoryObjType;
 	}
 
 	public LookupExpListAdapter(Context context, List<String> inventoryLabels, Map<String, List<SpannableStringBuilder>> inventoryDetailsDict) {
@@ -88,18 +88,18 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		for (String s : myList) {
 			if (inventoryDetailsDict.toString().contains(s)) {
 				count++;
-				setType(s);
+				setInventoryObjType(s);
 			}
 		}
 
-		if (type == null || count > 1) {
-			setType("No Type");
+		if (inventoryObjType == null || count > 1) {
+			setInventoryObjType("No Type");
 		}
 
 		TextView txtParent = convertView.findViewById(R.id.txtParent);
 
 
-		switch (getType()) {
+		switch (getInventoryObjType()) {
 			case "Wells":
 				txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
 				break;
@@ -135,7 +135,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 		TextView txtChild = convertView.findViewById(R.id.txtChild);
 
-		switch (getType()) {
+		switch (getInventoryObjType()) {
 			case "Boreholes":
 			case "Prospect":
 				if (childPosition % 2 != 0) {

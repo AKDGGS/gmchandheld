@@ -16,11 +16,19 @@ public class LookupDisplay extends BaseActivity {
 
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-		LookupBuildTree lookupBuildTreeObj;
-		lookupBuildTreeObj = Bridge.instance().lookupBuildTree;
+
+
+		LookupBuildTree lookupBuildTreeObj = new LookupBuildTree();
 
 		Intent intent = getIntent();
 		String barcode = intent.getStringExtra("barcode");
+		String rawJSON = intent.getStringExtra("rawJSON");
+
+		try {
+			lookupBuildTreeObj.processRawJSON(rawJSON);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		if (barcode != null) {
 			LookupDisplay.this.getSupportActionBar().setTitle(barcode);

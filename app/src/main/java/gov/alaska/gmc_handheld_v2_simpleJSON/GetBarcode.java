@@ -1,6 +1,5 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -44,9 +43,8 @@ public class GetBarcode extends BaseActivity {
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Intent intent = new Intent(GetBarcode.this, LookupDisplay.class);
-				intent.putExtra(EXTRA_TEXT, listView.getItemAtPosition(position).toString());
-				startActivity(intent);
+				DownloadData downloadClass = new DownloadData(GetBarcode.this, listView.getItemAtPosition(position).toString());
+				downloadClass.execute(listView.getItemAtPosition(position).toString());
 			}
 		});
 
@@ -61,7 +59,6 @@ public class GetBarcode extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-
 				switch (MainActivity.getButton_pushed()) {
 					case "Summary":
 					case "Lookup":
@@ -94,13 +91,10 @@ public class GetBarcode extends BaseActivity {
 							System.out.println("Error");
 					}
 					return true;
-
 				}
-
 				return false;
 			}
 		});
-
 	}
 
 
@@ -108,17 +102,7 @@ public class GetBarcode extends BaseActivity {
 		EditText editText1 = findViewById(R.id.editText1);
 		String BARCODE = editText1.getText().toString();
 
-		String websiteURL;
-
-		int APILevel = android.os.Build.VERSION.SDK_INT;
-		if (APILevel < 18) {
-			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + BARCODE;
-		}else{
-			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + BARCODE;
+		DownloadData downloadClass = new DownloadData(GetBarcode.this, BARCODE);
+		downloadClass.execute(BARCODE);
 		}
-			DownloadData downloadClass = new DownloadData(GetBarcode.this, BARCODE);
-			downloadClass.execute(websiteURL);
-
-		}
-
 	}

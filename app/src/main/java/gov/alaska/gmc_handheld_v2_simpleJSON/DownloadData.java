@@ -34,7 +34,15 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 	@Override
 	protected String doInBackground(String... strings) {
 
-		String url = strings[0];
+		String websiteURL;
+
+		int APILevel = android.os.Build.VERSION.SDK_INT;
+		if (APILevel < 18) {
+			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];;
+		} else {
+			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];;
+		}
+
 		InputStream inputStream;
 
 		// Retry code: https://stackoverflow.com/a/37443321
@@ -44,7 +52,7 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 
 		do {
 			try {
-				URL myURL = new URL(url);
+				URL myURL = new URL(websiteURL);
 				connection = (HttpURLConnection) myURL.openConnection();
 				connection.setReadTimeout(10000);
 				connection.setConnectTimeout(200000);
@@ -82,20 +90,13 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 	protected void onPostExecute(String s) {
 
 		// an incorrect barcode returns an array with 3 characters.
-		if (s.length() > 3) {
-			lookupHistory.add(0, new SpannableString(BARCODE));
-			LookupBuildTree LookupBuildTreeObj = null;
-			LookupBuildTreeObj = new LookupBuildTree();
-			try {
-				LookupBuildTreeObj.processRawJSON(s);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			Bridge.instance().lookupBuildTree = LookupBuildTreeObj;
+		if (s.length() > 3) {  //len of 2
+			SpannableString ss = new SpannableString(BARCODE);
+			lookupHistory.add(0, ss);
 
 			Intent intent = new Intent(context, LookupDisplay.class);
 			intent.putExtra("barcode", BARCODE);
+			intent.putExtra("rawJSON", s);
 			context.startActivity(intent);
 		} else {
 			SpannableString ss = new SpannableString(BARCODE + " Error!");
