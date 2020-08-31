@@ -5,13 +5,13 @@
     android:background= "#ff567b95"
     android:orientation="horizontal"
     android:padding="8dp"
-    android:id="@+id/toast_error_root">
+    android:id="@+id/lookup_error_root">
 
     <TextView
-        android:id="@+id/toast_errror_msg"
+        android:id="@+id/lookup_errror_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Errror"
+        android:text=""
         android:textColor="@android:color/white"
         android:textSize="18dp"/>
 
