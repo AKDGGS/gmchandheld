@@ -1,11 +1,15 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,10 +21,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.LinkedList;
 
-import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
-
 public class DownloadData extends AsyncTask<String, Void, String> {
-// https://www.youtube.com/watch?v=ARnLydTCRrE
+	// https://www.youtube.com/watch?v=ARnLydTCRrE
 
 	LinkedList<SpannableString> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
 	Context context;
@@ -38,9 +40,11 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {
-			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];;
+			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];
+			;
 		} else {
-			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];;
+			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];
+			;
 		}
 
 		InputStream inputStream;
@@ -99,12 +103,16 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			intent.putExtra("rawJSON", s);
 			context.startActivity(intent);
 		} else {
-			SpannableString ss = new SpannableString(BARCODE + " Error!");
-			ForegroundColorSpan foregroundSpan = new ForegroundColorSpan(Color.RED);
-			ss.setSpan(foregroundSpan, 0,
-					ss.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-			lookupHistory.add(0, ss);
-			GetBarcode.adapter.notifyDataSetChanged();
+			int LONG_DELAY = 3500; //controls for how long the Toast error message is displayed
+			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+			View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
+			Toast toast = new Toast(context.getApplicationContext());
+			toast.setGravity(Gravity.CENTER, 0, 0);
+			toast.setDuration(Toast.LENGTH_LONG);
+			toast.setView(layout);
+			toast.show();
+
+
 		}
 	}
 }
