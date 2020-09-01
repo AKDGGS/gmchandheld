@@ -95,7 +95,6 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 
 	@Override
 	protected void onPostExecute(String s) {
-
 		if (exceptionToBeThrown != null) {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
@@ -113,25 +112,30 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			AlertDialog alert = alertDialog.create();
 			alert.setCanceledOnTouchOutside(false);
 			alert.show();
-		} else if (s.length() > 2) {
-			// an incorrect barcode returns an array with 2 characters.
-			switch(destination){
-				case "LookupDisplay":
-					lookupHistory.add(0, barcode);
-					intent.putExtra("barcode", barcode);
-					intent.putExtra("rawJSON", s);
-					context.startActivity(intent);
-					break;
-			}
 		} else {
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-			View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
-			Toast toast = new Toast(context.getApplicationContext());
-			toast.setGravity(Gravity.CENTER, 0, 0);
-			toast.setDuration(Toast.LENGTH_LONG);
-			toast.setView(layout);
-			toast.show();
+			if (destination != null) {
+				switch (destination) {
+					case "LookupDisplay":
+
+						if (s.length() > 2) {
+							lookupHistory.add(0, barcode);
+							intent.putExtra("barcode", barcode);
+							intent.putExtra("rawJSON", s);
+							context.startActivity(intent);
+							break;
+						} else {
+							LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+							View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
+							Toast toast = new Toast(context.getApplicationContext());
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.setDuration(Toast.LENGTH_LONG);
+							toast.setView(layout);
+							toast.show();
+						}
+				}
+			}
 		}
+
 	}
 }
 

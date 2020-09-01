@@ -23,6 +23,9 @@ public class GetBarcode extends BaseActivity {
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	public static ArrayAdapter<String> adapter;
 
+	public GetBarcode() {
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,11 +101,12 @@ public class GetBarcode extends BaseActivity {
 	}
 
 	private void openLookup() {
+
 		EditText editText1 = findViewById(R.id.editText1);
 		String BARCODE = editText1.getText().toString();
 		Intent intent = new Intent(this, LookupDisplay.class);
 		String destination = "LookupDisplay";
 		DownloadData downloadClass = new DownloadData(GetBarcode.this, BARCODE, intent, destination);
 		downloadClass.execute(BARCODE);
-		}
 	}
+}
