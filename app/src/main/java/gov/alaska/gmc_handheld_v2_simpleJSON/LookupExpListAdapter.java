@@ -98,7 +98,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 		TextView txtParent = convertView.findViewById(R.id.txtParent);
 
-
 		switch (getInventoryObjType()) {
 			case "Wells":
 				txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
@@ -115,12 +114,8 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			default:
 				txtParent.setBackgroundColor(Color.parseColor("#ffd9dddf"));
 		}
-
 		txtParent.setText(lang);
-
-
 		return convertView;
-
 	}
 
 	@Override
@@ -175,15 +170,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				break;
 		}
 
-//		DisplayMetrics dm = context.getResources().getDisplayMetrics();
-//		int densityDpi = dm.densityDpi;
-//
-//		System.out.println(densityDpi);
-
-
-//		System.out.println(14 * context.getResources().getDisplayMetrics().scaledDensity);
-
-
 //		System.out.println(txtChild.getTextSize());
 		// A value related to the size of the text.  It is not the font size, but related to it.
 		int textSize = (int) txtChild.getTextSize();
@@ -210,7 +196,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
 		return true;
 	}
-
 
 	public static SpannableString createIndentedText(Spannable text, int marginFirstLine, int marginNextLines) {
 		//https://www.programmersought.com/article/45371641877/

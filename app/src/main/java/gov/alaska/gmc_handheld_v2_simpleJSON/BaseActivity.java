@@ -16,12 +16,10 @@ public class BaseActivity extends AppCompatActivity {
     public static String button_pushed;
     public static final String EXTRA_TEXT = "com.example.user_input_no_button.EXTRA_TEXT";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base);
-
 
         try {
             ViewConfiguration config = ViewConfiguration.get(this);
@@ -31,12 +29,7 @@ public class BaseActivity extends AppCompatActivity {
         } catch (Exception ex) {
             // Ignore
         }
-
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,7 +102,5 @@ public class BaseActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
-
     }
 }

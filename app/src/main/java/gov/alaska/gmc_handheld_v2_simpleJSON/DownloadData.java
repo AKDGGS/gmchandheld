@@ -36,13 +36,13 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 	}
 
 	@Override
-	protected String doInBackground(String... strings){
+	protected String doInBackground(String... strings) {
 
 		String websiteURL;
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {
-			websiteURL = "http//maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];
+			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];
 			;
 		} else {
 			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];
@@ -80,7 +80,6 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 				exceptionToBeThrown = e;
 				e.printStackTrace();
 			}
-
 		} catch (ProtocolException e) {
 			exceptionToBeThrown = e;
 			e.printStackTrace();
@@ -94,16 +93,15 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 		return null;
 	}
 
-
 	@Override
 	protected void onPostExecute(String s) {
 
-		if(exceptionToBeThrown != null){
+		if (exceptionToBeThrown != null) {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
 
 			AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-			alertDialog.setTitle("Alert");
+			alertDialog.setTitle("Exception Thrown");
 			alertDialog.setMessage(exceptionToBeThrown.toString());
 
 			alertDialog.setView(layout);
@@ -115,8 +113,8 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			AlertDialog alert = alertDialog.create();
 			alert.setCanceledOnTouchOutside(false);
 			alert.show();
-		}else		// an incorrect barcode returns an array with 3 characters.
-		if (s.length() > 3) {  //len of 2
+		} else if (s.length() > 2) {
+			// an incorrect barcode returns an array with 2 characters.
 			SpannableString ss = new SpannableString(BARCODE);
 			lookupHistory.add(0, ss);
 
@@ -125,7 +123,6 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			intent.putExtra("rawJSON", s);
 			context.startActivity(intent);
 		} else {
-			int LONG_DELAY = 3500; //controls for how long the Toast error message is displayed
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
 			Toast toast = new Toast(context.getApplicationContext());
@@ -133,7 +130,6 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			toast.setDuration(Toast.LENGTH_LONG);
 			toast.setView(layout);
 			toast.show();
-
 		}
 	}
 }

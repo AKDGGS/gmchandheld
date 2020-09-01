@@ -16,8 +16,6 @@ public class LookupDisplay extends BaseActivity {
 
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-
-
 		LookupBuildTree lookupBuildTreeObj = new LookupBuildTree();
 
 		Intent intent = getIntent();
