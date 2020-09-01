@@ -16,14 +16,14 @@ public class LookupDisplay extends BaseActivity {
 
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-		LookupProcessJsonForDisplay lookupProcessJsonForDisplayObj = new LookupProcessJsonForDisplay();
+		LookupLogicForDisplay lookupLogicForDisplayObj = new LookupLogicForDisplay();
 
 		Intent intent = getIntent();
 		String barcode = intent.getStringExtra("barcode");
 		String rawJSON = intent.getStringExtra("rawJSON");
 
 		try {
-			lookupProcessJsonForDisplayObj.processRawJSON(rawJSON);
+			lookupLogicForDisplayObj.processRawJSON(rawJSON);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -31,13 +31,13 @@ public class LookupDisplay extends BaseActivity {
 		if (barcode != null) {
 			LookupDisplay.this.getSupportActionBar().setTitle(barcode);
 
-			if (lookupProcessJsonForDisplayObj.getKeyList().size() > 0) {
-				LookupDisplay.this.getSupportActionBar().setSubtitle(lookupProcessJsonForDisplayObj.getKeyList().size() + " Result(s)");
+			if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
+				LookupDisplay.this.getSupportActionBar().setSubtitle(lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
 			}
 		}
 
 		expandableListView = findViewById(R.id.expandableListView);
-		listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupProcessJsonForDisplayObj.getKeyList(), lookupProcessJsonForDisplayObj.getDisplayDict());
+		listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
 		expandableListView.setAdapter(listAdapter);
 
 		if (listAdapter.getGroupCount() >= 1) {
