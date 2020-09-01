@@ -6,8 +6,8 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 public class LookupDisplay extends BaseActivity {
-	ExpandableListView expandableListView;
-	ExpandableListAdapter listAdapter;
+	private ExpandableListView expandableListView;
+	private ExpandableListAdapter listAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

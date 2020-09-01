@@ -1,8 +1,8 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.SpannableString;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,11 +17,11 @@ import java.util.LinkedList;
 
 public class GetBarcode extends BaseActivity {
 
-	EditText barcodeInput;
-	Button submit_button;
-	ListView listView;
-	final LinkedList<SpannableString> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
-	public static ArrayAdapter<SpannableString> adapter;
+	private EditText barcodeInput;
+	private Button submit_button;
+	private ListView listView;
+	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+	public static ArrayAdapter<String> adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,8 @@ public class GetBarcode extends BaseActivity {
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				DownloadData downloadClass = new DownloadData(GetBarcode.this, listView.getItemAtPosition(position).toString());
+				Intent intent = new Intent(GetBarcode.this, LookupDisplay.class);
+				DownloadData downloadClass = new DownloadData(GetBarcode.this, listView.getItemAtPosition(position).toString(), intent, "LookupDisplay");
 				downloadClass.execute(listView.getItemAtPosition(position).toString());
 			}
 		});
@@ -99,8 +100,9 @@ public class GetBarcode extends BaseActivity {
 	private void openLookup() {
 		EditText editText1 = findViewById(R.id.editText1);
 		String BARCODE = editText1.getText().toString();
-
-		DownloadData downloadClass = new DownloadData(GetBarcode.this, BARCODE);
+		Intent intent = new Intent(this, LookupDisplay.class);
+		String destination = "LookupDisplay";
+		DownloadData downloadClass = new DownloadData(GetBarcode.this, BARCODE, intent, destination);
 		downloadClass.execute(BARCODE);
 		}
 	}

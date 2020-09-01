@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.text.SpannableString;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,13 +25,17 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 	// https://www.youtube.com/watch?v=ARnLydTCRrE
 
 	private Exception exceptionToBeThrown;
-	final LinkedList<SpannableString> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
-	final Context context;
-	final String BARCODE;
+	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+	private Context context;
+	private String barcode;
+	private Intent intent;
+	private String destination;
 
-	public DownloadData(Context context, String BARCODE) {
+	public DownloadData(Context context, String barcode, Intent intent, String destination) {
 		this.context = context;
-		this.BARCODE = BARCODE;
+		this.barcode = barcode;
+		this.intent = intent;
+		this.destination = destination;
 	}
 
 	@Override
@@ -112,15 +115,14 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			alert.show();
 		} else if (s.length() > 2) {
 			// an incorrect barcode returns an array with 2 characters.
-			SpannableString ss = new SpannableString(BARCODE);
-			lookupHistory.add(0, ss);
-
-
-			// move to lookup
-			Intent intent = new Intent(context, LookupDisplay.class);
-			intent.putExtra("barcode", BARCODE);
-			intent.putExtra("rawJSON", s);
-			context.startActivity(intent);
+			switch(destination){
+				case "LookupDisplay":
+					lookupHistory.add(0, barcode);
+					intent.putExtra("barcode", barcode);
+					intent.putExtra("rawJSON", s);
+					context.startActivity(intent);
+					break;
+			}
 		} else {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
