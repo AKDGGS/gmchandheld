@@ -43,10 +43,8 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {
 			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];
-			;
 		} else {
 			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];
-			;
 		}
 
 		InputStream inputStream;
@@ -73,8 +71,7 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 					i = inputStream.read();
 				}
 				inputStream.close();
-				inputStream.close();
-
+				connection.disconnect();
 				return byteArrayOutputStream.toString();
 			} catch (IOException e) {
 				exceptionToBeThrown = e;
@@ -118,6 +115,8 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			SpannableString ss = new SpannableString(BARCODE);
 			lookupHistory.add(0, ss);
 
+
+			// move to lookup
 			Intent intent = new Intent(context, LookupDisplay.class);
 			intent.putExtra("barcode", BARCODE);
 			intent.putExtra("rawJSON", s);
