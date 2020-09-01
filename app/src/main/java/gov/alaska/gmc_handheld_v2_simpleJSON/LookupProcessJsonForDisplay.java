@@ -20,16 +20,15 @@ import gov.alaska.gmc_handheld_v2_simpleJSON.comparators.SortInventoryObjectList
 import static android.graphics.Typeface.BOLD;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
-public class LookupBuildTree{
+public class LookupProcessJsonForDisplay {
 
 	private  List<String> keyList;
 	private  Map<String, List<SpannableStringBuilder>> displayDict;
-	private String barcode;
 	private int ID;
 
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
 
-	public LookupBuildTree() {
+	public LookupProcessJsonForDisplay() {
 		keyList = new ArrayList<>();
 		displayDict = new HashMap<>();
 		nf.setMinimumFractionDigits(0);
@@ -53,7 +52,6 @@ public class LookupBuildTree{
 	}
 
 	public void setBarcode(String barcode) {
-		this.barcode = barcode;
 	}
 
 	public void setID(int ID) {

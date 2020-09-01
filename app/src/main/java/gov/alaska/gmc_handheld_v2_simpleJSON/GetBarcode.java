@@ -20,7 +20,7 @@ public class GetBarcode extends BaseActivity {
 	EditText barcodeInput;
 	Button submit_button;
 	ListView listView;
-	LinkedList<SpannableString> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
+	final LinkedList<SpannableString> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
 	public static ArrayAdapter<SpannableString> adapter;
 
 	@Override

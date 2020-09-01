@@ -26,9 +26,9 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 	// https://www.youtube.com/watch?v=ARnLydTCRrE
 
 	private Exception exceptionToBeThrown;
-	LinkedList<SpannableString> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
-	Context context;
-	String BARCODE;
+	final LinkedList<SpannableString> lookupHistory = LookupHistoryHolder.getInstance().lookupHistory;
+	final Context context;
+	final String BARCODE;
 
 	public DownloadData(Context context, String BARCODE) {
 		this.context = context;
@@ -52,7 +52,7 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 		InputStream inputStream;
 
 		// Retry code: https://stackoverflow.com/a/37443321
-		HttpURLConnection connection = null;
+		HttpURLConnection connection;
 
 		try {
 			URL myURL = new URL(websiteURL);
