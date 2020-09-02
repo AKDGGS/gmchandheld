@@ -15,6 +15,7 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -24,15 +25,16 @@ import java.util.LinkedList;
 public class DownloadData extends AsyncTask<String, Void, String> {
 	// https://www.youtube.com/watch?v=ARnLydTCRrE
 
+	private WeakReference<Context> contextRef;
+
 	private Exception exceptionToBeThrown;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-	private Context context;
 	private String barcode;
 	private Intent intent;
 	private String destination;
 
 	public DownloadData(Context context, String barcode, Intent intent, String destination) {
-		this.context = context;
+		this.contextRef = new WeakReference<>(context);
 		this.barcode = barcode;
 		this.intent = intent;
 		this.destination = destination;
@@ -95,6 +97,7 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 
 	@Override
 	protected void onPostExecute(String s) {
+		Context context = contextRef.get();
 		if (exceptionToBeThrown != null) {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
@@ -116,7 +119,6 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			if (destination != null) {
 				switch (destination) {
 					case "LookupDisplay":
-
 						if (s.length() > 2) {
 							lookupHistory.add(0, barcode);
 							intent.putExtra("barcode", barcode);
@@ -135,7 +137,6 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 				}
 			}
 		}
-
 	}
 }
 

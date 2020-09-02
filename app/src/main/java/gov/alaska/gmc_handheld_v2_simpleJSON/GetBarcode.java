@@ -17,14 +17,10 @@ import java.util.LinkedList;
 
 public class GetBarcode extends BaseActivity {
 
-	private EditText barcodeInput;
 	private Button submit_button;
 	private ListView listView;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	public static ArrayAdapter<String> adapter;
-
-	public GetBarcode() {
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +46,6 @@ public class GetBarcode extends BaseActivity {
 				downloadClass.execute(listView.getItemAtPosition(position).toString());
 			}
 		});
-
 		onButtonClick();
 		addKeyListener();
 	}
@@ -75,7 +70,7 @@ public class GetBarcode extends BaseActivity {
 	}
 
 	private void addKeyListener() {
-		barcodeInput = findViewById(R.id.editText1);
+		EditText barcodeInput = findViewById(R.id.editText1);
 
 		// add a keylistener to keep track user input
 		barcodeInput.setOnKeyListener(new View.OnKeyListener() {
@@ -101,7 +96,6 @@ public class GetBarcode extends BaseActivity {
 	}
 
 	private void openLookup() {
-
 		EditText editText1 = findViewById(R.id.editText1);
 		String BARCODE = editText1.getText().toString();
 		Intent intent = new Intent(this, LookupDisplay.class);

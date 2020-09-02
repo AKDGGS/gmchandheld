@@ -6,8 +6,6 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 public class LookupDisplay extends BaseActivity {
-	private ExpandableListView expandableListView;
-	private ExpandableListAdapter listAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +34,8 @@ public class LookupDisplay extends BaseActivity {
 			}
 		}
 
-		expandableListView = findViewById(R.id.expandableListView);
-		listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
+		ExpandableListView expandableListView = findViewById(R.id.expandableListView);
+		ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
 		expandableListView.setAdapter(listAdapter);
 
 		if (listAdapter.getGroupCount() >= 1) {
