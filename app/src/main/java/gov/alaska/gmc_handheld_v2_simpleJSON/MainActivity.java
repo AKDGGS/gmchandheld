@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity {
 
 
     private void open_get_barcode() {
-        Intent get_barcode = new Intent(this, GetBarcode.class);
+        Intent get_barcode = new Intent(this, Lookup.class);
         get_barcode.putExtra(EXTRA_TEXT, button_pushed);
         startActivity(get_barcode);
     }

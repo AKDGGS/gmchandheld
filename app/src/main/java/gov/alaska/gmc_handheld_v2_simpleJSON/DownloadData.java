@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,23 +19,20 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.LinkedList;
 
+interface AsyncResponse {
+	void processFinish(String output);
+}
+
 public class DownloadData extends AsyncTask<String, Void, String> {
-	// https://www.youtube.com/watch?v=ARnLydTCRrE
-
 	private WeakReference<Context> contextRef;
-
 	private Exception exceptionToBeThrown;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-	private String barcode;
-	private Intent intent;
-	private String destination;
 
-	public DownloadData(Context context, String barcode, Intent intent, String destination) {
+	public DownloadData(Context context, String barcode) {
 		this.contextRef = new WeakReference<>(context);
-		this.barcode = barcode;
-		this.intent = intent;
-		this.destination = destination;
 	}
+
+	public AsyncResponse delegate = null;
 
 	@Override
 	protected String doInBackground(String... strings) {
@@ -95,8 +89,10 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 		return null;
 	}
 
+
 	@Override
 	protected void onPostExecute(String s) {
+
 		Context context = contextRef.get();
 		if (exceptionToBeThrown != null) {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
@@ -116,26 +112,7 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 			alert.setCanceledOnTouchOutside(false);
 			alert.show();
 		} else {
-			if (destination != null) {
-				switch (destination) {
-					case "LookupDisplay":
-						if (s.length() > 2) {
-							lookupHistory.add(0, barcode);
-							intent.putExtra("barcode", barcode);
-							intent.putExtra("rawJSON", s);
-							context.startActivity(intent);
-							break;
-						} else {
-							LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-							View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
-							Toast toast = new Toast(context.getApplicationContext());
-							toast.setGravity(Gravity.CENTER, 0, 0);
-							toast.setDuration(Toast.LENGTH_LONG);
-							toast.setView(layout);
-							toast.show();
-						}
-				}
-			}
+			delegate.processFinish(s);
 		}
 	}
 }

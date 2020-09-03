@@ -35,23 +35,12 @@ public class LookupLogicForDisplay {
 		nf.setMaximumFractionDigits(1);
 	}
 
-	public void setKeyList(List<String> keyList) {
-		this.keyList = keyList;
-	}
-
-	public void setDisplayDict(Map<String, List<SpannableStringBuilder>> displayDict) {
-		this.displayDict = displayDict;
-	}
-
 	public List<String> getKeyList() {
 		return keyList;
 	}
 
 	public Map<String, List<SpannableStringBuilder>> getDisplayDict() {
 		return displayDict;
-	}
-
-	public void setBarcode(String barcode) {
 	}
 
 	public void setID(int ID) {
@@ -324,7 +313,6 @@ public class LookupLogicForDisplay {
 			case "APINumber":
 				return new InventoryObject("API Number", o, 95);
 			case "barcode":
-				setBarcode(o.toString());
 				return new InventoryObject("Barcode", o, 1000);
 			case "boxNumber":
 				return new InventoryObject("Box Number", o, 950);

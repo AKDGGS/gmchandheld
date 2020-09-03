@@ -22,10 +22,10 @@
         <activity android:name=".AddContainer" />
         <activity
             android:name=".LookupDisplay"
-            android:parentActivityName=".GetBarcode"
+            android:parentActivityName=".Lookup"
             android:theme="@style/Theme.AppCompat.DayNight" />
         <activity
-            android:name=".GetBarcode"
+            android:name=".Lookup"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

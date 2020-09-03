@@ -52,21 +52,21 @@ public class BaseActivity extends AppCompatActivity {
             case R.id.summary:
                 button_pushed = "Summary";
                 MainActivity.setButton_pushed("Summary");
-                Intent intent_summary = new Intent(this, GetBarcode.class);
+                Intent intent_summary = new Intent(this, Lookup.class);
                 intent_summary.putExtra(EXTRA_TEXT, button_pushed);
                 this.startActivity(intent_summary);
                 return true;
 
             case R.id.lookup:
                 button_pushed = "Lookup";
-                Intent intent_lookup = new Intent(this, GetBarcode.class);
+                Intent intent_lookup = new Intent(this, Lookup.class);
                 intent_lookup.putExtra(EXTRA_TEXT, button_pushed);
                 this.startActivity(intent_lookup);
                 return true;
 
             case R.id.move:
                 button_pushed = "Move";
-                Intent intent_move = new Intent(this, GetBarcode.class);
+                Intent intent_move = new Intent(this, Lookup.class);
                 intent_move.putExtra(EXTRA_TEXT, button_pushed);
                 this.startActivity(intent_move);
                 return true;

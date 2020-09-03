@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:backgroundTint="@color/colorPrimary"
-    tools:context=".GetBarcode">
+    tools:context=".Lookup">
 
     <include
         android:id="@+id/toolbar"
