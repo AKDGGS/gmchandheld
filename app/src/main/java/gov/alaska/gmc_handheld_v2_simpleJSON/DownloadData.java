@@ -9,11 +9,30 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 public class DownloadData {
+	private Exception exception = null;
+	private ByteArrayOutputStream byteArrayOutputStream;
 
-	public DownloadData() {}
 
+	public DownloadData() {
+		this.byteArrayOutputStream =  new ByteArrayOutputStream();
+	}
 
-	public String donwloadData(String barcode){
+	public boolean isErrored(){
+		if (exception != null){
+			return true;
+		}
+		return false;
+	}
+
+	public Exception getException() {
+		return exception;
+	}
+
+	public ByteArrayOutputStream getByteArrayOutputStream() {
+		return byteArrayOutputStream;
+	}
+
+	public DownloadData donwloadData(DownloadData obj, String barcode){
 		String websiteURL;
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
@@ -37,27 +56,31 @@ public class DownloadData {
 			connection.connect();
 
 			inputStream = connection.getInputStream();
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//			byteArrayOutputStream = new ByteArrayOutputStream();
 
 			int i;
 			try {
 				i = inputStream.read();
 				while (i != -1) {
-					byteArrayOutputStream.write(i);
+					obj.byteArrayOutputStream.write(i);
 					i = inputStream.read();
 				}
 				inputStream.close();
 				connection.disconnect();
-				return byteArrayOutputStream.toString();
+				return obj;
 			} catch (IOException e) {
-				return e.toString();
+				exception = e;
+				return null;
 			}
 		} catch (ProtocolException e) {
-			return e.toString();
+			exception = e;
+			return null;
 		} catch (MalformedURLException e) {
-			return e.toString();
+			exception = e;
+			return null;
 		} catch (IOException e) {
-			return e.toString();
+			exception = e;
+			return null;
 		}
 	}
 }

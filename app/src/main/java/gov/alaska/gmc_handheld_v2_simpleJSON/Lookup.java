@@ -28,7 +28,6 @@ public class Lookup extends BaseActivity {
 
 	private ListView listView;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-	private String barcodeFromHistory = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +45,7 @@ public class Lookup extends BaseActivity {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				// if "enter" is pressed
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-					openLookup();
+					openLookup(getBarcode());
 					return true;
 				}
 				return false;
@@ -58,7 +57,7 @@ public class Lookup extends BaseActivity {
 		submit_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				openLookup();
+				openLookup(getBarcode());
 			}
 		});
 
@@ -70,37 +69,28 @@ public class Lookup extends BaseActivity {
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				barcodeFromHistory = listView.getItemAtPosition(position).toString();
-				openLookup();
+				openLookup(listView.getItemAtPosition(position).toString());
 			}
 		});
 	}
 
 	@SuppressLint("StaticFieldLeak")
-	private void openLookup() {
-		final String barcode;
-		if (barcodeFromHistory == null) {
-			barcode = getBarcode();
-		} else {
-			barcode = barcodeFromHistory;
-			barcodeFromHistory = null;
-		}
+	private void openLookup(String barcodeInput) {
+		final String barcode = barcodeInput;
 
-		new AsyncTask<String, Void, String>() {
+		new AsyncTask<String, Void, DownloadData>() {
 			@Override
-			protected String doInBackground(String... strings) {
+			protected DownloadData doInBackground(String... strings) {
 				DownloadData downloadData = new DownloadData();
-				String s = downloadData.donwloadData(barcode);
-				return s;
+				downloadData.donwloadData(downloadData, barcode);
+				return downloadData;
 			}
 
 			@Override
-			protected void onPostExecute(String output) {
-				super.onPostExecute(output);
-				String barcode = getBarcode();
+			protected void onPostExecute(DownloadData obj) {
 
-				if (output.contains("Exception")) {
-					final String msg = output;
+				if (obj.isErrored()) {
+					final String msg = obj.getException().toString();
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();
 					View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) (Lookup.this).findViewById(R.id.lookup_error_root));
 
@@ -118,16 +108,15 @@ public class Lookup extends BaseActivity {
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
 
-				} else if (output.length() > 2) {
+				} else if (obj.getByteArrayOutputStream().toString().length() > 2) {
 					if (!lookupHistory.contains(barcode)) {
 						lookupHistory.add(0, barcode);
 					}
 					Intent intent = new Intent(Lookup.this, LookupDisplay.class);
 					intent.putExtra("barcode", barcode);
-					intent.putExtra("rawJSON", output);
+					intent.putExtra("rawJSON", obj.getByteArrayOutputStream().toString());
 					Lookup.this.startActivity(intent);
 				} else {
-
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();
 					View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) (Lookup.this).findViewById(R.id.toast_error_root));
 					Toast toast = new Toast(Lookup.this);
