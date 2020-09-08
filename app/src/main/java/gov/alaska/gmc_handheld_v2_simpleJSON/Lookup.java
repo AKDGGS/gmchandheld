@@ -88,7 +88,7 @@ public class Lookup extends BaseActivity implements AsyncResponse {
 		Handler mainHandler = new Handler(this.getMainLooper());
 
 		if (output.contains("Exception")) {
-			final String o = output;
+			final String msg = output;
 
 			Runnable myRunnable = new Runnable() {
 				@Override
@@ -98,7 +98,7 @@ public class Lookup extends BaseActivity implements AsyncResponse {
 
 					AlertDialog.Builder alertDialog = new AlertDialog.Builder(Lookup.this);
 					alertDialog.setTitle("Exception Thrown");
-					alertDialog.setMessage(o);
+					alertDialog.setMessage(msg);
 
 					alertDialog.setView(layout);
 					alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
