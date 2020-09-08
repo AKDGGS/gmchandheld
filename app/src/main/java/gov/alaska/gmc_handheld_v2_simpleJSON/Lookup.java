@@ -1,11 +1,12 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,10 +23,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.LinkedList;
 
-public class Lookup extends BaseActivity implements AsyncResponse {
+//public class Lookup extends BaseActivity implements AsyncResponse {
+public class Lookup extends BaseActivity {
 
 	private ListView listView;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+	private String barcodeFromHistory = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +62,7 @@ public class Lookup extends BaseActivity implements AsyncResponse {
 			}
 		});
 
-		// populate the history list
+//		 populate the history list
 		listView = findViewById(R.id.listViewGetBarcodeHistory);
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lookupHistory);
@@ -67,32 +70,37 @@ public class Lookup extends BaseActivity implements AsyncResponse {
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				DownloadData downloadClass = new DownloadData();
-				downloadClass.delegate = Lookup.this;
-				downloadClass.execute(listView.getItemAtPosition(position).toString());
+				barcodeFromHistory = listView.getItemAtPosition(position).toString();
+				openLookup();
 			}
 		});
 	}
 
+	@SuppressLint("StaticFieldLeak")
 	private void openLookup() {
-		String barcode = getBarcode();
-		DownloadData downloadClass = new DownloadData();
-		downloadClass.delegate = this;
-		downloadClass.execute(barcode);
+		final String barcode;
+		if (barcodeFromHistory == null) {
+			barcode = getBarcode();
+		} else {
+			barcode = barcodeFromHistory;
+			barcodeFromHistory = null;
+		}
 
-	}
+		new AsyncTask<String, Void, String>() {
+			@Override
+			protected String doInBackground(String... strings) {
+				DownloadData downloadData = new DownloadData();
+				String s = downloadData.donwloadData(barcode);
+				return s;
+			}
 
-	@Override
-	public void processFinish(String output) {
-		String barcode = getBarcode();
-		Handler mainHandler = new Handler(this.getMainLooper());
+			@Override
+			protected void onPostExecute(String output) {
+				super.onPostExecute(output);
+				String barcode = getBarcode();
 
-		if (output.contains("Exception")) {
-			final String msg = output;
-
-			Runnable myRunnable = new Runnable() {
-				@Override
-				public void run() {
+				if (output.contains("Exception")) {
+					final String msg = output;
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();
 					View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) (Lookup.this).findViewById(R.id.lookup_error_root));
 
@@ -109,21 +117,17 @@ public class Lookup extends BaseActivity implements AsyncResponse {
 					AlertDialog alert = alertDialog.create();
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
-				}
-			};
-			mainHandler.post(myRunnable);
-		} else if (output.length() > 2) {
-			if (!lookupHistory.contains(barcode)) {
-				lookupHistory.add(0, barcode);
-			}
-			Intent intent = new Intent(this, LookupDisplay.class);
-			intent.putExtra("barcode", barcode);
-			intent.putExtra("rawJSON", output);
-			this.startActivity(intent);
-		} else {
-			Runnable myRunnable = new Runnable() {
-				@Override
-				public void run() {
+
+				} else if (output.length() > 2) {
+					if (!lookupHistory.contains(barcode)) {
+						lookupHistory.add(0, barcode);
+					}
+					Intent intent = new Intent(Lookup.this, LookupDisplay.class);
+					intent.putExtra("barcode", barcode);
+					intent.putExtra("rawJSON", output);
+					Lookup.this.startActivity(intent);
+				} else {
+
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();
 					View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) (Lookup.this).findViewById(R.id.toast_error_root));
 					Toast toast = new Toast(Lookup.this);
@@ -132,9 +136,8 @@ public class Lookup extends BaseActivity implements AsyncResponse {
 					toast.setView(layout);
 					toast.show();
 				}
-			};
-			mainHandler.post(myRunnable);
-		}
+			}
+		}.execute();
 	}
 
 	public String getBarcode() {

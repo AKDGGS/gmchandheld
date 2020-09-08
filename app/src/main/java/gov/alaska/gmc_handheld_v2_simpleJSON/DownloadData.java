@@ -1,7 +1,5 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.os.AsyncTask;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,26 +8,19 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-interface AsyncResponse {
-	void processFinish(String output);
-}
-
-public class DownloadData extends AsyncTask<String, Void, String> {
+public class DownloadData {
 
 	public DownloadData() {}
 
-	public AsyncResponse delegate = null;
 
-	@Override
-	protected String doInBackground(String... strings) {
-
+	public String donwloadData(String barcode){
 		String websiteURL;
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {
-			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];
+			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
 		} else {
-			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + strings[0];
+			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
 		}
 
 		InputStream inputStream;
@@ -57,23 +48,16 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 				}
 				inputStream.close();
 				connection.disconnect();
-				delegate.processFinish(byteArrayOutputStream.toString());
 				return byteArrayOutputStream.toString();
 			} catch (IOException e) {
-				delegate.processFinish(e.toString());
 				return e.toString();
 			}
 		} catch (ProtocolException e) {
-			delegate.processFinish(e.toString());
-
-			return null;
+			return e.toString();
 		} catch (MalformedURLException e) {
-			delegate.processFinish(e.toString());
-			return null;
+			return e.toString();
 		} catch (IOException e) {
-			delegate.processFinish(e.toString());
-			return null;
+			return e.toString();
 		}
 	}
 }
-
