@@ -1,6 +1,5 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -10,11 +9,10 @@ import java.net.URL;
 
 public class DownloadData {
 	private Exception exception = null;
-	private ByteArrayOutputStream byteArrayOutputStream;
+	private String rawJson;
 
 
 	public DownloadData() {
-		this.byteArrayOutputStream =  new ByteArrayOutputStream();
 	}
 
 	public boolean isErrored(){
@@ -28,11 +26,11 @@ public class DownloadData {
 		return exception;
 	}
 
-	public ByteArrayOutputStream getByteArrayOutputStream() {
-		return byteArrayOutputStream;
+	public String getRawJson() {
+		return rawJson;
 	}
 
-	public DownloadData donwloadData(DownloadData obj, String barcode){
+	public DownloadData getDataFromURL(String barcode){
 		String websiteURL;
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
@@ -56,18 +54,23 @@ public class DownloadData {
 			connection.connect();
 
 			inputStream = connection.getInputStream();
-//			byteArrayOutputStream = new ByteArrayOutputStream();
 
 			int i;
 			try {
-				i = inputStream.read();
-				while (i != -1) {
-					obj.byteArrayOutputStream.write(i);
-					i = inputStream.read();
+				StringBuilder sb = new StringBuilder();
+				byte[] buffer = new byte[4096];
+				int buffer_read = 0;
+
+				while (buffer_read != -1) {
+					buffer_read = inputStream.read(buffer);
+					if(buffer_read > 0){
+						sb.append(new String(buffer, 0, buffer_read));
+					}
 				}
+				rawJson = sb.toString();
 				inputStream.close();
 				connection.disconnect();
-				return obj;
+				return null;
 			} catch (IOException e) {
 				exception = e;
 				return null;

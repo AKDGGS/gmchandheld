@@ -82,7 +82,7 @@ public class Lookup extends BaseActivity {
 			@Override
 			protected DownloadData doInBackground(String... strings) {
 				DownloadData downloadData = new DownloadData();
-				downloadData.donwloadData(downloadData, barcode);
+				downloadData.getDataFromURL(barcode);
 				return downloadData;
 			}
 
@@ -108,13 +108,13 @@ public class Lookup extends BaseActivity {
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
 
-				} else if (obj.getByteArrayOutputStream().toString().length() > 2) {
+				} else if (obj.getRawJson().toString().length() > 2) {
 					if (!lookupHistory.contains(barcode)) {
 						lookupHistory.add(0, barcode);
 					}
 					Intent intent = new Intent(Lookup.this, LookupDisplay.class);
 					intent.putExtra("barcode", barcode);
-					intent.putExtra("rawJSON", obj.getByteArrayOutputStream().toString());
+					intent.putExtra("rawJSON", obj.getRawJson().toString());
 					Lookup.this.startActivity(intent);
 				} else {
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();
