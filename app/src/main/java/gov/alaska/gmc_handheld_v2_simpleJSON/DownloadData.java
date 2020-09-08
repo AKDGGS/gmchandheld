@@ -1,36 +1,22 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.LinkedList;
 
 interface AsyncResponse {
 	void processFinish(String output);
 }
 
 public class DownloadData extends AsyncTask<String, Void, String> {
-	private WeakReference<Context> contextRef;
-	private Exception exceptionToBeThrown;
-	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 
-	public DownloadData(Context context, String barcode) {
-		this.contextRef = new WeakReference<>(context);
-	}
+	public DownloadData() {}
 
 	public AsyncResponse delegate = null;
 
@@ -71,48 +57,22 @@ public class DownloadData extends AsyncTask<String, Void, String> {
 				}
 				inputStream.close();
 				connection.disconnect();
+				delegate.processFinish(byteArrayOutputStream.toString());
 				return byteArrayOutputStream.toString();
 			} catch (IOException e) {
-				exceptionToBeThrown = e;
-				e.printStackTrace();
+				delegate.processFinish(e.toString());
+				return e.toString();
 			}
 		} catch (ProtocolException e) {
-			exceptionToBeThrown = e;
-			e.printStackTrace();
+			delegate.processFinish(e.toString());
+
+			return null;
 		} catch (MalformedURLException e) {
-			exceptionToBeThrown = e;
-			e.printStackTrace();
+			delegate.processFinish(e.toString());
+			return null;
 		} catch (IOException e) {
-			exceptionToBeThrown = e;
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-
-	@Override
-	protected void onPostExecute(String s) {
-
-		Context context = contextRef.get();
-		if (exceptionToBeThrown != null) {
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
-
-			AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-			alertDialog.setTitle("Exception Thrown");
-			alertDialog.setMessage(exceptionToBeThrown.toString());
-
-			alertDialog.setView(layout);
-			alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-				}
-			});
-			AlertDialog alert = alertDialog.create();
-			alert.setCanceledOnTouchOutside(false);
-			alert.show();
-		} else {
-			delegate.processFinish(s);
+			delegate.processFinish(e.toString());
+			return null;
 		}
 	}
 }
