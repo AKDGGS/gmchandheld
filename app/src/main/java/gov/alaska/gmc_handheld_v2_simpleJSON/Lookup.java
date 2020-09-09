@@ -29,6 +29,8 @@ public class Lookup extends BaseActivity {
 	private ListView listView;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -78,13 +80,26 @@ public class Lookup extends BaseActivity {
 	private void openLookup(String barcodeInput) {
 		final String barcode = barcodeInput;
 
+		final String websiteURL;
+
+		int APILevel = android.os.Build.VERSION.SDK_INT;
+		if (APILevel < 18) {
+//			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
+			websiteURL = "http://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=" + barcode;
+
+		} else {
+			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
+		}
+
 		new AsyncTask<String, Void, DownloadData>() {
 			@Override
 			protected DownloadData doInBackground(String... strings) {
-				DownloadData downloadData = new DownloadData();
-				downloadData.getDataFromURL(barcode);
+				DownloadData downloadData = new DownloadData(websiteURL, Lookup.this);
+				downloadData.getDataFromURL();
 				return downloadData;
 			}
+
+
 
 			@Override
 			protected void onPostExecute(DownloadData obj) {
@@ -108,13 +123,18 @@ public class Lookup extends BaseActivity {
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
 
-				} else if (obj.getRawJson().toString().length() > 2) {
+				} else if (obj.getRawJson().length() > 2) {
 					if (!lookupHistory.contains(barcode)) {
 						lookupHistory.add(0, barcode);
+
 					}
 					Intent intent = new Intent(Lookup.this, LookupDisplay.class);
 					intent.putExtra("barcode", barcode);
-					intent.putExtra("rawJSON", obj.getRawJson().toString());
+//					SharedPreferences sp = getApplicationContext().getSharedPreferences("downloadedData", Context.MODE_PRIVATE);
+//					String s = sp.getString("downloadDataString", "");
+//					intent.putExtra("rawJSON", obj.getRawJson());
+//					intent.putExtra("rawJSON", "[{\"ID\":11276,\"barcode\":\"GMC-000096345\",\"boreholes\":[{\"ID\":1459,\"name\":\"UA-1\",\"onshore\":true,\"prospect\":{\"ID\":4,\"name\":\"Amchitka Island\"}}],\"boxNumber\":\"192\",\"collection\":{\"ID\":29,\"name\":\"UAF\"},\"containerPath\":\"ANC/RE/15/07/B\",\"intervalBottom\":3440.00,\"intervalTop\":3020.00,\"intervalUnit\":{\"ID\":2,\"abbr\":\"ft\",\"name\":\"feet\"},\"keywords\":[\"raw\",\"cuttings\",\"washed\"],\"remark\":\"cuttings, interval depths, bad box, orphans replaced in box, samples (3280-3290) \\u0026 (3420-3430) missing\"}]");
+
 					Lookup.this.startActivity(intent);
 				} else {
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();
@@ -129,8 +149,22 @@ public class Lookup extends BaseActivity {
 		}.execute();
 	}
 
+
 	public String getBarcode() {
 		EditText barcodeInput = findViewById(R.id.editText1);
 		return barcodeInput.getText().toString();
 	}
+//
+//	public void setDefaults(String key, String value, Context context) {
+//		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+//		SharedPreferences.Editor editor = preferences.edit();
+//		editor.putString(key, value);
+//		editor.commit();
+//	}
+//
+//
+//	public static String getDefaults(String key, Context context) {
+//		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+//		return preferences.getString(key, null);
+//	}
 }

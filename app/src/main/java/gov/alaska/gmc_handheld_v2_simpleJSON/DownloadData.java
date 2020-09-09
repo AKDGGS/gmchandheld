@@ -1,5 +1,10 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import org.json.JSONArray;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -10,16 +15,18 @@ import java.net.URL;
 public class DownloadData {
 	private Exception exception = null;
 	private String rawJson;
+	private JSONArray jsonArrayResult;
+	private String url;
+	private Context context;
 
+	public DownloadData(String url, Context context) {
 
-	public DownloadData() {
+		this.url = url;
+		this.context = context;
 	}
 
-	public boolean isErrored(){
-		if (exception != null){
-			return true;
-		}
-		return false;
+	public boolean isErrored() {
+		return exception != null;
 	}
 
 	public Exception getException() {
@@ -30,32 +37,25 @@ public class DownloadData {
 		return rawJson;
 	}
 
-	public DownloadData getDataFromURL(String barcode){
-		String websiteURL;
+	public JSONArray getJsonArrayResult() {
+		return jsonArrayResult;
+	}
 
-		int APILevel = android.os.Build.VERSION.SDK_INT;
-		if (APILevel < 18) {
-			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
-		} else {
-			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
-		}
-
+	public DownloadData getDataFromURL() {
+		SharedPreferences sp;
 		InputStream inputStream;
-
-		// Retry code: https://stackoverflow.com/a/37443321
 		HttpURLConnection connection;
 
 		try {
-			URL myURL = new URL(websiteURL);
+			URL myURL = new URL(url);
 			connection = (HttpURLConnection) myURL.openConnection();
-			connection.setReadTimeout(10000);
+			connection.setReadTimeout(60000);
 			connection.setConnectTimeout(200000);
 			connection.setRequestMethod("GET");
 			connection.connect();
 
 			inputStream = connection.getInputStream();
 
-			int i;
 			try {
 				StringBuilder sb = new StringBuilder();
 				byte[] buffer = new byte[4096];
@@ -63,27 +63,87 @@ public class DownloadData {
 
 				while (buffer_read != -1) {
 					buffer_read = inputStream.read(buffer);
-					if(buffer_read > 0){
+					if (buffer_read > 0) {
 						sb.append(new String(buffer, 0, buffer_read));
 					}
 				}
 				rawJson = sb.toString();
+				sp = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
+				SharedPreferences.Editor editor = sp.edit();
+				editor.putString("downloadedDataString", rawJson);
+				editor.commit();
+				System.out.println(rawJson);
+
+
 				inputStream.close();
 				connection.disconnect();
-				return null;
+				return this;
 			} catch (IOException e) {
 				exception = e;
-				return null;
+				return this;
 			}
 		} catch (ProtocolException e) {
 			exception = e;
-			return null;
+			return this;
 		} catch (MalformedURLException e) {
 			exception = e;
-			return null;
+			return this;
 		} catch (IOException e) {
 			exception = e;
-			return null;
+			return this;
 		}
 	}
+
+//	public DownloadData fetchJSON() {
+//
+//		InputStream inputStream;
+//		HttpURLConnection connection;
+//
+//		try {
+//			URL myURL = new URL(url);
+//
+//			connection = (HttpURLConnection) myURL.openConnection();
+//			connection.setReadTimeout(10000);
+//			connection.setConnectTimeout(200000);
+//			connection.setRequestMethod("GET");
+//			connection.connect();
+//
+//			inputStream = connection.getInputStream();
+//
+//			try {
+//				StringBuilder sb = new StringBuilder();
+//				byte[] buffer = new byte[4096];
+//				int buffer_read = 0;
+//
+//				while (buffer_read != -1) {
+//					buffer_read = inputStream.read(buffer);
+//					if (buffer_read > 0) {
+//						sb.append(new String(buffer, 0, buffer_read));
+//					}
+//				}
+//				rawJson = sb.toString();
+//
+//				Object json = new JSONTokener(rawJson).nextValue();
+//				if (json instanceof JSONArray) {
+//					jsonArrayResult = (JSONArray) json;
+//				}
+//
+//				inputStream.close();
+//				connection.disconnect();
+//				return this;
+//			} catch (IOException | JSONException e) {
+//				exception = e;
+//				return this;
+//			}
+//		} catch (ProtocolException e) {
+//			exception = e;
+//			return this;
+//		} catch (MalformedURLException e) {
+//			exception = e;
+//			return this;
+//		} catch (IOException e) {
+//			exception = e;
+//			return this;
+//		}
+//	}
 }

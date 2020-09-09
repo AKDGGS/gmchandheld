@@ -1,6 +1,8 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -18,7 +20,9 @@ public class LookupDisplay extends BaseActivity {
 
 		Intent intent = getIntent();
 		String barcode = intent.getStringExtra("barcode");
-		String rawJSON = intent.getStringExtra("rawJSON");
+//		String rawJSON = intent.getStringExtra("rawJSON");
+		SharedPreferences sp = getApplicationContext().getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
+		String rawJSON = sp.getString("downloadedDataString", "");
 
 		try {
 			lookupLogicForDisplayObj.processRawJSON(rawJSON);
