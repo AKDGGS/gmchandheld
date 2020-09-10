@@ -1,8 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -18,14 +16,10 @@ public class LookupDisplay extends BaseActivity {
 
 		LookupLogicForDisplay lookupLogicForDisplayObj = new LookupLogicForDisplay();
 
+
 		Intent intent = getIntent();
 		String barcode = intent.getStringExtra("barcode");
-
-		SharedPreferences sp = getApplicationContext().getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
-		String rawJSON = sp.getString("downloadedDataString", "");
-
-		//The downloaded data is not preserved between downloads
-		sp.edit().remove("downloadDataString").commit();
+		String rawJSON = intent.getStringExtra("rawJSON");
 
 		try {
 			lookupLogicForDisplayObj.processRawJSON(rawJSON);

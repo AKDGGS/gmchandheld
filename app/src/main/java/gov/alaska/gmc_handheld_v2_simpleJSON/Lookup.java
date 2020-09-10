@@ -2,10 +2,8 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,7 +23,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.LinkedList;
 
-//public class Lookup extends BaseActivity implements AsyncResponse {
 public class Lookup extends BaseActivity {
 
 	private ListView listView;
@@ -101,13 +98,9 @@ public class Lookup extends BaseActivity {
 				return downloadData;
 			}
 
-
-
 			@Override
 			protected void onPostExecute(DownloadData obj) {
 
-				SharedPreferences sp = getApplicationContext().getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
-				String rawJSON = sp.getString("downloadedDataString", "");
 
 				if (obj.isErrored()) {
 					final String msg = obj.getException().toString();
@@ -128,7 +121,7 @@ public class Lookup extends BaseActivity {
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
 
-				} else if (rawJSON.length() > 2) {
+				} else if (obj.getRawJson().length() > 2) {
 					if (!lookupHistory.contains(barcode)) {
 						lookupHistory.add(0, barcode);
 
@@ -137,10 +130,12 @@ public class Lookup extends BaseActivity {
 //						SharedPreferences.Editor editor = prefs.edit();
 //						editor.putString("lookupHistoryString" , lookupHistory.toString());
 //						editor.commit();
-
 					}
+
+
 					Intent intent = new Intent(Lookup.this, LookupDisplay.class);
 					intent.putExtra("barcode", barcode);
+					intent.putExtra("rawJSON", obj.getRawJson().toString());
 					Lookup.this.startActivity(intent);
 				} else {
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();

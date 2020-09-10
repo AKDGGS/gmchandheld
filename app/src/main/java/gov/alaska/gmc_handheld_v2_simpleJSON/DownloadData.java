@@ -1,7 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +13,7 @@ public class DownloadData {
 	private Exception exception = null;
 	private String url;
 	private Context context;
+	private String rawJson;
 
 	public DownloadData(String url, Context context) {
 
@@ -29,9 +29,12 @@ public class DownloadData {
 		return exception;
 	}
 
+	public String getRawJson() {
+		return rawJson;
+	}
+
 
 	public DownloadData getDataFromURL() {
-		SharedPreferences sp;
 		InputStream inputStream;
 		HttpURLConnection connection;
 
@@ -56,11 +59,8 @@ public class DownloadData {
 						sb.append(new String(buffer, 0, buffer_read));
 					}
 				}
-				sp = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
-				SharedPreferences.Editor editor = sp.edit();
-				editor.putString("downloadedDataString", sb.toString());
-				editor.commit();
 
+				rawJson = sb.toString();
 				inputStream.close();
 				connection.disconnect();
 				return this;
