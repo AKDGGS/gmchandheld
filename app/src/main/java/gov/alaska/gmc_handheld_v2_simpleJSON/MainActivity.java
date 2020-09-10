@@ -30,18 +30,14 @@ public class MainActivity extends BaseActivity {
 
         // test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
-//        Set<String> set2 = sp.getStringSet("key", null);
-//
-//        System.out.println(set2);
+//        String s2 =  sp.getString("lookupHistoryString", "");
+//        System.out.println(s2);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
 
 
-        //The color needs to be reset, because if an incorrect URL is entered the color will match the
-        //the color from the last txtParent in MyExpListAdapter.  These lines reset the color of the
-        //elements to the desired color.
         Button but1 = findViewById(R.id.button1);
         but1.setBackgroundColor(Color.parseColor("#ff567b95"));
 
@@ -106,16 +102,11 @@ public class MainActivity extends BaseActivity {
                 startActivity(audit);
                 break;
         }
-
     }
-
 
     private void open_get_barcode() {
         Intent get_barcode = new Intent(this, Lookup.class);
         get_barcode.putExtra(EXTRA_TEXT, button_pushed);
         startActivity(get_barcode);
     }
-
-
-
 }

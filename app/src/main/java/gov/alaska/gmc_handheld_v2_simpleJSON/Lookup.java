@@ -31,8 +31,6 @@ public class Lookup extends BaseActivity {
 	private ListView listView;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 
-
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,8 +84,10 @@ public class Lookup extends BaseActivity {
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {
-//			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
-			websiteURL = "http://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=" + barcode;
+			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
+
+			//dev address -- used for testing
+//			websiteURL = "http://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=" + barcode;
 
 		} else {
 			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
@@ -131,13 +131,11 @@ public class Lookup extends BaseActivity {
 				} else if (rawJSON.length() > 2) {
 					if (!lookupHistory.contains(barcode)) {
 						lookupHistory.add(0, barcode);
-						
+
 						//Save LookupHistory list -- Test for audit and move.
-//						Set<String> set = new HashSet<String>();
-//						set.addAll(lookupHistory);
 //						SharedPreferences prefs = getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
 //						SharedPreferences.Editor editor = prefs.edit();
-//						editor.putStringSet("key", set);
+//						editor.putString("lookupHistoryString" , lookupHistory.toString());
 //						editor.commit();
 
 					}
@@ -157,22 +155,8 @@ public class Lookup extends BaseActivity {
 		}.execute();
 	}
 
-
 	public String getBarcode() {
 		EditText barcodeInput = findViewById(R.id.editText1);
 		return barcodeInput.getText().toString();
 	}
-//
-//	public void setDefaults(String key, String value, Context context) {
-//		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-//		SharedPreferences.Editor editor = preferences.edit();
-//		editor.putString(key, value);
-//		editor.commit();
-//	}
-//
-//
-//	public static String getDefaults(String key, Context context) {
-//		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-//		return preferences.getString(key, null);
-//	}
 }
