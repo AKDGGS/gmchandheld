@@ -2,8 +2,10 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -104,6 +106,9 @@ public class Lookup extends BaseActivity {
 			@Override
 			protected void onPostExecute(DownloadData obj) {
 
+				SharedPreferences sp = getApplicationContext().getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
+				String rawJSON = sp.getString("downloadedDataString", "");
+
 				if (obj.isErrored()) {
 					final String msg = obj.getException().toString();
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();
@@ -123,18 +128,21 @@ public class Lookup extends BaseActivity {
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
 
-				} else if (obj.getRawJson().length() > 2) {
+				} else if (rawJSON.length() > 2) {
 					if (!lookupHistory.contains(barcode)) {
 						lookupHistory.add(0, barcode);
+						
+						//Save LookupHistory list -- Test for audit and move.
+//						Set<String> set = new HashSet<String>();
+//						set.addAll(lookupHistory);
+//						SharedPreferences prefs = getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
+//						SharedPreferences.Editor editor = prefs.edit();
+//						editor.putStringSet("key", set);
+//						editor.commit();
 
 					}
 					Intent intent = new Intent(Lookup.this, LookupDisplay.class);
 					intent.putExtra("barcode", barcode);
-//					SharedPreferences sp = getApplicationContext().getSharedPreferences("downloadedData", Context.MODE_PRIVATE);
-//					String s = sp.getString("downloadDataString", "");
-//					intent.putExtra("rawJSON", obj.getRawJson());
-//					intent.putExtra("rawJSON", "[{\"ID\":11276,\"barcode\":\"GMC-000096345\",\"boreholes\":[{\"ID\":1459,\"name\":\"UA-1\",\"onshore\":true,\"prospect\":{\"ID\":4,\"name\":\"Amchitka Island\"}}],\"boxNumber\":\"192\",\"collection\":{\"ID\":29,\"name\":\"UAF\"},\"containerPath\":\"ANC/RE/15/07/B\",\"intervalBottom\":3440.00,\"intervalTop\":3020.00,\"intervalUnit\":{\"ID\":2,\"abbr\":\"ft\",\"name\":\"feet\"},\"keywords\":[\"raw\",\"cuttings\",\"washed\"],\"remark\":\"cuttings, interval depths, bad box, orphans replaced in box, samples (3280-3290) \\u0026 (3420-3430) missing\"}]");
-
 					Lookup.this.startActivity(intent);
 				} else {
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();

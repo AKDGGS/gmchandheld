@@ -20,9 +20,12 @@ public class LookupDisplay extends BaseActivity {
 
 		Intent intent = getIntent();
 		String barcode = intent.getStringExtra("barcode");
-//		String rawJSON = intent.getStringExtra("rawJSON");
+
 		SharedPreferences sp = getApplicationContext().getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
 		String rawJSON = sp.getString("downloadedDataString", "");
+
+		//The downloaded data is not preserved between downloads
+		sp.edit().remove("downloadDataString").commit();
 
 		try {
 			lookupLogicForDisplayObj.processRawJSON(rawJSON);

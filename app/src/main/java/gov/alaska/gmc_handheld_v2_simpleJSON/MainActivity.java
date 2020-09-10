@@ -27,6 +27,13 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        // test for accessing lookupHistory from shared preferences.
+//        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
+//        Set<String> set2 = sp.getStringSet("key", null);
+//
+//        System.out.println(set2);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
