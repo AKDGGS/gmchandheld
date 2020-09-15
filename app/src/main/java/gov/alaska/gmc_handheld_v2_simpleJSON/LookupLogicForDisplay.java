@@ -22,10 +22,9 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupLogicForDisplay {
 
-	private  List<String> keyList;
-	private  Map<String, List<SpannableStringBuilder>> displayDict;
+	private List<String> keyList;
+	private Map<String, List<SpannableStringBuilder>> displayDict;
 	private int ID;
-
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
 
 	public LookupLogicForDisplay() {
@@ -47,7 +46,8 @@ public class LookupLogicForDisplay {
 		this.ID = ID;
 	}
 
-//*********************************************************************************************
+
+	//*********************************************************************************************
 
 	public void processRawJSON(String rawJSON) throws Exception {
 

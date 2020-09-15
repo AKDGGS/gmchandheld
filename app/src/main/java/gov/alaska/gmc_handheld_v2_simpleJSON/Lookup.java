@@ -101,7 +101,6 @@ public class Lookup extends BaseActivity {
 			@Override
 			protected void onPostExecute(DownloadData obj) {
 
-
 				if (obj.isErrored()) {
 					final String msg = obj.getException().toString();
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();
@@ -124,18 +123,19 @@ public class Lookup extends BaseActivity {
 				} else if (obj.getRawJson().length() > 2) {
 					if (!lookupHistory.contains(barcode)) {
 						lookupHistory.add(0, barcode);
+					}
+					LookupLogicForDisplay lookupLogicForDisplayObj;
+					lookupLogicForDisplayObj = new LookupLogicForDisplay();
+					Bridge.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
 
-						//Save LookupHistory list -- Test for audit and move.
-//						SharedPreferences prefs = getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
-//						SharedPreferences.Editor editor = prefs.edit();
-//						editor.putString("lookupHistoryString" , lookupHistory.toString());
-//						editor.commit();
+					try {
+						lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 
-
 					Intent intent = new Intent(Lookup.this, LookupDisplay.class);
-					intent.putExtra("barcode", barcode);
-					intent.putExtra("rawJSON", obj.getRawJson().toString());
+					intent.putExtra("barcode", barcode);  //this barcode refers to the query barcode.
 					Lookup.this.startActivity(intent);
 				} else {
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();

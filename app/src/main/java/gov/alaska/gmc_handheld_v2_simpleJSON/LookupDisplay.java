@@ -14,18 +14,11 @@ public class LookupDisplay extends BaseActivity {
 
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-		LookupLogicForDisplay lookupLogicForDisplayObj = new LookupLogicForDisplay();
-
+		LookupLogicForDisplay lookupLogicForDisplayObj;
+		lookupLogicForDisplayObj = Bridge.instance().lookupLogicForDisplayObj;
 
 		Intent intent = getIntent();
-		String barcode = intent.getStringExtra("barcode");
-		String rawJSON = intent.getStringExtra("rawJSON");
-
-		try {
-			lookupLogicForDisplayObj.processRawJSON(rawJSON);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
 
 		if (barcode != null) {
 			LookupDisplay.this.getSupportActionBar().setTitle(barcode);

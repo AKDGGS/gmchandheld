@@ -10,6 +10,6 @@ public class Bridge {
 		return obj;
 	}
 
-	public LookupLogicForDisplay lookupLogicForDisplay;
+	public LookupLogicForDisplay lookupLogicForDisplayObj;
 
 }

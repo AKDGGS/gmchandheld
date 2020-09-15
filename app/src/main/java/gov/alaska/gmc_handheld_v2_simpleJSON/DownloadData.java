@@ -15,6 +15,8 @@ public class DownloadData {
 	private Context context;
 	private String rawJson;
 
+
+
 	public DownloadData(String url, Context context) {
 
 		this.url = url;
