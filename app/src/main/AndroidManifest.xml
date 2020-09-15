@@ -18,7 +18,8 @@
         <activity android:name=".Recode" />
         <activity android:name=".Move" />
         <activity android:name=".Summary" />
-        <activity android:name=".Help" />
+        <activity android:name=".Help"
+            android:parentActivityName=".Lookup"/>
         <activity android:name=".AddContainer" />
         <activity
             android:name=".LookupDisplay"

@@ -81,9 +81,8 @@ public class MainActivity extends BaseActivity {
                 open_get_barcode();
                 break;
             case "Move":
-                Intent move = new Intent(this, Move.class);
                 button_pushed = "Move";
-                open_get_barcode();
+                open_move();
                 break;
             case "Recode":
                 Intent recode = new Intent(this, Recode.class);
@@ -105,8 +104,26 @@ public class MainActivity extends BaseActivity {
     }
 
     private void open_get_barcode() {
-        Intent get_barcode = new Intent(this, Lookup.class);
-        get_barcode.putExtra(EXTRA_TEXT, button_pushed);
-        startActivity(get_barcode);
+
+        LookupLogicForDisplay lookupLogicForDisplayObj;
+        lookupLogicForDisplayObj = Bridge.instance().lookupLogicForDisplayObj;
+
+        System.out.println(lookupLogicForDisplayObj == null);
+
+        if(lookupLogicForDisplayObj == null) {
+            Intent get_barcode = new Intent(this, Lookup.class);
+            get_barcode.putExtra(EXTRA_TEXT, button_pushed);
+            startActivity(get_barcode);
+        }else{
+            Intent audit = new Intent(this, LookupDisplay.class);
+            startActivity(audit);
+        }
+    }
+
+    private void open_move() {
+
+            Intent get_barcode = new Intent(this, Move.class);
+            get_barcode.putExtra(EXTRA_TEXT, button_pushed);
+            startActivity(get_barcode);
     }
 }

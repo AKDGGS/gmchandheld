@@ -58,15 +58,22 @@ public class BaseActivity extends AppCompatActivity {
                 return true;
 
             case R.id.lookup:
-                button_pushed = "Lookup";
-                Intent intent_lookup = new Intent(this, Lookup.class);
-                intent_lookup.putExtra(EXTRA_TEXT, button_pushed);
-                this.startActivity(intent_lookup);
+                LookupLogicForDisplay lookupLogicForDisplayObj;
+                lookupLogicForDisplayObj = Bridge.instance().lookupLogicForDisplayObj;
+
+                if(lookupLogicForDisplayObj == null) {
+                    Intent get_barcode = new Intent(this, Lookup.class);
+                    get_barcode.putExtra(EXTRA_TEXT, button_pushed);
+                    startActivity(get_barcode);
+                }else{
+                    Intent audit = new Intent(this, LookupDisplay.class);
+                    startActivity(audit);
+                }
                 return true;
 
             case R.id.move:
                 button_pushed = "Move";
-                Intent intent_move = new Intent(this, Lookup.class);
+                Intent intent_move = new Intent(this, Move.class);
                 intent_move.putExtra(EXTRA_TEXT, button_pushed);
                 this.startActivity(intent_move);
                 return true;
