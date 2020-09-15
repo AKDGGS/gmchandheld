@@ -27,6 +27,14 @@ public class Lookup extends BaseActivity {
 
 	private ListView listView;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+	private boolean asyncCalled;
+
+	@Override
+	public void onRestart() {
+		super.onRestart();
+		finish();
+		startActivity(getIntent());
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +46,15 @@ public class Lookup extends BaseActivity {
 
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
-		EditText barcodeInput = findViewById(R.id.editText1);
+		final EditText barcodeInputBtn = findViewById(R.id.editText1);
+		final Button submit_button = findViewById(R.id.submit_button);
+
 		// KeyListener listens if enter is pressed
-		barcodeInput.setOnKeyListener(new View.OnKeyListener() {
+		barcodeInputBtn.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				// if "enter" is pressed
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-					openLookup(getBarcode());
+					submit_button.performClick();
 					return true;
 				}
 				return false;
@@ -52,7 +62,6 @@ public class Lookup extends BaseActivity {
 		});
 
 		// onClickListener listens if the submit button is clicked
-		Button submit_button = findViewById(R.id.submit_button);
 		submit_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -60,7 +69,7 @@ public class Lookup extends BaseActivity {
 			}
 		});
 
-//		 populate the history list
+		// populates the history list
 		listView = findViewById(R.id.listViewGetBarcodeHistory);
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lookupHistory);
@@ -68,29 +77,49 @@ public class Lookup extends BaseActivity {
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				openLookup(listView.getItemAtPosition(position).toString());
+				if (asyncCalled == false) {
+					barcodeInputBtn.setText(listView.getItemAtPosition(position).toString());
+					submit_button.performClick();
+				}
 			}
 		});
 	}
 
 	@SuppressLint("StaticFieldLeak")
-	private void openLookup(String barcodeInput) {
-		final String barcode = barcodeInput;
-
+	private void openLookup(final String barcodeQuery) {
+		final String barcode = barcodeQuery;
 		final String websiteURL;
+
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {
-			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
+//			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
 
 			//dev address -- used for testing
-//			websiteURL = "http://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=" + barcode;
+			websiteURL = "http://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=" + barcode;
 
 		} else {
 			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcode;
 		}
 
 		new AsyncTask<String, Void, DownloadData>() {
+			Button submit_button = findViewById(R.id.submit_button);
+			EditText barcodeInputBtn= findViewById(R.id.editText1);
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+				barcodeInputBtn.setFocusable(false);
+				barcodeInputBtn.setEnabled(false);
+
+				asyncCalled = true;
+				//----disable button---
+				submit_button.setEnabled(false);
+				submit_button.setClickable(false);
+
+				//---show message----
+				submit_button.setAlpha(.5f);
+			}
+
 			@Override
 			protected DownloadData doInBackground(String... strings) {
 				DownloadData downloadData = new DownloadData(websiteURL, Lookup.this);
@@ -146,8 +175,13 @@ public class Lookup extends BaseActivity {
 					toast.setView(layout);
 					toast.show();
 				}
+				submit_button.setEnabled(true);
+				submit_button.setAlpha(1f);
+				submit_button.setText(null);
+				asyncCalled = false;
 			}
 		}.execute();
+
 	}
 
 	public String getBarcode() {
