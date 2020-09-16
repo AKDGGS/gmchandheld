@@ -6,6 +6,22 @@
     android:orientation="vertical"
     tools:context=".LookupDisplay">
 
+    <EditText
+        android:id="@+id/invisibleEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Transparent EditText"
+        android:background="@android:color/transparent"
+        android:visibility="gone">
+
+        <requestFocus />
+    </EditText>
+
+
     <ExpandableListView
         android:id="@+id/expandableListView"
         android:layout_width="match_parent"

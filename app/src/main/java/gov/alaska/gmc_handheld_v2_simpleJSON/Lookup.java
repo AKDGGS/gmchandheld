@@ -46,11 +46,11 @@ public class Lookup extends BaseActivity {
 
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
-		final EditText barcodeInputBtn = findViewById(R.id.editText1);
+		final EditText barcodeInput = findViewById(R.id.editText1);
 		final Button submit_button = findViewById(R.id.submit_button);
 
 		// KeyListener listens if enter is pressed
-		barcodeInputBtn.setOnKeyListener(new View.OnKeyListener() {
+		barcodeInput.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				// if "enter" is pressed
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -78,7 +78,7 @@ public class Lookup extends BaseActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if (asyncCalled == false) {
-					barcodeInputBtn.setText(listView.getItemAtPosition(position).toString());
+					barcodeInput.setText(listView.getItemAtPosition(position).toString());
 					submit_button.performClick();
 				}
 			}
@@ -86,7 +86,7 @@ public class Lookup extends BaseActivity {
 	}
 
 	@SuppressLint("StaticFieldLeak")
-	private void openLookup(final String barcodeQuery) {
+	public void openLookup(final String barcodeQuery) {
 		final String barcode = barcodeQuery;
 		final String websiteURL;
 
@@ -104,7 +104,8 @@ public class Lookup extends BaseActivity {
 
 		new AsyncTask<String, Void, DownloadData>() {
 			Button submit_button = findViewById(R.id.submit_button);
-			EditText barcodeInputBtn= findViewById(R.id.editText1);
+			EditText barcodeInputBtn = findViewById(R.id.editText1);
+
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
