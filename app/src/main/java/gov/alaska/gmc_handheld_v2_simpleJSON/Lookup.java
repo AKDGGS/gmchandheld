@@ -29,12 +29,16 @@ public class Lookup extends BaseActivity {
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	private boolean asyncCalled;
 
+	private String barcode;
+
 	@Override
 	public void onRestart() {
 		super.onRestart();
 		finish();
 		startActivity(getIntent());
 	}
+
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,18 +108,18 @@ public class Lookup extends BaseActivity {
 
 		new AsyncTask<String, Void, DownloadData>() {
 			Button submit_button = findViewById(R.id.submit_button);
-			EditText barcodeInputBtn = findViewById(R.id.editText1);
+			EditText barcodeInput = findViewById(R.id.editText1);
 
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
-				barcodeInputBtn.setFocusable(false);
-				barcodeInputBtn.setEnabled(false);
+//				barcodeInput.setFocusable(false);
+//				barcodeInput.setEnabled(false);
 
 				asyncCalled = true;
 				//----disable button---
 				submit_button.setEnabled(false);
-				submit_button.setClickable(false);
+//				submit_button.setClickable(false);
 
 				//---show message----
 				submit_button.setAlpha(.5f);
@@ -168,6 +172,7 @@ public class Lookup extends BaseActivity {
 					intent.putExtra("barcode", barcode);  //this barcode refers to the query barcode.
 					Lookup.this.startActivity(intent);
 				} else {
+
 					LayoutInflater inflater = Lookup.this.getLayoutInflater();
 					View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) (Lookup.this).findViewById(R.id.toast_error_root));
 					Toast toast = new Toast(Lookup.this);
@@ -176,7 +181,11 @@ public class Lookup extends BaseActivity {
 					toast.setView(layout);
 					toast.show();
 				}
+				barcodeInput.setFocusable(true);
+				barcodeInput.setEnabled(true);
+				//----disable button---
 				submit_button.setEnabled(true);
+				submit_button.setClickable(true);
 				submit_button.setAlpha(1f);
 				submit_button.setText(null);
 				asyncCalled = false;
