@@ -12,13 +12,10 @@ import java.net.URL;
 public class DownloadData {
 	private Exception exception = null;
 	private String url;
-	private Context context;
 	private String rawJson;
 
 	public DownloadData(String url, Context context) {
-
 		this.url = url;
-		this.context = context;
 	}
 
 	public boolean isErrored() {
@@ -34,7 +31,7 @@ public class DownloadData {
 	}
 
 
-	public DownloadData getDataFromURL() {
+	public void getDataFromURL() {
 		InputStream inputStream;
 		HttpURLConnection connection;
 
@@ -63,20 +60,18 @@ public class DownloadData {
 				rawJson = sb.toString();
 				inputStream.close();
 				connection.disconnect();
-				return this;
 			} catch (IOException e) {
 				exception = e;
-				return this;
+				inputStream.close();
+				connection.disconnect();
 			}
 		} catch (ProtocolException e) {
 			exception = e;
-			return this;
 		} catch (MalformedURLException e) {
 			exception = e;
-			return this;
 		} catch (IOException e) {
 			exception = e;
-			return this;
 		}
+
 	}
 }

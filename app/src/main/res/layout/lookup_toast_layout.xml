@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:text="Nothing was returned. Is the barcode correct?"
         android:textColor="@android:color/white"
-        android:textSize="18dp"/>
+        android:textSize="18sp"/>
 
 </LinearLayout>

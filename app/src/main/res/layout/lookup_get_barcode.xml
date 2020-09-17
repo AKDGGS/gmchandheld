@@ -53,7 +53,7 @@
         android:layout_marginLeft="5dp"
         android:text="History"
         android:textStyle="bold"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:textColor="#ff353535"/>
 
     <ListView
