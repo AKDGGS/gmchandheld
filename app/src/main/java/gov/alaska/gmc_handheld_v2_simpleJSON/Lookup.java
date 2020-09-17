@@ -51,7 +51,6 @@ public class Lookup extends BaseActivity {
 			}
 		});
 
-
 		final OpenLookup openLookupObj = new OpenLookup();
 
 		// onClickListener listens if the submit button is clicked
@@ -75,7 +74,6 @@ public class Lookup extends BaseActivity {
 			}
 		});
 	}
-
 
 	public String getBarcode() {
 		EditText barcodeInput = findViewById(R.id.editText1);

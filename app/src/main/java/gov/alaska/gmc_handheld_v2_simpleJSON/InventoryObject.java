@@ -4,64 +4,63 @@ import java.util.ArrayList;
 
 public class InventoryObject {
 
-    private String name;
-    private Object value;
-    private final ArrayList<InventoryObject> children;
-    private int displayWeight;
+	private String name;
+	private Object value;
+	private final ArrayList<InventoryObject> children;
+	private int displayWeight;
 
-    public InventoryObject() {
-        this(null, null, 0);
-    }
+	public InventoryObject() {
+		this(null, null, 0);
+	}
 
-    public InventoryObject(String name) {
-        this(name, null, 0);
-    }
+	public InventoryObject(String name) {
+		this(name, null, 0);
+	}
 
-    public InventoryObject(String name, Object value) {
-        this(name, value, 0);
-    }
+	public InventoryObject(String name, Object value) {
+		this(name, value, 0);
+	}
 
-    public InventoryObject(String name, Object value, int displayWeight) {
-        this.name = name;
-        this.value = value;
-        this.displayWeight = displayWeight;
-        children = new ArrayList<>();
-    }
+	public InventoryObject(String name, Object value, int displayWeight) {
+		this.name = name;
+		this.value = value;
+		this.displayWeight = displayWeight;
+		children = new ArrayList<>();
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
 
-    public ArrayList<InventoryObject> getChildren() {
-        return children;
-    }
+	public Object getValue() {
+		return value;
+	}
 
-    public void addChild(InventoryObject child) {
-        if (child != null) {
-            this.children.add(child);
-        }
-    }
+	public void setValue(Object value) {
+		this.value = value;
+	}
 
 
-    public Integer getDisplayWeight() {
-        return displayWeight;
-    }
+	public ArrayList<InventoryObject> getChildren() {
+		return children;
+	}
 
-    public void setDisplayWeight(Integer displayWeight) {
-        this.displayWeight = displayWeight;
-    }
+	public void addChild(InventoryObject child) {
+		if (child != null) {
+			this.children.add(child);
+		}
+	}
+
+	public Integer getDisplayWeight() {
+		return displayWeight;
+	}
+
+	public void setDisplayWeight(Integer displayWeight) {
+		this.displayWeight = displayWeight;
+	}
 }

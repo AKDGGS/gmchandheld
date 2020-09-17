@@ -142,7 +142,7 @@ public class LookupLogicForDisplay {
 					newName += " / " + o.optString("barcode");
 				}
 				io = new InventoryObject(newName);
-			}else{
+			} else {
 				io = new InventoryObject(name);
 			}
 		} else {
@@ -296,7 +296,6 @@ public class LookupLogicForDisplay {
 //*********************************************************************************************
 
 	private InventoryObject handleSimple(Object parent, String name, Object o) {
-
 
 		// Simple values should always have a name
 		if (name == null) {

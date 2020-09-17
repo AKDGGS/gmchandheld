@@ -34,7 +34,6 @@ public class LookupDisplay extends BaseActivity {
 			}
 		});
 
-
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 		LookupLogicForDisplay lookupLogicForDisplayObj;
