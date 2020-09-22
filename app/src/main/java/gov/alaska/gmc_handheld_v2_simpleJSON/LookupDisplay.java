@@ -16,6 +16,8 @@ public class LookupDisplay extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup);
 
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
 		invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
@@ -33,8 +35,6 @@ public class LookupDisplay extends BaseActivity {
 				return false;
 			}
 		});
-
-		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 		LookupLogicForDisplay lookupLogicForDisplayObj;
 		lookupLogicForDisplayObj = Bridge.instance().lookupLogicForDisplayObj;
@@ -65,4 +65,6 @@ public class LookupDisplay extends BaseActivity {
 			}
 		}
 	}
+
+
 }

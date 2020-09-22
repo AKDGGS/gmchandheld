@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,43 +24,51 @@ public class OpenLookup {
 	}
 
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+	public static final String SHARED_PREFS = "sharedPrefs";
+	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
 
 	@SuppressLint("StaticFieldLeak")
 	public void processDataForDisplay(final String barcodeQuery, final Context context) {
 		final String websiteURL;
 
+//		SharedPreferences sp = context.getApplicationContext().getSharedPreferences("", Context.MODE_PRIVATE);
+//		String s2 = sp.getString("lookupHistoryString", "");
+//		System.out.println(s2);
+
+		System.out.println(barcodeQuery);
+
+		SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+		String url = sharedPreferences.getString("urlText", "");
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {
-			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcodeQuery;
+			websiteURL = "http://" + url + "/inventory.json?barcode=" +  barcodeQuery;
+//			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcodeQuery;
 
 			//dev address -- used for testing
 //			websiteURL = "http://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=" + barcode;
 
 		} else {
-			websiteURL = "https://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcodeQuery;
+			websiteURL = "https://" + url + "/inventory.json?barcode=" + barcodeQuery;
 		}
 
-		Lookup lookup = new Lookup();
-		if(((Activity) context).getApplication() == lookup.getApplication()){
-			System.out.println("true");
-		}
+		switch(context.getClass().getSimpleName()){
+			case "Lookup": {
+				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
+				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
+				submit_button.setEnabled(false);
+				submit_button.setClickable(false);
 
-		//want to find a better test condition...this works and nothing else I have tried has worked....
-		if (((Activity) context).findViewById(R.id.submit_button) != null){
-			final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
-			final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
-			submit_button.setEnabled(false);
-			submit_button.setClickable(false);
-
-			barcodeInput.setFocusable(false);
-			barcodeInput.setEnabled(false);
-		}
-
-		if (((Activity) context).findViewById(R.id.invisibleEditText) != null) {
-			final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
-			barcodeInput.setFocusable(false);
-			barcodeInput.setEnabled(false);
+				barcodeInput.setFocusable(false);
+				barcodeInput.setEnabled(false);
+				break;
+			}
+			case "LookupDisplay": {
+				final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
+				barcodeInput.setFocusable(false);
+				barcodeInput.setEnabled(false);
+				break;
+			}
 		}
 
 		new AsyncTask<String, Void, DownloadData>() {
@@ -94,12 +103,14 @@ public class OpenLookup {
 					alert.show();
 
 				} else if (obj.getRawJson().length() > 2) {
-					if (!lookupHistory.contains(barcodeQuery)) {
-						lookupHistory.add(0, barcodeQuery);
-					}
+
 					LookupLogicForDisplay lookupLogicForDisplayObj;
 					lookupLogicForDisplayObj = new LookupLogicForDisplay();
 					Bridge.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
+
+					if (!lookupHistory.contains(barcodeQuery)) {
+						lookupHistory.add(0, barcodeQuery);
+					}
 
 					try {
 						lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
@@ -120,5 +131,32 @@ public class OpenLookup {
 				}
 			}
 		}.execute();
+
+
+		switch(context.getClass().getSimpleName()){
+			case "Lookup": {
+				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
+				submit_button.setEnabled(true);
+				submit_button.setClickable(true);
+				submit_button.setFocusableInTouchMode(true);
+
+				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
+				barcodeInput.setFocusable(true);
+				barcodeInput.setEnabled(true);
+				barcodeInput.setFocusableInTouchMode(true);
+				break;
+			}
+			case "LookupDisplay": {
+				final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
+				barcodeInput.setEnabled(true);
+				barcodeInput.setFocusable(true);
+				barcodeInput.setFocusableInTouchMode(true);
+				barcodeInput.requestFocus();
+				barcodeInput.getText().clear();
+				break;
+			}
+
+		}
 	}
+
 }

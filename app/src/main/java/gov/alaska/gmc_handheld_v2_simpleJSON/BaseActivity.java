@@ -66,8 +66,8 @@ public class BaseActivity extends AppCompatActivity {
                     get_barcode.putExtra(EXTRA_TEXT, button_pushed);
                     startActivity(get_barcode);
                 }else{
-                    Intent audit = new Intent(this, LookupDisplay.class);
-                    startActivity(audit);
+                    Intent lookup = new Intent(this, LookupDisplay.class);
+                    startActivity(lookup);
                 }
                 return true;
 
@@ -105,6 +105,14 @@ public class BaseActivity extends AppCompatActivity {
                 intent_audit.putExtra(EXTRA_TEXT, button_pushed);
                 this.startActivity(intent_audit);
                 return true;
+
+            case R.id.configuration:
+                button_pushed = "Configuration";
+                Intent intent_configuration = new Intent(this, Configuration.class);
+                intent_configuration.putExtra(EXTRA_TEXT, button_pushed);
+                this.startActivity(intent_configuration);
+                return true;
+
 
             default:
                 return super.onOptionsItemSelected(item);

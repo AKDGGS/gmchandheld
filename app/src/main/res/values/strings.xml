@@ -9,4 +9,6 @@
     <string name="add_inventory">add inventory</string>
     <string name="audit">audit</string>
     <string name="what_is_being_audited">What is being audited?</string>
+    <string name="maps_dggs_alaska_gov_gmc">maps.dggs.alaska.gov/gmc</string>
+    <string name="enter_the_host_and_path">Enter the host and path:</string>
 </resources>

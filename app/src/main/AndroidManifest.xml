@@ -12,22 +12,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <activity android:name=".Configuration"></activity>
         <activity android:name=".BaseActivity" />
         <activity android:name=".Audit" />
         <activity android:name=".AddInventory" />
         <activity android:name=".Recode" />
         <activity android:name=".Move" />
         <activity android:name=".Summary" />
-        <activity android:name=".Help"
-            android:parentActivityName=".Lookup"/>
+
+        <activity
+            android:name=".Help"
+            android:parentActivityName=".Lookup" />
         <activity android:name=".AddContainer" />
+
         <activity
             android:name=".LookupDisplay"
             android:parentActivityName=".Lookup"
             android:theme="@style/Theme.AppCompat.DayNight" />
+
         <activity
             android:name=".Lookup"
             android:parentActivityName=".MainActivity" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

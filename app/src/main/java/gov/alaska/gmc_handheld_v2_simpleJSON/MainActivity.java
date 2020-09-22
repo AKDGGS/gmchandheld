@@ -22,6 +22,7 @@ public class MainActivity extends BaseActivity {
 
     public static final String EXTRA_TEXT = "com.example.user_input_no_button.EXTRA_TEXT";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +33,8 @@ public class MainActivity extends BaseActivity {
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
 //        String s2 =  sp.getString("lookupHistoryString", "");
 //        System.out.println(s2);
+
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
@@ -60,6 +63,9 @@ public class MainActivity extends BaseActivity {
         but7.setBackgroundColor(Color.parseColor("#ff567b95"));
 
         Button but8 = findViewById(R.id.button8);
+        but8.setBackgroundColor(Color.parseColor("#ff567b95"));
+
+        Button but9 = findViewById(R.id.button9);
         but8.setBackgroundColor(Color.parseColor("#ff567b95"));
     }
 
@@ -100,6 +106,10 @@ public class MainActivity extends BaseActivity {
                 Intent audit = new Intent(this, Audit.class);
                 startActivity(audit);
                 break;
+            case "Configuration":
+                Intent configuration = new Intent(this, Configuration.class);
+                startActivity(configuration);
+                break;
         }
     }
 
@@ -108,15 +118,14 @@ public class MainActivity extends BaseActivity {
         LookupLogicForDisplay lookupLogicForDisplayObj;
         lookupLogicForDisplayObj = Bridge.instance().lookupLogicForDisplayObj;
 
-        System.out.println(lookupLogicForDisplayObj == null);
 
         if(lookupLogicForDisplayObj == null) {
             Intent get_barcode = new Intent(this, Lookup.class);
             get_barcode.putExtra(EXTRA_TEXT, button_pushed);
             startActivity(get_barcode);
         }else{
-            Intent audit = new Intent(this, LookupDisplay.class);
-            startActivity(audit);
+            Intent lookup = new Intent(this, LookupDisplay.class);
+            startActivity(lookup);
         }
     }
 
@@ -125,5 +134,11 @@ public class MainActivity extends BaseActivity {
             Intent get_barcode = new Intent(this, Move.class);
             get_barcode.putExtra(EXTRA_TEXT, button_pushed);
             startActivity(get_barcode);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Bridge.instance().lookupLogicForDisplayObj = null;
+        super.onBackPressed();
     }
 }
