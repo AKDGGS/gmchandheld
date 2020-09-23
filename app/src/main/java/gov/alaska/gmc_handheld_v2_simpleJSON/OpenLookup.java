@@ -34,25 +34,37 @@ public class OpenLookup {
 	@SuppressLint("StaticFieldLeak")
 	public void processDataForDisplay(final String barcodeQuery, final Context context) {
 		final String websiteURL;
+		String websiteURL1;
 
 //		SharedPreferences sp = context.getApplicationContext().getSharedPreferences("", Context.MODE_PRIVATE);
 //		String s2 = sp.getString("lookupHistoryString", "");
 //		System.out.println(s2);
+
+		System.out.println(context.getClass().getSimpleName());
 
 		SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
 		String url = sharedPreferences.getString("urlText", "");
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {
-			websiteURL = "http://" + url + "/inventory.json?barcode=" + barcodeQuery;
-//			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcodeQuery;
-
-			//dev address -- used for testing
-//			websiteURL = "http://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=" + barcode;
-
+			websiteURL1 = "http://" + url;
 		} else {
-			websiteURL = "https://" + url + "/inventory.json?barcode=" + barcodeQuery;
+			websiteURL1 = "https://" + url;
 		}
+		switch (context.getClass().getSimpleName()) {
+			case "Summary": {
+				websiteURL1 = websiteURL1 + "/summary.json?barcode=" + barcodeQuery;
+				System.out.println(websiteURL1);
+				break;
+			}
+			case "Lookup": {
+				websiteURL1 = websiteURL1 + "/inventory.json?barcode=" + barcodeQuery;
+				System.out.println(websiteURL1);
+				break;
+			}
+		}
+
+		websiteURL = websiteURL1;
 
 		switch (context.getClass().getSimpleName()) {
 			case "Lookup": {
@@ -75,6 +87,8 @@ public class OpenLookup {
 				break;
 			}
 		}
+
+
 
 		new AsyncTask<String, Integer, DownloadData>() {
 

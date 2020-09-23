@@ -1,8 +1,8 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import androidx.appcompat.widget.Toolbar;
-
 import android.os.Bundle;
+
+import androidx.appcompat.widget.Toolbar;
 
 public class Summary extends BaseActivity {
 
@@ -13,5 +13,10 @@ public class Summary extends BaseActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        OpenLookup openLookup = new OpenLookup();
+        openLookup.processDataForDisplay("GMC-000076260", this);
+
     }
 }

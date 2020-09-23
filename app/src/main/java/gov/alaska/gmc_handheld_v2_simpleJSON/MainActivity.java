@@ -35,6 +35,7 @@ public class MainActivity extends BaseActivity {
 //        System.out.println("TEST " + s2);
 
 
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
@@ -55,7 +56,7 @@ public class MainActivity extends BaseActivity {
                 break;
             case "Summary":
                 button_pushed = "Summary";
-                open_get_barcode();
+                open_summary();
                 break;
             case "Move":
                 button_pushed = "Move";
@@ -98,6 +99,13 @@ public class MainActivity extends BaseActivity {
             Intent lookup = new Intent(this, LookupDisplay.class);
             startActivity(lookup);
         }
+    }
+
+    private void open_summary() {
+
+        Intent get_barcode = new Intent(this, Summary.class);
+        get_barcode.putExtra(EXTRA_TEXT, button_pushed);
+        startActivity(get_barcode);
     }
 
     private void open_move() {

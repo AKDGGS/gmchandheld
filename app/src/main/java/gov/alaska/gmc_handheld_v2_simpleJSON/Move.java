@@ -46,14 +46,9 @@ public class Move extends BaseActivity {
                             return true;
                         }
                     }
-
                     return false;
                 }
             });
-//        }
-
-
-//        final OpenLookup openLookupObj = new OpenLookup();
 
         // onClickListener listens if the submit button is clicked
         move_button.setOnClickListener(new View.OnClickListener() {
