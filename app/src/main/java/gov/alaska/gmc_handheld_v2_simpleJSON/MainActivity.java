@@ -35,38 +35,9 @@ public class MainActivity extends BaseActivity {
 //        System.out.println("TEST " + s2);
 
 
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
-
-
-        Button but1 = findViewById(R.id.button1);
-        but1.setBackgroundColor(Color.parseColor("#ff567b95"));
-
-        Button but2 = findViewById(R.id.button2);
-        but2.setBackgroundColor(Color.parseColor("#ff567b95"));
-
-        Button but3 = findViewById(R.id.button3);
-        but3.setBackgroundColor(Color.parseColor("#ff567b95"));
-
-        Button but4 = findViewById(R.id.button4);
-        but4.setBackgroundColor(Color.parseColor("#ff567b95"));
-
-        Button but5 = findViewById(R.id.button5);
-        but5.setBackgroundColor(Color.parseColor("#ff567b95"));
-
-        Button but6 = findViewById(R.id.button6);
-        but6.setBackgroundColor(Color.parseColor("#ff567b95"));
-
-        Button but7 = findViewById(R.id.button7);
-        but7.setBackgroundColor(Color.parseColor("#ff567b95"));
-
-        Button but8 = findViewById(R.id.button8);
-        but8.setBackgroundColor(Color.parseColor("#ff567b95"));
-
-        Button but9 = findViewById(R.id.button9);
-        but8.setBackgroundColor(Color.parseColor("#ff567b95"));
     }
 
     public void menu_option(View View) {

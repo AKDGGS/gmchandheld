@@ -74,8 +74,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="#3498db">
+            android:layout_weight="1">
 
             <Button
                 android:id="@+id/button3"

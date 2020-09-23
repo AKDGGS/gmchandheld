@@ -17,6 +17,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.LinkedList;
 
 public class OpenLookup {
@@ -98,55 +101,74 @@ public class OpenLookup {
 			protected DownloadData doInBackground(String... strings) {
 				DownloadData downloadData = new DownloadData(websiteURL, context);
 				downloadData.getDataFromURL();
+				System.out.println(downloadData.getRawJson());
 				return downloadData;
 			}
 
 			@Override
 			protected void onPostExecute(DownloadData obj) {
 
-				if (obj.isErrored()) {
-					final String msg = obj.getException().toString();
-					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-					View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
+				switch (context.getClass().getSimpleName()) {
+					case "Move":
 
-					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-					alertDialog.setTitle("Exception Thrown");
-					alertDialog.setMessage(msg);
+						try {
+							JSONArray inputJson = new JSONArray((obj.getRawJson()));
 
-					alertDialog.setView(layout);
-					alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
+							System.out.println(inputJson.getJSONObject(0).opt("containerPath"));
+							inputJson.getJSONObject(0).putOpt("containerPath", "Moved");
+
+
+						} catch (JSONException e) {
+							e.printStackTrace();
 						}
-					});
-					AlertDialog alert = alertDialog.create();
-					alert.setCanceledOnTouchOutside(false);
-					alert.show();
+						break;
+					case "Lookup": {
 
-				} else if (obj.getRawJson().length() > 2) {
+						if (obj.isErrored()) {
+							final String msg = obj.getException().toString();
+							LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+							View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
 
-					LookupLogicForDisplay lookupLogicForDisplayObj;
-					lookupLogicForDisplayObj = new LookupLogicForDisplay();
-					Bridge.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
+							AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+							alertDialog.setTitle("Exception Thrown");
+							alertDialog.setMessage(msg);
+
+							alertDialog.setView(layout);
+							alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+								}
+							});
+							AlertDialog alert = alertDialog.create();
+							alert.setCanceledOnTouchOutside(false);
+							alert.show();
+
+						} else if (obj.getRawJson().length() > 2) {
+
+							LookupLogicForDisplay lookupLogicForDisplayObj;
+							lookupLogicForDisplayObj = new LookupLogicForDisplay();
+							Bridge.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
 
 
-
-					try {
-						lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
-					} catch (Exception e) {
-						e.printStackTrace();
+							try {
+								lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							Intent intent = new Intent(context, LookupDisplay.class);
+							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
+							context.startActivity(intent);
+						} else {
+							LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+							View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
+							Toast toast = new Toast(context);
+							toast.setGravity(Gravity.CENTER, 0, 0);
+							toast.setDuration(Toast.LENGTH_LONG);
+							toast.setView(layout);
+							toast.show();
+						}
+						break;
 					}
-					Intent intent = new Intent(context, LookupDisplay.class);
-					intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
-					context.startActivity(intent);
-				} else {
-					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-					View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
-					Toast toast = new Toast(context);
-					toast.setGravity(Gravity.CENTER, 0, 0);
-					toast.setDuration(Toast.LENGTH_LONG);
-					toast.setView(layout);
-					toast.show();
 				}
 			}
 		}.execute();
