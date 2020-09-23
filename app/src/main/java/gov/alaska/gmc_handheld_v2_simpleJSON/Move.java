@@ -86,8 +86,6 @@ public class Move extends BaseActivity {
         System.out.println(getBarcode());
         OpenLookup openLookup = new OpenLookup();
         openLookup.processDataForDisplay(getBarcode(), this);
-//        DownloadData downloadData = new DownloadData("http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + getBarcode(), this);
-
 
     }
 
