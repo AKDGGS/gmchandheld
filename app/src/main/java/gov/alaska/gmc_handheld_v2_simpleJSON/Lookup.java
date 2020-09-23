@@ -20,7 +20,6 @@ public class Lookup extends BaseActivity {
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	private boolean submitted = false;
 
-
 	@Override
 	public void onRestart() {
 		super.onRestart();
@@ -67,21 +66,21 @@ public class Lookup extends BaseActivity {
 		// populates the history list
 		listView = findViewById(R.id.listViewGetBarcodeHistory);
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lookupHistory);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+		adapter.addAll(lookupHistory);
+		adapter.notifyDataSetChanged();
 		listView.setAdapter(adapter);
 
-			listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					if(submitted == false) {
-						barcodeInput.setText(listView.getItemAtPosition(position).toString());
-						submit_button.performClick();
-						submitted = true;
-					}
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				if (submitted == false) {
+					barcodeInput.setText(listView.getItemAtPosition(position).toString());
+					submit_button.performClick();
+					submitted = true;
 				}
-			});
-
-		adapter.notifyDataSetChanged();
+			}
+		});
 	}
 
 	public String getBarcode() {

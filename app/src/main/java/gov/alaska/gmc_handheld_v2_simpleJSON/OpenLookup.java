@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.LinkedList;
@@ -25,7 +26,7 @@ public class OpenLookup {
 
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	public static final String SHARED_PREFS = "sharedPrefs";
-	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
+//	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
 
 	@SuppressLint("StaticFieldLeak")
 	public void processDataForDisplay(final String barcodeQuery, final Context context) {
@@ -34,8 +35,6 @@ public class OpenLookup {
 //		SharedPreferences sp = context.getApplicationContext().getSharedPreferences("", Context.MODE_PRIVATE);
 //		String s2 = sp.getString("lookupHistoryString", "");
 //		System.out.println(s2);
-
-		System.out.println(barcodeQuery);
 
 		SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
 		String url = sharedPreferences.getString("urlText", "");
@@ -74,7 +73,26 @@ public class OpenLookup {
 			}
 		}
 
-		new AsyncTask<String, Void, DownloadData>() {
+		new AsyncTask<String, Integer, DownloadData>() {
+
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+
+				AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+				LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+				View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) context).findViewById(R.id.downloading_alert_root));
+				alertDialog.setView(layout);
+
+				TextView title = new TextView(context);
+				title.setText("Downloading");
+				title.setGravity(Gravity.CENTER);
+				title.setTextSize(16);
+				alertDialog.setCustomTitle(title);
+				AlertDialog alert = alertDialog.create();
+
+				alert.show();
+			}
 
 			@Override
 			protected DownloadData doInBackground(String... strings) {
@@ -111,15 +129,7 @@ public class OpenLookup {
 					lookupLogicForDisplayObj = new LookupLogicForDisplay();
 					Bridge.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
 
-					if (!lookupHistory.contains(barcodeQuery)) {
-						lookupHistory.add(0, barcodeQuery);
-					}
 
-////				Save LookupHistory list-- Test for audit and move.
-//					SharedPreferences prefs = context.getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
-//					SharedPreferences.Editor editor = prefs.edit();
-//					editor.putString("lookupHistoryString", lookupHistory.toString());
-//					editor.commit();
 
 					try {
 						lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
@@ -137,19 +147,20 @@ public class OpenLookup {
 					toast.setDuration(Toast.LENGTH_LONG);
 					toast.setView(layout);
 					toast.show();
-
-//					final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
-//					submit_button.setEnabled(true);
-//					submit_button.setClickable(true);
-//					submit_button.setFocusableInTouchMode(true);
-//
-//					final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
-//					barcodeInput.setFocusable(true);
-//					barcodeInput.setEnabled(true);
-//					barcodeInput.setFocusableInTouchMode(true);
 				}
 			}
 		}.execute();
+
+		if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
+			lookupHistory.add(0, barcodeQuery);
+		}
+
+////				Save LookupHistory list-- Test for audit and move.
+//					SharedPreferences prefs = context.getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
+//					SharedPreferences.Editor editor = prefs.edit();
+//					editor.putString("lookupHistoryString", lookupHistory.toString());
+//					editor.commit();
+
 
 		switch (context.getClass().getSimpleName()) {
 			case "Lookup": {
@@ -174,10 +185,5 @@ public class OpenLookup {
 				break;
 			}
 		}
-
-
-
-
 	}
-
 }
