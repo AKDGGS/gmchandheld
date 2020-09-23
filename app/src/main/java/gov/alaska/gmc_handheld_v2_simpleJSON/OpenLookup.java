@@ -42,7 +42,7 @@ public class OpenLookup {
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
 		if (APILevel < 18) {
-			websiteURL = "http://" + url + "/inventory.json?barcode=" +  barcodeQuery;
+			websiteURL = "http://" + url + "/inventory.json?barcode=" + barcodeQuery;
 //			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcodeQuery;
 
 			//dev address -- used for testing
@@ -52,21 +52,24 @@ public class OpenLookup {
 			websiteURL = "https://" + url + "/inventory.json?barcode=" + barcodeQuery;
 		}
 
-		switch(context.getClass().getSimpleName()){
+		switch (context.getClass().getSimpleName()) {
 			case "Lookup": {
 				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
 				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
 				submit_button.setEnabled(false);
 				submit_button.setClickable(false);
+				submit_button.setFocusableInTouchMode(false);
 
 				barcodeInput.setFocusable(false);
 				barcodeInput.setEnabled(false);
+				barcodeInput.setFocusableInTouchMode(false);
 				break;
 			}
 			case "LookupDisplay": {
 				final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
 				barcodeInput.setFocusable(false);
 				barcodeInput.setEnabled(false);
+				barcodeInput.setFocusableInTouchMode(false);
 				break;
 			}
 		}
@@ -112,6 +115,12 @@ public class OpenLookup {
 						lookupHistory.add(0, barcodeQuery);
 					}
 
+////				Save LookupHistory list-- Test for audit and move.
+//					SharedPreferences prefs = context.getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
+//					SharedPreferences.Editor editor = prefs.edit();
+//					editor.putString("lookupHistoryString", lookupHistory.toString());
+//					editor.commit();
+
 					try {
 						lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
 					} catch (Exception e) {
@@ -128,12 +137,21 @@ public class OpenLookup {
 					toast.setDuration(Toast.LENGTH_LONG);
 					toast.setView(layout);
 					toast.show();
+
+//					final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
+//					submit_button.setEnabled(true);
+//					submit_button.setClickable(true);
+//					submit_button.setFocusableInTouchMode(true);
+//
+//					final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
+//					barcodeInput.setFocusable(true);
+//					barcodeInput.setEnabled(true);
+//					barcodeInput.setFocusableInTouchMode(true);
 				}
 			}
 		}.execute();
 
-
-		switch(context.getClass().getSimpleName()){
+		switch (context.getClass().getSimpleName()) {
 			case "Lookup": {
 				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
 				submit_button.setEnabled(true);
@@ -148,15 +166,18 @@ public class OpenLookup {
 			}
 			case "LookupDisplay": {
 				final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
-				barcodeInput.setEnabled(true);
 				barcodeInput.setFocusable(true);
+				barcodeInput.setEnabled(true);
 				barcodeInput.setFocusableInTouchMode(true);
 				barcodeInput.requestFocus();
 				barcodeInput.getText().clear();
 				break;
 			}
-
 		}
+
+
+
+
 	}
 
 }

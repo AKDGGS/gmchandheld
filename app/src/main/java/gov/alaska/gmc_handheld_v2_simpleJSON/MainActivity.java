@@ -29,10 +29,10 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
 
-        // test for accessing lookupHistory from shared preferences.
+////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
 //        String s2 =  sp.getString("lookupHistoryString", "");
-//        System.out.println(s2);
+//        System.out.println("TEST " + s2);
 
 
 
