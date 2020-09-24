@@ -20,14 +20,13 @@ import gov.alaska.gmc_handheld_v2_simpleJSON.comparators.SortInventoryObjectList
 import static android.graphics.Typeface.BOLD;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
-public class LookupLogicForDisplay {
-
+public class SummaryLogicForDisplay {
 	private List<String> keyList;
 	private Map<String, List<SpannableStringBuilder>> displayDict;
 	private int ID;
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
 
-	public LookupLogicForDisplay() {
+	public SummaryLogicForDisplay() {
 		keyList = new ArrayList<>();
 		displayDict = new HashMap<>();
 		nf.setMinimumFractionDigits(0);
@@ -83,7 +82,7 @@ public class LookupLogicForDisplay {
 		Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
 		SpannableStringBuilder ssb = new SpannableStringBuilder();
-		if (o.getName() != null && !o.getName().equals(currKey)) {
+		if (o.getName() != null && !o.getName().equals(currKey) && !(o.getName() == "**boreholes")) {
 
 			//Barcode is not added to the displayList because it is in the Label
 			if (!"Barcode".equals(o.getName())) {
@@ -166,29 +165,20 @@ public class LookupLogicForDisplay {
 
 				//Create these nodes
 				case "boreholes": {
-					String id = o.optString("ID");
-					String newName = "Borehole";
-					if (!"".equals(Integer.toString(ID))) {
-						newName += " ID " + id;
-					}
+					String newName = "**boreholes";
 					io = new InventoryObject(newName, null, 100);
 					break;
 				}
-				case "collection":
-					if (o.has("name")) {
-						return new InventoryObject("Collection", o.get("name"), 500);
+				case "containers":
+					if (o.has("container")) {
+						return new InventoryObject("Container", o.get("container"), 500);
 					}
 					return null;
-				case "operators": {
-					String newName = "Operator";
-					if (o.has("current")) {
-						newName += (o.optBoolean("current") ? " (Current)" : " (Previous)");
-						io = new InventoryObject(newName, null, 50);
-					} else {
-						io = new InventoryObject(newName, null, 50);
+				case "collections":
+					if (o.has("collection")) {
+						return new InventoryObject("Collection", o.get("collection"), 500);
 					}
-					break;
-				}
+					return null;
 				case "outcrops": {
 					String id = o.optString("ID");
 					String newName = "Outcrop";
@@ -225,11 +215,6 @@ public class LookupLogicForDisplay {
 					io = new InventoryObject(newName, null, 50);
 					break;
 				}
-				case "type":
-					if (o.has("name")) {
-						return new InventoryObject("Type", o.get("name"), 500);
-					}
-					return null;
 				case "wells":
 					String id = o.optString("ID");
 					String newName = "Well";
@@ -239,7 +224,7 @@ public class LookupLogicForDisplay {
 					io = new InventoryObject(newName, null, 100);
 					break;
 				default:
-					io = new InventoryObject(name);
+					io = new InventoryObject(name + "999");
 			}
 		}
 
@@ -263,22 +248,16 @@ public class LookupLogicForDisplay {
 			io = new InventoryObject(name);
 		} else {
 			switch (name) {
-				case "keywords": {
-					StringBuilder sb = new StringBuilder();
-					for (int i = 0; i < a.length(); i++) {
-						if (a.get(i) instanceof String) {
-							if (sb.length() > 0) {
-								sb.append(", ");
-							}
-							sb.append(a.get(i));
-						}
-					}
-					return new InventoryObject("Keywords", sb.toString(), 800);
-				}
 
 				//Create these nodes
 				case "boreholes":
 					io = new InventoryObject("Boreholes", null, 100);
+					break;
+				case "collections":
+					io = new InventoryObject("Collections", null, 100);
+					break;
+				case "containers":
+					io = new InventoryObject("Containers", null, 100);
 					break;
 				case "operators":
 					io = new InventoryObject("Operators", null, 50);
@@ -315,209 +294,15 @@ public class LookupLogicForDisplay {
 		switch (name) {
 			// Higher the displayWeight, the higher a priority an key has.
 			// Items are sorted internally first, and the externally in processForDisplay()
-			case "abbr":
-				return null;
-			case "altNames":
-				return new InventoryObject("Alternative Names", o);
-			case "APINumber":
-				return new InventoryObject("API Number", o, 95);
-			case "barcode":
-				return new InventoryObject("Barcode", o, 1000);
-			case "boxNumber":
-				return new InventoryObject("Box Number", o, 950);
-			case "class":
-				return new InventoryObject("Class", o);
-			case "completionDate":
-				return new InventoryObject("Completion Date", o, 69);
-			case "completionStatus":
-				return new InventoryObject("Completion Status", o, 69);
-			case "containerPath":
-				return new InventoryObject("Container", o, 1000);
-			case "coreNumber":
-				return new InventoryObject("Core Number", o, 900);
-			case "current":
-				return null;
-			case "description":
-				return new InventoryObject("Description", o, 600);
-			case "elevation": {
-				if (parent instanceof JSONObject) {
-					JSONObject pjo = (JSONObject) parent;
 
-					if (o instanceof Double) {
-						String val = nf.format(o);
-						String abbr;
+			case "total":
+				return new InventoryObject("Total", o);
 
-						JSONObject u = pjo.optJSONObject("elevationUnit");
-						if (u == null) {
-							u = pjo.optJSONObject("unit");
-						}
-						if (u != null) {
-							abbr = u.optString("abbr");
-							val += " " + abbr;
-						}
-						return new InventoryObject("Elevation", val, 75);
-					}
-				}
-				return new InventoryObject("Elevation", o, 75);
-			}
-			case "federal":
-				String newName = name;
-				if (parent instanceof JSONObject) {
-					JSONObject pjo = (JSONObject) parent;
-					if (pjo.has("onshore")) {
-						return null;
-					}
-					if (o instanceof Boolean) {
-						if ((boolean) o) {
-							newName = "Federal";
-						} else {
-							newName = "Non-Federal";
-						}
-						o = null;
-					}
-				}
-				return new InventoryObject(newName, o, 70);
-			case "ID":
-				if (parent instanceof JSONObject) {
-					JSONObject pjo = (JSONObject) parent;
-					//checks if ID is in top level.
-					if (pjo.has("barcode") && o instanceof Integer) {
-						if (o != null) {
-							setID((Integer) o);
-							return new InventoryObject("ID", o, 1000);
-						}
-					}
-				}
-				return null;
-			case "intervalBottom": {
-				if (parent instanceof JSONObject) {
-					JSONObject pjo = (JSONObject) parent;
-					if (pjo.has("intervalTop")) {
-						return null;
-					}
-					if (o instanceof Double) {
-						String val = nf.format(o);
-						String abbr;
-
-						JSONObject iu = pjo.optJSONObject("intervalUnit");
-						if (iu != null) {
-							abbr = iu.optString("abbr");
-							val += " " + abbr;
-							return new InventoryObject("Interval Bottom", val, 902);
-						}
-					}
-				}
-				return new InventoryObject("Interval Bottom", o, 902);
-			}
-			case "intervalTop": {
-				if (parent instanceof JSONObject) {
-					JSONObject pjo = (JSONObject) parent;
-					if (o instanceof Double) {
-						String val = nf.format(o);
-						String abbr = "";
-
-						JSONObject iu = pjo.optJSONObject("intervalUnit");
-						if (iu != null) {
-							abbr = iu.optString("abbr");
-							val += " " + abbr;
-						}
-
-						Double ib = pjo.optDouble("intervalBottom");
-						if (!ib.isNaN()) {
-							String valBot = nf.format(ib);
-							val += " - " + valBot;
-							if (!"".equals(abbr)) {
-								val += " " + abbr;
-							}
-						}
-						return new InventoryObject("Interval ", val, 902);
-					}
-				}
-				return new InventoryObject("Interval Top", o, 902);
-			}
 			case "keywords":
-				return new InventoryObject("Keywords", o, 600);
-			case "measuredDepth": {
-				if (parent instanceof JSONObject) {
-					JSONObject pjo = (JSONObject) parent;
+				return new InventoryObject("Keywords", o, 900);
+			case "well":
+				return new InventoryObject("Well", o, 600);
 
-					if (o instanceof Double) {
-						String val = nf.format(o);
-						String abbr;
-
-						JSONObject u = pjo.optJSONObject("measuredDepthUnit");
-						if (u == null) {
-							u = pjo.optJSONObject("unit");
-						}
-						if (u != null) {
-							abbr = u.optString("abbr");
-							val += " " + abbr;
-						}
-						return new InventoryObject("Measured Depth", val, 75);
-					}
-				}
-				return new InventoryObject("Measured Depth", o, 75);
-			}
-			case "name":
-				return new InventoryObject("Name", o, 1000);
-			case "number":
-				return new InventoryObject("Number", o);
-			case "onshore":
-				if (parent instanceof JSONObject) {
-					JSONObject pjo = (JSONObject) parent;
-
-					if (o instanceof Boolean) {
-						if ((boolean) o) {
-							name = "Onshore";
-						} else {
-							name = "Offshore";
-						}
-						o = null;
-					}
-					boolean fed = pjo.optBoolean("Federal");
-					if (fed) {
-						name = name + " / Federal";
-					} else {
-						name = name + " /  Non-Federal";
-					}
-				}
-				return new InventoryObject(name, o, 70);
-			case "permitStatus":
-				return new InventoryObject("Permit Status", o, 70);
-			case "remark":
-				if (o.toString().contains("\n")) {
-					o = o.toString().replace("\n", " ");
-				}
-				return new InventoryObject("Remark", o, 900);
-			case "sampleNumber":
-				return new InventoryObject("Sample Number", o, 600);
-			case "setNumber":
-				return new InventoryObject("Set Number", o, 1000);
-			case "spudDate":
-				return new InventoryObject("Spud Date", o, 60);
-			case "verticalDepth": {
-				if (parent instanceof JSONObject) {
-					JSONObject pjo = (JSONObject) parent;
-
-					if (o instanceof Double) {
-						String val = nf.format(o);
-						String abbr;
-
-						JSONObject u = pjo.optJSONObject("unit");
-
-						if (u != null) {
-							abbr = u.optString("abbr");
-							val += " " + abbr;
-						}
-						return new InventoryObject("Vertical Depth", val, 75);
-					}
-				}
-				return new InventoryObject("Vertical Depth", o, 75);
-			}
-			case "wellNumber":
-				return new InventoryObject("Well Number", o, 94);
-			case "year":
-				return new InventoryObject("Year", o);
 			default:
 				return new InventoryObject(name, o);
 		}

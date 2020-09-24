@@ -59,7 +59,7 @@ public class BaseActivity extends AppCompatActivity {
 
             case R.id.lookup:
                 LookupLogicForDisplay lookupLogicForDisplayObj;
-                lookupLogicForDisplayObj = Bridge.instance().lookupLogicForDisplayObj;
+                lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
                 if(lookupLogicForDisplayObj == null) {
                     Intent get_barcode = new Intent(this, Lookup.class);

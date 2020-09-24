@@ -34,8 +34,6 @@ public class MainActivity extends BaseActivity {
 //        String s2 =  sp.getString("lookupHistoryString", "");
 //        System.out.println("TEST " + s2);
 
-
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
@@ -88,8 +86,7 @@ public class MainActivity extends BaseActivity {
     private void open_get_barcode() {
 
         LookupLogicForDisplay lookupLogicForDisplayObj;
-        lookupLogicForDisplayObj = Bridge.instance().lookupLogicForDisplayObj;
-
+        lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
         if(lookupLogicForDisplayObj == null) {
             Intent get_barcode = new Intent(this, Lookup.class);
@@ -102,14 +99,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void open_summary() {
-
         Intent get_barcode = new Intent(this, Summary.class);
         get_barcode.putExtra(EXTRA_TEXT, button_pushed);
         startActivity(get_barcode);
     }
 
     private void open_move() {
-
             Intent get_barcode = new Intent(this, Move.class);
             get_barcode.putExtra(EXTRA_TEXT, button_pushed);
             startActivity(get_barcode);
@@ -117,7 +112,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Bridge.instance().lookupLogicForDisplayObj = null;
+        LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
         super.onBackPressed();
     }
 }

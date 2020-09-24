@@ -29,6 +29,7 @@ public class LookupDisplay extends BaseActivity {
 				}
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
 					final OpenLookup openLookupObj = new OpenLookup();
+					System.out.println(invisibleEditText.getText().toString());
 					openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), LookupDisplay.this);
 					return true;
 				}
@@ -37,7 +38,7 @@ public class LookupDisplay extends BaseActivity {
 		});
 
 		LookupLogicForDisplay lookupLogicForDisplayObj;
-		lookupLogicForDisplayObj = Bridge.instance().lookupLogicForDisplayObj;
+		lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
 		if (lookupLogicForDisplayObj != null) {
 			Intent intent = getIntent();
@@ -65,6 +66,4 @@ public class LookupDisplay extends BaseActivity {
 			}
 		}
 	}
-
-
 }
