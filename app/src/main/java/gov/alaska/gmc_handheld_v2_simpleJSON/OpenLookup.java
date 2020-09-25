@@ -85,6 +85,14 @@ public class OpenLookup {
 				websiteURL1 = websiteURL1 + "/summary.json?barcode=" + barcodeQuery;
 				break;
 			}
+			case "SummaryDisplay": {
+				final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
+				barcodeInput.setFocusable(false);
+				barcodeInput.setEnabled(false);
+				barcodeInput.setFocusableInTouchMode(false);
+				websiteURL1 = websiteURL1 + "/inventory.json?barcode=" + barcodeQuery;
+				break;
+			}
 		}
 
 		websiteURL = websiteURL1;
@@ -159,7 +167,8 @@ public class OpenLookup {
 							context.startActivity(intent);
 							break;
 						}
-						case "Summary": {
+						case "Summary":
+						case "SummaryDisplay":{
 							SummaryLogicForDisplay summaryLogicForDisplayObj;
 							summaryLogicForDisplayObj = new SummaryLogicForDisplay();
 							SummaryDisplayObjInstance.instance().summaryLogicForDisplay = summaryLogicForDisplayObj;

@@ -173,8 +173,8 @@ public class SummaryLogicForDisplay {
 				}
 				case "containers":
 					if (o.has("container")) {
-//						return new InventoryObject("Container", o.get("container"), 500);
-						return null;
+						return new InventoryObject("Container", o.get("container"), 500);
+
 					}
 					return null;
 				case "collections":
@@ -257,13 +257,7 @@ public class SummaryLogicForDisplay {
 					io = new InventoryObject("Collections", null, 100);
 					break;
 				case "containers":
-					JSONObject oTemp = null;
-
-					if(a instanceof JSONArray) {
-						oTemp = a.optJSONObject(0);
-					}
-
-					io = new InventoryObject("Container", oTemp.optString("container"), 1000);
+					io = new InventoryObject("Containers", null, 1000);
 					break;
 				case "outcrops":
 					io = new InventoryObject("Outcrops", null, 50);

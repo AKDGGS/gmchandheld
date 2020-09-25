@@ -18,18 +18,21 @@ public class SummaryDisplay extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
-
+        System.out.println(invisibleEditText.getText().toString());
         invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+                System.out.println(invisibleEditText.getText().toString());
                 // if "enter" is pressed
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     invisibleEditText.setVisibility(View.VISIBLE);
 
                 }
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+
                     final OpenLookup openLookupObj = new OpenLookup();
-                    System.out.println(invisibleEditText.getText().toString());
+
                     openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), SummaryDisplay.this);
+                    System.out.println(invisibleEditText.getText().toString());
                     return true;
                 }
                 return false;
