@@ -90,7 +90,7 @@ public class OpenLookup {
 		websiteURL = websiteURL1;
 
 		new AsyncTask<String, Integer, DownloadData>() {
-
+			AlertDialog alert;  //onPreExec
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
@@ -105,8 +105,7 @@ public class OpenLookup {
 				title.setGravity(Gravity.CENTER);
 				title.setTextSize(16);
 				alertDialog.setCustomTitle(title);
-				AlertDialog alert = alertDialog.create();
-
+				alert = alertDialog.create();
 				alert.show();
 			}
 
@@ -119,6 +118,8 @@ public class OpenLookup {
 
 			@Override
 			protected void onPostExecute(DownloadData obj) {
+				//Dismisses the downloading alert.  This is needed if the download fails.
+				alert.dismiss();
 
 				if (obj.isErrored()) {
 					final String msg = obj.getException().toString();
@@ -156,6 +157,7 @@ public class OpenLookup {
 							Intent intent = new Intent(context, LookupDisplay.class);
 							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 							context.startActivity(intent);
+							break;
 						}
 						case "Summary": {
 							SummaryLogicForDisplay summaryLogicForDisplayObj;
@@ -175,6 +177,7 @@ public class OpenLookup {
 							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 							System.out.println(context.getClass().getSimpleName());
 							context.startActivity(intent);
+							break;
 						}
 
 					}
@@ -191,9 +194,12 @@ public class OpenLookup {
 			}
 		}.execute();
 
-		if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
-			lookupHistory.add(0, barcodeQuery);
+		if(("Lookup".equals(context.getClass().getSimpleName())) || ("LookupDisplay".equals(context.getClass().getSimpleName()))){
+			if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
+				lookupHistory.add(0, barcodeQuery);
+			}
 		}
+
 
 ////				Save LookupHistory list-- Test for audit and move.
 //					SharedPreferences prefs = context.getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -222,6 +228,18 @@ public class OpenLookup {
 				barcodeInput.setFocusableInTouchMode(true);
 				barcodeInput.requestFocus();
 				barcodeInput.getText().clear();
+				break;
+			}
+			case "Summary": {
+				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
+				submit_button.setEnabled(true);
+				submit_button.setClickable(true);
+				submit_button.setFocusableInTouchMode(true);
+
+				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
+				barcodeInput.setFocusable(true);
+				barcodeInput.setEnabled(true);
+				barcodeInput.setFocusableInTouchMode(true);
 				break;
 			}
 		}

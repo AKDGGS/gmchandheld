@@ -14,7 +14,7 @@ public class LookupDisplay extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.lookup);
+		setContentView(R.layout.lookup_display);
 
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 

@@ -15,7 +15,7 @@ public class SummaryDisplay extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.summary_display);
 
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
@@ -43,17 +43,26 @@ public class SummaryDisplay extends BaseActivity {
             Intent intent = getIntent();
             String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
 
-//            if (barcode != null) {
-//                SummaryDisplay.this.getSupportActionBar().setTitle(barcode);
-//
+            if (barcode != null) {
+                SummaryDisplay.this.getSupportActionBar().setTitle(barcode);
+
 //                if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
 //                    SummaryDisplay.this.getSupportActionBar().setSubtitle(summaryLogicForDisplayObj.getKeyList().size() + " Result(s)");
 //                }
-//            }
+            }
 
             ExpandableListView expandableListView = findViewById(R.id.expandableListView);
             ExpandableListAdapter listAdapter = new LookupExpListAdapter(SummaryDisplay.this, summaryLogicForDisplayObj.getKeyList(), summaryLogicForDisplayObj.getDisplayDict());
             expandableListView.setAdapter(listAdapter);
+
+            if (listAdapter.getGroupCount() >= 1) {
+                //expands only the first element
+//							expandableListView.expandGroup(0);
+                //expands all
+                for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+                    expandableListView.expandGroup(i);
+                }
+            }
         }
     }
 }

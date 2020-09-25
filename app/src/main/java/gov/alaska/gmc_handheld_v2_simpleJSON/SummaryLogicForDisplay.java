@@ -82,7 +82,7 @@ public class SummaryLogicForDisplay {
 		Collections.sort(o.getChildren(), new SortInventoryObjectList());
 
 		SpannableStringBuilder ssb = new SpannableStringBuilder();
-		if (o.getName() != null && !o.getName().equals(currKey) && !(o.getName() == "**boreholes")) {
+		if (o.getName() != null && !o.getName().equals(currKey) && !(o.getName().contains("Object"))) {
 
 			//Barcode is not added to the displayList because it is in the Label
 			if (!"Barcode".equals(o.getName())) {
@@ -90,7 +90,9 @@ public class SummaryLogicForDisplay {
 					// Indentation is 3 spaces
 					// If this changes, you might need to change LookupExpListAdapter getChildView
 					// in order to deal with multiline indentations.
+
 					ssb.append("   ");
+
 				}
 				int lengthOfSsb;
 
@@ -165,13 +167,14 @@ public class SummaryLogicForDisplay {
 
 				//Create these nodes
 				case "boreholes": {
-					String newName = "**boreholes";
+					String newName = "Object Borehole";
 					io = new InventoryObject(newName, null, 100);
 					break;
 				}
 				case "containers":
 					if (o.has("container")) {
-						return new InventoryObject("Container", o.get("container"), 500);
+//						return new InventoryObject("Container", o.get("container"), 500);
+						return null;
 					}
 					return null;
 				case "collections":
@@ -185,7 +188,7 @@ public class SummaryLogicForDisplay {
 					if (!"".equals(Integer.toString(ID))) {
 						newName += " ID " + id;
 					}
-					io = new InventoryObject(newName, null, 100);
+					io = new InventoryObject("Object " + newName, null, 100);
 					break;
 				}
 				case "prospect": {
@@ -194,7 +197,7 @@ public class SummaryLogicForDisplay {
 					if (!"".equals(Integer.toString(ID))) {
 						newName += " ID " + id;
 					}
-					io = new InventoryObject(newName, null);
+					io = new InventoryObject("Object " + newName, null);
 					break;
 				}
 				case "shotline": {
@@ -203,7 +206,7 @@ public class SummaryLogicForDisplay {
 					if (!"".equals(Integer.toString(ID))) {
 						newName += " ID " + id;
 					}
-					io = new InventoryObject(newName, null);
+					io = new InventoryObject("Object " + newName, null);
 					break;
 				}
 				case "shotpoints": {
@@ -212,19 +215,16 @@ public class SummaryLogicForDisplay {
 					if (!"".equals(Integer.toString(ID))) {
 						newName += " ID " + id;
 					}
-					io = new InventoryObject(newName, null, 50);
+					io = new InventoryObject("Object " + newName, null, 50);
 					break;
 				}
 				case "wells":
 					String id = o.optString("ID");
 					String newName = "Well";
-					if (!"".equals(Integer.toString(ID))) {
-						newName += " ID " + id;
-					}
-					io = new InventoryObject(newName, null, 100);
+					io = new InventoryObject("Object " + newName, null, 100);
 					break;
 				default:
-					io = new InventoryObject(name + "999");
+					io = new InventoryObject(name);
 			}
 		}
 
@@ -240,8 +240,8 @@ public class SummaryLogicForDisplay {
 
 //*********************************************************************************************
 
-	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws
-			Exception {
+	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
+
 		InventoryObject io;
 
 		if (name == null) {
@@ -251,25 +251,28 @@ public class SummaryLogicForDisplay {
 
 				//Create these nodes
 				case "boreholes":
-					io = new InventoryObject("Boreholes", null, 100);
+					io = new InventoryObject("Boreholes", null, 50);
 					break;
 				case "collections":
 					io = new InventoryObject("Collections", null, 100);
 					break;
 				case "containers":
-					io = new InventoryObject("Containers", null, 100);
-					break;
-				case "operators":
-					io = new InventoryObject("Operators", null, 50);
+					JSONObject oTemp = null;
+
+					if(a instanceof JSONArray) {
+						oTemp = a.optJSONObject(0);
+					}
+
+					io = new InventoryObject("Container", oTemp.optString("container"), 1000);
 					break;
 				case "outcrops":
-					io = new InventoryObject("Outcrops", null, 100);
+					io = new InventoryObject("Outcrops", null, 50);
 					break;
 				case "shotpoints":
-					io = new InventoryObject("Shotpoints", null, 100);
+					io = new InventoryObject("Shotpoints", null, 50);
 					break;
 				case "wells":
-					io = new InventoryObject("Wells", null, 100);
+					io = new InventoryObject("Wells", null, 50);
 					break;
 				default:
 					io = new InventoryObject(name);
@@ -291,18 +294,30 @@ public class SummaryLogicForDisplay {
 			return null;
 		}
 
+		System.out.println(name);
 		switch (name) {
 			// Higher the displayWeight, the higher a priority an key has.
 			// Items are sorted internally first, and the externally in processForDisplay()
+			case "barcode":
+				return new InventoryObject("Barcode", o, 1000);
 
-			case "total":
-				return new InventoryObject("Total", o);
+			case "borehole":
+//				Object newO = o;
+//				if (parent instanceof JSONObject) {
+//					JSONObject pjo = (JSONObject) parent;
+//					if (pjo.has("total")) {
+//						newO = newO + " Count: " + pjo.optString("total");
+//					}
+//				}
+//				return new InventoryObject("Borehole", newO, 900);
+				return new InventoryObject("Borehole", o, 900);
 
 			case "keywords":
-				return new InventoryObject("Keywords", o, 900);
+				return new InventoryObject("Keywords", o, 700);
+			case "total":
+				return new InventoryObject("Total", o, 800);
 			case "well":
-				return new InventoryObject("Well", o, 600);
-
+				return new InventoryObject("Well", o, 900);
 			default:
 				return new InventoryObject(name, o);
 		}

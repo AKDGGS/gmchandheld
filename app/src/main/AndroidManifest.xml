@@ -11,7 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SummaryDisplay"></activity>
+        <activity android:name=".SummaryDisplay"
+            android:parentActivityName=".Summary"
+            android:theme="@style/Theme.AppCompat.DayNight" />
         <activity android:name=".Configuration" />
         <activity android:name=".BaseActivity" />
         <activity android:name=".Audit" />

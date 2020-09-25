@@ -1,5 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -26,6 +27,8 @@ public class Summary extends BaseActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
         final EditText barcodeInput = findViewById(R.id.editText1);
         final Button submit_button = findViewById(R.id.submit_button);
