@@ -20,16 +20,13 @@ public class LookupDisplay extends BaseActivity {
 
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
+		invisibleEditText.setVisibility(View.GONE);
+
 		invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				// if "enter" is pressed
-				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-					invisibleEditText.setVisibility(View.VISIBLE);
 
-				}
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
 					final OpenLookup openLookupObj = new OpenLookup();
-					System.out.println(invisibleEditText.getText().toString());
 					openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), LookupDisplay.this);
 					return true;
 				}
@@ -66,4 +63,14 @@ public class LookupDisplay extends BaseActivity {
 			}
 		}
 	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
+		invisibleEditText.setText((char)event.getUnicodeChar()+"");
+		invisibleEditText.requestFocus();
+		invisibleEditText.setVisibility(View.VISIBLE);
+		return super.onKeyDown(keyCode, event);
+	}
+
 }

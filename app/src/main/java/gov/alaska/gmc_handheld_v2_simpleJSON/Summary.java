@@ -4,13 +4,20 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.LinkedList;
+
 public class Summary extends BaseActivity {
 
+    private ListView listView;
+    private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
     private boolean submitted = false;
 
     @Override
@@ -53,6 +60,25 @@ public class Summary extends BaseActivity {
             public void onClick(View v) {
                 openLookupObj.processDataForDisplay(getBarcode(), Summary.this);
                 submitted = false;
+            }
+        });
+
+        // populates the history list
+        listView = findViewById(R.id.listViewGetSummaryHistory);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        adapter.addAll(summaryHistory);
+        adapter.notifyDataSetChanged();
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (submitted == false) {
+                    barcodeInput.setText(listView.getItemAtPosition(position).toString());
+                    submit_button.performClick();
+                    submitted = true;
+                }
             }
         });
 

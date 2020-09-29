@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.LinkedList;
 
@@ -25,6 +24,8 @@ public class OpenLookup {
 	}
 
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+	private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
+
 	public static final String SHARED_PREFS = "sharedPrefs";
 //	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
 
@@ -139,7 +140,7 @@ public class OpenLookup {
 					alertDialog.setMessage(msg);
 
 					alertDialog.setView(layout);
-					alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 						}
@@ -147,6 +148,7 @@ public class OpenLookup {
 					AlertDialog alert = alertDialog.create();
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
+
 
 				} else if (obj.getRawJson().length() > 2) {
 
@@ -163,8 +165,13 @@ public class OpenLookup {
 								e.printStackTrace();
 							}
 							Intent intent = new Intent(context, LookupDisplay.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 							context.startActivity(intent);
+
+							if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
+								lookupHistory.add(0, barcodeQuery);
+							}
 							break;
 						}
 						case "Summary":
@@ -179,13 +186,15 @@ public class OpenLookup {
 								e.printStackTrace();
 							}
 
-							System.out.println(summaryLogicForDisplayObj.getDisplayDict());
-							System.out.println(summaryLogicForDisplayObj.getKeyList());
-
 							Intent intent = new Intent(context, SummaryDisplay.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 							System.out.println(context.getClass().getSimpleName());
 							context.startActivity(intent);
+
+							if (!summaryHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
+								summaryHistory.add(0, barcodeQuery);
+							}
 							break;
 						}
 
@@ -194,21 +203,36 @@ public class OpenLookup {
 				} else {
 					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 					View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
-					Toast toast = new Toast(context);
-					toast.setGravity(Gravity.CENTER, 0, 0);
-					toast.setDuration(Toast.LENGTH_LONG);
-					toast.setView(layout);
-					toast.show();
+
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+					alertDialog.setMessage("Barcode: " + barcodeQuery);
+
+					alertDialog.setView(layout);
+					alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+						}
+					});
+					AlertDialog alert = alertDialog.create();
+					alert.setCanceledOnTouchOutside(false);
+					alert.show();
+					System.out.println(context.getClass().getSimpleName());
+					switch (context.getClass().getSimpleName()){
+						case "LookupDisplay":
+						case "SummaryDisplay":{
+							final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
+							barcodeInput.requestFocus();
+							break;
+						}
+						case "Summary":
+						case "Lookup": {
+							final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
+							barcodeInput.requestFocus();
+						}
+					}
 				}
 			}
 		}.execute();
-
-		if(("Lookup".equals(context.getClass().getSimpleName())) || ("LookupDisplay".equals(context.getClass().getSimpleName()))){
-			if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
-				lookupHistory.add(0, barcodeQuery);
-			}
-		}
-
 
 ////				Save LookupHistory list-- Test for audit and move.
 //					SharedPreferences prefs = context.getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -218,6 +242,7 @@ public class OpenLookup {
 
 
 		switch (context.getClass().getSimpleName()) {
+			case "Summary":
 			case "Lookup": {
 				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
 				submit_button.setEnabled(true);
@@ -225,11 +250,14 @@ public class OpenLookup {
 				submit_button.setFocusableInTouchMode(true);
 
 				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
+				barcodeInput.requestFocus();
+				barcodeInput.getText().clear();
 				barcodeInput.setFocusable(true);
 				barcodeInput.setEnabled(true);
 				barcodeInput.setFocusableInTouchMode(true);
 				break;
 			}
+			case "SummaryDisplay":
 			case "LookupDisplay": {
 				final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
 				barcodeInput.setFocusable(true);
@@ -237,18 +265,6 @@ public class OpenLookup {
 				barcodeInput.setFocusableInTouchMode(true);
 				barcodeInput.requestFocus();
 				barcodeInput.getText().clear();
-				break;
-			}
-			case "Summary": {
-				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
-				submit_button.setEnabled(true);
-				submit_button.setClickable(true);
-				submit_button.setFocusableInTouchMode(true);
-
-				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
-				barcodeInput.setFocusable(true);
-				barcodeInput.setEnabled(true);
-				barcodeInput.setFocusableInTouchMode(true);
 				break;
 			}
 		}

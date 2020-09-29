@@ -18,7 +18,8 @@ public class SummaryDisplay extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
-        System.out.println(invisibleEditText.getText().toString());
+        invisibleEditText.setVisibility(View.GONE);
+
         invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 System.out.println(invisibleEditText.getText().toString());
@@ -67,5 +68,15 @@ public class SummaryDisplay extends BaseActivity {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
+        invisibleEditText.setText((char)event.getUnicodeChar()+"");
+        invisibleEditText.requestFocus();
+        invisibleEditText.setVisibility(View.VISIBLE);
+
+        return super.onKeyDown(keyCode, event);
     }
 }
