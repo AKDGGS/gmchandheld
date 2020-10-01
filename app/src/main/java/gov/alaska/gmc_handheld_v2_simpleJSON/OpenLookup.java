@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import java.util.LinkedList;
 
+
 public class OpenLookup {
 
 	public OpenLookup() {
@@ -73,7 +74,7 @@ public class OpenLookup {
 				websiteURL1 = websiteURL1 + "/inventory.json?barcode=" + barcodeQuery;
 				break;
 			}
-			case "Summary":{
+			case "Summary": {
 				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
 				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
 				submit_button.setEnabled(false);
@@ -100,6 +101,7 @@ public class OpenLookup {
 
 		new AsyncTask<String, Integer, DownloadData>() {
 			AlertDialog alert;  //onPreExec
+
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
@@ -152,7 +154,7 @@ public class OpenLookup {
 
 				} else if (obj.getRawJson().length() > 2) {
 
-					switch(context.getClass().getSimpleName()){
+					switch (context.getClass().getSimpleName()) {
 						case "Lookup":
 						case "LookupDisplay": {
 							LookupLogicForDisplay lookupLogicForDisplayObj;
@@ -175,7 +177,7 @@ public class OpenLookup {
 							break;
 						}
 						case "Summary":
-						case "SummaryDisplay":{
+						case "SummaryDisplay": {
 							SummaryLogicForDisplay summaryLogicForDisplayObj;
 							summaryLogicForDisplayObj = new SummaryLogicForDisplay();
 							SummaryDisplayObjInstance.instance().summaryLogicForDisplay = summaryLogicForDisplayObj;
@@ -217,9 +219,9 @@ public class OpenLookup {
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
 					System.out.println(context.getClass().getSimpleName());
-					switch (context.getClass().getSimpleName()){
+					switch (context.getClass().getSimpleName()) {
 						case "LookupDisplay":
-						case "SummaryDisplay":{
+						case "SummaryDisplay": {
 							final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
 							barcodeInput.requestFocus();
 							break;
