@@ -122,7 +122,7 @@ public class OpenLookup {
 
 			@Override
 			protected DownloadData doInBackground(String... strings) {
-				DownloadData downloadData = new DownloadData(websiteURL, context);
+				DownloadData downloadData = new DownloadData(websiteURL, barcodeQuery);
 				downloadData.getDataFromURL();
 				return downloadData;
 			}
