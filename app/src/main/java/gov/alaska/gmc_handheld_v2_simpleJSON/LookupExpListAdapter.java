@@ -87,7 +87,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			convertView = inflater.inflate(R.layout.exp_list_parent, null);
 		}
 
-		List<String> myList = Arrays.asList("Wells", "Outcrops", "Boreholes", "Shotpoints", "Radiation MSVH");
+		List<String> myList = Arrays.asList("Wells", "Outcrops", "Boreholes", "Shotpoints");
 		int count = 0;
 		for (String s : myList) {
 			if (inventoryDetailsDict.toString().contains(s)) {
@@ -96,34 +96,34 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			}
 		}
 
-		if (inventoryDetailsDict.containsKey("Radiation MSVH")) {
-			setInventoryObjType(("Radiation MSVH"));
-		} else if (inventoryObjType == null || count > 1) {
+		if (inventoryObjType == null || count > 1) {
 			setInventoryObjType("No Type");
+		}
+
+
+		if (inventoryDetailsDict.toString().contains("Radiation MSVH")) {
+			if(alertCalled == false){
+				LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+				View layout = inflater.inflate(R.layout.radiation_warning, (ViewGroup) ((Activity) context).findViewById(R.id.radiation_root));
+
+				AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+				alertDialog.setView(layout);
+				alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+				AlertDialog alert = alertDialog.create();
+				alert.setCanceledOnTouchOutside(false);
+				alert.show();
+				alertCalled = true;
+			}
 		}
 
 		TextView txtParent = convertView.findViewById(R.id.txtParent);
 
 		switch (getInventoryObjType()) {
-			case "Radiation MSVH":
-				if(alertCalled == false){
-					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-					View layout = inflater.inflate(R.layout.radiation_warning, (ViewGroup) ((Activity) context).findViewById(R.id.radiation_root));
-
-					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-
-					alertDialog.setView(layout);
-					alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-						}
-					});
-					AlertDialog alert = alertDialog.create();
-					alert.setCanceledOnTouchOutside(false);
-					alert.show();
-					alertCalled = true;
-				}
-				break;
 			case "Wells":
 				txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
 				break;
