@@ -69,7 +69,7 @@ public class BaseActivity extends AppCompatActivity {
                 lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
                 if(lookupLogicForDisplayObj == null) {
-                    Intent get_barcode = new Intent(this, Lookup.class);
+                    Intent get_barcode = new Intent(this, MainActivity.class);
                     get_barcode.putExtra(EXTRA_TEXT, button_pushed);
                     startActivity(get_barcode);
                 }else{

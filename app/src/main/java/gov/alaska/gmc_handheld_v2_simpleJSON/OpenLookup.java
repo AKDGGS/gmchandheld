@@ -53,7 +53,8 @@ public class OpenLookup {
 		}
 
 		switch (context.getClass().getSimpleName()) {
-			case "Lookup": {
+//			case "Lookup": {
+			case "MainActivity": {
 				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
 				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
 				submit_button.setEnabled(false);
@@ -156,7 +157,8 @@ public class OpenLookup {
 
 					switch (context.getClass().getSimpleName()) {
 						case "Lookup":
-						case "LookupDisplay": {
+						case "LookupDisplay":
+						case "MainActivity":{
 							LookupLogicForDisplay lookupLogicForDisplayObj;
 							lookupLogicForDisplayObj = new LookupLogicForDisplay();
 							LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
@@ -166,6 +168,8 @@ public class OpenLookup {
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
+
+
 							Intent intent = new Intent(context, LookupDisplay.class);
 							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
@@ -218,10 +222,11 @@ public class OpenLookup {
 					AlertDialog alert = alertDialog.create();
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
-					System.out.println(context.getClass().getSimpleName());
+
 					switch (context.getClass().getSimpleName()) {
 						case "LookupDisplay":
-						case "SummaryDisplay": {
+						case "SummaryDisplay":
+						case "MainActivity":{
 							final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
 							barcodeInput.requestFocus();
 							break;

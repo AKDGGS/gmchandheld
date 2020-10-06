@@ -1,113 +1,95 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.LinkedList;
+
 public class MainActivity extends BaseActivity {
 
-    private static String button_pushed;
+    private ListView listView;
+    private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+    private boolean submitted = false;
 
-    public static String getButton_pushed() {
-        return button_pushed;
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
     }
-
-    public static void setButton_pushed(String button_pushed) {
-        MainActivity.button_pushed = button_pushed;
-    }
-
-    public static final String EXTRA_TEXT = "com.example.user_input_no_button.EXTRA_TEXT";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
 //        String s2 =  sp.getString("lookupHistoryString", "");
 //        System.out.println("TEST " + s2);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
+
+        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
+
+        final EditText barcodeInput = findViewById(R.id.editText1);
+        final Button submit_button = findViewById(R.id.submit_button);
+
+        // KeyListener listens if enter is pressed
+        barcodeInput.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // if "enter" is pressed
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    submit_button.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        final OpenLookup openLookupObj = new OpenLookup();
+
+        // onClickListener listens if the submit button is clicked
+        submit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openLookupObj.processDataForDisplay(getBarcode(), MainActivity.this);
+                submitted = false;
+            }
+        });
+
+        // populates the history list
+        listView = findViewById(R.id.listViewGetBarcodeHistory);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        adapter.addAll(lookupHistory);
+        adapter.notifyDataSetChanged();
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (submitted == false) {
+                    barcodeInput.setText(listView.getItemAtPosition(position).toString());
+                    submit_button.performClick();
+                    submitted = true;
+                }
+            }
+        });
     }
 
-    public void menu_option(View View) {
-        String button_text;
-        button_text = ((Button) View).getText().toString();
-
-        switch (button_text) {
-            case "Help":
-                Intent help = new Intent(this, Help.class);
-                startActivity(help);
-                break;
-            case "Lookup":
-                button_pushed = "Lookup";
-                open_get_barcode();
-                break;
-            case "Summary":
-                button_pushed = "Summary";
-                open_summary();
-                break;
-            case "Move":
-                button_pushed = "Move";
-                open_move();
-                break;
-            case "Recode":
-                Intent recode = new Intent(this, Recode.class);
-                startActivity(recode);
-                break;
-            case "Add Inventory":
-                Intent add_inventory = new Intent(this, AddInventory.class);
-                startActivity(add_inventory);
-                break;
-            case "Add Container":
-                Intent add_container = new Intent(this, AddContainer.class);
-                startActivity(add_container);
-                break;
-            case "Audit":
-                Intent audit = new Intent(this, Audit.class);
-                startActivity(audit);
-                break;
-            case "Configuration":
-                Intent configuration = new Intent(this, Configuration.class);
-                startActivity(configuration);
-                break;
-        }
-    }
-
-    private void open_get_barcode() {
-
-        LookupLogicForDisplay lookupLogicForDisplayObj;
-        lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
-
-        if(lookupLogicForDisplayObj == null) {
-            Intent get_barcode = new Intent(this, Lookup.class);
-            get_barcode.putExtra(EXTRA_TEXT, button_pushed);
-            startActivity(get_barcode);
-        }else{
-            Intent lookup = new Intent(this, LookupDisplay.class);
-            startActivity(lookup);
-        }
-    }
-
-    private void open_summary() {
-        Intent get_barcode = new Intent(this, Summary.class);
-        get_barcode.putExtra(EXTRA_TEXT, button_pushed);
-        startActivity(get_barcode);
-    }
-
-    private void open_move() {
-            Intent get_barcode = new Intent(this, Move.class);
-            get_barcode.putExtra(EXTRA_TEXT, button_pushed);
-            startActivity(get_barcode);
+    public String getBarcode() {
+        EditText barcodeInput = findViewById(R.id.editText1);
+        return barcodeInput.getText().toString();
     }
 
     @Override

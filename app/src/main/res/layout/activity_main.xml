@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
+    app:backgroundTint="@color/colorPrimary"
     tools:context=".MainActivity">
 
     <include
@@ -14,237 +15,55 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="5dp"
-        android:baselineAligned="false"
         android:orientation="horizontal">
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/editText1"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#ff567b95"
-                android:onClick="menu_option"
-                android:text="Help"
-                android:textColor="#fff"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="3dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
             android:layout_weight="1"
-            android:background="#3498db">
+            android:inputType="text"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            />
 
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#ff567b95"
-                android:onClick="menu_option"
-                android:text="Lookup"
-                android:textColor="#fff"
-                android:textSize="15sp" />
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/ic_baseline_arrow_forward_24" />
 
-        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
+        android:text="History"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#ff353535"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#ff567b95"
-                android:onClick="menu_option"
-                android:text="Summary"
-                android:textColor="#fff"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="#3498db">
-
-            <Button
-                android:id="@+id/button4"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#ff567b95"
-                android:onClick="menu_option"
-                android:text="Move"
-                android:textColor="#fff"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <ListView
+        android:id="@+id/listViewGetBarcodeHistory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="56dp"
+        android:layout_marginRight="56dp" />
 
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="#3498db">
-
-            <Button
-                android:id="@+id/button5"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#ff567b95"
-                android:onClick="menu_option"
-                android:text="Recode"
-                android:textColor="#fff"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="#3498db">
-
-            <Button
-                android:id="@+id/button6"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#ff567b95"
-                android:onClick="menu_option"
-                android:text="Add Inventory"
-                android:textColor="#fff"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="#3498db">
-
-            <Button
-                android:id="@+id/button7"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#ff567b95"
-                android:onClick="menu_option"
-                android:text="Add Container"
-                android:textColor="#fff"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="#3498db">
-
-            <Button
-                android:id="@+id/button8"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#ff567b95"
-                android:onClick="menu_option"
-                android:text="Audit"
-                android:textColor="#fff"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="#3498db">
-
-            <Button
-                android:id="@+id/button9"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#ff567b95"
-                android:onClick="menu_option"
-                android:text="Configuration"
-                android:textColor="#fff"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-
-
-    </LinearLayout>
 
 </LinearLayout>

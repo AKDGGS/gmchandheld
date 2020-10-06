@@ -74,6 +74,7 @@ public class SummaryDisplay extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
         invisibleEditText.setText((char)event.getUnicodeChar()+"");
+        invisibleEditText.setSelection(invisibleEditText.getText().length());
         invisibleEditText.requestFocus();
         invisibleEditText.setVisibility(View.VISIBLE);
 

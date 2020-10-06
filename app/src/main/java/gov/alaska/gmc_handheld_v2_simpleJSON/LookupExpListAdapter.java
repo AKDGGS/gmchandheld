@@ -1,6 +1,9 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.text.Spannable;
@@ -23,6 +26,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 	final List<String> inventoryLabels;
 	final Map<String, List<SpannableStringBuilder>> inventoryDetailsDict;
 	private String inventoryObjType = null;
+	private boolean alertCalled = false;
 
 	public String getInventoryObjType() {
 		return inventoryObjType;
@@ -83,7 +87,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			convertView = inflater.inflate(R.layout.exp_list_parent, null);
 		}
 
-		List<String> myList = Arrays.asList("Wells", "Outcrops", "Boreholes", "Shotpoints");
+		List<String> myList = Arrays.asList("Wells", "Outcrops", "Boreholes", "Shotpoints", "Radiation MSVH");
 		int count = 0;
 		for (String s : myList) {
 			if (inventoryDetailsDict.toString().contains(s)) {
@@ -92,13 +96,34 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			}
 		}
 
-		if (inventoryObjType == null || count > 1) {
+		if (inventoryDetailsDict.containsKey("Radiation MSVH")) {
+			setInventoryObjType(("Radiation MSVH"));
+		} else if (inventoryObjType == null || count > 1) {
 			setInventoryObjType("No Type");
 		}
 
 		TextView txtParent = convertView.findViewById(R.id.txtParent);
 
 		switch (getInventoryObjType()) {
+			case "Radiation MSVH":
+				if(alertCalled == false){
+					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+					View layout = inflater.inflate(R.layout.radiation_warning, (ViewGroup) ((Activity) context).findViewById(R.id.radiation_root));
+
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+					alertDialog.setView(layout);
+					alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+						}
+					});
+					AlertDialog alert = alertDialog.create();
+					alert.setCanceledOnTouchOutside(false);
+					alert.show();
+					alertCalled = true;
+				}
+				break;
 			case "Wells":
 				txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
 				break;
@@ -131,6 +156,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		TextView txtChild = convertView.findViewById(R.id.txtChild);
 
 		switch (getInventoryObjType()) {
+
 			case "Boreholes":
 			case "Prospect":
 				if (childPosition % 2 != 0) {

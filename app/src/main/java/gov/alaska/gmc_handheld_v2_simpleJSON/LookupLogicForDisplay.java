@@ -484,6 +484,8 @@ public class LookupLogicForDisplay {
 				return new InventoryObject(name, o, 70);
 			case "permitStatus":
 				return new InventoryObject("Permit Status", o, 70);
+			case "radiationMSVH":
+				return new InventoryObject("Radiation MSVH", o, 1200);
 			case "remark":
 				if (o.toString().contains("\n")) {
 					o = o.toString().replace("\n", " ");
