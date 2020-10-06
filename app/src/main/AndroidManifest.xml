@@ -11,25 +11,42 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".SummaryDisplay"
             android:parentActivityName=".Summary"
             android:theme="@style/Theme.AppCompat.DayNight" />
+
         <activity android:name=".Configuration"
             android:label="Configuration"/>
+
         <activity android:name=".BaseActivity" />
-        <activity android:name=".Audit" />
-        <activity android:name=".AddInventory" />
-        <activity android:name=".Recode" />
-        <activity android:name=".Move" />
+
+        <activity android:name=".Audit"
+            android:label="Audit"/>
+
+        <activity android:name=".AddInventory"
+            android:label="Add Inventory"/>
+
+        <activity android:name=".Recode"
+            android:label="Recode"/>
+
+        <activity android:name=".Move"
+            android:label="Move"/>
+
         <activity android:name=".Summary"
             android:label="Summary"/>
-        <activity
-            android:name=".Help"/>
-        <activity android:name=".AddContainer" />
+
+        <activity android:name=".Help"
+            android:label="Help"/>
+
+        <activity android:name=".AddContainer"
+            android:label="Add Container"/>
+
         <activity
             android:name=".LookupDisplay"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.AppCompat.DayNight" />
+
         <activity android:name=".MainActivity"
             android:label="Lookup"
             >
@@ -39,6 +56,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

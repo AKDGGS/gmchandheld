@@ -33,7 +33,6 @@ public class SummaryDisplay extends BaseActivity {
                     final OpenLookup openLookupObj = new OpenLookup();
 
                     openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), SummaryDisplay.this);
-                    System.out.println(invisibleEditText.getText().toString());
                     return true;
                 }
                 return false;
@@ -49,10 +48,6 @@ public class SummaryDisplay extends BaseActivity {
 
             if (barcode != null) {
                 SummaryDisplay.this.getSupportActionBar().setTitle(barcode);
-
-//                if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
-//                    SummaryDisplay.this.getSupportActionBar().setSubtitle(summaryLogicForDisplayObj.getKeyList().size() + " Result(s)");
-//                }
             }
 
             ExpandableListView expandableListView = findViewById(R.id.expandableListView);
@@ -60,9 +55,6 @@ public class SummaryDisplay extends BaseActivity {
             expandableListView.setAdapter(listAdapter);
 
             if (listAdapter.getGroupCount() >= 1) {
-                //expands only the first element
-//							expandableListView.expandGroup(0);
-                //expands all
                 for (int i = 0; i < listAdapter.getGroupCount(); i++) {
                     expandableListView.expandGroup(i);
                 }

@@ -1,8 +1,9 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import androidx.appcompat.widget.Toolbar;
-
+import android.graphics.Color;
 import android.os.Bundle;
+
+import androidx.appcompat.widget.Toolbar;
 
 public class Recode extends BaseActivity {
 
@@ -12,6 +13,7 @@ public class Recode extends BaseActivity {
         setContentView(R.layout.recode);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
     }
 }

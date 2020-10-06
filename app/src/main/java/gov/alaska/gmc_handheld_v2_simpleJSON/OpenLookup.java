@@ -93,7 +93,7 @@ public class OpenLookup {
 				barcodeInput.setFocusable(false);
 				barcodeInput.setEnabled(false);
 				barcodeInput.setFocusableInTouchMode(false);
-				websiteURL1 = websiteURL1 + "/inventory.json?barcode=" + barcodeQuery;
+				websiteURL1 = websiteURL1 + "/summary.json?barcode=" + barcodeQuery;
 				break;
 			}
 		}
@@ -156,7 +156,6 @@ public class OpenLookup {
 				} else if (obj.getRawJson().length() > 2) {
 
 					switch (context.getClass().getSimpleName()) {
-						case "Lookup":
 						case "LookupDisplay":
 						case "MainActivity":{
 							LookupLogicForDisplay lookupLogicForDisplayObj;
@@ -195,7 +194,6 @@ public class OpenLookup {
 							Intent intent = new Intent(context, SummaryDisplay.class);
 							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
-							System.out.println(context.getClass().getSimpleName());
 							context.startActivity(intent);
 
 							if (!summaryHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
@@ -224,15 +222,14 @@ public class OpenLookup {
 					alert.show();
 
 					switch (context.getClass().getSimpleName()) {
-						case "LookupDisplay":
 						case "SummaryDisplay":
-						case "MainActivity":{
+						case "LookupDisplay":{
 							final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
 							barcodeInput.requestFocus();
 							break;
 						}
 						case "Summary":
-						case "Lookup": {
+						case "MainActivity": {
 							final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
 							barcodeInput.requestFocus();
 						}
