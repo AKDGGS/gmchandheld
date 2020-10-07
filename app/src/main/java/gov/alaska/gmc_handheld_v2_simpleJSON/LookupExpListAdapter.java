@@ -93,7 +93,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			if (inventoryDetailsDict.toString().contains(s)) {
 				count++;
 				setInventoryObjType(s);
-				System.out.println(s);
 			}
 		}
 
@@ -123,8 +122,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		}
 
 		TextView txtParent = convertView.findViewById(R.id.txtParent);
-
-		System.out.println(getInventoryObjType());
 
 		switch (getInventoryObjType()) {
 			case "Wells":

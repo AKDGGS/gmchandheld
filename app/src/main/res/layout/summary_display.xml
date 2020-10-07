@@ -10,10 +10,8 @@
         android:id="@+id/invisibleEditText"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:ems="10"
-        android:hint="Transparent EditText"
+        android:hint="@string/search_query"
         android:background="@android:color/transparent"
         >
 

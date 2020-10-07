@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -13,45 +14,74 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            android:text="Save All" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/softKeyboardSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:text="Soft Keyboard"
+            android:textOff="Off"
+            android:textOn="On"
+            android:thumb="@drawable/thumb1"
+            app:showText="true"
+            app:track="@drawable/track1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/enter_the_host_and_path"
-            android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="15dp"
-            android:textSize="16sp"
+            android:text="@string/host"
             android:textColor="@android:color/black"
-        />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/url_editText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginRight="15dp"
-            android:inputType="text"
-            android:text="@string/maps_dggs_alaska_gov_gmc"
-            android:paddingLeft="16dp"
-            android:paddingStart="16dp"
-            />
-
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="Save" />
-
-
+            android:layout_marginTop="10dp"
+            android:inputType="text"
+            android:text="@string/maps_dggs_alaska_gov_gmc" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="15dp"
+            android:text="API Key: "
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/api_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:inputType="text"
+            android:hint="API Key" />
+    </LinearLayout>
 
 
 </LinearLayout>

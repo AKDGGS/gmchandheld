@@ -1,7 +1,10 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,6 +22,7 @@ public class MainActivity extends BaseActivity {
     private ListView listView;
     private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
     private boolean submitted = false;
+    public static final String SHARED_PREFS = "sharedPrefs";
 
     @Override
     public void onRestart() {
@@ -42,6 +46,13 @@ public class MainActivity extends BaseActivity {
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
         final EditText barcodeInput = findViewById(R.id.editText1);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        boolean onOff = sharedPreferences.getBoolean("softKeyboardStr", false);
+
+        if(onOff == false) {
+            barcodeInput.setInputType(InputType.TYPE_NULL);
+        }
         final Button submit_button = findViewById(R.id.submit_button);
 
         // KeyListener listens if enter is pressed
