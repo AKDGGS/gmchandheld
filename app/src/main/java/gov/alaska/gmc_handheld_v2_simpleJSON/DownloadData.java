@@ -1,6 +1,9 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -21,10 +24,13 @@ public class DownloadData {
 	private String url;
 	private String rawJson;
 	private String barcodeQuery;
+	private Context context;
+	public static final String SHARED_PREFS = "sharedPrefs";
 
-	public DownloadData(String url, String barcodeQuery) {
+	public DownloadData(String url, String barcodeQuery, Context context) {
 		this.url = url;
 		this.barcodeQuery = barcodeQuery;
+		this.context = context;
 	}
 
 	public boolean isErrored() {
@@ -49,17 +55,18 @@ public class DownloadData {
 			connection = (HttpURLConnection) myURL.openConnection();
 
 			Date date = new Date();
-			String HDATE= getDateFormat().format(date);
+			String HDATE = getDateFormat().format(date);
 
 			String QUERYPARAM = "barcode=" + barcodeQuery;
 			String message = HDATE + "\n" + QUERYPARAM;
 
-			String APIKEY = "thXAgLfS68TRpmixfvr2nksFQYrzZf5F";
+			SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+			String APIKEY = sharedPreferences.getString("apiText", "");
 
-			String AUTH_DGST= getDGST(APIKEY, message);
+			String AUTH_DGST = getDGST(APIKEY, message);
 
 			connection.setRequestMethod("GET");
-			connection.setRequestProperty ("Authorization", "BASE64-HMAC-SHA256 " + AUTH_DGST);
+			connection.setRequestProperty("Authorization", "BASE64-HMAC-SHA256 " + AUTH_DGST);
 			connection.setRequestProperty("Date", HDATE);
 
 			connection.setReadTimeout(60000);
@@ -99,7 +106,7 @@ public class DownloadData {
 	}
 
 
-	public SimpleDateFormat getDateFormat(){
+	public SimpleDateFormat getDateFormat() {
 		SimpleDateFormat sdf = new SimpleDateFormat(
 				"EEE, dd MMM yyyy HH:mm:ss zzz"
 		);
@@ -108,7 +115,7 @@ public class DownloadData {
 	}
 
 
-	private String getDGST(String APIKEY, String message){
+	private String getDGST(String APIKEY, String message) {
 		Mac mac = null;
 		byte[] hmac256 = null;
 		try {

@@ -45,11 +45,15 @@ public class OpenLookup {
 //			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcodeQuery;
 //			websiteURL = "http://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=" + barcode
 
+		if (url.charAt(url.length() - 1) != ('/')) {
+			url = url + '/';
+		}
+
 		int APILevel = android.os.Build.VERSION.SDK_INT;
-		if (APILevel < 18) {
-			websiteURL1 = "http://" + url;
+		if (APILevel < 18 && url.substring(0, 5).equals("https")) {
+			websiteURL1 = "http" + url.substring(5, url.length());
 		} else {
-			websiteURL1 = "https://" + url;
+			websiteURL1 = url;
 		}
 
 		switch (context.getClass().getSimpleName()) {
@@ -64,7 +68,7 @@ public class OpenLookup {
 				barcodeInput.setFocusable(false);
 				barcodeInput.setEnabled(false);
 				barcodeInput.setFocusableInTouchMode(false);
-				websiteURL1 = websiteURL1 + "/inventory.json?barcode=" + barcodeQuery;
+				websiteURL1 = websiteURL1 + "inventory.json?barcode=" + barcodeQuery;
 				break;
 			}
 			case "LookupDisplay": {
@@ -72,7 +76,7 @@ public class OpenLookup {
 				barcodeInput.setFocusable(false);
 				barcodeInput.setEnabled(false);
 				barcodeInput.setFocusableInTouchMode(false);
-				websiteURL1 = websiteURL1 + "/inventory.json?barcode=" + barcodeQuery;
+				websiteURL1 = websiteURL1 + "inventory.json?barcode=" + barcodeQuery;
 				break;
 			}
 			case "Summary": {
@@ -85,7 +89,7 @@ public class OpenLookup {
 				barcodeInput.setFocusable(false);
 				barcodeInput.setEnabled(false);
 				barcodeInput.setFocusableInTouchMode(false);
-				websiteURL1 = websiteURL1 + "/summary.json?barcode=" + barcodeQuery;
+				websiteURL1 = websiteURL1 + "summary.json?barcode=" + barcodeQuery;
 				break;
 			}
 			case "SummaryDisplay": {
@@ -93,7 +97,7 @@ public class OpenLookup {
 				barcodeInput.setFocusable(false);
 				barcodeInput.setEnabled(false);
 				barcodeInput.setFocusableInTouchMode(false);
-				websiteURL1 = websiteURL1 + "/summary.json?barcode=" + barcodeQuery;
+				websiteURL1 = websiteURL1 + "summary.json?barcode=" + barcodeQuery;
 				break;
 			}
 		}
@@ -123,7 +127,7 @@ public class OpenLookup {
 
 			@Override
 			protected DownloadData doInBackground(String... strings) {
-				DownloadData downloadData = new DownloadData(websiteURL, barcodeQuery);
+				DownloadData downloadData = new DownloadData(websiteURL, barcodeQuery, context);
 				downloadData.getDataFromURL();
 				return downloadData;
 			}
@@ -134,12 +138,18 @@ public class OpenLookup {
 				alert.dismiss();
 
 				if (obj.isErrored()) {
-					final String msg = obj.getException().toString();
+					String msg1 = obj.getException().toString();
+					System.out.println(obj.getException().getClass().getSimpleName().equals("UnknownHostException"));
+					if ("UnknownHostException".equals(obj.getException().getClass().getSimpleName())){
+						msg1 = "Go to settings and check if the URL is correct.";
+					}
+
+					final String msg = msg1;
 					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 					View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
 
 					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-					alertDialog.setTitle("Exception Thrown");
+					alertDialog.setTitle("Something went wrong.");
 					alertDialog.setMessage(msg);
 
 					alertDialog.setView(layout);
@@ -157,7 +167,7 @@ public class OpenLookup {
 
 					switch (context.getClass().getSimpleName()) {
 						case "LookupDisplay":
-						case "MainActivity":{
+						case "MainActivity": {
 							LookupLogicForDisplay lookupLogicForDisplayObj;
 							lookupLogicForDisplayObj = new LookupLogicForDisplay();
 							LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
@@ -167,8 +177,6 @@ public class OpenLookup {
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-
-
 							Intent intent = new Intent(context, LookupDisplay.class);
 							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
@@ -223,7 +231,7 @@ public class OpenLookup {
 
 					switch (context.getClass().getSimpleName()) {
 						case "SummaryDisplay":
-						case "LookupDisplay":{
+						case "LookupDisplay": {
 							final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
 							barcodeInput.requestFocus();
 							break;
