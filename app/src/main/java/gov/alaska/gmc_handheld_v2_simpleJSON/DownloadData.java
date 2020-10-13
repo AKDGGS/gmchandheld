@@ -73,7 +73,8 @@ public class DownloadData {
 			connection.setConnectTimeout(200000);
 			connection.setRequestMethod("GET");
 			connection.connect();
-
+			System.out.println(connection.getResponseCode());
+			
 			inputStream = connection.getInputStream();
 
 			try {

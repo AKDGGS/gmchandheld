@@ -3,6 +3,7 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.KeyEvent;
@@ -11,6 +12,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+
+import androidx.core.content.ContextCompat;
 
 
 public class LookupDisplay extends BaseActivity {
@@ -29,8 +32,6 @@ public class LookupDisplay extends BaseActivity {
 		invisibleEditText.setInputType(InputType.TYPE_NULL);
 		invisibleEditText.setVisibility(View.GONE);
 
-
-// Handles hard keyboard ENTER
 		invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				if (keyCode == KeyEvent.KEYCODE_DEL) {
@@ -55,6 +56,12 @@ public class LookupDisplay extends BaseActivity {
 
 			if (barcode != null) {
 				LookupDisplay.this.getSupportActionBar().setTitle(barcode);
+				if(lookupLogicForDisplayObj.getDisplayDict().toString().contains("radiation_risk")) {
+					System.out.println(lookupLogicForDisplayObj.getDisplayDict().toString());
+
+					LookupDisplay.this.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
+//					LookupDisplay.this.getSupportActionBar().setIcon(R.drawable.ic_baseline_warning_24);
+				}
 
 				if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
 					LookupDisplay.this.getSupportActionBar().setSubtitle(lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");

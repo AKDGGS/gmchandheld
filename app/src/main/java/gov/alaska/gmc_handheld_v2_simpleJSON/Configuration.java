@@ -1,8 +1,10 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,30 +15,40 @@ import androidx.appcompat.widget.Toolbar;
 
 public class Configuration extends BaseActivity {
 
-public static final String SHARED_PREFS="sharedPrefs";
-public static final String URL_TEXT= "urlText";
-public static final String API_TEXT= "apiText";
-public static final String SOFT_KEYBOARD_STR="softKeyboardStr";
+	public static final String SHARED_PREFS = "sharedPrefs";
+	public static final String URL_TEXT = "urlText";
+	public static final String API_TEXT = "apiText";
+	public static final String SOFT_KEYBOARD_STR = "softKeyboardStr";
 
 
-private SwitchCompat softKeyboardSwitch;
-private boolean switchOnOff;
-private EditText urlInput;
-private EditText apiInput;
-private String url;
-private String apiKey;
+	private SwitchCompat softKeyboardSwitch;
+	private boolean switchOnOff;
+	private EditText urlInput;
+	private EditText apiInput;
+	private String url;
+	private String apiKey;
 
-@Override
-protected void onCreate(Bundle savedInstanceState){
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.configuration);
 
-		Toolbar toolbar=findViewById(R.id.toolbar);
+		Toolbar toolbar = findViewById(R.id.toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
 
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
+
+		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+		boolean onOff = sharedPreferences.getBoolean("softKeyboardStr", false);
+
+		if (onOff == false) {
+			urlInput.setInputType(InputType.TYPE_NULL);
+			apiInput.setInputType(InputType.TYPE_NULL);
+		}
+
+
 		final Button save_button = findViewById(R.id.save_button);
 		softKeyboardSwitch = findViewById(R.id.softKeyboardSwitch);
 
@@ -51,7 +63,7 @@ protected void onCreate(Bundle savedInstanceState){
 		loadData();
 
 		updateViews();
-		}
+	}
 
 	public String getUrl() {
 		urlInput = findViewById(R.id.url_editText);
@@ -88,4 +100,4 @@ protected void onCreate(Bundle savedInstanceState){
 		apiInput.setText(apiKey);
 		softKeyboardSwitch.setChecked(switchOnOff);
 	}
-		}
+}

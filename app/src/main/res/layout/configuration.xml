@@ -82,7 +82,7 @@
                         android:id="@+id/url_editText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="maps.dggs.alaska.gov/gmc"
+                        android:text="http://maps.dggs.alaska.gov/gmc/"
                         android:textSize="14sp"
                         />
 

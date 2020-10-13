@@ -51,11 +51,11 @@ public class BaseActivity extends AppCompatActivity {
 
             case R.id.summary: {
                 SummaryLogicForDisplay summaryLogicForDisplayObj;
-                summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplay;
+                summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
 
                 if (summaryLogicForDisplayObj == null) {
                     Intent get_barcode = new Intent(this, Summary.class);
-                    get_barcode.putExtra(EXTRA_TEXT, button_pushed);
+//                    get_barcode.putExtra(EXTRA_TEXT, button_pushed);
                     startActivity(get_barcode);
                 } else {
                     Intent lookup = new Intent(this, SummaryDisplay.class);
@@ -70,7 +70,7 @@ public class BaseActivity extends AppCompatActivity {
 
                 if(lookupLogicForDisplayObj == null) {
                     Intent get_barcode = new Intent(this, MainActivity.class);
-                    get_barcode.putExtra(EXTRA_TEXT, button_pushed);
+//                    get_barcode.putExtra(EXTRA_TEXT, button_pushed);
                     startActivity(get_barcode);
                 }else{
                     Intent lookup = new Intent(this, LookupDisplay.class);

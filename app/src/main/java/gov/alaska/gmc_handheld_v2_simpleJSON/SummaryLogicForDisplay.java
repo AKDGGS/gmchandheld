@@ -288,7 +288,6 @@ public class SummaryLogicForDisplay {
 			return null;
 		}
 
-		System.out.println(name);
 		switch (name) {
 			// Higher the displayWeight, the higher a priority an key has.
 			// Items are sorted internally first, and the externally in processForDisplay()

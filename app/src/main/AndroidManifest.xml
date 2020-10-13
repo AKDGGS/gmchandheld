@@ -45,14 +45,13 @@
         <activity
             android:name=".LookupDisplay"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.AppCompat.DayNight" />
+            android:theme="@style/Theme.AppCompat.DayNight"
+            />
 
         <activity android:name=".MainActivity"
-            android:label="Lookup"
-            >
+            android:label="Lookup">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

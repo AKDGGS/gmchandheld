@@ -179,6 +179,15 @@ public class LookupLogicForDisplay {
 						return new InventoryObject("Collection", o.get("name"), 500);
 					}
 					return null;
+//				case "issues": {
+//					String id = o.optString("ID");
+//					String newName = "Issue";
+//					if (!"".equals(Integer.toString(ID))) {
+//						newName += " ID " + id;
+//					}
+//					io = new InventoryObject(newName, null, 100);
+//					break;
+//				}
 				case "operators": {
 					String newName = "Operator";
 					if (o.has("current")) {
@@ -225,12 +234,22 @@ public class LookupLogicForDisplay {
 					io = new InventoryObject(newName, null, 50);
 					break;
 				}
-				case "type":
+				case "qualities": {
+					String id = o.optString("ID");
+					String newName = "Quality";
+					if (!"".equals(Integer.toString(ID))) {
+						newName += " ID " + id;
+					}
+					io = new InventoryObject(newName, null, 100);
+					break;
+				}
+				case "type": {
 					if (o.has("name")) {
 						return new InventoryObject("Type", o.get("name"), 500);
 					}
 					return null;
-				case "wells":
+				}
+				case "wells": {
 					String id = o.optString("ID");
 					String newName = "Well";
 					if (!"".equals(Integer.toString(ID))) {
@@ -238,8 +257,10 @@ public class LookupLogicForDisplay {
 					}
 					io = new InventoryObject(newName, null, 100);
 					break;
-				default:
+				}
+				default: {
 					io = new InventoryObject(name);
+				}
 			}
 		}
 
@@ -280,11 +301,17 @@ public class LookupLogicForDisplay {
 				case "boreholes":
 					io = new InventoryObject("Boreholes", null, 100);
 					break;
+				case "issues":
+					io = new InventoryObject("Issues", null, 50);
+					break;
 				case "operators":
 					io = new InventoryObject("Operators", null, 50);
 					break;
 				case "outcrops":
 					io = new InventoryObject("Outcrops", null, 100);
+					break;
+				case "qualities":
+					io = new InventoryObject("Qualities", null, 100);
 					break;
 				case "shotpoints":
 					io = new InventoryObject("Shotpoints", null, 100);
@@ -435,6 +462,8 @@ public class LookupLogicForDisplay {
 				}
 				return new InventoryObject("Interval Top", o, 902);
 			}
+			case "issues":
+				return new InventoryObject("Issue", o, 600);
 			case "keywords":
 				return new InventoryObject("Keywords", o, 600);
 			case "measuredDepth": {

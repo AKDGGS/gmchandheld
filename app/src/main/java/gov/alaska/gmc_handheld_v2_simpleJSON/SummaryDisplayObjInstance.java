@@ -10,6 +10,6 @@ public class SummaryDisplayObjInstance {
 		return obj;
 	}
 
-	public SummaryLogicForDisplay summaryLogicForDisplay;
+	public SummaryLogicForDisplay summaryLogicForDisplayObj;
 
 }

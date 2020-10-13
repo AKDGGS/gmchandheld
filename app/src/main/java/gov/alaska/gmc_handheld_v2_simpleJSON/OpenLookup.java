@@ -117,7 +117,7 @@ public class OpenLookup {
 				alertDialog.setView(layout);
 
 				TextView title = new TextView(context);
-				title.setText("Downloading");
+				title.setText("Downloading: " + barcodeQuery);
 				title.setGravity(Gravity.CENTER);
 				title.setTextSize(16);
 				alertDialog.setCustomTitle(title);
@@ -139,7 +139,7 @@ public class OpenLookup {
 
 				if (obj.isErrored()) {
 					String msg1 = obj.getException().toString();
-					System.out.println(obj.getException().getClass().getSimpleName().equals("UnknownHostException"));
+
 					if ("UnknownHostException".equals(obj.getException().getClass().getSimpleName())){
 						msg1 = "Go to settings and check if the URL is correct.";
 					}
@@ -161,6 +161,35 @@ public class OpenLookup {
 					AlertDialog alert = alertDialog.create();
 					alert.setCanceledOnTouchOutside(false);
 					alert.show();
+
+					switch (context.getClass().getSimpleName()) {
+						case "Summary":
+						case "MainActivity": {
+							final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
+							submit_button.setEnabled(true);
+							submit_button.setClickable(true);
+							submit_button.setFocusableInTouchMode(true);
+
+							final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
+							barcodeInput.requestFocus();
+							barcodeInput.getText().clear();
+							barcodeInput.setFocusable(true);
+							barcodeInput.setEnabled(true);
+							barcodeInput.setFocusableInTouchMode(true);
+							break;
+						}
+						case "SummaryDisplay":
+						case "LookupDisplay": {
+							final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
+							barcodeInput.setFocusable(true);
+							barcodeInput.setEnabled(true);
+							barcodeInput.setFocusableInTouchMode(true);
+							barcodeInput.requestFocus();
+							barcodeInput.getText().clear();
+							break;
+						}
+					}
+
 
 
 				} else if (obj.getRawJson().length() > 2) {
@@ -191,7 +220,7 @@ public class OpenLookup {
 						case "SummaryDisplay": {
 							SummaryLogicForDisplay summaryLogicForDisplayObj;
 							summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-							SummaryDisplayObjInstance.instance().summaryLogicForDisplay = summaryLogicForDisplayObj;
+							SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
 
 							try {
 								summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
@@ -240,6 +269,7 @@ public class OpenLookup {
 						case "MainActivity": {
 							final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
 							barcodeInput.requestFocus();
+							break;
 						}
 					}
 				}
@@ -255,7 +285,7 @@ public class OpenLookup {
 
 		switch (context.getClass().getSimpleName()) {
 			case "Summary":
-			case "Lookup": {
+			case "MainActivity": {
 				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
 				submit_button.setEnabled(true);
 				submit_button.setClickable(true);
