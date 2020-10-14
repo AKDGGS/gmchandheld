@@ -2,15 +2,54 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-<!--    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+
         <!-- Customize your theme here. -->
-
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@android:color/background_dark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
 
+    </style>
+
+    <style name="Base_ToolbarTheme">
+        <!-- Color used for the title of the Toolbar - as long as not overridden -->
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
+        <!-- Used to color back button and three dots -->
+        <item name="android:textColorSecondary">@color/colorRadiation</item>
+    </style>
+
+
+    <style name="CustomTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 
 </resources>
+
+
+
+<!--<style name="Base_ToolbarStyle">-->
+<!--<item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>-->
+<!--<item name="android:background">?colorPrimary</item>-->
+<!--<item name="android:theme">@style/Base_ToolbarTheme</item>-->
+<!--<item name="titleTextAppearance">@style/CustomTitleTextAppearance</item>-->
+<!--<item name="subtitleTextAppearance">@style/CustomSubTitleTextAppearance</item>-->
+<!--</style>-->
+
+<!--<style name="Base_ToolbarTheme">-->
+<!--&lt;!&ndash; Color used for the title of the Toolbar - as long as not overridden &ndash;&gt;-->
+<!--<item name="android:textColorPrimary">@color/colorPrimaryDark</item>-->
+<!--&lt;!&ndash; Used to color back button and three dots &ndash;&gt;-->
+<!--<item name="android:textColorSecondary">@color/colorAccent</item>-->
+<!--</style>-->
+
+
+
+<!--<style name="CustomSubTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">-->
+
+<!--<item name="android:textSize">10sp</item>-->
+<!--<item name="android:textColor">@color/colorPrimary</item>-->
+<!--<item name="android:textStyle">italic</item>-->
+<!--</style>-->

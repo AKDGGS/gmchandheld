@@ -85,7 +85,6 @@
                         android:text="http://maps.dggs.alaska.gov/gmc/"
                         android:textSize="14sp"
                         />
-
                 </LinearLayout>
 
                 <View

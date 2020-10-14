@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.InputType;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -18,7 +21,6 @@ import androidx.core.content.ContextCompat;
 
 public class LookupDisplay extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,21 +52,26 @@ public class LookupDisplay extends BaseActivity {
 		LookupLogicForDisplay lookupLogicForDisplayObj;
 		lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
+		if("GMC_handheld".equals(getSupportActionBar().getTitle())){
+
+			// NEED TO FIX THIS IN BASE ACTIVITY.
+			LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + "Tommy" +"</font> </small> </strong>"));
+
+		}
+
 		if (lookupLogicForDisplayObj != null) {
 			Intent intent = getIntent();
 			String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
 
 			if (barcode != null) {
-				LookupDisplay.this.getSupportActionBar().setTitle(barcode);
-				if(lookupLogicForDisplayObj.getDisplayDict().toString().contains("radiation_risk")) {
-					System.out.println(lookupLogicForDisplayObj.getDisplayDict().toString());
+				LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + barcode +"</font> </small> </strong>"));
 
+				if(lookupLogicForDisplayObj.getDisplayDict().toString().contains("radiation_risk")) {
 					LookupDisplay.this.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
-//					LookupDisplay.this.getSupportActionBar().setIcon(R.drawable.ic_baseline_warning_24);
 				}
 
 				if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-					LookupDisplay.this.getSupportActionBar().setSubtitle(lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
+					LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
 				}
 			}
 
@@ -99,6 +106,23 @@ public class LookupDisplay extends BaseActivity {
 		invisibleEditText.requestFocus();
 		invisibleEditText.setVisibility(View.VISIBLE);
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		LookupLogicForDisplay lookupLogicForDisplayObj;
+		lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
+
+		if(lookupLogicForDisplayObj.getDisplayDict().toString().contains("radiation_risk")) {
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.radiation_menu, menu);
+
+
+		}else{
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.main_menu, menu);
+		}
+		return true;
 	}
 
 }

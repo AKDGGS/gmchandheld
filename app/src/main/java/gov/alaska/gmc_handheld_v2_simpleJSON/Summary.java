@@ -39,7 +39,10 @@ public class Summary extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
+
 
         final EditText barcodeInput = findViewById(R.id.editText1);
         final Button submit_button = findViewById(R.id.submit_button);

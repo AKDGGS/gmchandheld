@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,10 +42,10 @@ public class Configuration extends BaseActivity {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
 		boolean onOff = sharedPreferences.getBoolean("softKeyboardStr", false);
 
-		if (onOff == false) {
-			urlInput.setInputType(InputType.TYPE_NULL);
-			apiInput.setInputType(InputType.TYPE_NULL);
-		}
+//		if (onOff == false) {
+//			urlInput.setInputType(InputType.TYPE_NULL);
+//			apiInput.setInputType(InputType.TYPE_NULL);
+//		}
 
 
 		final Button save_button = findViewById(R.id.save_button);

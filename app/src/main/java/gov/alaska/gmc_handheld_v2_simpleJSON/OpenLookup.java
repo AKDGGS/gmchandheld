@@ -30,6 +30,8 @@ public class OpenLookup {
 	public static final String SHARED_PREFS = "sharedPrefs";
 //	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
 
+	private boolean downloading = false;
+
 	@SuppressLint("StaticFieldLeak")
 	public void processDataForDisplay(final String barcodeQuery, final Context context) {
 		final String websiteURL;
@@ -57,7 +59,6 @@ public class OpenLookup {
 		}
 
 		switch (context.getClass().getSimpleName()) {
-//			case "Lookup": {
 			case "MainActivity": {
 				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
 				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
@@ -104,177 +105,140 @@ public class OpenLookup {
 
 		websiteURL = websiteURL1;
 
-		new AsyncTask<String, Integer, DownloadData>() {
-			AlertDialog alert;  //onPreExec
+		if (downloading == false) {
+			downloading = true;
 
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
+			new AsyncTask<String, Integer, DownloadData>() {
+				AlertDialog alert;  //onPreExec
 
-				AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-				LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-				View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) context).findViewById(R.id.downloading_alert_root));
-				alertDialog.setView(layout);
-
-				TextView title = new TextView(context);
-				title.setText("Downloading: " + barcodeQuery);
-				title.setGravity(Gravity.CENTER);
-				title.setTextSize(16);
-				alertDialog.setCustomTitle(title);
-				alert = alertDialog.create();
-				alert.show();
-			}
-
-			@Override
-			protected DownloadData doInBackground(String... strings) {
-				DownloadData downloadData = new DownloadData(websiteURL, barcodeQuery, context);
-				downloadData.getDataFromURL();
-				return downloadData;
-			}
-
-			@Override
-			protected void onPostExecute(DownloadData obj) {
-				//Dismisses the downloading alert.  This is needed if the download fails.
-				alert.dismiss();
-
-				if (obj.isErrored()) {
-					String msg1 = obj.getException().toString();
-
-					if ("UnknownHostException".equals(obj.getException().getClass().getSimpleName())){
-						msg1 = "Go to settings and check if the URL is correct.";
-					}
-
-					final String msg = msg1;
-					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-					View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
+				@Override
+				protected void onPreExecute() {
+					super.onPreExecute();
 
 					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-					alertDialog.setTitle("Something went wrong.");
-					alertDialog.setMessage(msg);
-
-					alertDialog.setView(layout);
-					alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-						}
-					});
-					AlertDialog alert = alertDialog.create();
-					alert.setCanceledOnTouchOutside(false);
-					alert.show();
-
-					switch (context.getClass().getSimpleName()) {
-						case "Summary":
-						case "MainActivity": {
-							final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
-							submit_button.setEnabled(true);
-							submit_button.setClickable(true);
-							submit_button.setFocusableInTouchMode(true);
-
-							final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
-							barcodeInput.requestFocus();
-							barcodeInput.getText().clear();
-							barcodeInput.setFocusable(true);
-							barcodeInput.setEnabled(true);
-							barcodeInput.setFocusableInTouchMode(true);
-							break;
-						}
-						case "SummaryDisplay":
-						case "LookupDisplay": {
-							final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
-							barcodeInput.setFocusable(true);
-							barcodeInput.setEnabled(true);
-							barcodeInput.setFocusableInTouchMode(true);
-							barcodeInput.requestFocus();
-							barcodeInput.getText().clear();
-							break;
-						}
-					}
-
-
-
-				} else if (obj.getRawJson().length() > 2) {
-
-					switch (context.getClass().getSimpleName()) {
-						case "LookupDisplay":
-						case "MainActivity": {
-							LookupLogicForDisplay lookupLogicForDisplayObj;
-							lookupLogicForDisplayObj = new LookupLogicForDisplay();
-							LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
-
-							try {
-								lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							Intent intent = new Intent(context, LookupDisplay.class);
-							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
-							context.startActivity(intent);
-
-							if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
-								lookupHistory.add(0, barcodeQuery);
-							}
-							break;
-						}
-						case "Summary":
-						case "SummaryDisplay": {
-							SummaryLogicForDisplay summaryLogicForDisplayObj;
-							summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-							SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
-
-							try {
-								summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-
-							Intent intent = new Intent(context, SummaryDisplay.class);
-							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-							intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
-							context.startActivity(intent);
-
-							if (!summaryHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
-								summaryHistory.add(0, barcodeQuery);
-							}
-							break;
-						}
-
-					}
-
-				} else {
 					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-					View layout = inflater.inflate(R.layout.lookup_toast_layout, (ViewGroup) ((Activity) context).findViewById(R.id.toast_error_root));
-
-					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-					alertDialog.setMessage("Barcode: " + barcodeQuery);
-
+					View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) context).findViewById(R.id.downloading_alert_root));
 					alertDialog.setView(layout);
-					alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-						}
-					});
-					AlertDialog alert = alertDialog.create();
-					alert.setCanceledOnTouchOutside(false);
-					alert.show();
 
-					switch (context.getClass().getSimpleName()) {
-						case "SummaryDisplay":
-						case "LookupDisplay": {
-							final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
-							barcodeInput.requestFocus();
-							break;
+					TextView title = new TextView(context);
+					title.setText("Downloading: " + barcodeQuery);
+					title.setGravity(Gravity.CENTER);
+					title.setTextSize(16);
+					alertDialog.setCustomTitle(title);
+					alert = alertDialog.create();
+					alert.show();
+				}
+
+				@Override
+				protected DownloadData doInBackground(String... strings) {
+					DownloadData downloadData = new DownloadData(websiteURL, barcodeQuery, context);
+					downloadData.getDataFromURL();
+					return downloadData;
+				}
+
+				@Override
+				protected void onPostExecute(DownloadData obj) {
+					//Dismisses the downloading alert.  This is needed if the download fails.
+					alert.dismiss();
+
+					if (obj.isErrored()) {
+						String msg1 = obj.getException().toString();
+						int responseCode = obj.getResponseCode();
+
+						if ("UnknownHostException".equals(obj.getException().getClass().getSimpleName())) {
+							msg1 = "Go to configuration and check if the URL is correct.";
 						}
-						case "Summary":
-						case "MainActivity": {
-							final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
-							barcodeInput.requestFocus();
-							break;
+
+						final String msg = msg1;
+						LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+						View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
+
+						AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+						switch (responseCode) {
+							case (200):
+								alertDialog.setTitle("Connection succesful, but");
+								alertDialog.setMessage(obj.getException().getMessage());
+								break;
+							case (403):
+								alertDialog.setTitle("Authentication Error.");
+								alertDialog.setMessage("Go to configuration and check the API key.");
+								break;
+							case (404):
+								alertDialog.setTitle("URL Error.");
+								alertDialog.setMessage("Go to configuration and check the URL.");
+								break;
+							default:
+								alertDialog.setTitle("Unknown Error:");
+								alertDialog.setMessage(responseCode + "\n" + obj.getResponseMsg() + "\n" + obj.getException());
 						}
+
+
+						alertDialog.setView(layout);
+						alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						});
+						AlertDialog alert = alertDialog.create();
+						alert.setCanceledOnTouchOutside(false);
+						alert.show();
+
+						resetLookupSummaryButtons(context);
+
+
+					} else if (obj.getRawJson().length() > 2) {
+
+						switch (context.getClass().getSimpleName()) {
+							case "LookupDisplay":
+							case "MainActivity": {
+								LookupLogicForDisplay lookupLogicForDisplayObj;
+								lookupLogicForDisplayObj = new LookupLogicForDisplay();
+								LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
+
+								try {
+									lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								Intent intent = new Intent(context, LookupDisplay.class);
+								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
+								context.startActivity(intent);
+
+								if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
+									lookupHistory.add(0, barcodeQuery);
+								}
+								break;
+							}
+							case "Summary":
+							case "SummaryDisplay": {
+								SummaryLogicForDisplay summaryLogicForDisplayObj;
+								summaryLogicForDisplayObj = new SummaryLogicForDisplay();
+								SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
+
+								try {
+									summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+
+								Intent intent = new Intent(context, SummaryDisplay.class);
+								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
+								context.startActivity(intent);
+
+								if (!summaryHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
+									summaryHistory.add(0, barcodeQuery);
+								}
+								break;
+							}
+
+						}
+
 					}
 				}
-			}
-		}.execute();
+			}.execute();
 
 ////				Save LookupHistory list-- Test for audit and move.
 //					SharedPreferences prefs = context.getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -282,7 +246,13 @@ public class OpenLookup {
 //					editor.putString("lookupHistoryString", lookupHistory.toString());
 //					editor.commit();
 
+			resetLookupSummaryButtons(context);
+		}
+		downloading = false;
+	}
 
+
+	private void resetLookupSummaryButtons(Context context) {
 		switch (context.getClass().getSimpleName()) {
 			case "Summary":
 			case "MainActivity": {

@@ -23,7 +23,6 @@ public class SummaryDisplay extends BaseActivity {
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-
         final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
         invisibleEditText.setInputType(InputType.TYPE_NULL);

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GMC_handheld_v2_simpleJSON</string>
+    <string name="app_name">GMC_handheld</string>
     <string name="lookup">Lookup</string>
     <string name="add_container">add container</string>
     <string name="help">Help</string>
