@@ -14,19 +14,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="@string/save_all" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@android:color/darker_gray"
-            android:layout_marginHorizontal="10dp"/>
-
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -49,8 +36,8 @@
                     android:text="@string/soft_keyboard"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:textOff="@string/off"
-                    android:textOn="@string/on"
+                    android:textOff=""
+                    android:textOn=""
                     android:thumb="@drawable/thumb1"
                     app:showText="true"
                     app:track="@drawable/track1" />
@@ -129,6 +116,20 @@
         </ScrollView>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginHorizontal="10dp"/>
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/save_all" />
+
+
 
 
 

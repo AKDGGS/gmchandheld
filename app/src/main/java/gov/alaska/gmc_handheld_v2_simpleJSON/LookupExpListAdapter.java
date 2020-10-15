@@ -1,9 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.text.Spannable;
@@ -98,27 +95,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 		if (inventoryObjType == null || count > 1) {
 			setInventoryObjType("No Type");
-		}
-
-
-		if (inventoryDetailsDict.toString().contains("Radiation MSVH")) {
-			if(alertCalled == false){
-				LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-				View layout = inflater.inflate(R.layout.radiation_warning, (ViewGroup) ((Activity) context).findViewById(R.id.radiation_root));
-
-				AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-
-				alertDialog.setView(layout);
-				alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				});
-				AlertDialog alert = alertDialog.create();
-				alert.setCanceledOnTouchOutside(false);
-				alert.show();
-				alertCalled = true;
-			}
 		}
 
 		TextView txtParent = convertView.findViewById(R.id.txtParent);

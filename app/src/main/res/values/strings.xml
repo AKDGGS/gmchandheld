@@ -30,8 +30,6 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="api_key_label">API Key:</string>
     <string name="url_label">URL:</string>
-    <string name="off">Off</string>
-    <string name="on">On</string>
     <string name="soft_keyboard">Soft Keyboard</string>
     <string name="save_all">Save All</string>
 </resources>

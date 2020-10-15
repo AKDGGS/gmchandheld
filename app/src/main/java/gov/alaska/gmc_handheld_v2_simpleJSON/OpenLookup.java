@@ -3,6 +3,7 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +32,8 @@ public class OpenLookup {
 //	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
 
 	private boolean downloading = false;
+	ProgressDialog p;
+	AsyncTask asyncTask = null;
 
 	@SuppressLint("StaticFieldLeak")
 	public void processDataForDisplay(final String barcodeQuery, final Context context) {
@@ -108,7 +111,7 @@ public class OpenLookup {
 		if (downloading == false) {
 			downloading = true;
 
-			new AsyncTask<String, Integer, DownloadData>() {
+			asyncTask = new AsyncTask<String, Integer, DownloadData>() {
 				AlertDialog alert;  //onPreExec
 
 				@Override
@@ -125,8 +128,21 @@ public class OpenLookup {
 					title.setGravity(Gravity.CENTER);
 					title.setTextSize(16);
 					alertDialog.setCustomTitle(title);
+					alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							asyncTask.cancel(true);
+						}
+					});
 					alert = alertDialog.create();
 					alert.show();
+
+
+//					if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
+						lookupHistory.add(0, barcodeQuery);
+
+//					}
 				}
 
 				@Override
@@ -173,13 +189,15 @@ public class OpenLookup {
 								alertDialog.setMessage(responseCode + "\n" + obj.getResponseMsg() + "\n" + obj.getException());
 						}
 
-
 						alertDialog.setView(layout);
+
 						alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 							}
 						});
+
 						AlertDialog alert = alertDialog.create();
 						alert.setCanceledOnTouchOutside(false);
 						alert.show();
@@ -196,6 +214,8 @@ public class OpenLookup {
 								lookupLogicForDisplayObj = new LookupLogicForDisplay();
 								LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
 
+								lookupLogicForDisplayObj.setBarcodeQuery(barcodeQuery);
+
 								try {
 									lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
 								} catch (Exception e) {
@@ -206,9 +226,7 @@ public class OpenLookup {
 								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 								context.startActivity(intent);
 
-								if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
-									lookupHistory.add(0, barcodeQuery);
-								}
+
 								break;
 							}
 							case "Summary":

@@ -8,10 +8,6 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/help"
-        android:title="Help"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/lookup"
         android:title="Lookup"
         app:showAsAction="never" />
@@ -19,29 +15,55 @@
         android:id="@+id/summary"
         android:title="Summary"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/move"
-        android:title="Move"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/recode"
-        android:title="Recode"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/add_inventory"
-        android:title="Add Inventory"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/add_container"
-        android:title="Add Container"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/audit"
-        android:title="Audit"
-        app:showAsAction="never" />
 
     <item
         android:id="@+id/configuration"
         android:title="Configuration"
         app:showAsAction="never" />
+
 </menu>
+
+
+
+<!--<item android:id="@+id/radiation_warning"-->
+<!--android:title="Warning"-->
+<!--android:icon="@drawable/ic_radiation_warning_symbol"-->
+<!--app:showAsAction="always"/>-->
+
+<!--<item-->
+<!--android:id="@+id/help"-->
+<!--android:title="Help"-->
+<!--app:showAsAction="never" />-->
+<!--<item-->
+<!--android:id="@+id/lookup"-->
+<!--android:title="Lookup"-->
+<!--app:showAsAction="never" />-->
+<!--<item-->
+<!--android:id="@+id/summary"-->
+<!--android:title="Summary"-->
+<!--app:showAsAction="never" />-->
+<!--<item-->
+<!--android:id="@+id/move"-->
+<!--android:title="Move"-->
+<!--app:showAsAction="never" />-->
+<!--<item-->
+<!--android:id="@+id/recode"-->
+<!--android:title="Recode"-->
+<!--app:showAsAction="never" />-->
+<!--<item-->
+<!--android:id="@+id/add_inventory"-->
+<!--android:title="Add Inventory"-->
+<!--app:showAsAction="never" />-->
+<!--<item-->
+<!--android:id="@+id/add_container"-->
+<!--android:title="Add Container"-->
+<!--app:showAsAction="never" />-->
+<!--<item-->
+<!--android:id="@+id/audit"-->
+<!--android:title="Audit"-->
+<!--app:showAsAction="never" />-->
+
+<!--<item-->
+<!--android:id="@+id/configuration"-->
+<!--android:title="Configuration"-->
+<!--app:showAsAction="never" />-->

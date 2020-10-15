@@ -53,9 +53,14 @@ public class LookupDisplay extends BaseActivity {
 		lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
 		if("GMC_handheld".equals(getSupportActionBar().getTitle())){
+			LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + lookupLogicForDisplayObj.getBarcodeQuery() +"</font> </small> </strong>"));
+			if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
+				LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
+			}
 
-			// NEED TO FIX THIS IN BASE ACTIVITY.
-			LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + "Tommy" +"</font> </small> </strong>"));
+			if(lookupLogicForDisplayObj.getradiationWarningFlag()) {
+				LookupDisplay.this.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
+			}
 
 		}
 
@@ -66,7 +71,7 @@ public class LookupDisplay extends BaseActivity {
 			if (barcode != null) {
 				LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + barcode +"</font> </small> </strong>"));
 
-				if(lookupLogicForDisplayObj.getDisplayDict().toString().contains("radiation_risk")) {
+				if(lookupLogicForDisplayObj.getradiationWarningFlag()) {
 					LookupDisplay.this.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
 				}
 
@@ -116,7 +121,6 @@ public class LookupDisplay extends BaseActivity {
 		if(lookupLogicForDisplayObj.getDisplayDict().toString().contains("radiation_risk")) {
 			MenuInflater inflater = getMenuInflater();
 			inflater.inflate(R.menu.radiation_menu, menu);
-
 
 		}else{
 			MenuInflater inflater = getMenuInflater();

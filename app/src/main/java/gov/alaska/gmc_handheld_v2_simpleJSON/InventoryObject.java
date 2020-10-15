@@ -9,6 +9,7 @@ public class InventoryObject {
 	private final ArrayList<InventoryObject> children;
 	private int displayWeight;
 
+
 	public InventoryObject() {
 		this(null, null, 0);
 	}
@@ -63,4 +64,5 @@ public class InventoryObject {
 	public void setDisplayWeight(Integer displayWeight) {
 		this.displayWeight = displayWeight;
 	}
+
 }

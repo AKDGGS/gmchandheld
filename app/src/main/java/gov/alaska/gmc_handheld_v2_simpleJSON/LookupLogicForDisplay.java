@@ -26,10 +26,14 @@ public class LookupLogicForDisplay {
 	private Map<String, List<SpannableStringBuilder>> displayDict;
 	private int ID;
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
+	private boolean radiationWarningFlag;
+	private String barcodeQuery;
+
 
 	public LookupLogicForDisplay() {
 		keyList = new ArrayList<>();
 		displayDict = new HashMap<>();
+		radiationWarningFlag = false;
 		nf.setMinimumFractionDigits(0);
 		nf.setMaximumFractionDigits(1);
 	}
@@ -45,6 +49,15 @@ public class LookupLogicForDisplay {
 	public void setID(int ID) {
 		this.ID = ID;
 	}
+
+	public boolean getradiationWarningFlag(){return radiationWarningFlag;}
+
+	public void setBarcodeQuery(String barcodeQuery){
+		this.barcodeQuery = barcodeQuery;
+	}
+
+	public String getBarcodeQuery(){return barcodeQuery;}
+
 
 
 	//*********************************************************************************************
@@ -63,6 +76,7 @@ public class LookupLogicForDisplay {
 			JSONObject inputJson = new JSONObject((rawJSON));  // check for jsonobject
 
 			InventoryObject root = parseTree(null, inputJson.opt("barcode").toString(), inputJson);
+
 
 			if (root != null) {
 				getStringForDisplay(root, 1, null, null, getDisplayDict());
@@ -463,6 +477,9 @@ public class LookupLogicForDisplay {
 				return new InventoryObject("Interval Top", o, 902);
 			}
 			case "issues":
+				if("radiation_risk".equals(o.toString())){
+					radiationWarningFlag = true;
+				}
 				return new InventoryObject("Issue", o, 600);
 			case "keywords":
 				return new InventoryObject("Keywords", o, 600);
@@ -514,6 +531,9 @@ public class LookupLogicForDisplay {
 			case "permitStatus":
 				return new InventoryObject("Permit Status", o, 70);
 			case "radiationMSVH":
+				if(((Double) o).floatValue() > 0) {
+					radiationWarningFlag = true;
+				}
 				return new InventoryObject("Radiation MSVH", o, 1200);
 			case "remark":
 				if (o.toString().contains("\n")) {

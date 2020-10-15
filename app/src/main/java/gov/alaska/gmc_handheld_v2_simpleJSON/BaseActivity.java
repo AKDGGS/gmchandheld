@@ -13,8 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.lang.reflect.Field;
 
 public class BaseActivity extends AppCompatActivity {
-	public static String button_pushed;
-	public static final String EXTRA_TEXT = "com.example.user_input_no_button.EXTRA_TEXT";
+//	public static final String EXTRA_TEXT = "com.example.user_input_no_button.EXTRA_TEXT";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +41,10 @@ public class BaseActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
 		switch (item.getItemId()) {
-			case R.id.help:
-				Intent intent_help = new Intent(this, Help.class);
-				this.startActivity(intent_help);
-				return true;
+//			case R.id.help:
+//				Intent intent_help = new Intent(this, Help.class);
+//				this.startActivity(intent_help);
+//				return true;
 
 			case R.id.summary: {
 				SummaryLogicForDisplay summaryLogicForDisplayObj;
@@ -53,7 +52,6 @@ public class BaseActivity extends AppCompatActivity {
 
 				if (summaryLogicForDisplayObj == null) {
 					Intent get_barcode = new Intent(this, Summary.class);
-//                    get_barcode.putExtra(EXTRA_TEXT, button_pushed);
 					startActivity(get_barcode);
 				} else {
 					Intent lookup = new Intent(this, SummaryDisplay.class);
@@ -68,7 +66,6 @@ public class BaseActivity extends AppCompatActivity {
 
 				if (lookupLogicForDisplayObj == null) {
 					Intent get_barcode = new Intent(this, MainActivity.class);
-//                    get_barcode.putExtra(EXTRA_TEXT, button_pushed);
 					startActivity(get_barcode);
 				} else {
 					Intent lookup = new Intent(this, LookupDisplay.class);
@@ -76,32 +73,32 @@ public class BaseActivity extends AppCompatActivity {
 				}
 				return true;
 
-			case R.id.move:
-				Intent intent_move = new Intent(this, Move.class);
-				this.startActivity(intent_move);
-				return true;
-
-			case R.id.recode:
-				Intent intent_recode = new Intent(this, Recode.class);
-				this.startActivity(intent_recode);
-				return true;
-
-			case R.id.add_inventory:
-
-				Intent intent_add_inventory = new Intent(this, AddInventory.class);
-
-				this.startActivity(intent_add_inventory);
-				return true;
-
-			case R.id.add_container:
-				Intent intent_add_container = new Intent(this, AddContainer.class);
-				this.startActivity(intent_add_container);
-				return true;
-
-			case R.id.audit:
-				Intent intent_audit = new Intent(this, Audit.class);
-				this.startActivity(intent_audit);
-				return true;
+//			case R.id.move:
+//				Intent intent_move = new Intent(this, Move.class);
+//				this.startActivity(intent_move);
+//				return true;
+//
+//			case R.id.recode:
+//				Intent intent_recode = new Intent(this, Recode.class);
+//				this.startActivity(intent_recode);
+//				return true;
+//
+//			case R.id.add_inventory:
+//
+//				Intent intent_add_inventory = new Intent(this, AddInventory.class);
+//
+//				this.startActivity(intent_add_inventory);
+//				return true;
+//
+//			case R.id.add_container:
+//				Intent intent_add_container = new Intent(this, AddContainer.class);
+//				this.startActivity(intent_add_container);
+//				return true;
+//
+//			case R.id.audit:
+//				Intent intent_audit = new Intent(this, Audit.class);
+//				this.startActivity(intent_audit);
+//				return true;
 
 			case R.id.configuration:
 				Intent intent_configuration = new Intent(this, Configuration.class);
