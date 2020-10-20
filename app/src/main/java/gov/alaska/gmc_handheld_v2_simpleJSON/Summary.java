@@ -1,10 +1,7 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,6 +32,7 @@ public class Summary extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.summary_get_barcode);
+        SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = null;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,13 +44,6 @@ public class Summary extends BaseActivity {
 
         final EditText barcodeInput = findViewById(R.id.editText1);
         final Button submit_button = findViewById(R.id.submit_button);
-
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        boolean onOff = sharedPreferences.getBoolean("softKeyboardStr", false);
-
-        if(!onOff) {
-            barcodeInput.setInputType(InputType.TYPE_NULL);
-        }
 
 
         // KeyListener listens if enter is pressed

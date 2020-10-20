@@ -1,10 +1,9 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,6 +35,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
+
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
 //        String s2 =  sp.getString("lookupHistoryString", "");
@@ -48,12 +49,7 @@ public class MainActivity extends BaseActivity {
 
         final EditText barcodeInput = findViewById(R.id.editText1);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        boolean onOff = sharedPreferences.getBoolean("softKeyboardStr", false);
 
-        if(onOff == false) {
-            barcodeInput.setInputType(InputType.TYPE_NULL);
-        }
         final Button submit_button = findViewById(R.id.submit_button);
 
         // KeyListener listens if enter is pressed
@@ -68,6 +64,7 @@ public class MainActivity extends BaseActivity {
                 return false;
             }
         });
+
 
         final OpenLookup openLookupObj = new OpenLookup();
 
@@ -92,12 +89,16 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (submitted == false) {
+                    System.out.println(position);
                     barcodeInput.setText(listView.getItemAtPosition(position).toString());
                     submit_button.performClick();
                     submitted = true;
+
                 }
             }
         });
+
+        resetLookupSummaryButtons(this);
     }
 
     public String getBarcode() {
@@ -109,5 +110,35 @@ public class MainActivity extends BaseActivity {
     public void onBackPressed() {
         LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
         super.onBackPressed();
+    }
+
+    private void resetLookupSummaryButtons(Context context) {
+        switch (context.getClass().getSimpleName()) {
+            case "Summary":
+            case "MainActivity": {
+                final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
+                submit_button.setEnabled(true);
+                submit_button.setClickable(true);
+                submit_button.setFocusableInTouchMode(true);
+
+                final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
+                barcodeInput.requestFocus();
+                barcodeInput.getText().clear();
+                barcodeInput.setFocusable(true);
+                barcodeInput.setEnabled(true);
+                barcodeInput.setFocusableInTouchMode(true);
+                break;
+            }
+            case "SummaryDisplay":
+            case "LookupDisplay": {
+                final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
+                barcodeInput.setFocusable(true);
+                barcodeInput.setEnabled(true);
+                barcodeInput.setFocusableInTouchMode(true);
+                barcodeInput.requestFocus();
+                barcodeInput.getText().clear();
+                break;
+            }
+        }
     }
 }

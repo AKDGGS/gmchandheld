@@ -13,8 +13,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.LinkedList;
@@ -37,6 +39,8 @@ public class OpenLookup {
 
 	@SuppressLint("StaticFieldLeak")
 	public void processDataForDisplay(final String barcodeQuery, final Context context) {
+
+
 		final String websiteURL;
 		String websiteURL1;
 
@@ -138,11 +142,44 @@ public class OpenLookup {
 					alert = alertDialog.create();
 					alert.show();
 
+					String lastAddedLookupHistory = null;
+					String lastAddedSummaryHistory = null;
 
-//					if (!lookupHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
-						lookupHistory.add(0, barcodeQuery);
+					if(!lookupHistory.isEmpty()) {
+						lastAddedLookupHistory  = lookupHistory.get(0);
+					}
+					if(!summaryHistory.isEmpty()) {
+						lastAddedSummaryHistory = summaryHistory.get(0);
+					}
 
-//					}
+					if (!barcodeQuery.isEmpty()) {
+						switch(context.getClass().getSimpleName()){
+							case "MainActivity": {
+								if (!barcodeQuery.equals(lastAddedLookupHistory)){
+									lookupHistory.add(0, barcodeQuery);
+								}
+
+								ListView listView = ((Activity) context).findViewById(R.id.listViewGetBarcodeHistory);
+								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
+								adapter.addAll(lookupHistory);
+								adapter.notifyDataSetChanged();
+								listView.setAdapter(adapter);
+								break;
+							}
+							case "Summary": {
+								if (!barcodeQuery.equals(lastAddedSummaryHistory)){
+									summaryHistory.add(0, barcodeQuery);
+								}
+
+								ListView listView = ((Activity) context).findViewById(R.id.listViewGetSummaryHistory);
+								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
+								adapter.addAll(summaryHistory);
+								adapter.notifyDataSetChanged();
+								listView.setAdapter(adapter);
+								break;
+							}
+						}
+					}
 				}
 
 				@Override
@@ -158,36 +195,12 @@ public class OpenLookup {
 					alert.dismiss();
 
 					if (obj.isErrored()) {
-						String msg1 = obj.getException().toString();
-						int responseCode = obj.getResponseCode();
 
-						if ("UnknownHostException".equals(obj.getException().getClass().getSimpleName())) {
-							msg1 = "Go to configuration and check if the URL is correct.";
-						}
-
-						final String msg = msg1;
 						LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 						View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
 
 						AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-
-						switch (responseCode) {
-							case (200):
-								alertDialog.setTitle("Connection succesful, but");
-								alertDialog.setMessage(obj.getException().getMessage());
-								break;
-							case (403):
-								alertDialog.setTitle("Authentication Error.");
-								alertDialog.setMessage("Go to configuration and check the API key.");
-								break;
-							case (404):
-								alertDialog.setTitle("URL Error.");
-								alertDialog.setMessage("Go to configuration and check the URL.");
-								break;
-							default:
-								alertDialog.setTitle("Unknown Error:");
-								alertDialog.setMessage(responseCode + "\n" + obj.getResponseMsg() + "\n" + obj.getException());
-						}
+						alertDialog.setMessage(obj.getException().getMessage());
 
 						alertDialog.setView(layout);
 
@@ -225,8 +238,6 @@ public class OpenLookup {
 								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 								context.startActivity(intent);
-
-
 								break;
 							}
 							case "Summary":
@@ -234,6 +245,8 @@ public class OpenLookup {
 								SummaryLogicForDisplay summaryLogicForDisplayObj;
 								summaryLogicForDisplayObj = new SummaryLogicForDisplay();
 								SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
+
+								summaryLogicForDisplayObj.setBarcodeQuery(barcodeQuery);
 
 								try {
 									summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
@@ -299,4 +312,6 @@ public class OpenLookup {
 			}
 		}
 	}
+
+
 }

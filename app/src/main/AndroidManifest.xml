@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="gov.alaska.gmc_handheld_v2_simpleJSON">
 
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -13,10 +16,12 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".SummaryDisplay"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:parentActivityName=".Summary"
             android:theme="@style/Theme.AppCompat.DayNight" />
 
         <activity android:name=".Configuration"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:label="Configuration"/>
 
         <activity android:name=".BaseActivity" />
@@ -34,6 +39,7 @@
             android:label="Move"/>
 
         <activity android:name=".Summary"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:label="Summary"/>
 
         <activity android:name=".Help"
@@ -49,6 +55,7 @@
             />
 
         <activity android:name=".MainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:label="Lookup">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

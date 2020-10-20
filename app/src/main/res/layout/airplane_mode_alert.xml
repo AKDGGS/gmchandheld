@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:padding="8dp"
-    android:id="@+id/lookup_error_root">
+    android:id="@+id/airplane_mode_root">
 
     <TextView
-        android:id="@+id/lookup_error_msg"
+        android:id="@+id/airplane_mode_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""

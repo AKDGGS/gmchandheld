@@ -21,6 +21,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class DownloadData {
 	private Exception exception = null;
+	private StringBuilder sb;
 	private int responseCode;
 	private String responseMsg;
 	private String url;
@@ -85,13 +86,15 @@ public class DownloadData {
 			connection.setRequestMethod("GET");
 			connection.connect();
 
-//			System.out.println("Date: " + new Date(connection.getDate()));
-
 			responseCode = connection.getResponseCode();
 			responseMsg = connection.getResponseMessage();
 
-			inputStream = connection.getInputStream();
-
+			inputStream = null;
+			try {
+				inputStream = connection.getInputStream();
+			} catch(IOException e) {
+				inputStream = connection.getErrorStream();
+			}
 
 			try {
 				StringBuilder sb = new StringBuilder();
@@ -105,8 +108,12 @@ public class DownloadData {
 					}
 				}
 
+				if(connection.getErrorStream() != null) {
+					exception = new Exception(String.valueOf(sb));
+				}
+
 				if (sb == null || sb.length() <= 2) {
-					exception = new Exception("Nothing was returned from the server.\n\nIs the barcode correct? " + barcodeQuery );
+					exception = new Exception("No results found.\n\nIs the barcode correct? " + barcodeQuery );
 				} else {
 					rawJson = sb.toString();
 				}
@@ -122,12 +129,10 @@ public class DownloadData {
 			exception = e;
 		} catch (MalformedURLException e) {
 			exception = e;
+			exception = new Exception(String.valueOf(sb));
 		} catch (IOException e) {
 			exception = e;
 		}
-
-
-
 	}
 
 

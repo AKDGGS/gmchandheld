@@ -18,8 +18,7 @@
             android:layout_centerVertical="true"
             android:ems="0"
             android:hint="Transparent EditText"
-            android:background="@android:color/transparent"
-            >
+            android:background="@android:color/transparent">
 
             <requestFocus />
         </EditText>

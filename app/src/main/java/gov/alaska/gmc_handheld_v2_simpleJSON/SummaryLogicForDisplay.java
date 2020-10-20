@@ -25,6 +25,8 @@ public class SummaryLogicForDisplay {
 	private Map<String, List<SpannableStringBuilder>> displayDict;
 	private int ID;
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
+	private String barcodeQuery;
+
 
 	public SummaryLogicForDisplay() {
 		keyList = new ArrayList<>();
@@ -44,6 +46,12 @@ public class SummaryLogicForDisplay {
 	public void setID(int ID) {
 		this.ID = ID;
 	}
+
+	public void setBarcodeQuery(String barcodeQuery){
+		this.barcodeQuery = barcodeQuery;
+	}
+
+	public String getBarcodeQuery(){return barcodeQuery;}
 
 
 	//*********************************************************************************************
