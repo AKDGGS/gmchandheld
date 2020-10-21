@@ -8,13 +8,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,6 +35,15 @@ public class OpenLookup {
 //	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
 
 	private boolean downloading = false;
+
+	public boolean isDownloading() {
+		return downloading;
+	}
+
+	public void setDownloading(boolean downloading) {
+		this.downloading = downloading;
+	}
+
 	ProgressDialog p;
 	AsyncTask asyncTask = null;
 
@@ -51,9 +61,6 @@ public class OpenLookup {
 		SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
 		String url = sharedPreferences.getString("urlText", "");
 
-//			websiteURL = "http://maps.dggs.alaska.gov/gmc/inventory.json?barcode=" + barcodeQuery;
-//			websiteURL = "http://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=" + barcode
-
 		if (url.charAt(url.length() - 1) != ('/')) {
 			url = url + '/';
 		}
@@ -66,45 +73,13 @@ public class OpenLookup {
 		}
 
 		switch (context.getClass().getSimpleName()) {
-			case "MainActivity": {
-				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
-				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
-				submit_button.setEnabled(false);
-				submit_button.setClickable(false);
-				submit_button.setFocusableInTouchMode(false);
-
-				barcodeInput.setFocusable(false);
-				barcodeInput.setEnabled(false);
-				barcodeInput.setFocusableInTouchMode(false);
-				websiteURL1 = websiteURL1 + "inventory.json?barcode=" + barcodeQuery;
-				break;
-			}
+			case "MainActivity":
 			case "LookupDisplay": {
-				final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
-				barcodeInput.setFocusable(false);
-				barcodeInput.setEnabled(false);
-				barcodeInput.setFocusableInTouchMode(false);
 				websiteURL1 = websiteURL1 + "inventory.json?barcode=" + barcodeQuery;
 				break;
 			}
-			case "Summary": {
-				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
-				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
-				submit_button.setEnabled(false);
-				submit_button.setClickable(false);
-				submit_button.setFocusableInTouchMode(false);
-
-				barcodeInput.setFocusable(false);
-				barcodeInput.setEnabled(false);
-				barcodeInput.setFocusableInTouchMode(false);
-				websiteURL1 = websiteURL1 + "summary.json?barcode=" + barcodeQuery;
-				break;
-			}
+			case "Summary":
 			case "SummaryDisplay": {
-				final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
-				barcodeInput.setFocusable(false);
-				barcodeInput.setEnabled(false);
-				barcodeInput.setFocusableInTouchMode(false);
 				websiteURL1 = websiteURL1 + "summary.json?barcode=" + barcodeQuery;
 				break;
 			}
@@ -112,8 +87,7 @@ public class OpenLookup {
 
 		websiteURL = websiteURL1;
 
-		if (downloading == false) {
-			downloading = true;
+		if (downloading == true) {
 
 			asyncTask = new AsyncTask<String, Integer, DownloadData>() {
 				AlertDialog alert;  //onPreExec
@@ -127,38 +101,31 @@ public class OpenLookup {
 					View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) context).findViewById(R.id.downloading_alert_root));
 					alertDialog.setView(layout);
 
+
 					TextView title = new TextView(context);
 					title.setText("Downloading: " + barcodeQuery);
 					title.setGravity(Gravity.CENTER);
 					title.setTextSize(16);
 					alertDialog.setCustomTitle(title);
-					alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+					alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
 							asyncTask.cancel(true);
+							downloading = false;
 						}
 					});
+
 					alert = alertDialog.create();
+
 					alert.show();
-
-					String lastAddedLookupHistory = null;
-					String lastAddedSummaryHistory = null;
-
-					if(!lookupHistory.isEmpty()) {
-						lastAddedLookupHistory  = lookupHistory.get(0);
-					}
-					if(!summaryHistory.isEmpty()) {
-						lastAddedSummaryHistory = summaryHistory.get(0);
-					}
+					alert.setCanceledOnTouchOutside(false);
 
 					if (!barcodeQuery.isEmpty()) {
-						switch(context.getClass().getSimpleName()){
+						switch (context.getClass().getSimpleName()) {
 							case "MainActivity": {
-								if (!barcodeQuery.equals(lastAddedLookupHistory)){
-									lookupHistory.add(0, barcodeQuery);
-								}
 
+								lastAddedtoHistory(context, barcodeQuery);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetBarcodeHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(lookupHistory);
@@ -167,10 +134,8 @@ public class OpenLookup {
 								break;
 							}
 							case "Summary": {
-								if (!barcodeQuery.equals(lastAddedSummaryHistory)){
-									summaryHistory.add(0, barcodeQuery);
-								}
 
+								lastAddedtoHistory(context, barcodeQuery);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetSummaryHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(summaryHistory);
@@ -180,6 +145,7 @@ public class OpenLookup {
 							}
 						}
 					}
+					downloading = false;
 				}
 
 				@Override
@@ -193,30 +159,57 @@ public class OpenLookup {
 				protected void onPostExecute(DownloadData obj) {
 					//Dismisses the downloading alert.  This is needed if the download fails.
 					alert.dismiss();
-
+					downloading = true;
 					if (obj.isErrored()) {
 
 						LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 						View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
 
 						AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-						alertDialog.setMessage(obj.getException().getMessage());
+
+						int responseCode = obj.getResponseCode();
+						ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+						if(responseCode == 403){
+							alertDialog.setTitle(obj.getException().getMessage());
+							alertDialog.setMessage("In the configuration screen, check the API key.");
+						}else if(responseCode == 404){
+							alertDialog.setTitle("URL Error");
+							alertDialog.setMessage("In the configuration screen, check the URL.");
+						}else if(responseCode >= 500){
+							alertDialog.setTitle("Internal Server Error");
+							alertDialog.setMessage(obj.getException().getMessage());
+						}else if ((Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0)){
+							alertDialog.setMessage("Is the device connected to the internet/network?  " +
+									"Check if Air Plane mode is on.");
+						}else if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
+							alertDialog.setMessage("Is the device connected to the internet/network?  " +
+									"Check if the connection has been lost.");
+						}else {
+							alertDialog.setMessage(obj.getException().getMessage());
+						}
+
 
 						alertDialog.setView(layout);
-
 						alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
+								downloading = true;
+								switch (context.getClass().getSimpleName()) {
+									case "SummaryDisplay":
+									case "LookupDisplay":
+										lastAddedtoHistory(context, barcodeQuery);
+										EditText invisibleEditText = ((Activity) context).findViewById(R.id.invisibleEditText);
+										invisibleEditText.setText("");
+										invisibleEditText.requestFocus();
+								}
 							}
 						});
 
 						AlertDialog alert = alertDialog.create();
 						alert.setCanceledOnTouchOutside(false);
 						alert.show();
-
-						resetLookupSummaryButtons(context);
-
 
 					} else if (obj.getRawJson().length() > 2) {
 
@@ -238,6 +231,8 @@ public class OpenLookup {
 								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 								context.startActivity(intent);
+
+								lastAddedtoHistory(context, barcodeQuery);
 								break;
 							}
 							case "Summary":
@@ -258,15 +253,11 @@ public class OpenLookup {
 								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 								context.startActivity(intent);
-
-								if (!summaryHistory.contains(barcodeQuery) & !barcodeQuery.isEmpty()) {
-									summaryHistory.add(0, barcodeQuery);
-								}
+								lastAddedtoHistory(context, barcodeQuery);
 								break;
 							}
 
 						}
-
 					}
 				}
 			}.execute();
@@ -277,41 +268,33 @@ public class OpenLookup {
 //					editor.putString("lookupHistoryString", lookupHistory.toString());
 //					editor.commit();
 
-			resetLookupSummaryButtons(context);
 		}
-		downloading = false;
 	}
 
-
-	private void resetLookupSummaryButtons(Context context) {
+	private String lastAddedtoHistory(Context context, String barcodeQuery) {
+		String lastAdded = null;
 		switch (context.getClass().getSimpleName()) {
-			case "Summary":
+			case "LookupDisplay":
 			case "MainActivity": {
-				final Button submit_button = ((Activity) context).findViewById(R.id.submit_button);
-				submit_button.setEnabled(true);
-				submit_button.setClickable(true);
-				submit_button.setFocusableInTouchMode(true);
-
-				final EditText barcodeInput = ((Activity) context).findViewById(R.id.editText1);
-				barcodeInput.requestFocus();
-				barcodeInput.getText().clear();
-				barcodeInput.setFocusable(true);
-				barcodeInput.setEnabled(true);
-				barcodeInput.setFocusableInTouchMode(true);
+				if (!lookupHistory.isEmpty()) {
+					lastAdded = lookupHistory.get(0);
+				}
+				if (!barcodeQuery.equals(lastAdded) & !barcodeQuery.isEmpty()) {
+					lookupHistory.add(0, barcodeQuery);
+				}
 				break;
 			}
-			case "SummaryDisplay":
-			case "LookupDisplay": {
-				final EditText barcodeInput = ((Activity) context).findViewById(R.id.invisibleEditText);
-				barcodeInput.setFocusable(true);
-				barcodeInput.setEnabled(true);
-				barcodeInput.setFocusableInTouchMode(true);
-				barcodeInput.requestFocus();
-				barcodeInput.getText().clear();
+			case "Summary":
+			case "SummaryDisplay": {
+				if (!summaryHistory.isEmpty()) {
+					lastAdded = summaryHistory.get(0);
+				}
+				if (!barcodeQuery.equals(lastAdded) & !barcodeQuery.isEmpty()) {
+					summaryHistory.add(0, barcodeQuery);
+				}
 				break;
 			}
 		}
+		return lastAdded;
 	}
-
-
 }

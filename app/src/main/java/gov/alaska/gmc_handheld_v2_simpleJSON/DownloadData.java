@@ -80,8 +80,8 @@ public class DownloadData {
 			connection.setRequestProperty("Authorization", "BASE64-HMAC-SHA256 " + AUTH_DGST);
 			connection.setRequestProperty("Date", HDATE);
 
-			connection.setReadTimeout(6 * 1000);
-			connection.setConnectTimeout(10 * 1000);
+			connection.setReadTimeout(3 * 1000);
+			connection.setConnectTimeout(6 * 1000);
 
 			connection.setRequestMethod("GET");
 			connection.connect();
@@ -92,7 +92,7 @@ public class DownloadData {
 			inputStream = null;
 			try {
 				inputStream = connection.getInputStream();
-			} catch(IOException e) {
+			} catch (IOException e) {
 				inputStream = connection.getErrorStream();
 			}
 
@@ -108,12 +108,13 @@ public class DownloadData {
 					}
 				}
 
-				if(connection.getErrorStream() != null) {
+				if (connection.getErrorStream() != null) {
 					exception = new Exception(String.valueOf(sb));
+					System.out.println(sb.toString());
 				}
 
 				if (sb == null || sb.length() <= 2) {
-					exception = new Exception("No results found.\n\nIs the barcode correct? " + barcodeQuery );
+					exception = new Exception("No results found.\n\nIs the barcode correct? " + barcodeQuery);
 				} else {
 					rawJson = sb.toString();
 				}

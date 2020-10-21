@@ -18,7 +18,6 @@ public class Summary extends BaseActivity {
 
     private ListView listView;
     private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
-    private boolean submitted = false;
     public static final String SHARED_PREFS = "sharedPrefs";
 
     @Override
@@ -41,53 +40,50 @@ public class Summary extends BaseActivity {
 
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
-
         final EditText barcodeInput = findViewById(R.id.editText1);
         final Button submit_button = findViewById(R.id.submit_button);
-
-
-        // KeyListener listens if enter is pressed
-        barcodeInput.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // if "enter" is pressed
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    submit_button.performClick();
-                    return true;
-                }
-                return false;
-            }
-        });
-
         final OpenLookup openLookupObj = new OpenLookup();
-
-        // onClickListener listens if the submit button is clicked
-        submit_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openLookupObj.processDataForDisplay(getBarcode(), Summary.this);
-                submitted = false;
-            }
-        });
 
         // populates the history list
         listView = findViewById(R.id.listViewGetSummaryHistory);
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         adapter.addAll(summaryHistory);
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (submitted == false) {
+        // Submit barcode query
+        if (!openLookupObj.isDownloading()) {
+
+            // onClickListener listens if the submit button is clicked
+            submit_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openLookupObj.setDownloading(true);
+                    openLookupObj.processDataForDisplay(getBarcode(), Summary.this);
+                }
+            });
+
+            // KeyListener listens if enter is pressed
+            barcodeInput.setOnKeyListener(new View.OnKeyListener() {
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    // if "enter" is pressed
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        submit_button.performClick();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            // Clicking barcode in history list.
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     barcodeInput.setText(listView.getItemAtPosition(position).toString());
                     submit_button.performClick();
-                    submitted = true;
                 }
-            }
-        });
-
+            });
+        }
     }
 
     public String getBarcode() {

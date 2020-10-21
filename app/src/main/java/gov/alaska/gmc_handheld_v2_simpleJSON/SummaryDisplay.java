@@ -14,7 +14,6 @@ public class SummaryDisplay extends BaseActivity {
 
     public static final String SHARED_PREFS = "sharedPrefs";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +24,10 @@ public class SummaryDisplay extends BaseActivity {
         final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
         invisibleEditText.setInputType(InputType.TYPE_NULL);
-        invisibleEditText.setVisibility(View.GONE);
+        final OpenLookup openLookupObj = new OpenLookup();
+
+        openLookupObj.setDownloading(true);
+        invisibleEditText.setFocusable(true);
 
         invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -34,7 +36,6 @@ public class SummaryDisplay extends BaseActivity {
                 }
 
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    final OpenLookup openLookupObj = new OpenLookup();
                     openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), SummaryDisplay.this);
                     return true;
                 }
@@ -51,10 +52,6 @@ public class SummaryDisplay extends BaseActivity {
                 SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + summaryLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
             }
 
-//            if(summaryLogicForDisplayObj.getradiationWarningFlag()) {
-//                LookupDisplay.this.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
-//            }
-
         }
 
         if (summaryLogicForDisplayObj != null) {
@@ -63,6 +60,7 @@ public class SummaryDisplay extends BaseActivity {
 
             if (barcode != null) {
                 SummaryDisplay.this.getSupportActionBar().setTitle(barcode);
+
                 if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
                     SummaryDisplay.this.getSupportActionBar().setSubtitle(summaryLogicForDisplayObj.getKeyList().size() + " Result(s)");
                 }

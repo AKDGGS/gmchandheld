@@ -15,11 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".SummaryDisplay"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:parentActivityName=".Summary"
-            android:theme="@style/Theme.AppCompat.DayNight" />
-
         <activity android:name=".Configuration"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:label="Configuration"/>
@@ -41,6 +36,11 @@
         <activity android:name=".Summary"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:label="Summary"/>
+
+        <activity android:name=".SummaryDisplay"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:parentActivityName=".Summary"
+            android:theme="@style/Theme.AppCompat.DayNight" />
 
         <activity android:name=".Help"
             android:label="Help"/>

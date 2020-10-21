@@ -30,7 +30,7 @@ public class BaseActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
-		checkConnection(this);
+//		checkConnection(this);
 
 		try {
 			ViewConfiguration config = ViewConfiguration.get(this);
@@ -173,8 +173,6 @@ public class BaseActivity extends AppCompatActivity {
 			alert.setCanceledOnTouchOutside(false);
 			alert.show();
 		}
-
-
 		return true;
 	}
 }
