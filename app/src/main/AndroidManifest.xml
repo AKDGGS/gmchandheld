@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="gov.alaska.gmc_handheld_v2_simpleJSON">
 
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -10,54 +9,54 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="GMC Handheld"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".Configuration"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:label="Configuration"/>
-
+        <activity
+            android:name=".Configuration"
+            android:label="Configuration"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".BaseActivity" />
-
-        <activity android:name=".Audit"
-            android:label="Audit"/>
-
-        <activity android:name=".AddInventory"
-            android:label="Add Inventory"/>
-
-        <activity android:name=".Recode"
-            android:label="Recode"/>
-
-        <activity android:name=".Move"
-            android:label="Move"/>
-
-        <activity android:name=".Summary"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:label="Summary"/>
-
-        <activity android:name=".SummaryDisplay"
-            android:windowSoftInputMode="stateAlwaysHidden"
+        <activity
+            android:name=".Audit"
+            android:label="Audit" />
+        <activity
+            android:name=".AddInventory"
+            android:label="Add Inventory" />
+        <activity
+            android:name=".Recode"
+            android:label="Recode" />
+        <activity
+            android:name=".Move"
+            android:label="Move" />
+        <activity
+            android:name=".Summary"
+            android:label="Summary"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".SummaryDisplay"
             android:parentActivityName=".Summary"
-            android:theme="@style/Theme.AppCompat.DayNight" />
-
-        <activity android:name=".Help"
-            android:label="Help"/>
-
-        <activity android:name=".AddContainer"
-            android:label="Add Container"/>
-
+            android:theme="@style/Theme.AppCompat.DayNight"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".Help"
+            android:label="Help" />
+        <activity
+            android:name=".AddContainer"
+            android:label="Add Container" />
         <activity
             android:name=".LookupDisplay"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.AppCompat.DayNight"
-            />
+            android:theme="@style/Theme.AppCompat.DayNight" />
 
-        <activity android:name=".MainActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:label="Lookup">
-            <intent-filter>
+
+        <activity
+            android:theme="@style/AppTheme"
+            android:name=".MainActivity"
+            android:label="@string/lookup"
+            android:windowSoftInputMode="stateAlwaysHidden">
+            <intent-filter android:label="@string/app_name"> <!--name of app-->
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

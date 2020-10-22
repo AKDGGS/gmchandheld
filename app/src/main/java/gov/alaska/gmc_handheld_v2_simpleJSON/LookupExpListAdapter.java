@@ -23,7 +23,15 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 	final List<String> inventoryLabels;
 	final Map<String, List<SpannableStringBuilder>> inventoryDetailsDict;
 	private String inventoryObjType = null;
-	private boolean alertCalled = false;
+//	private boolean alertCalled = false;
+
+	static class ParentViewHolder {
+		TextView parentText;
+	}
+
+	static class ChildViewHolder {
+		TextView childText;
+	}
 
 	public String getInventoryObjType() {
 		return inventoryObjType;
@@ -78,10 +86,19 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
 		String lang = (String) getGroup(groupPosition);
+		final View result;
+		ParentViewHolder parentHolder = new ParentViewHolder();
 
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.exp_list_parent, null);
+			parentHolder.parentText = convertView.findViewById(R.id.txtParent);
+
+			result = convertView;
+			convertView.setTag(parentHolder);
+		}else{
+			parentHolder = (ParentViewHolder) convertView.getTag();
+			result = convertView;
 		}
 
 		List<String> myList = Arrays.asList("Wells", "Outcrops", "Boreholes", "Shotpoints");
@@ -115,7 +132,8 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			default:
 				txtParent.setBackgroundColor(Color.parseColor("#ffd9dddf"));
 		}
-		txtParent.setText(lang);
+//		txtParent.setText(lang);
+		parentHolder.parentText.setText(lang);
 		return convertView;
 	}
 

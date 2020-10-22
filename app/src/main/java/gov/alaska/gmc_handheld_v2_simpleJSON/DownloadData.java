@@ -80,11 +80,13 @@ public class DownloadData {
 			connection.setRequestProperty("Authorization", "BASE64-HMAC-SHA256 " + AUTH_DGST);
 			connection.setRequestProperty("Date", HDATE);
 
-			connection.setReadTimeout(3 * 1000);
-			connection.setConnectTimeout(6 * 1000);
+			connection.setReadTimeout( 10 * 1000);
+			connection.setConnectTimeout(5 * 1000);
 
 			connection.setRequestMethod("GET");
+
 			connection.connect();
+			System.out.println(connection.getReadTimeout());
 
 			responseCode = connection.getResponseCode();
 			responseMsg = connection.getResponseMessage();
@@ -121,7 +123,7 @@ public class DownloadData {
 
 				inputStream.close();
 				connection.disconnect();
-			} catch (IOException e) {
+			}catch (IOException e) {
 				exception = e;
 				inputStream.close();
 				connection.disconnect();

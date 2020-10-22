@@ -186,7 +186,11 @@ public class OpenLookup {
 							alertDialog.setMessage("Is the device connected to the internet/network?  " +
 									"Check if the connection has been lost.");
 						}else {
-							alertDialog.setMessage(obj.getException().getMessage());
+							if(obj.getException().getMessage() == null){
+								alertDialog.setMessage("Unknown Error");
+							}else {
+								alertDialog.setMessage(obj.getException().getMessage());
+							}
 						}
 
 
@@ -197,12 +201,19 @@ public class OpenLookup {
 							public void onClick(DialogInterface dialog, int which) {
 								downloading = true;
 								switch (context.getClass().getSimpleName()) {
+									case "MainActivity":
+									case "Summary":
+										EditText getBarcodeEditText = ((Activity) context).findViewById(R.id.getBarcodeEditText);
+										getBarcodeEditText.setText("");
+										getBarcodeEditText.requestFocus();
+										break;
 									case "SummaryDisplay":
 									case "LookupDisplay":
 										lastAddedtoHistory(context, barcodeQuery);
 										EditText invisibleEditText = ((Activity) context).findViewById(R.id.invisibleEditText);
 										invisibleEditText.setText("");
 										invisibleEditText.requestFocus();
+										break;
 								}
 							}
 						});

@@ -40,7 +40,7 @@ public class Summary extends BaseActivity {
 
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
-        final EditText barcodeInput = findViewById(R.id.editText1);
+        final EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
         final Button submit_button = findViewById(R.id.submit_button);
         final OpenLookup openLookupObj = new OpenLookup();
 
@@ -87,7 +87,7 @@ public class Summary extends BaseActivity {
     }
 
     public String getBarcode() {
-        EditText barcodeInput = findViewById(R.id.editText1);
+        EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
         return barcodeInput.getText().toString();
     }
 

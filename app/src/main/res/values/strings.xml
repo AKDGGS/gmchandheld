@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GMC_handheld</string>
+
     <string name="lookup">Lookup</string>
     <string name="add_container">add container</string>
     <string name="help">Help</string>
@@ -32,7 +32,5 @@
     <string name="url_label">URL:</string>
     <string name="soft_keyboard">Soft Keyboard</string>
     <string name="save_all">Save All</string>
+    <string name="app_name">GMC Inventory</string> <!--name of app-->
 </resources>
-
-
-<!--    -->
