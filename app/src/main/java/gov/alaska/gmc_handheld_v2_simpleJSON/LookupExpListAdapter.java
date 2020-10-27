@@ -26,9 +26,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		TextView parentText;
 	}
 
-	static class ChildViewHolder {
-		TextView childText;
-	}
 
 	public String getInventoryObjType() {
 		return inventoryObjType;
@@ -85,12 +82,18 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		String expListParentLabel = (String) getGroup(groupPosition);
 		ParentViewHolder parentHolder = new ParentViewHolder();
 
+//		if (convertView == null) {
+//			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//			convertView = inflater.inflate(R.layout.exp_list_parent, null);
+//		}
+//
+//		TextView txtChild = convertView.findViewById(R.id.txtParent);
+
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.exp_list_parent, null);
 			parentHolder.parentText = convertView.findViewById(R.id.txtParent);
 			convertView.setTag(parentHolder);
-
 		}
 
 		parentHolder = (ParentViewHolder) convertView.getTag();
@@ -126,6 +129,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		}
 
 		parentHolder.parentText.setText(expListParentLabel);
+//		txtChild.setText(expListParentLabel);
 		return convertView;
 	}
 
