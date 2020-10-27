@@ -50,7 +50,7 @@ public class LookupLogicForDisplay {
 		this.ID = ID;
 	}
 
-	public boolean getradiationWarningFlag(){return radiationWarningFlag;}
+	public boolean getRadiationWarningFlag(){return radiationWarningFlag;}
 
 	public void setBarcodeQuery(String barcodeQuery){
 		this.barcodeQuery = barcodeQuery;

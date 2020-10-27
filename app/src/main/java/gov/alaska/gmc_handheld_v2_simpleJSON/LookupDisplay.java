@@ -17,8 +17,6 @@ import androidx.core.content.ContextCompat;
 
 
 public class LookupDisplay extends BaseActivity {
-	public static final String SHARED_PREFS = "sharedPrefs";
-//	private ExpandableListAdapter listAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +50,13 @@ public class LookupDisplay extends BaseActivity {
 		LookupLogicForDisplay lookupLogicForDisplayObj;
 		lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
-		if ("GMC_handheld".equals(getSupportActionBar().getTitle())) {
+		if ("GMC_handheld".contentEquals(getSupportActionBar().getTitle())) {
 			LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + lookupLogicForDisplayObj.getBarcodeQuery() + "</font> </small> </strong>"));
 			if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
 				LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
 			}
 
-			if (lookupLogicForDisplayObj.getradiationWarningFlag()) {
+			if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
 				LookupDisplay.this.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
 			}
 		}
@@ -70,7 +68,7 @@ public class LookupDisplay extends BaseActivity {
 			if (barcode != null) {
 				LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + barcode + "</font> </small> </strong>"));
 
-				if (lookupLogicForDisplayObj.getradiationWarningFlag()) {
+				if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
 					LookupDisplay.this.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
 				}
 

@@ -3,7 +3,6 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,12 +43,10 @@ public class OpenLookup {
 		this.downloading = downloading;
 	}
 
-	ProgressDialog p;
 	AsyncTask asyncTask = null;
 
 	@SuppressLint("StaticFieldLeak")
 	public void processDataForDisplay(final String barcodeQuery, final Context context) {
-
 
 		final String websiteURL;
 		String websiteURL1;
@@ -66,8 +63,8 @@ public class OpenLookup {
 		}
 
 		int APILevel = android.os.Build.VERSION.SDK_INT;
-		if (APILevel < 18 && url.substring(0, 5).equals("https")) {
-			websiteURL1 = "http" + url.substring(5, url.length());
+		if (APILevel < 18 && url.startsWith("https")) {
+			websiteURL1 = "http" + url.substring(5);
 		} else {
 			websiteURL1 = url;
 		}
@@ -87,7 +84,7 @@ public class OpenLookup {
 
 		websiteURL = websiteURL1;
 
-		if (downloading == true) {
+		if (downloading) {
 
 			asyncTask = new AsyncTask<String, Integer, DownloadData>() {
 				AlertDialog alert;  //onPreExec
@@ -125,7 +122,7 @@ public class OpenLookup {
 						switch (context.getClass().getSimpleName()) {
 							case "MainActivity": {
 
-								lastAddedtoHistory(context, barcodeQuery);
+								lastAddedToHistory(context, barcodeQuery);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetBarcodeHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(lookupHistory);
@@ -135,7 +132,7 @@ public class OpenLookup {
 							}
 							case "Summary": {
 
-								lastAddedtoHistory(context, barcodeQuery);
+								lastAddedToHistory(context, barcodeQuery);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetSummaryHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(summaryHistory);
@@ -209,7 +206,7 @@ public class OpenLookup {
 										break;
 									case "SummaryDisplay":
 									case "LookupDisplay":
-										lastAddedtoHistory(context, barcodeQuery);
+										lastAddedToHistory(context, barcodeQuery);
 										EditText invisibleEditText = ((Activity) context).findViewById(R.id.invisibleEditText);
 										invisibleEditText.setText("");
 										invisibleEditText.requestFocus();
@@ -243,7 +240,7 @@ public class OpenLookup {
 								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 								context.startActivity(intent);
 
-								lastAddedtoHistory(context, barcodeQuery);
+								lastAddedToHistory(context, barcodeQuery);
 								break;
 							}
 							case "Summary":
@@ -264,7 +261,7 @@ public class OpenLookup {
 								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
 								context.startActivity(intent);
-								lastAddedtoHistory(context, barcodeQuery);
+								lastAddedToHistory(context, barcodeQuery);
 								break;
 							}
 
@@ -282,7 +279,7 @@ public class OpenLookup {
 		}
 	}
 
-	private String lastAddedtoHistory(Context context, String barcodeQuery) {
+	private void lastAddedToHistory(Context context, String barcodeQuery) {
 		String lastAdded = null;
 		switch (context.getClass().getSimpleName()) {
 			case "LookupDisplay":
@@ -306,6 +303,5 @@ public class OpenLookup {
 				break;
 			}
 		}
-		return lastAdded;
 	}
 }

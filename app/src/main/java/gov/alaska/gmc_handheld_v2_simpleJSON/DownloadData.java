@@ -24,10 +24,10 @@ public class DownloadData {
 	private StringBuilder sb;
 	private int responseCode;
 	private String responseMsg;
-	private String url;
+	private final String url;
 	private String rawJson;
-	private String barcodeQuery;
-	private Context context;
+	private final String barcodeQuery;
+	private final Context context;
 	public static final String SHARED_PREFS = "sharedPrefs";
 
 	public DownloadData(String url, String barcodeQuery, Context context) {
@@ -91,7 +91,7 @@ public class DownloadData {
 			responseCode = connection.getResponseCode();
 			responseMsg = connection.getResponseMessage();
 
-			inputStream = null;
+//			inputStream = null;
 			try {
 				inputStream = connection.getInputStream();
 			} catch (IOException e) {
@@ -115,7 +115,7 @@ public class DownloadData {
 					System.out.println(sb.toString());
 				}
 
-				if (sb == null || sb.length() <= 2) {
+				if (sb.length() <= 2) {
 					exception = new Exception("No results found.\n\nIs the barcode correct? " + barcodeQuery);
 				} else {
 					rawJson = sb.toString();
@@ -149,7 +149,7 @@ public class DownloadData {
 
 
 	private String getDGST(String APIKEY, String message) {
-		Mac mac = null;
+		Mac mac;
 		byte[] hmac256 = null;
 		try {
 			mac = Mac.getInstance("HmacSHA256");

@@ -12,8 +12,6 @@ import android.widget.ExpandableListView;
 
 public class SummaryDisplay extends BaseActivity {
 
-    public static final String SHARED_PREFS = "sharedPrefs";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +44,7 @@ public class SummaryDisplay extends BaseActivity {
         SummaryLogicForDisplay summaryLogicForDisplayObj;
         summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
 
-        if("GMC_handheld".equals(getSupportActionBar().getTitle())){
+        if("GMC_handheld".contentEquals(getSupportActionBar().getTitle())){
             SummaryDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + summaryLogicForDisplayObj.getBarcodeQuery() +"</font> </small> </strong>"));
             if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
                 SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + summaryLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));

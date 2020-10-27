@@ -13,7 +13,6 @@ import androidx.appcompat.widget.Toolbar;
 
 
 public class Move extends BaseActivity {
-    private boolean submitted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,6 @@ public class Move extends BaseActivity {
                     moveContainer();
                     moveContainerET.setText("");
                     moveDestinationET.setText("");
-                    submitted = false;
                 }
             }
         });

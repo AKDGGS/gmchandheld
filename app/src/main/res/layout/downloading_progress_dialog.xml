@@ -2,10 +2,10 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background= "#ff567b95"
     android:orientation="horizontal"
     android:gravity="center"
     android:padding="8dp"
+    android:background= "#ff567b95"
     android:id="@+id/downloading_alert_root">
 
     <ProgressBar
@@ -14,3 +14,5 @@
         />
 
 </LinearLayout>
+
+<!--android:background= "#ff567b95"-->

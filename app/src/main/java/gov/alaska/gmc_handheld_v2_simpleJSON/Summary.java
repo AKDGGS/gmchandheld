@@ -18,7 +18,6 @@ public class Summary extends BaseActivity {
 
     private ListView listView;
     private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
-    public static final String SHARED_PREFS = "sharedPrefs";
 
     @Override
     public void onRestart() {

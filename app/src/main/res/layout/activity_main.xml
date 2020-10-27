@@ -54,7 +54,8 @@
         android:text="History"
         android:textStyle="bold"
         android:textSize="16sp"
-        android:textColor="#ff353535"/>
+        android:textColor="#ff353535"
+        android:layout_marginStart="5dp" />
 
     <ListView
         android:id="@+id/listViewGetBarcodeHistory"

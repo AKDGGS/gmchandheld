@@ -44,6 +44,7 @@
                         android:layout_height="wrap_content"
                         android:text="http://maps.dggs.alaska.gov/gmc/"
                         android:textSize="14sp"
+                        android:inputType="textUri"
                         />
                 </LinearLayout>
 

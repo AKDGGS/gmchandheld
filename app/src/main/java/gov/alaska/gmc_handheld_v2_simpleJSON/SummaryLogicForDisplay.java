@@ -24,13 +24,13 @@ public class SummaryLogicForDisplay {
 	private List<String> keyList;
 	private Map<String, List<SpannableStringBuilder>> displayDict;
 	private int ID;
-	private final NumberFormat nf = NumberFormat.getNumberInstance();
 	private String barcodeQuery;
 
 
 	public SummaryLogicForDisplay() {
 		keyList = new ArrayList<>();
 		displayDict = new HashMap<>();
+		NumberFormat nf = NumberFormat.getNumberInstance();
 		nf.setMinimumFractionDigits(0);
 		nf.setMaximumFractionDigits(1);
 	}

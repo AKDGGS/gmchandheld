@@ -23,7 +23,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 	final List<String> inventoryLabels;
 	final Map<String, List<SpannableStringBuilder>> inventoryDetailsDict;
 	private String inventoryObjType = null;
-//	private boolean alertCalled = false;
 
 	static class ParentViewHolder {
 		TextView parentText;
@@ -85,9 +84,14 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
-		String lang = (String) getGroup(groupPosition);
+		String expListParentLabel = (String) getGroup(groupPosition);
 		final View result;
 		ParentViewHolder parentHolder = new ParentViewHolder();
+
+//		if (convertView == null) {
+//			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//			convertView = inflater.inflate(R.layout.exp_list_parent, null);
+//		}
 
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -113,39 +117,53 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		if (inventoryObjType == null || count > 1) {
 			setInventoryObjType("No Type");
 		}
-
-		TextView txtParent = convertView.findViewById(R.id.txtParent);
+		
 
 		switch (getInventoryObjType()) {
 			case "Wells":
-				txtParent.setBackgroundColor(Color.parseColor("#ff92cbff"));
+				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ff92cbff"));
 				break;
 			case "Boreholes":
-				txtParent.setBackgroundColor(Color.parseColor("#ff63ba00")); //Green
+				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ff63ba00")); //Green
 				break;
 			case "Outcrops":
-				txtParent.setBackgroundColor(Color.parseColor("#ffe6b101")); // yellow-orange
+				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffe6b101")); // yellow-orange
 				break;
 			case "Shotpoints":
-				txtParent.setBackgroundColor(Color.parseColor("#ffff8a86"));
+				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffff8a86"));
 				break;
 			default:
-				txtParent.setBackgroundColor(Color.parseColor("#ffd9dddf"));
+				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffd9dddf"));
 		}
-//		txtParent.setText(lang);
-		parentHolder.parentText.setText(lang);
+
+		parentHolder.parentText.setText(expListParentLabel);
 		return convertView;
 	}
 
 	@Override
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-		SpannableStringBuilder topic = (SpannableStringBuilder) getChild(groupPosition, childPosition);
+		SpannableStringBuilder expListChildContents = (SpannableStringBuilder) getChild(groupPosition, childPosition);
 
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.exp_list_child, null);
 		}
+
+//		final View result;
+//		ChildViewHolder childHolder = new ChildViewHolder();
+//
+//		if (convertView == null) {
+//			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//			convertView = inflater.inflate(R.layout.exp_list_child, null);
+//			childHolder.childText = convertView.findViewById(R.id.txtChild);
+//
+//			result = convertView;
+//			convertView.setTag(childHolder);
+//		}else{
+//			childHolder = (ChildViewHolder) convertView.getTag();
+//			result = convertView;
+//		}
 
 		TextView txtChild = convertView.findViewById(R.id.txtChild);
 
@@ -194,16 +212,17 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		int textSize = (int) txtChild.getTextSize();
 
 		// 14 comes from the text size in exp_list_child.
-		if (!Character.isWhitespace(topic.charAt(3))) {
-			txtChild.setText(createIndentedText(topic, 0, textSize));
-		} else if (!Character.isWhitespace(topic.charAt(6))) {
-			txtChild.setText(createIndentedText(topic, 0, textSize * 2));
-		} else if (!Character.isWhitespace(topic.charAt(9))) {
-			txtChild.setText(createIndentedText(topic, 0, textSize * 3));
+		if (!Character.isWhitespace(expListChildContents.charAt(3))) {
+			txtChild.setText(createIndentedText(expListChildContents, 0, textSize));
+		} else if (!Character.isWhitespace(expListChildContents.charAt(6))) {
+			txtChild.setText(createIndentedText(expListChildContents, 0, textSize * 2));
+		} else if (!Character.isWhitespace(expListChildContents.charAt(9))) {
+			txtChild.setText(createIndentedText(expListChildContents, 0, textSize * 3));
 		} else {
-			txtChild.setText(createIndentedText(topic, 0, textSize * 4));
+			txtChild.setText(createIndentedText(expListChildContents, 0, textSize * 4));
 		}
 		return convertView;
+
 	}
 
 	@Override

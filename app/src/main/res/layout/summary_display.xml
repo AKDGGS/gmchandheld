@@ -10,11 +10,10 @@
         android:id="@+id/invisibleEditText"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:ems="0"
         android:hint="Transparent EditText"
         android:background="@android:color/transparent"
+        android:inputType="text"
         >
 
         <requestFocus />
