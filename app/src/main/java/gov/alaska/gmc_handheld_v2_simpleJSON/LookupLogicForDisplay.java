@@ -99,6 +99,7 @@ public class LookupLogicForDisplay {
 		SpannableStringBuilder ssb = new SpannableStringBuilder();
 		if (o.getName() != null && !o.getName().equals(currKey)) {
 
+			System.out.println("Spannable Key: " + o.getName());
 			//Barcode is not added to the displayList because it is in the Label
 			if (!"Barcode".equals(o.getName())) {
 				for (int i = 0; i < depth - 1; i++) {

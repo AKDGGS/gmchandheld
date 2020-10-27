@@ -56,10 +56,10 @@ public class DownloadData {
 		return rawJson;
 	}
 
-
 	public void getDataFromURL() {
 		InputStream inputStream;
 		HttpURLConnection connection;
+
 
 		try {
 			URL myURL = new URL(url);
@@ -91,7 +91,6 @@ public class DownloadData {
 			responseCode = connection.getResponseCode();
 			responseMsg = connection.getResponseMessage();
 
-//			inputStream = null;
 			try {
 				inputStream = connection.getInputStream();
 			} catch (IOException e) {
@@ -138,7 +137,6 @@ public class DownloadData {
 		}
 	}
 
-
 	public SimpleDateFormat getDateFormat() {
 		SimpleDateFormat sdf = new SimpleDateFormat(
 				"EEE, dd MMM yyyy HH:mm:ss zzz"
@@ -146,7 +144,6 @@ public class DownloadData {
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return sdf;
 	}
-
 
 	private String getDGST(String APIKEY, String message) {
 		Mac mac;

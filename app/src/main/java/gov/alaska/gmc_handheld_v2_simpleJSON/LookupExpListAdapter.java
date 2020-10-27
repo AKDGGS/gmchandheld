@@ -3,8 +3,6 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.LeadingMarginSpan;
 import android.view.LayoutInflater;
@@ -85,25 +83,17 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
 		String expListParentLabel = (String) getGroup(groupPosition);
-		final View result;
 		ParentViewHolder parentHolder = new ParentViewHolder();
-
-//		if (convertView == null) {
-//			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//			convertView = inflater.inflate(R.layout.exp_list_parent, null);
-//		}
 
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.exp_list_parent, null);
 			parentHolder.parentText = convertView.findViewById(R.id.txtParent);
-
-			result = convertView;
 			convertView.setTag(parentHolder);
-		}else{
-			parentHolder = (ParentViewHolder) convertView.getTag();
-			result = convertView;
+
 		}
+
+		parentHolder = (ParentViewHolder) convertView.getTag();
 
 		List<String> myList = Arrays.asList("Wells", "Outcrops", "Boreholes", "Shotpoints");
 		int count = 0;
@@ -117,7 +107,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		if (inventoryObjType == null || count > 1) {
 			setInventoryObjType("No Type");
 		}
-		
 
 		switch (getInventoryObjType()) {
 			case "Wells":
@@ -149,21 +138,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.exp_list_child, null);
 		}
-
-//		final View result;
-//		ChildViewHolder childHolder = new ChildViewHolder();
-//
-//		if (convertView == null) {
-//			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//			convertView = inflater.inflate(R.layout.exp_list_child, null);
-//			childHolder.childText = convertView.findViewById(R.id.txtChild);
-//
-//			result = convertView;
-//			convertView.setTag(childHolder);
-//		}else{
-//			childHolder = (ChildViewHolder) convertView.getTag();
-//			result = convertView;
-//		}
 
 		TextView txtChild = convertView.findViewById(R.id.txtChild);
 
@@ -221,6 +195,8 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		} else {
 			txtChild.setText(createIndentedText(expListChildContents, 0, textSize * 4));
 		}
+
+		txtChild.setText(expListChildContents);
 		return convertView;
 
 	}
@@ -230,11 +206,10 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		return true;
 	}
 
-	public static SpannableString createIndentedText(Spannable text, int marginFirstLine, int marginNextLines) {
+	public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
 		//https://www.programmersought.com/article/45371641877/
-		SpannableString result = new SpannableString(text);
-		result.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
-		return result;
+		text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
+		return text;
 	}
 
 	public static int getScreenWidth() {

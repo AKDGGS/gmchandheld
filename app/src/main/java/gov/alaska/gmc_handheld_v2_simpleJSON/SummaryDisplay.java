@@ -49,7 +49,6 @@ public class SummaryDisplay extends BaseActivity {
             if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
                 SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + summaryLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
             }
-
         }
 
         if (summaryLogicForDisplayObj != null) {

@@ -81,7 +81,6 @@ public class LookupDisplay extends BaseActivity {
 			ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
 			expandableListView.setAdapter(listAdapter);
 
-			System.out.println(lookupLogicForDisplayObj.getDisplayDict().toString());
 			if (listAdapter.getGroupCount() >= 1) {
 				for (int i = 0; i < listAdapter.getGroupCount(); i++) {
 					expandableListView.expandGroup(i);
