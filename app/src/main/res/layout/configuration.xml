@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <include
         android:id="@+id/toolbar"
@@ -12,6 +13,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp"
+            android:text="Build Date: Oct, 28, 2020"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textAlignment="gravity"
+            android:gravity="left"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="10dp"/>
 
         <ScrollView
             android:layout_width="match_parent"

@@ -86,7 +86,6 @@ public class DownloadData {
 			connection.setRequestMethod("GET");
 
 			connection.connect();
-			System.out.println(connection.getReadTimeout());
 
 			responseCode = connection.getResponseCode();
 			responseMsg = connection.getResponseMessage();

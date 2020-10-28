@@ -86,8 +86,18 @@ public class LookupDisplay extends BaseActivity {
 					expandableListView.expandGroup(i);
 				}
 			}
+
+			expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+				@Override
+				public boolean onGroupClick(ExpandableListView parent, View v,
+											int groupPosition, long id) {
+					return true; // This way the expander cannot be collapsed
+				}
+			});
 		}
 	}
+
+
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -116,5 +126,11 @@ public class LookupDisplay extends BaseActivity {
 		}
 		return true;
 	}
+
+//	@Override
+//	public void onBackPressed() {
+//		Intent get_barcode = new Intent(this, MainActivity.class);
+//		startActivity(get_barcode);
+//	}
 
 }

@@ -87,7 +87,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 //			convertView = inflater.inflate(R.layout.exp_list_parent, null);
 //		}
 //
-//		TextView txtChild = convertView.findViewById(R.id.txtParent);
+//		TextView txtParent = convertView.findViewById(R.id.txtParent);
 
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -129,7 +129,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		}
 
 		parentHolder.parentText.setText(expListParentLabel);
-//		txtChild.setText(expListParentLabel);
+//		txtParent.setText(expListParentLabel);
 		return convertView;
 	}
 
@@ -186,19 +186,24 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				break;
 		}
 
+//		txtChild.setTypeface(Typeface.MONOSPACE);
 		// A value related to the size of the text.  It is not the font size, but related to it.
 		int textSize = (int) txtChild.getTextSize();
 
-		// 14 comes from the text size in exp_list_child.
-		if (!Character.isWhitespace(expListChildContents.charAt(3))) {
-			txtChild.setText(createIndentedText(expListChildContents, 0, textSize));
-		} else if (!Character.isWhitespace(expListChildContents.charAt(6))) {
-			txtChild.setText(createIndentedText(expListChildContents, 0, textSize * 2));
-		} else if (!Character.isWhitespace(expListChildContents.charAt(9))) {
-			txtChild.setText(createIndentedText(expListChildContents, 0, textSize * 3));
-		} else {
-			txtChild.setText(createIndentedText(expListChildContents, 0, textSize * 4));
-		}
+
+	// 14 comes from the text size in exp_list_child.
+//	if (!Character.isWhitespace(expListChildContents.charAt(3))) {
+//		txtChild.setText(createIndentedText(expListChildContents, 3, textSize));
+//	} else if (!Character.isWhitespace(expListChildContents.charAt(6))) {
+//		txtChild.setText(createIndentedText(expListChildContents, 6, textSize * 2));
+//	} else if (!Character.isWhitespace(expListChildContents.charAt(9))) {
+//		txtChild.setText(createIndentedText(expListChildContents, 9, textSize * 3));
+//	} else if (!Character.isWhitespace(expListChildContents.charAt(12))) {
+//		txtChild.setText(createIndentedText(expListChildContents, 12, textSize * 4));
+//	} else {
+//		txtChild.setText(createIndentedText(expListChildContents, 0, textSize * 4));
+//	}
+
 
 		txtChild.setText(expListChildContents);
 		return convertView;
@@ -212,6 +217,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 	public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
 		//https://www.programmersought.com/article/45371641877/
+
 		text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
 		return text;
 	}
@@ -220,4 +226,8 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		//https://stackoverflow.com/a/31377616
 		return Resources.getSystem().getDisplayMetrics().widthPixels;
 	}
+
+
 }
+
+// GMC-000197640

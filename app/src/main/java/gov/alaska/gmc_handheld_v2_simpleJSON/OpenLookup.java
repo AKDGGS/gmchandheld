@@ -87,6 +87,7 @@ public class OpenLookup {
 		if (downloading) {
 
 			asyncTask = new AsyncTask<String, Integer, DownloadData>() {
+
 				AlertDialog alert;  //onPreExec
 
 				@Override
@@ -147,16 +148,19 @@ public class OpenLookup {
 
 				@Override
 				protected DownloadData doInBackground(String... strings) {
-					DownloadData downloadData = new DownloadData(websiteURL, barcodeQuery, context);
-					downloadData.getDataFromURL();
-					return downloadData;
+					if(!isCancelled()) {
+						DownloadData downloadData = new DownloadData(websiteURL, barcodeQuery, context);
+						downloadData.getDataFromURL();
+						return downloadData;
+					}
+					return null;
 				}
 
 				@Override
 				protected void onPostExecute(DownloadData obj) {
 					//Dismisses the downloading alert.  This is needed if the download fails.
 					alert.dismiss();
-					downloading = true;
+
 					if (obj.isErrored()) {
 
 						LayoutInflater inflater = ((Activity) context).getLayoutInflater();
@@ -167,25 +171,25 @@ public class OpenLookup {
 						int responseCode = obj.getResponseCode();
 						ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-						if(responseCode == 403){
+						if (responseCode == 403) {
 							alertDialog.setTitle(obj.getException().getMessage());
 							alertDialog.setMessage("In the configuration screen, check the API key.");
-						}else if(responseCode == 404){
+						} else if (responseCode == 404) {
 							alertDialog.setTitle("URL Error");
 							alertDialog.setMessage("In the configuration screen, check the URL.");
-						}else if(responseCode >= 500){
+						} else if (responseCode >= 500) {
 							alertDialog.setTitle("Internal Server Error");
 							alertDialog.setMessage(obj.getException().getMessage());
-						}else if ((Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0)){
+						} else if ((Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0)) {
 							alertDialog.setMessage("Is the device connected to the internet/network?  " +
 									"Check if Air Plane mode is on.");
-						}else if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
+						} else if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
 							alertDialog.setMessage("Is the device connected to the internet/network?  " +
 									"Check if the connection has been lost.");
-						}else {
-							if(obj.getException().getMessage() == null){
+						} else {
+							if (obj.getException().getMessage() == null) {
 								alertDialog.setMessage("Unknown Error");
-							}else {
+							} else {
 								alertDialog.setMessage(obj.getException().getMessage());
 							}
 						}

@@ -17,7 +17,6 @@ public class Configuration extends BaseActivity {
 	public static final String URL_TEXT = "urlText";
 	public static final String API_TEXT = "apiText";
 
-
 	private EditText urlInput;
 	private EditText apiInput;
 	private String url;
@@ -85,4 +84,10 @@ public class Configuration extends BaseActivity {
 		urlInput.setText(url);
 		apiInput.setText(apiKey);
 	}
+
+//	@Override
+//	public void onBackPressed() {
+//		Intent get_barcode = new Intent(this, MainActivity.class);
+//		startActivity(get_barcode);
+//	}
 }

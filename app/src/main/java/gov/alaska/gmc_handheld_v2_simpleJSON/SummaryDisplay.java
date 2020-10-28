@@ -72,6 +72,14 @@ public class SummaryDisplay extends BaseActivity {
                     expandableListView.expandGroup(i);
                 }
             }
+
+            expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+                @Override
+                public boolean onGroupClick(ExpandableListView parent, View v,
+                                            int groupPosition, long id) {
+                    return true; // This way the expander cannot be collapsed
+                }
+            });
         }
     }
 
@@ -86,5 +94,11 @@ public class SummaryDisplay extends BaseActivity {
         invisibleEditText.setVisibility(View.VISIBLE);
         return super.onKeyDown(keyCode, event);
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        Intent get_barcode = new Intent(this, Summary.class);
+//        startActivity(get_barcode);
+//    }
 
 }

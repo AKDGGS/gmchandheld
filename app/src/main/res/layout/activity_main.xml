@@ -31,7 +31,8 @@
             android:layout_weight="1"
             android:inputType="text"
             android:paddingLeft="16dp"
-            android:paddingStart="16dp" />
+            android:paddingStart="16dp"
+            android:text="FA14127596B006-0016"/>
 
         <Button
             android:id="@+id/submit_button"
