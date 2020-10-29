@@ -31,6 +31,7 @@
             android:inputType="text"
             android:paddingLeft="16dp"
             android:paddingStart="16dp"
+            android:text=""
             />
 
         <Button

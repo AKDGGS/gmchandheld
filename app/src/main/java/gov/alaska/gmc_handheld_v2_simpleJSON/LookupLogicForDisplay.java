@@ -1,6 +1,7 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.text.SpannableStringBuilder;
+import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
 
 import org.json.JSONArray;
@@ -50,14 +51,17 @@ public class LookupLogicForDisplay {
 		this.ID = ID;
 	}
 
-	public boolean getRadiationWarningFlag(){return radiationWarningFlag;}
+	public boolean getRadiationWarningFlag() {
+		return radiationWarningFlag;
+	}
 
-	public void setBarcodeQuery(String barcodeQuery){
+	public void setBarcodeQuery(String barcodeQuery) {
 		this.barcodeQuery = barcodeQuery;
 	}
 
-	public String getBarcodeQuery(){return barcodeQuery;}
-
+	public String getBarcodeQuery() {
+		return barcodeQuery;
+	}
 
 
 	//*********************************************************************************************
@@ -117,6 +121,21 @@ public class LookupLogicForDisplay {
 				}
 				ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 						lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+				//Arbitrary Value
+
+				int indentationIncrement = 42;
+
+				if (!Character.isWhitespace(ssb.charAt(3))) {
+					ssb = createIndentedText(ssb, 3, indentationIncrement);
+				} else if (!Character.isWhitespace(ssb.charAt(6))) {
+					ssb = createIndentedText(ssb, 6, indentationIncrement * 2);
+				} else if (!Character.isWhitespace(ssb.charAt(9))) {
+					ssb = createIndentedText(ssb, 9, indentationIncrement * 3);
+				}  else {
+					ssb = createIndentedText(ssb, 0, indentationIncrement * 4);
+				}
 				displayList.add(ssb);
 				dict.put(currKey, displayList);
 			}
@@ -477,7 +496,7 @@ public class LookupLogicForDisplay {
 				return new InventoryObject("Interval Top", o, 902);
 			}
 			case "issues":
-				if("radiation_risk".equals(o.toString())){
+				if ("radiation_risk".equals(o.toString())) {
 					radiationWarningFlag = true;
 				}
 				return new InventoryObject("Issue", o, 600);
@@ -531,7 +550,7 @@ public class LookupLogicForDisplay {
 			case "permitStatus":
 				return new InventoryObject("Permit Status", o, 70);
 			case "radiationMSVH":
-				if(((Double) o).floatValue() > 0) {
+				if (((Double) o).floatValue() > 0) {
 					radiationWarningFlag = true;
 				}
 				return new InventoryObject("Radiation MSVH", o, 1200);
@@ -572,5 +591,11 @@ public class LookupLogicForDisplay {
 			default:
 				return new InventoryObject(name, o);
 		}
+	}
+
+	public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
+		//https://www.programmersought.com/article/45371641877/
+		text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
+		return text;
 	}
 }

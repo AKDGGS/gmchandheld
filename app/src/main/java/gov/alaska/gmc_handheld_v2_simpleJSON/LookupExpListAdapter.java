@@ -186,23 +186,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				break;
 		}
 
-//		txtChild.setTypeface(Typeface.MONOSPACE);
-		// A value related to the size of the text.  It is not the font size, but related to it.
-		int textSize = (int) txtChild.getTextSize();
-
-
-	// 14 comes from the text size in exp_list_child.
-//	if (!Character.isWhitespace(expListChildContents.charAt(3))) {
-//		txtChild.setText(createIndentedText(expListChildContents, 3, textSize));
-//	} else if (!Character.isWhitespace(expListChildContents.charAt(6))) {
-//		txtChild.setText(createIndentedText(expListChildContents, 6, textSize * 2));
-//	} else if (!Character.isWhitespace(expListChildContents.charAt(9))) {
-//		txtChild.setText(createIndentedText(expListChildContents, 9, textSize * 3));
-//	} else if (!Character.isWhitespace(expListChildContents.charAt(12))) {
-//		txtChild.setText(createIndentedText(expListChildContents, 12, textSize * 4));
-//	} else {
-//		txtChild.setText(createIndentedText(expListChildContents, 0, textSize * 4));
-//	}
 
 
 		txtChild.setText(expListChildContents);

@@ -1,6 +1,7 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.text.SpannableStringBuilder;
+import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
 
 import org.json.JSONArray;
@@ -112,6 +113,21 @@ public class SummaryLogicForDisplay {
 				}
 				ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 						lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+
+				//Arbitrary value
+				int indentationIncrement = 42;
+
+				if (!Character.isWhitespace(ssb.charAt(3))) {
+					ssb = createIndentedText(ssb, 3, indentationIncrement);
+				} else if (!Character.isWhitespace(ssb.charAt(6))) {
+					ssb = createIndentedText(ssb, 6, indentationIncrement * 2);
+				} else if (!Character.isWhitespace(ssb.charAt(9))) {
+					ssb = createIndentedText(ssb, 9, indentationIncrement * 3);
+				}  else {
+					ssb = createIndentedText(ssb, 0, indentationIncrement * 4);
+				}
+
+
 				displayList.add(ssb);
 				dict.put(currKey, displayList);
 			}
@@ -322,5 +338,13 @@ public class SummaryLogicForDisplay {
 			default:
 				return new InventoryObject(name, o);
 		}
+	}
+
+
+	public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
+		//https://www.programmersought.com/article/45371641877/
+
+		text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
+		return text;
 	}
 }
