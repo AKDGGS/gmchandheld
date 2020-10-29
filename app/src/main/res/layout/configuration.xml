@@ -20,7 +20,7 @@
             android:paddingLeft="5dp"
             android:paddingTop="15dp"
             android:paddingBottom="5dp"
-            android:text="Build Date: Oct, 28, 2020"
+            android:text="Build Date: Oct, 29, 2020"
             android:textStyle="bold"
             android:textSize="14sp"
             android:textAlignment="gravity"

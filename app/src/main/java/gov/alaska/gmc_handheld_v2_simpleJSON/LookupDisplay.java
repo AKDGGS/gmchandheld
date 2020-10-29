@@ -1,7 +1,9 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
@@ -17,11 +19,14 @@ import androidx.core.content.ContextCompat;
 
 
 public class LookupDisplay extends BaseActivity {
+	ExpandableListView expandableListView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_display);
+		expandableListView = findViewById(R.id.expandableListView);
+
 
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -77,7 +82,7 @@ public class LookupDisplay extends BaseActivity {
 				}
 			}
 
-			ExpandableListView expandableListView = findViewById(R.id.expandableListView);
+
 			ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
 			expandableListView.setAdapter(listAdapter);
 
@@ -132,5 +137,43 @@ public class LookupDisplay extends BaseActivity {
 //		Intent get_barcode = new Intent(this, MainActivity.class);
 //		startActivity(get_barcode);
 //	}
+
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event){
+		int action, keycode;
+
+		action = event.getAction();
+		keycode = event.getKeyCode();
+
+		System.out.println(action);
+		System.out.println(keycode);
+		AudioManager manager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+
+		switch (keycode){
+			case KeyEvent.KEYCODE_DPAD_UP:
+			case KeyEvent.KEYCODE_VOLUME_UP:{
+				manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
+				manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
+				if(KeyEvent.ACTION_UP == action){
+					expandableListView.smoothScrollByOffset(-3);
+				}
+				return true;
+			}
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+			case KeyEvent.KEYCODE_VOLUME_DOWN:{
+
+				if(KeyEvent.ACTION_UP == action){
+
+					expandableListView.smoothScrollByOffset(3);
+				}
+				return true;
+			}
+
+
+
+		}
+		return super.dispatchKeyEvent(event);
+	}
 
 }

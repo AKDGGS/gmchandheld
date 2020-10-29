@@ -1,6 +1,8 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
@@ -12,10 +14,14 @@ import android.widget.ExpandableListView;
 
 public class SummaryDisplay extends BaseActivity {
 
+    private ExpandableListView expandableListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.summary_display);
+        expandableListView = findViewById(R.id.expandableListView);
+
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -63,7 +69,6 @@ public class SummaryDisplay extends BaseActivity {
                 }
             }
 
-            ExpandableListView expandableListView = findViewById(R.id.expandableListView);
             ExpandableListAdapter listAdapter = new LookupExpListAdapter(SummaryDisplay.this, summaryLogicForDisplayObj.getKeyList(), summaryLogicForDisplayObj.getDisplayDict());
             expandableListView.setAdapter(listAdapter);
 
@@ -100,5 +105,37 @@ public class SummaryDisplay extends BaseActivity {
 //        Intent get_barcode = new Intent(this, Summary.class);
 //        startActivity(get_barcode);
 //    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event){
+        int action, keycode;
+
+        action = event.getAction();
+        keycode = event.getKeyCode();
+        AudioManager manager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+
+
+        switch (keycode){
+            case KeyEvent.KEYCODE_VOLUME_UP:{
+                manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
+                manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
+
+                if(KeyEvent.ACTION_UP == action){
+
+                    expandableListView.smoothScrollByOffset(3);
+                }
+                return true;
+            }
+            case KeyEvent.KEYCODE_VOLUME_DOWN:{
+
+                if(KeyEvent.ACTION_UP == action){
+                    expandableListView.smoothScrollByOffset(-3);
+                }
+                return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
 
 }

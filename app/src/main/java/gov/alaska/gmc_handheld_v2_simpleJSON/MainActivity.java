@@ -21,6 +21,7 @@ public class MainActivity extends BaseActivity {
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	public static final String SHARED_PREFS = "sharedPrefs";
 
+
 	@Override
 	public void onRestart() {
 		super.onRestart();
