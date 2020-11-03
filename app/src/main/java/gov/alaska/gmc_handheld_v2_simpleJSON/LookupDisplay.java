@@ -19,7 +19,8 @@ import androidx.core.content.ContextCompat;
 
 
 public class LookupDisplay extends BaseActivity {
-	ExpandableListView expandableListView;
+	private ExpandableListView expandableListView;
+	private int listAdapterLength;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class LookupDisplay extends BaseActivity {
 		LookupLogicForDisplay lookupLogicForDisplayObj;
 		lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
-		if ("GMC_handheld".contentEquals(getSupportActionBar().getTitle())) {
+		if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
 			LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + lookupLogicForDisplayObj.getBarcodeQuery() + "</font> </small> </strong>"));
 			if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
 				LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
@@ -86,6 +87,7 @@ public class LookupDisplay extends BaseActivity {
 			ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
 			expandableListView.setAdapter(listAdapter);
 
+			listAdapterLength = listAdapter.getGroupCount();
 			if (listAdapter.getGroupCount() >= 1) {
 				for (int i = 0; i < listAdapter.getGroupCount(); i++) {
 					expandableListView.expandGroup(i);
@@ -146,8 +148,6 @@ public class LookupDisplay extends BaseActivity {
 		action = event.getAction();
 		keycode = event.getKeyCode();
 
-		System.out.println(action);
-		System.out.println(keycode);
 		AudioManager manager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
 
 		switch (keycode){
@@ -155,6 +155,9 @@ public class LookupDisplay extends BaseActivity {
 			case KeyEvent.KEYCODE_VOLUME_UP:{
 				manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
 				manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
+				if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+					expandableListView.smoothScrollToPosition(0, 0);
+				}
 				if(KeyEvent.ACTION_UP == action){
 					expandableListView.smoothScrollByOffset(-3);
 				}
@@ -163,17 +166,18 @@ public class LookupDisplay extends BaseActivity {
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 			case KeyEvent.KEYCODE_VOLUME_DOWN:{
 
-				if(KeyEvent.ACTION_UP == action){
+				if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+					expandableListView.smoothScrollToPosition(expandableListView.getCount());
+				}
 
+				if(KeyEvent.ACTION_UP == action){
 					expandableListView.smoothScrollByOffset(3);
 				}
 				return true;
 			}
-
-
-
 		}
 		return super.dispatchKeyEvent(event);
 	}
+
 
 }

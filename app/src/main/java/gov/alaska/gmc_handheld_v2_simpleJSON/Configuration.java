@@ -7,9 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 public class Configuration extends BaseActivity {
 
@@ -19,8 +23,10 @@ public class Configuration extends BaseActivity {
 
 	private EditText urlInput;
 	private EditText apiInput;
+	private TextView buildDateTV;
 	private String url;
 	private String apiKey;
+	private long time;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +37,12 @@ public class Configuration extends BaseActivity {
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
 
+		buildDateTV = findViewById(R.id.buildDateTV);
+		Date buildDate = new Date(BuildConfig.TIMESTAMP);
+		buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
+
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
-
 
 		final Button save_button = findViewById(R.id.save_button);
 
@@ -42,9 +51,7 @@ public class Configuration extends BaseActivity {
 			@Override
 			public void onClick(View v) {saveData(); }
 		});
-
 		loadData();
-
 		updateViews();
 	}
 

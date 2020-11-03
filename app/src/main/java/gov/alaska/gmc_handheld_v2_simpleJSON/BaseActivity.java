@@ -74,6 +74,10 @@ public class BaseActivity extends AppCompatActivity {
 			intent_configuration.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			this.startActivity(intent_configuration);
 			return true;
+		}else if (item.getItemId() == (R.id.move)) {
+			Intent intent_configuration = new Intent(this, Move.class);
+			this.startActivity(intent_configuration);
+			return true;
 		}else{
 			return super.onOptionsItemSelected(item);
 		}

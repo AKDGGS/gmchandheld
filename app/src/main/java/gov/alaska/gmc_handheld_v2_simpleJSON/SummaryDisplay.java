@@ -50,7 +50,7 @@ public class SummaryDisplay extends BaseActivity {
         SummaryLogicForDisplay summaryLogicForDisplayObj;
         summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
 
-        if("GMC_handheld".contentEquals(getSupportActionBar().getTitle())){
+        if("GMC Handheld".contentEquals(getSupportActionBar().getTitle())){
             SummaryDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + summaryLogicForDisplayObj.getBarcodeQuery() +"</font> </small> </strong>"));
             if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
                 SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + summaryLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
@@ -136,6 +136,4 @@ public class SummaryDisplay extends BaseActivity {
         }
         return super.dispatchKeyEvent(event);
     }
-
-
 }
