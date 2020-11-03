@@ -28,7 +28,7 @@
             android:name=".Recode"
             android:label="Recode" />
         <activity
-            android:name=".Move"
+            android:name=".MoveDisplay"
             android:label="Move" />
         <activity
             android:name=".Summary"

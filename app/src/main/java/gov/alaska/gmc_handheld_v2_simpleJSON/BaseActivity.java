@@ -75,7 +75,7 @@ public class BaseActivity extends AppCompatActivity {
 			this.startActivity(intent_configuration);
 			return true;
 		}else if (item.getItemId() == (R.id.move)) {
-			Intent intent_configuration = new Intent(this, Move.class);
+			Intent intent_configuration = new Intent(this, MoveDisplay.class);
 			this.startActivity(intent_configuration);
 			return true;
 		}else{

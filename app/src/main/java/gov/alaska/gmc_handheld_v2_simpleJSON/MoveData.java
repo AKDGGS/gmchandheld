@@ -19,20 +19,22 @@ import java.util.TimeZone;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-public class DownloadData {
+public class MoveData {
 	private Exception exception = null;
 	private StringBuilder sb;
 	private int responseCode;
 	private String responseMsg;
 	private final String url;
 	private String rawJson;
-	private final String barcodeQuery;
+	private final String destination;
+	private final String containerList;
 	private final Context context;
 	public static final String SHARED_PREFS = "sharedPrefs";
 
-	public DownloadData(String url, String barcodeQuery, Context context) {
+	public MoveData(String url, String destination, String containerList, Context context) {
 		this.url = url;
-		this.barcodeQuery = barcodeQuery;
+		this.destination = destination;
+		this.containerList = containerList;
 		this.context = context;
 	}
 
@@ -68,26 +70,30 @@ public class DownloadData {
 			Date date = new Date();
 			String HDATE = getDateFormat().format(date);
 
-			String QUERYPARAM = "barcode=" + barcodeQuery;
+			System.out.println(context.getClass().getSimpleName());
+			String QUERYPARAM = "d=" + destination + containerList;
 			String message = HDATE + "\n" + QUERYPARAM;
 
 			SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
 			String APIKEY = sharedPreferences.getString("apiText", "");
 
 			String AUTH_DGST = getDGST(APIKEY, message);
-			System.out.println(AUTH_DGST);
 
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Authorization", "BASE64-HMAC-SHA256 " + AUTH_DGST);
 			connection.setRequestProperty("Date", HDATE);
 
-			connection.setReadTimeout(10 * 1000);
+			connection.setReadTimeout( 10 * 1000);
 			connection.setConnectTimeout(5 * 1000);
+
+			System.out.println(AUTH_DGST);
 
 			connection.connect();
 
 			responseCode = connection.getResponseCode();
 			responseMsg = connection.getResponseMessage();
+
+
 
 			try {
 				inputStream = connection.getInputStream();
@@ -113,14 +119,14 @@ public class DownloadData {
 				}
 
 				if (sb.length() <= 2) {
-					exception = new Exception("No results found.\n\nIs the barcode correct? " + barcodeQuery);
+					exception = new Exception("No results found.\n\nIs the destiantion correct? " + destination);
 				} else {
 					rawJson = sb.toString();
 				}
 
 				inputStream.close();
 				connection.disconnect();
-			} catch (IOException e) {
+			}catch (IOException e) {
 				exception = e;
 				inputStream.close();
 				connection.disconnect();
