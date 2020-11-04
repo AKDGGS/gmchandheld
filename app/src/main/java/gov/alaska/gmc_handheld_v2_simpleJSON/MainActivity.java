@@ -58,13 +58,12 @@ public class MainActivity extends BaseActivity {
 
         // Submit barcode query
 		if (!openLookupObj.isDownloading()) {
-
 			// onClickListener listens if the submit button is clicked
 			submit_button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					openLookupObj.setDownloading(true);
-					openLookupObj.processDataForDisplay(getBarcode(), MainActivity.this);
+					openLookupObj.processDataForDisplay(getBarcode(), null, MainActivity.this);
 				}
 			});
 

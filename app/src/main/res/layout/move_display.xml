@@ -5,114 +5,142 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    app:backgroundTint="@android:color/holo_purple" >
+    app:backgroundTint="@android:color/holo_purple">
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/destination"
-        android:textAllCaps="true"
-        android:textColor="@android:color/black" />
-
-    <EditText
-        android:id="@+id/destinationET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginRight="15dp"
-        android:inputType="text"
-        android:paddingStart="16dp"
-        android:paddingLeft="16dp"
-        tools:ignore="RtlSymmetry"
-        app:backgroundTint="@color/colorPrimary"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/container_to_move"
-        android:textAllCaps="true"
-        android:textColor="@android:color/black" />
-
-
-    <EditText
-        android:id="@+id/moveContainerET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginRight="15dp"
-        android:inputType="text"
-        android:paddingStart="16dp"
-        android:paddingLeft="16dp"
-        tools:ignore="RtlSymmetry"
-        app:backgroundTint="@color/colorPrimary"/>
+        layout="@layout/toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-        <Button
-            android:id="@+id/add_container_button"
+        android:orientation="horizontal">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="add"
-            android:background="#ff567b95"
-            android:textColor="#fff"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/destination"
+            android:textAllCaps="true"
+            android:textColor="@android:color/black"
             android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/destinationET"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
+            android:inputType="text"
+
+            android:paddingLeft="16dp"
+            app:backgroundTint="@color/colorPrimary"
+            tools:ignore="RtlSymmetry" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="5dp"
+            android:text="Container:"
+            android:textAllCaps="true"
+            android:textColor="@android:color/black"
+            android:textSize="12sp" />
+
+
+        <EditText
+            android:id="@+id/moveContainerET"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            app:backgroundTint="@color/colorPrimary"
+            tools:ignore="RtlSymmetry" />
+
+        <Button
+            android:id="@+id/add_container_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+
+            android:background="@drawable/ic_baseline_add_24"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:padding="3dp"
+            android:text="Containers to move: (long click to remove item)"
+            android:textColor="#ff353535"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/moveCountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:padding="3dp"
+            android:paddingRight="10dp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/listViewGetContainersToMove"
+            android:layout_width="306dp"
+            android:layout_height="447dp"
+            android:layout_above="@+id/move_button"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="56dp"
+            android:layout_marginRight="56dp"
+            android:layout_marginBottom="5dp"
+            android:fadeScrollbars="false" />
 
         <Button
             android:id="@+id/move_button"
+            android:layout_alignParentBottom="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="12dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="12dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="@string/move"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:background="#ff567b95"
+            android:text="@string/move"
             android:textColor="#fff"
             android:textSize="12sp" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="5dp"
-        android:text="Containers to move"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="#ff353535"
-        android:layout_marginStart="5dp" />
-
-    <ListView
-        android:id="@+id/listViewGetContainersToMove"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="56dp"
-        android:layout_marginRight="56dp" />
-
-
-
+    </RelativeLayout>
 </LinearLayout>

@@ -40,7 +40,7 @@ public class SummaryDisplay extends BaseActivity {
                 }
 
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), SummaryDisplay.this);
+                    openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), null,SummaryDisplay.this);
                     return true;
                 }
                 return false;

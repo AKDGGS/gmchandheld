@@ -18,7 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 
@@ -29,6 +31,7 @@ public class OpenLookup {
 
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
+	private String containerListStr;
 
 	public static final String SHARED_PREFS = "sharedPrefs";
 //	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
@@ -46,7 +49,7 @@ public class OpenLookup {
 	AsyncTask asyncTask = null;
 
 	@SuppressLint("StaticFieldLeak")
-	public void processDataForDisplay(final String barcodeQuery, final Context context) {
+	public void processDataForDisplay(final String queryOrDestination, final ArrayList<String> containerList, final Context context) {
 
 		final String websiteURL;
 		String websiteURL1;
@@ -72,12 +75,17 @@ public class OpenLookup {
 		switch (context.getClass().getSimpleName()) {
 			case "MainActivity":
 			case "LookupDisplay": {
-				websiteURL1 = websiteURL1 + "inventory.json?barcode=" + barcodeQuery;
+				websiteURL1 = websiteURL1 + "inventory.json?barcode=" + queryOrDestination;
 				break;
 			}
 			case "Summary":
 			case "SummaryDisplay": {
-				websiteURL1 = websiteURL1 + "summary.json?barcode=" + barcodeQuery;
+				websiteURL1 = websiteURL1 + "summary.json?barcode=" + queryOrDestination;
+				break;
+			}
+			case "MoveDisplay": {
+				containerListStr = containersToMoveStr(containerList);
+				websiteURL1 = websiteURL1 + "move.json?d=" + queryOrDestination + containerListStr;
 				break;
 			}
 		}
@@ -85,7 +93,6 @@ public class OpenLookup {
 		websiteURL = websiteURL1;
 
 		if (downloading) {
-
 			asyncTask = new AsyncTask<String, Integer, DownloadData>() {
 
 				AlertDialog alert;  //onPreExec
@@ -101,7 +108,7 @@ public class OpenLookup {
 
 
 					TextView title = new TextView(context);
-					title.setText("Downloading: " + barcodeQuery);
+					title.setText("Processing " + queryOrDestination);
 					title.setGravity(Gravity.CENTER);
 					title.setTextSize(16);
 					alertDialog.setCustomTitle(title);
@@ -119,11 +126,11 @@ public class OpenLookup {
 					alert.show();
 					alert.setCanceledOnTouchOutside(false);
 
-					if (!barcodeQuery.isEmpty()) {
+					if (!queryOrDestination.isEmpty()) {
 						switch (context.getClass().getSimpleName()) {
 							case "MainActivity": {
 
-								lastAddedToHistory(context, barcodeQuery);
+								lastAddedToHistory(context, queryOrDestination);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetBarcodeHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(lookupHistory);
@@ -133,7 +140,7 @@ public class OpenLookup {
 							}
 							case "Summary": {
 
-								lastAddedToHistory(context, barcodeQuery);
+								lastAddedToHistory(context, queryOrDestination);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetSummaryHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(summaryHistory);
@@ -148,8 +155,24 @@ public class OpenLookup {
 
 				@Override
 				protected DownloadData doInBackground(String... strings) {
-					if(!isCancelled()) {
-						DownloadData downloadData = new DownloadData(websiteURL, barcodeQuery, context);
+					if (!isCancelled()) {
+						DownloadData downloadData = null;
+
+						switch (context.getClass().getSimpleName()) {
+							case "MainActivity":
+							case "LookupDisplay":
+							case "Summary":
+							case "SummaryDisplay": {
+								downloadData = new DownloadData(websiteURL, queryOrDestination, context);
+								break;
+							}
+							case "MoveDisplay": {
+								System.out.println("Test.....");
+								downloadData = new DownloadData(websiteURL, queryOrDestination, containerListStr, context);
+								break;
+							}
+						}
+
 						downloadData.getDataFromURL();
 						return downloadData;
 					}
@@ -210,69 +233,89 @@ public class OpenLookup {
 										break;
 									case "SummaryDisplay":
 									case "LookupDisplay":
-										lastAddedToHistory(context, barcodeQuery);
+										lastAddedToHistory(context, queryOrDestination);
 										EditText invisibleEditText = ((Activity) context).findViewById(R.id.invisibleEditText);
 										invisibleEditText.setText("");
 										invisibleEditText.requestFocus();
 										break;
+									case "MoveDisplay":
+										EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
+										destinationET.setText(queryOrDestination);
+										break;
 								}
 							}
-						});
 
-						AlertDialog alert = alertDialog.create();
-						alert.setCanceledOnTouchOutside(false);
-						alert.show();
+					});
 
-					} else if (obj.getRawJson().length() > 2) {
+					AlertDialog alert = alertDialog.create();
+					alert.setCanceledOnTouchOutside(false);
+					alert.show();
 
-						switch (context.getClass().getSimpleName()) {
-							case "LookupDisplay":
-							case "MainActivity": {
-								LookupLogicForDisplay lookupLogicForDisplayObj;
-								lookupLogicForDisplayObj = new LookupLogicForDisplay();
-								LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
+				} else if(obj.getRawJson().
 
-								lookupLogicForDisplayObj.setBarcodeQuery(barcodeQuery);
+				length() >2)
 
-								try {
-									lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-								Intent intent = new Intent(context, LookupDisplay.class);
-								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
-								context.startActivity(intent);
+				{
 
-								lastAddedToHistory(context, barcodeQuery);
-								break;
+					switch (context.getClass().getSimpleName()) {
+						case "LookupDisplay":
+						case "MainActivity": {
+							LookupLogicForDisplay lookupLogicForDisplayObj;
+							lookupLogicForDisplayObj = new LookupLogicForDisplay();
+							LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
+
+							lookupLogicForDisplayObj.setBarcodeQuery(queryOrDestination);
+
+							try {
+								lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
-							case "Summary":
-							case "SummaryDisplay": {
-								SummaryLogicForDisplay summaryLogicForDisplayObj;
-								summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-								SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
+							Intent intent = new Intent(context, LookupDisplay.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+							intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
+							context.startActivity(intent);
 
-								summaryLogicForDisplayObj.setBarcodeQuery(barcodeQuery);
-
-								try {
-									summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-
-								Intent intent = new Intent(context, SummaryDisplay.class);
-								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-								intent.putExtra("barcode", barcodeQuery);  //this barcode refers to the query barcode.
-								context.startActivity(intent);
-								lastAddedToHistory(context, barcodeQuery);
-								break;
-							}
-
+							lastAddedToHistory(context, queryOrDestination);
+							break;
 						}
+						case "Summary":
+						case "SummaryDisplay": {
+							SummaryLogicForDisplay summaryLogicForDisplayObj;
+							summaryLogicForDisplayObj = new SummaryLogicForDisplay();
+							SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
+
+							summaryLogicForDisplayObj.setBarcodeQuery(queryOrDestination);
+
+							try {
+								summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+							Intent intent = new Intent(context, SummaryDisplay.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+							intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
+							context.startActivity(intent);
+							lastAddedToHistory(context, queryOrDestination);
+							break;
+						}
+						case "MoveDisplay": {
+							containerList.clear();
+							ListView containerListLV = ((Activity) context).findViewById(R.id.listViewGetContainersToMove);
+							ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
+							adapter.clear();
+							adapter.notifyDataSetChanged();
+							Toast.makeText(context, "The move was successful.",
+									Toast.LENGTH_LONG).show();
+							EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
+							destinationET.requestFocus();
+						}
+
 					}
 				}
-			}.execute();
+			}
+		}.execute();
 
 ////				Save LookupHistory list-- Test for audit and move.
 //					SharedPreferences prefs = context.getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -280,8 +323,9 @@ public class OpenLookup {
 //					editor.putString("lookupHistoryString", lookupHistory.toString());
 //					editor.commit();
 
-		}
 	}
+
+}
 
 	private void lastAddedToHistory(Context context, String barcodeQuery) {
 		String lastAdded = null;
@@ -307,5 +351,23 @@ public class OpenLookup {
 				break;
 			}
 		}
+	}
+
+	public String containersToMoveStr(ArrayList<String> list) {
+		String delim = "&c=";
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(delim);
+		int i = 0;
+		while (i < list.size() - 1) {
+			sb.append(list.get(i));
+			sb.append(delim);
+			i++;
+		}
+		sb.append(list.get(i));
+
+		String res = sb.toString();
+		return res;
 	}
 }

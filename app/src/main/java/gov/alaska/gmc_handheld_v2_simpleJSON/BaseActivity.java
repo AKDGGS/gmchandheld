@@ -41,7 +41,7 @@ public class BaseActivity extends AppCompatActivity {
 	@Override
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-		if(item.getItemId() == (R.id.summary)){
+		if (item.getItemId() == (R.id.summary)) {
 			SummaryLogicForDisplay summaryLogicForDisplayObj;
 			summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
 
@@ -55,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
 				startActivity(summary);
 			}
 			return true;
-		}else if(item.getItemId() == (R.id.lookup)){
+		} else if (item.getItemId() == (R.id.lookup)) {
 			LookupLogicForDisplay lookupLogicForDisplayObj;
 			lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
@@ -69,16 +69,18 @@ public class BaseActivity extends AppCompatActivity {
 				startActivity(lookup);
 			}
 			return true;
-		}else if (item.getItemId() == (R.id.configuration)) {
+		} else if (item.getItemId() == (R.id.configuration)) {
 			Intent intent_configuration = new Intent(this, Configuration.class);
 			intent_configuration.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			this.startActivity(intent_configuration);
 			return true;
-		}else if (item.getItemId() == (R.id.move)) {
-			Intent intent_configuration = new Intent(this, MoveDisplay.class);
-			this.startActivity(intent_configuration);
+		} else if (item.getItemId() == (R.id.move)) {
+			Intent intent_move = new Intent(this, MoveDisplay.class);
+			intent_move.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//			this.startActivityForResult(intent_move, 1);
+			this.startActivity(intent_move);
 			return true;
-		}else{
+		} else {
 			return super.onOptionsItemSelected(item);
 		}
 
@@ -154,4 +156,7 @@ public class BaseActivity extends AppCompatActivity {
 //				return super.onOptionsItemSelected(item);
 //		}
 	}
+
+
+
 }

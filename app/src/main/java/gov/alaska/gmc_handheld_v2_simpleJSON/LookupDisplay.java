@@ -46,7 +46,7 @@ public class LookupDisplay extends BaseActivity {
 				}
 
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-					openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), LookupDisplay.this);
+					openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), null,LookupDisplay.this);
 					return true;
 				}
 				return false;

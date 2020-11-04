@@ -58,7 +58,7 @@ public class Summary extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     openLookupObj.setDownloading(true);
-                    openLookupObj.processDataForDisplay(getBarcode(), Summary.this);
+                    openLookupObj.processDataForDisplay(getBarcode(), null, Summary.this);
                 }
             });
 

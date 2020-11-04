@@ -29,7 +29,8 @@
             android:label="Recode" />
         <activity
             android:name=".MoveDisplay"
-            android:label="Move" />
+            android:label="Move"
+            android:launchMode="singleTask" />
         <activity
             android:name=".Summary"
             android:label="Summary"

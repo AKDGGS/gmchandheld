@@ -26,13 +26,23 @@ public class DownloadData {
 	private String responseMsg;
 	private final String url;
 	private String rawJson;
-	private final String barcodeQuery;
+	private String queryOrDestination;
+	private String containerListStr;
 	private final Context context;
+
+
 	public static final String SHARED_PREFS = "sharedPrefs";
 
-	public DownloadData(String url, String barcodeQuery, Context context) {
+	public DownloadData(String url, String queryOrDestination, Context context) {
 		this.url = url;
-		this.barcodeQuery = barcodeQuery;
+		this.queryOrDestination = queryOrDestination;
+		this.context = context;
+	}
+
+	public DownloadData(String url, String queryOrDestination, String containerListStr, Context context) {
+		this.url = url;
+		this.queryOrDestination = queryOrDestination;
+		this.containerListStr = containerListStr;
 		this.context = context;
 	}
 
@@ -60,7 +70,6 @@ public class DownloadData {
 		InputStream inputStream;
 		HttpURLConnection connection;
 
-
 		try {
 			URL myURL = new URL(url);
 			connection = (HttpURLConnection) myURL.openConnection();
@@ -68,14 +77,29 @@ public class DownloadData {
 			Date date = new Date();
 			String HDATE = getDateFormat().format(date);
 
-			String QUERYPARAM = "barcode=" + barcodeQuery;
+			String QUERYPARAM = null;
+
+			System.out.println(context.getClass().getSimpleName());
+			switch (context.getClass().getSimpleName()){
+				case "MainActivity":
+				case "LookupDisplay":
+				case "Summary":
+				case "SummaryDisplay":{
+					QUERYPARAM = "barcode=" + queryOrDestination;
+					break;
+				}
+				case "MoveDisplay":{
+					QUERYPARAM = "d=" + queryOrDestination + containerListStr;
+					break;
+				}
+			}
+
 			String message = HDATE + "\n" + QUERYPARAM;
 
 			SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
 			String APIKEY = sharedPreferences.getString("apiText", "");
 
 			String AUTH_DGST = getDGST(APIKEY, message);
-			System.out.println(AUTH_DGST);
 
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Authorization", "BASE64-HMAC-SHA256 " + AUTH_DGST);
@@ -113,7 +137,7 @@ public class DownloadData {
 				}
 
 				if (sb.length() <= 2) {
-					exception = new Exception("No results found.\n\nIs the barcode correct? " + barcodeQuery);
+					exception = new Exception("No results found.\n\nIs the barcode correct? " + queryOrDestination);
 				} else {
 					rawJson = sb.toString();
 				}
