@@ -6,10 +6,12 @@ import android.content.SharedPreferences;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -85,11 +87,18 @@ public class DownloadData {
 				case "LookupDisplay":
 				case "Summary":
 				case "SummaryDisplay":{
-					QUERYPARAM = "barcode=" + queryOrDestination;
+
+					String query = null;
+					try {
+						query = URLEncoder.encode(queryOrDestination, "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					QUERYPARAM = "barcode=" + query;
 					break;
 				}
 				case "MoveDisplay":{
-					QUERYPARAM = "d=" + queryOrDestination + containerListStr;
+					QUERYPARAM = queryOrDestination;
 					break;
 				}
 			}

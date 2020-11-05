@@ -6,13 +6,13 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
 
-public class Audit extends BaseActivity {
+public class AuditDisplay extends BaseActivity {
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.audit);
+        setContentView(R.layout.audit_display);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));

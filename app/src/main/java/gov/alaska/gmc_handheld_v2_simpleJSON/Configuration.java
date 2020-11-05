@@ -26,7 +26,6 @@ public class Configuration extends BaseActivity {
 	private TextView buildDateTV;
 	private String url;
 	private String apiKey;
-	private long time;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +56,12 @@ public class Configuration extends BaseActivity {
 
 	public String getUrl() {
 		urlInput = findViewById(R.id.url_editText);
-		return urlInput.getText().toString();
+
+		url = urlInput.getText().toString();
+		if (url.charAt(url.length() - 1) != ('/')) {
+			url = url + '/';
+		}
+		return url;
 	}
 
 	public String getApiKey() {

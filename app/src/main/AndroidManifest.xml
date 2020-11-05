@@ -19,7 +19,7 @@
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".BaseActivity" />
         <activity
-            android:name=".Audit"
+            android:name=".AuditDisplay"
             android:label="Audit" />
         <activity
             android:name=".AddInventory"
@@ -30,7 +30,8 @@
         <activity
             android:name=".MoveDisplay"
             android:label="Move"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".Summary"
             android:label="Summary"

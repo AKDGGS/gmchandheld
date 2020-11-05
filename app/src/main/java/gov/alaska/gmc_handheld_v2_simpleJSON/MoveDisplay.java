@@ -16,10 +16,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 
-
 public class MoveDisplay extends BaseActivity {
 
-	//	private final Button add_button = null;
 	ListView containerListLV;
 
 	ArrayList<String> containerList;
@@ -40,6 +38,7 @@ public class MoveDisplay extends BaseActivity {
 		final Button move_button = findViewById(R.id.move_button);
 		final Button add_button = findViewById(R.id.add_container_button);
 		containerListLV = findViewById(R.id.listViewGetContainersToMove);
+		long timeLastClick;
 
 		containerList = new ArrayList<>();
 
@@ -65,22 +64,46 @@ public class MoveDisplay extends BaseActivity {
 		final OpenLookup openLookupObj = new OpenLookup();
 
 		if (!openLookupObj.isDownloading()) {
-			containerListLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//			containerListLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//				@Override
+//				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+//					final int which_item = position;
+//					adapter.remove(containerList.get(which_item));
+//					containerList.remove(which_item);
+//					adapter.notifyDataSetChanged();
+//					moveCountTV.setText(String.valueOf(containerList.size()));
+//					return false;
+//				}
+//			});
+
+
+			containerListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				long startTime = System.currentTimeMillis();
+
 				@Override
-				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+				public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 					final int which_item = position;
 					adapter.remove(containerList.get(which_item));
 					containerList.remove(which_item);
 					adapter.notifyDataSetChanged();
 					moveCountTV.setText(String.valueOf(containerList.size()));
-					return false;
 				}
+
+//				@Override
+//				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+//					final int which_item = position;
+//					adapter.remove(containerList.get(which_item));
+//					containerList.remove(which_item);
+//					adapter.notifyDataSetChanged();
+//					moveCountTV.setText(String.valueOf(containerList.size()));
+//					return false;
+//				}
 			});
+
 
 			// KeyListener listens if enter is pressed
 			moveContainerET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
-
 					// if "enter" is pressed
 					if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
 						add_button.performClick();
@@ -104,7 +127,6 @@ public class MoveDisplay extends BaseActivity {
 							moveContainerET.requestFocus();
 							return true;
 						}
-
 					}
 					return false;
 				}
@@ -141,6 +163,7 @@ public class MoveDisplay extends BaseActivity {
 		openLookup.setDownloading(true);
 		openLookup.processDataForDisplay(getDestination(), containerList, this);
 	}
+
 
 
 }

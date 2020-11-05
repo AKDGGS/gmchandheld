@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.lang.reflect.Field;
 
 public class BaseActivity extends AppCompatActivity {
-//	public static final String EXTRA_TEXT = "com.example.user_input_no_button.EXTRA_TEXT";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +26,7 @@ public class BaseActivity extends AppCompatActivity {
 			menuKeyField.setAccessible(true);
 			menuKeyField.setBoolean(config, false);
 		} catch (Exception ex) {
-			// Ignore
+			//ignore
 		}
 	}
 
@@ -80,9 +79,18 @@ public class BaseActivity extends AppCompatActivity {
 //			this.startActivityForResult(intent_move, 1);
 			this.startActivity(intent_move);
 			return true;
-		} else {
+		}else {
 			return super.onOptionsItemSelected(item);
 		}
+
+
+//		 else if (item.getItemId() == (R.id.audit)) {
+//			Intent intent_audit = new Intent(this, AuditDisplay.class);
+//			intent_audit.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+////			this.startActivityForResult(intent_move, 1);
+//			this.startActivity(intent_audit);
+//			return true;
+//		}
 
 
 		// DELETE THIS SWITCH STATEMENT AFTER ADDITIONAL FUNCTIONS ARE FINISHED.
@@ -141,17 +149,13 @@ public class BaseActivity extends AppCompatActivity {
 ////				this.startActivity(intent_add_container);
 ////				return true;
 ////
-////			case R.id.audit:
-////				Intent intent_audit = new Intent(this, Audit.class);
-////				this.startActivity(intent_audit);
-////				return true;
+
 //
 //			case R.id.configuration:
 //				Intent intent_configuration = new Intent(this, Configuration.class);
 //				this.startActivity(intent_configuration);
 //				return true;
-//
-//
+
 //			default:
 //				return super.onOptionsItemSelected(item);
 //		}

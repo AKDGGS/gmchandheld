@@ -20,6 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -32,6 +34,7 @@ public class OpenLookup {
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
 	private String containerListStr;
+	private String query = null;
 
 	public static final String SHARED_PREFS = "sharedPrefs";
 //	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
@@ -61,36 +64,46 @@ public class OpenLookup {
 		SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
 		String url = sharedPreferences.getString("urlText", "");
 
-		if (url.charAt(url.length() - 1) != ('/')) {
-			url = url + '/';
-		}
-
-		int APILevel = android.os.Build.VERSION.SDK_INT;
-		if (APILevel < 18 && url.startsWith("https")) {
-			websiteURL1 = "http" + url.substring(5);
-		} else {
-			websiteURL1 = url;
-		}
+//		int APILevel = android.os.Build.VERSION.SDK_INT;
+//		if (APILevel < 18 && url.startsWith("https")) {
+//			websiteURL1 = "http" + url.substring(5);
+//		} else {
+//			websiteURL1 = url;
+//		}
 
 		switch (context.getClass().getSimpleName()) {
 			case "MainActivity":
 			case "LookupDisplay": {
-				websiteURL1 = websiteURL1 + "inventory.json?barcode=" + queryOrDestination;
+				try {
+					query = URLEncoder.encode(queryOrDestination, "utf-8");
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+
+				url = url + "inventory.json?barcode=" + queryOrDestination;
 				break;
 			}
 			case "Summary":
 			case "SummaryDisplay": {
-				websiteURL1 = websiteURL1 + "summary.json?barcode=" + queryOrDestination;
+				url = url + "summary.json?barcode=" + queryOrDestination;
 				break;
 			}
 			case "MoveDisplay": {
 				containerListStr = containersToMoveStr(containerList);
-				websiteURL1 = websiteURL1 + "move.json?d=" + queryOrDestination + containerListStr;
+				System.out.println(containerListStr);
+				try {
+					query = URLEncoder.encode(queryOrDestination, "utf-8");
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				query = "d=" + query + containerListStr;
+				url = url +"move.json?" +  query;
+				System.out.println("Open Lookup: " + url);
 				break;
 			}
 		}
 
-		websiteURL = websiteURL1;
+		websiteURL = url;
 
 		if (downloading) {
 			asyncTask = new AsyncTask<String, Integer, DownloadData>() {
@@ -167,8 +180,8 @@ public class OpenLookup {
 								break;
 							}
 							case "MoveDisplay": {
-								System.out.println("Test.....");
-								downloadData = new DownloadData(websiteURL, queryOrDestination, containerListStr, context);
+								final String query2 = query;
+								downloadData = new DownloadData(websiteURL, query2, context);
 								break;
 							}
 						}
@@ -245,77 +258,69 @@ public class OpenLookup {
 								}
 							}
 
-					});
+						});
 
-					AlertDialog alert = alertDialog.create();
-					alert.setCanceledOnTouchOutside(false);
-					alert.show();
+						AlertDialog alert = alertDialog.create();
+						alert.setCanceledOnTouchOutside(false);
+						alert.show();
+					} else {
+						switch (context.getClass().getSimpleName()) {
+							case "LookupDisplay":
+							case "MainActivity": {
+								LookupLogicForDisplay lookupLogicForDisplayObj = new LookupLogicForDisplay();
+								LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
 
-				} else if(obj.getRawJson().
+								lookupLogicForDisplayObj.setBarcodeQuery(queryOrDestination);
 
-				length() >2)
+								try {
+									lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								Intent intent = new Intent(context, LookupDisplay.class);
+								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+								intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
+								context.startActivity(intent);
 
-				{
-
-					switch (context.getClass().getSimpleName()) {
-						case "LookupDisplay":
-						case "MainActivity": {
-							LookupLogicForDisplay lookupLogicForDisplayObj;
-							lookupLogicForDisplayObj = new LookupLogicForDisplay();
-							LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
-
-							lookupLogicForDisplayObj.setBarcodeQuery(queryOrDestination);
-
-							try {
-								lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
-							} catch (Exception e) {
-								e.printStackTrace();
+								lastAddedToHistory(context, queryOrDestination);
+								break;
 							}
-							Intent intent = new Intent(context, LookupDisplay.class);
-							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-							intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
-							context.startActivity(intent);
+							case "Summary":
+							case "SummaryDisplay": {
+								SummaryLogicForDisplay summaryLogicForDisplayObj = new SummaryLogicForDisplay();
+								SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
 
-							lastAddedToHistory(context, queryOrDestination);
-							break;
-						}
-						case "Summary":
-						case "SummaryDisplay": {
-							SummaryLogicForDisplay summaryLogicForDisplayObj;
-							summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-							SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
+								summaryLogicForDisplayObj.setBarcodeQuery(queryOrDestination);
 
-							summaryLogicForDisplayObj.setBarcodeQuery(queryOrDestination);
+								try {
+									summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
 
-							try {
-								summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
-							} catch (Exception e) {
-								e.printStackTrace();
+								Intent intent = new Intent(context, SummaryDisplay.class);
+								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+								intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
+								context.startActivity(intent);
+								lastAddedToHistory(context, queryOrDestination);
+								break;
+							}
+							case "MoveDisplay": {
+								containerList.clear();
+								ListView containerListLV = ((Activity) context).findViewById(R.id.listViewGetContainersToMove);
+								ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
+								adapter.clear();
+								adapter.notifyDataSetChanged();
+								Toast.makeText(context, "The move was successful.",
+										Toast.LENGTH_LONG).show();
+								EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
+								destinationET.requestFocus();
 							}
 
-							Intent intent = new Intent(context, SummaryDisplay.class);
-							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-							intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
-							context.startActivity(intent);
-							lastAddedToHistory(context, queryOrDestination);
-							break;
 						}
-						case "MoveDisplay": {
-							containerList.clear();
-							ListView containerListLV = ((Activity) context).findViewById(R.id.listViewGetContainersToMove);
-							ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
-							adapter.clear();
-							adapter.notifyDataSetChanged();
-							Toast.makeText(context, "The move was successful.",
-									Toast.LENGTH_LONG).show();
-							EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
-							destinationET.requestFocus();
-						}
-
 					}
 				}
-			}
-		}.execute();
+			}.execute();
 
 ////				Save LookupHistory list-- Test for audit and move.
 //					SharedPreferences prefs = context.getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -323,9 +328,9 @@ public class OpenLookup {
 //					editor.putString("lookupHistoryString", lookupHistory.toString());
 //					editor.commit();
 
-	}
+		}
 
-}
+	}
 
 	private void lastAddedToHistory(Context context, String barcodeQuery) {
 		String lastAdded = null;
@@ -361,7 +366,12 @@ public class OpenLookup {
 		sb.append(delim);
 		int i = 0;
 		while (i < list.size() - 1) {
-			sb.append(list.get(i));
+
+			try {
+				sb.append(URLEncoder.encode(list.get(i), "utf-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 			sb.append(delim);
 			i++;
 		}
