@@ -48,7 +48,9 @@ public class Configuration extends BaseActivity {
 		// onClickListener listens if the save button is clicked
 		save_button.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {saveData(); }
+			public void onClick(View v) {
+				saveData();
+			}
 		});
 		loadData();
 		updateViews();
@@ -58,10 +60,11 @@ public class Configuration extends BaseActivity {
 		urlInput = findViewById(R.id.url_editText);
 
 		url = urlInput.getText().toString();
-		if (url.charAt(url.length() - 1) != ('/')) {
+		if (url.length() > 1 && url.charAt(url.length() - 1) != ('/')) {
 			url = url + '/';
 		}
 		return url;
+
 	}
 
 	public String getApiKey() {
@@ -73,22 +76,29 @@ public class Configuration extends BaseActivity {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 
-		editor.putString(URL_TEXT, getUrl());
-		editor.putString(API_TEXT, getApiKey());
+		if ("".equals(getUrl()) || getUrl().equals(null)) {
+			Toast.makeText(this, "You did not enter an URL.", Toast.LENGTH_LONG).show();
+		}else if("".equals(getApiKey()) || getApiKey().equals(null)) {
+			Toast.makeText(this, "You did not enter an API key.", Toast.LENGTH_LONG).show();
+		}else{
+			editor.putString(URL_TEXT, getUrl());
+			editor.putString(API_TEXT, getApiKey());
 
-		editor.apply();
-		Toast.makeText(this, "Changes to configuration saved.", Toast.LENGTH_LONG).show();
+			editor.apply();
+			Toast.makeText(this, "Changes to configuration saved.", Toast.LENGTH_LONG).show();
 
-		Intent intent = new Intent(this, MainActivity.class);
-		startActivity(intent);
-
+			Intent intent = new Intent(this, MainActivity.class);
+			startActivity(intent);
+		}
 
 	}
 
 	public void loadData() {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		url = sharedPreferences.getString(URL_TEXT, "http://maps.dggs.alaska.gov/gmc/");
-		apiKey = sharedPreferences.getString(API_TEXT, "thXAgLfS68TRpmixfvr2nksFQYrzZf5F");
+		url = sharedPreferences.getString(URL_TEXT, "");
+		apiKey = sharedPreferences.getString(API_TEXT, "");
+//		url = sharedPreferences.getString(URL_TEXT, "http://maps.dggs.alaska.gov/gmc/");
+//		apiKey = sharedPreferences.getString(API_TEXT, "thXAgLfS68TRpmixfvr2nksFQYrzZf5F");
 	}
 
 	public void updateViews() {
