@@ -63,9 +63,9 @@ public class MoveDisplay extends BaseActivity {
 			}
 		});
 
-		final OpenLookup openLookupObj = new OpenLookup();
+		final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
 
-		if (!openLookupObj.isDownloading()) {
+		if (!remoteAPITaskObj.isDownloading()) {
 			containerListLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 				@Override
 				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -161,9 +161,9 @@ public class MoveDisplay extends BaseActivity {
 	}
 
 	public void moveContainer() {
-		OpenLookup openLookup = new OpenLookup();
-		openLookup.setDownloading(true);
-		openLookup.processDataForDisplay(getDestination(), containerList, this);
+		RemoteAPITask remoteAPITask = new RemoteAPITask();
+		remoteAPITask.setDownloading(true);
+		remoteAPITask.processDataForDisplay(getDestination(), containerList, this);
 	}
 
 

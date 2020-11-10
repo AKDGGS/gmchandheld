@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 
-public class OpenLookup {
+public class RemoteAPITask {
 
-	public OpenLookup() {
+	public RemoteAPITask() {
 	}
 
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
@@ -76,8 +76,8 @@ public class OpenLookup {
 			}
 		}
 
-		RemoteApiTask remoteApiTask = new RemoteApiTask();
-		remoteApiTask.processDataForDisplay(url, queryOrDestination, containerListStr, context);
+		RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
+		remoteApiUIHandler.processDataForDisplay(url, queryOrDestination, containerListStr, context);
 	}
 
 

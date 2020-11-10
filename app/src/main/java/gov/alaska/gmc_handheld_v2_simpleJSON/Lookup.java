@@ -47,7 +47,7 @@ public class Lookup extends BaseActivity {
 
 		final EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
 		final Button submit_button = findViewById(R.id.submit_button);
-		final OpenLookup openLookupObj = new OpenLookup();
+		final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
 
 		// populates the history list
 		listView = findViewById(R.id.listViewGetBarcodeHistory);
@@ -57,14 +57,14 @@ public class Lookup extends BaseActivity {
 		listView.setAdapter(adapter);
 
         // Submit barcode query
-		if (!openLookupObj.isDownloading()) {
+		if (!remoteAPITaskObj.isDownloading()) {
 			// onClickListener listens if the submit button is clicked
 			submit_button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					if(!getBarcode().isEmpty()) {
-						openLookupObj.setDownloading(true);
-						openLookupObj.processDataForDisplay(getBarcode(), null, Lookup.this);
+						remoteAPITaskObj.setDownloading(true);
+						remoteAPITaskObj.processDataForDisplay(getBarcode(), null, Lookup.this);
 					}
 				}
 			});

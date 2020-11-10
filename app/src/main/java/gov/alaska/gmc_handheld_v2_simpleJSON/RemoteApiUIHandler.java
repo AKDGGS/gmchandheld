@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 
-public class RemoteApiTask {
+public class RemoteApiUIHandler {
 
-	public RemoteApiTask() {
+	public RemoteApiUIHandler() {
 	}
 
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();

@@ -28,9 +28,9 @@ public class SummaryDisplay extends BaseActivity {
         final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
         invisibleEditText.setInputType(InputType.TYPE_NULL);
-        final OpenLookup openLookupObj = new OpenLookup();
+        final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
 
-        openLookupObj.setDownloading(true);
+        remoteAPITaskObj.setDownloading(true);
         invisibleEditText.setFocusable(true);
 
         invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
@@ -40,7 +40,7 @@ public class SummaryDisplay extends BaseActivity {
                 }
 
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    openLookupObj.processDataForDisplay(invisibleEditText.getText().toString(), null,SummaryDisplay.this);
+                    remoteAPITaskObj.processDataForDisplay(invisibleEditText.getText().toString(), null,SummaryDisplay.this);
                     return true;
                 }
                 return false;
