@@ -21,7 +21,7 @@ import java.util.TimeZone;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-public class DownloadData {
+public class RemoteAPIDownload {
 	private Exception exception = null;
 	private StringBuilder sb;
 	private int responseCode;
@@ -35,18 +35,13 @@ public class DownloadData {
 
 	public static final String SHARED_PREFS = "sharedPrefs";
 
-	public DownloadData(String url, String queryOrDestination, Context context) {
+	public RemoteAPIDownload(String url, Context context){
 		this.url = url;
-		this.queryOrDestination = queryOrDestination;
 		this.context = context;
 	}
 
-	public DownloadData(String url, String queryOrDestination, String containerListStr, Context context) {
-		this.url = url;
-		this.queryOrDestination = queryOrDestination;
-		this.containerListStr = containerListStr;
-		this.context = context;
-	}
+	public void setQueryOrDestination(String queryOrDestination){this.queryOrDestination = queryOrDestination;}
+	public void setContainerListStr(String containerListStr){this.containerListStr = containerListStr;}
 
 	public boolean isErrored() {
 		return exception != null;
@@ -81,9 +76,8 @@ public class DownloadData {
 
 			String QUERYPARAM = null;
 
-			System.out.println(context.getClass().getSimpleName());
 			switch (context.getClass().getSimpleName()){
-				case "MainActivity":
+				case "Lookup":
 				case "LookupDisplay":
 				case "Summary":
 				case "SummaryDisplay":{
@@ -98,7 +92,15 @@ public class DownloadData {
 					break;
 				}
 				case "MoveDisplay":{
-					QUERYPARAM = queryOrDestination;
+					String query = null;
+					try {
+						query = URLEncoder.encode(queryOrDestination, "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					query = "d=" + query + containerListStr;
+
+					QUERYPARAM = query;
 					break;
 				}
 			}
@@ -142,7 +144,6 @@ public class DownloadData {
 
 				if (connection.getErrorStream() != null) {
 					exception = new Exception(String.valueOf(sb));
-					System.out.println(sb.toString());
 				}
 
 				if (sb.length() <= 2) {

@@ -87,7 +87,7 @@ public class Configuration extends BaseActivity {
 			editor.apply();
 			Toast.makeText(this, "Changes to configuration saved.", Toast.LENGTH_LONG).show();
 
-			Intent intent = new Intent(this, MainActivity.class);
+			Intent intent = new Intent(this, Lookup.class);
 			startActivity(intent);
 		}
 

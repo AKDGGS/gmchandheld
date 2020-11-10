@@ -51,9 +51,11 @@ public class MoveDisplay extends BaseActivity {
 			public void onClick(View v) {
 				String container = moveContainerET.getText().toString();
 				if (!container.isEmpty()) {
-					containerList.add(container);
-					adapter.add(container);
-					adapter.notifyDataSetChanged();
+					if (!containerList.contains(container)) {
+						containerList.add(container);
+						adapter.add(container);
+						adapter.notifyDataSetChanged();
+					}
 					moveContainerET.setText("");
 					moveCountTV.setText(String.valueOf(containerList.size()));
 				}
@@ -64,7 +66,31 @@ public class MoveDisplay extends BaseActivity {
 		final OpenLookup openLookupObj = new OpenLookup();
 
 		if (!openLookupObj.isDownloading()) {
-//			containerListLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			containerListLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+				@Override
+				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+					final int which_item = position;
+					adapter.remove(containerList.get(which_item));
+					containerList.remove(which_item);
+					adapter.notifyDataSetChanged();
+					moveCountTV.setText(String.valueOf(containerList.size()));
+					return false;
+				}
+			});
+
+
+//			containerListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//				long startTime = System.currentTimeMillis();
+//
+//				@Override
+//				public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//					final int which_item = position;
+//					adapter.remove(containerList.get(which_item));
+//					containerList.remove(which_item);
+//					adapter.notifyDataSetChanged();
+//					moveCountTV.setText(String.valueOf(containerList.size()));
+//				}
+
 //				@Override
 //				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
 //					final int which_item = position;
@@ -75,30 +101,6 @@ public class MoveDisplay extends BaseActivity {
 //					return false;
 //				}
 //			});
-
-
-			containerListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				long startTime = System.currentTimeMillis();
-
-				@Override
-				public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-					final int which_item = position;
-					adapter.remove(containerList.get(which_item));
-					containerList.remove(which_item);
-					adapter.notifyDataSetChanged();
-					moveCountTV.setText(String.valueOf(containerList.size()));
-				}
-
-//				@Override
-//				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-//					final int which_item = position;
-//					adapter.remove(containerList.get(which_item));
-//					containerList.remove(which_item);
-//					adapter.notifyDataSetChanged();
-//					moveCountTV.setText(String.valueOf(containerList.size()));
-//					return false;
-//				}
-			});
 
 
 			// KeyListener listens if enter is pressed
@@ -118,9 +120,7 @@ public class MoveDisplay extends BaseActivity {
 			// KeyListener listens if enter is pressed
 			moveDestinationET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					if (TextUtils.isEmpty(moveContainerET.getText())) {
-						moveContainerET.setError("Container is required!");
-					} else {
+					if (!(TextUtils.isEmpty(moveContainerET.getText()))) {
 						// if "enter" is pressed
 						if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
 							add_button.performClick();
@@ -138,15 +138,17 @@ public class MoveDisplay extends BaseActivity {
 				@Override
 				public void onClick(View v) {
 					if ((TextUtils.isEmpty(moveContainerET.getText())) && (containerList.size() == 0)) {
-						System.out.println(containerList.size());
-						moveContainerET.setError("A container is required!");
+//						moveContainerET.setError("A container is required!");
 					} else if (TextUtils.isEmpty(moveDestinationET.getText())) {
-						moveDestinationET.setError("A destination is required!");
+//						moveDestinationET.setError("A destination is required!");
 					} else {
 						moveContainer();
 						moveContainerET.setText("");
 						moveDestinationET.setText("");
 						moveCountTV.setText("");
+						System.out.println(containerList);
+						containerList.clear();
+						System.out.println(containerList);
 					}
 				}
 			});
@@ -163,7 +165,6 @@ public class MoveDisplay extends BaseActivity {
 		openLookup.setDownloading(true);
 		openLookup.processDataForDisplay(getDestination(), containerList, this);
 	}
-
 
 
 }

@@ -15,7 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import java.util.LinkedList;
 
 
-public class MainActivity extends BaseActivity {
+public class Lookup extends BaseActivity {
 
 	private ListView listView;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
@@ -32,7 +32,7 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.lookup_main);
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
 
 ////         test for accessing lookupHistory from shared preferences.
@@ -62,8 +62,10 @@ public class MainActivity extends BaseActivity {
 			submit_button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					openLookupObj.setDownloading(true);
-					openLookupObj.processDataForDisplay(getBarcode(), null, MainActivity.this);
+					if(!getBarcode().isEmpty()) {
+						openLookupObj.setDownloading(true);
+						openLookupObj.processDataForDisplay(getBarcode(), null, Lookup.this);
+					}
 				}
 			});
 

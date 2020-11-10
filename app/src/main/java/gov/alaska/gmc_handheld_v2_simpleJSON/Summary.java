@@ -57,8 +57,10 @@ public class Summary extends BaseActivity {
             submit_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openLookupObj.setDownloading(true);
-                    openLookupObj.processDataForDisplay(getBarcode(), null, Summary.this);
+                    if(!getBarcode().isEmpty()) {
+                        openLookupObj.setDownloading(true);
+                        openLookupObj.processDataForDisplay(getBarcode(), null, Summary.this);
+                    }
                 }
             });
 

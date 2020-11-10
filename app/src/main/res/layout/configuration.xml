@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
@@ -46,7 +46,8 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -109,29 +110,35 @@
 
 
                 </LinearLayout>
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginHorizontal="10dp"
                     android:background="@android:color/darker_gray" />
-
             </LinearLayout>
         </ScrollView>
 
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="12dp"
+            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
+            android:paddingRight="5dp"
+            android:paddingEnd="5dp"
+            android:text="Save All"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            android:minHeight="40dip"
+            android:minWidth="40dip"
+            />
+
+
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginHorizontal="10dp"
-        android:background="@android:color/darker_gray" />
-
-    <Button
-        android:id="@+id/save_button"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="@string/save_all" />
 
 
 </LinearLayout>
