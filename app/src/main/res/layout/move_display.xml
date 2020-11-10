@@ -115,6 +115,7 @@
 
         <ListView
             android:id="@+id/listViewGetContainersToMove"
+            android:transcriptMode="alwaysScroll"
             android:layout_width="306dp"
             android:layout_height="447dp"
             android:layout_above="@+id/move_button"
