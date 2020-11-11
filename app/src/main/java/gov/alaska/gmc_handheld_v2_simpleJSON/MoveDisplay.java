@@ -2,6 +2,7 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,6 +23,8 @@ public class MoveDisplay extends BaseActivity {
 
 	ArrayList<String> containerList;
 	ArrayAdapter<String> adapter;
+
+	int clicks = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,31 +69,10 @@ public class MoveDisplay extends BaseActivity {
 		final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
 
 		if (!remoteAPITaskObj.isDownloading()) {
-			containerListLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-				@Override
-				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-					final int which_item = position;
-					adapter.remove(containerList.get(which_item));
-					containerList.remove(which_item);
-					adapter.notifyDataSetChanged();
-					moveCountTV.setText(String.valueOf(containerList.size()));
-					return false;
-				}
-			});
 
+			//Long click option to remove added elements
 
-//			containerListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//				long startTime = System.currentTimeMillis();
-//
-//				@Override
-//				public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//					final int which_item = position;
-//					adapter.remove(containerList.get(which_item));
-//					containerList.remove(which_item);
-//					adapter.notifyDataSetChanged();
-//					moveCountTV.setText(String.valueOf(containerList.size()));
-//				}
-
+//			containerListLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 //				@Override
 //				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
 //					final int which_item = position;
@@ -101,6 +83,31 @@ public class MoveDisplay extends BaseActivity {
 //					return false;
 //				}
 //			});
+
+			//double click to remove elements
+			containerListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				long startTime = System.currentTimeMillis();
+
+				@Override
+				public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
+					clicks++;
+
+					Handler handler = new Handler();
+					handler.postDelayed(new Runnable(){
+						@Override
+						public void run() {
+							if(clicks == 2){
+								final int which_item = position;
+								adapter.remove(containerList.get(which_item));
+								containerList.remove(which_item);
+								adapter.notifyDataSetChanged();
+								moveCountTV.setText(String.valueOf(containerList.size()));
+							}
+							clicks = 0;
+						}
+					}, 500);
+				}
+			});
 
 
 			// KeyListener listens if enter is pressed

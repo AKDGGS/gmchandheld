@@ -44,13 +44,18 @@ public class LookupDisplay extends BaseActivity {
 				if (keyCode == KeyEvent.KEYCODE_DEL) {
 					invisibleEditText.setText("");
 				}
+				if (invisibleEditText.getText().toString().trim().length() != 0) {
 
-				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-					remoteAPITaskObj.processDataForDisplay(invisibleEditText.getText().toString(), null,LookupDisplay.this);
-					return true;
+					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+						remoteAPITaskObj.processDataForDisplay(invisibleEditText.getText().toString(), null, LookupDisplay.this);
+						return true;
+					}
+				}else {
+					invisibleEditText.setText("");
 				}
 				return false;
 			}
+
 		});
 
 		LookupLogicForDisplay lookupLogicForDisplayObj;
@@ -89,21 +94,20 @@ public class LookupDisplay extends BaseActivity {
 
 			listAdapterLength = listAdapter.getGroupCount();
 			if (listAdapter.getGroupCount() >= 1) {
-				for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-					expandableListView.expandGroup(i);
-				}
+//				for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+//					expandableListView.expandGroup(i);
+//				}
 			}
 
-			expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-				@Override
-				public boolean onGroupClick(ExpandableListView parent, View v,
-											int groupPosition, long id) {
-					return true; // This way the expander cannot be collapsed
-				}
-			});
+//			expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//				@Override
+//				public boolean onGroupClick(ExpandableListView parent, View v,
+//											int groupPosition, long id) {
+//					return true; // This way the expander cannot be collapsed
+//				}
+//			});
 		}
 	}
-
 
 
 	@Override
@@ -142,35 +146,35 @@ public class LookupDisplay extends BaseActivity {
 
 
 	@Override
-	public boolean dispatchKeyEvent(KeyEvent event){
+	public boolean dispatchKeyEvent(KeyEvent event) {
 		int action, keycode;
 
 		action = event.getAction();
 		keycode = event.getKeyCode();
 
-		AudioManager manager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+		AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
-		switch (keycode){
+		switch (keycode) {
 			case KeyEvent.KEYCODE_DPAD_UP:
-			case KeyEvent.KEYCODE_VOLUME_UP:{
+			case KeyEvent.KEYCODE_VOLUME_UP: {
 				manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
 				manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
 				if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
 					expandableListView.smoothScrollToPosition(0, 0);
 				}
-				if(KeyEvent.ACTION_UP == action){
+				if (KeyEvent.ACTION_UP == action) {
 					expandableListView.smoothScrollByOffset(-3);
 				}
 				return true;
 			}
 			case KeyEvent.KEYCODE_DPAD_DOWN:
-			case KeyEvent.KEYCODE_VOLUME_DOWN:{
+			case KeyEvent.KEYCODE_VOLUME_DOWN: {
 
 				if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
 					expandableListView.smoothScrollToPosition(expandableListView.getCount());
 				}
 
-				if(KeyEvent.ACTION_UP == action){
+				if (KeyEvent.ACTION_UP == action) {
 					expandableListView.smoothScrollByOffset(3);
 				}
 				return true;

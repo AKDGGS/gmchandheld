@@ -1,13 +1,11 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 
 public class RemoteAPITask {
@@ -15,8 +13,8 @@ public class RemoteAPITask {
 	public RemoteAPITask() {
 	}
 
-	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-	private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
+//	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+//	private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
 	private String containerListStr;
 	private String query = null;
 
@@ -33,8 +31,6 @@ public class RemoteAPITask {
 		this.downloading = downloading;
 	}
 
-
-	@SuppressLint("StaticFieldLeak")
 	public void processDataForDisplay(final String queryOrDestination, final ArrayList<String> containerList, final Context context) {
 
 //		SharedPreferences sp = context.getApplicationContext().getSharedPreferences("", Context.MODE_PRIVATE);
