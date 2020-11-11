@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import java.text.DateFormat;
@@ -20,12 +21,16 @@ public class Configuration extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
 	public static final String URL_TEXT = "urlText";
 	public static final String API_TEXT = "apiText";
+	public static final String DETAILS_SWITCH_TEXT = "detailsSwitchText";
 
 	private EditText urlInput;
 	private EditText apiInput;
 	private TextView buildDateTV;
 	private String url;
 	private String apiKey;
+
+	private SwitchCompat detailsSwitch;
+	private boolean detailsSwitchOnOff;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,12 @@ public class Configuration extends BaseActivity {
 
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
+
+//		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+//		boolean onOff = sharedPreferences.getBoolean("expandedListShowDetailsSwitch", false);
+
+
+		detailsSwitch = findViewById(R.id.expandedListShowDetailsSwitch);
 
 		final Button save_button = findViewById(R.id.save_button);
 
@@ -83,6 +94,7 @@ public class Configuration extends BaseActivity {
 		}else{
 			editor.putString(URL_TEXT, getUrl());
 			editor.putString(API_TEXT, getApiKey());
+			editor.putBoolean(DETAILS_SWITCH_TEXT, detailsSwitch.isChecked());
 
 			editor.apply();
 			Toast.makeText(this, "Changes to configuration saved.", Toast.LENGTH_LONG).show();
@@ -97,6 +109,7 @@ public class Configuration extends BaseActivity {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		url = sharedPreferences.getString(URL_TEXT, "");
 		apiKey = sharedPreferences.getString(API_TEXT, "");
+		detailsSwitchOnOff = sharedPreferences.getBoolean(DETAILS_SWITCH_TEXT, false);
 //		url = sharedPreferences.getString(URL_TEXT, "http://maps.dggs.alaska.gov/gmc/");
 //		apiKey = sharedPreferences.getString(API_TEXT, "thXAgLfS68TRpmixfvr2nksFQYrzZf5F");
 	}
@@ -104,6 +117,7 @@ public class Configuration extends BaseActivity {
 	public void updateViews() {
 		urlInput.setText(url);
 		apiInput.setText(apiKey);
+		detailsSwitch.setChecked(detailsSwitchOnOff);
 	}
 
 //	@Override

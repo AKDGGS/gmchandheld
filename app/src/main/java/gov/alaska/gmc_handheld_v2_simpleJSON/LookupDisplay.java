@@ -2,6 +2,7 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -20,7 +21,8 @@ import androidx.core.content.ContextCompat;
 
 public class LookupDisplay extends BaseActivity {
 	private ExpandableListView expandableListView;
-	private int listAdapterLength;
+	public static final String SHARED_PREFS = "sharedPrefs";
+	public static final String DETAILS_SWITCH_TEXT = "detailsSwitchText";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,20 +94,26 @@ public class LookupDisplay extends BaseActivity {
 			ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
 			expandableListView.setAdapter(listAdapter);
 
-			listAdapterLength = listAdapter.getGroupCount();
-			if (listAdapter.getGroupCount() >= 1) {
-//				for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-//					expandableListView.expandGroup(i);
-//				}
-			}
+			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+			boolean onOff = sharedPreferences.getBoolean(DETAILS_SWITCH_TEXT, false);
 
-//			expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-//				@Override
-//				public boolean onGroupClick(ExpandableListView parent, View v,
-//											int groupPosition, long id) {
-//					return true; // This way the expander cannot be collapsed
-//				}
-//			});
+			System.out.println(onOff);
+
+			if(onOff) {
+				if (listAdapter.getGroupCount() >= 1) {
+				for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+					expandableListView.expandGroup(i);
+				}
+				}
+
+			expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+				@Override
+				public boolean onGroupClick(ExpandableListView parent, View v,
+											int groupPosition, long id) {
+					return true; // This way the expander cannot be collapsed
+				}
+			});
+			}
 		}
 	}
 

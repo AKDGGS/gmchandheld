@@ -76,19 +76,20 @@ public class SummaryDisplay extends BaseActivity {
 			ExpandableListAdapter listAdapter = new LookupExpListAdapter(SummaryDisplay.this, summaryLogicForDisplayObj.getKeyList(), summaryLogicForDisplayObj.getDisplayDict());
 			expandableListView.setAdapter(listAdapter);
 
-			if (listAdapter.getGroupCount() >= 1) {
-				for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-					expandableListView.expandGroup(i);
+				if (listAdapter.getGroupCount() >= 1) {
+					for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+						expandableListView.expandGroup(i);
+					}
 				}
-			}
 
-			expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-				@Override
-				public boolean onGroupClick(ExpandableListView parent, View v,
-											int groupPosition, long id) {
-					return true; // This way the expander cannot be collapsed
-				}
-			});
+				expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+					@Override
+					public boolean onGroupClick(ExpandableListView parent, View v,
+												int groupPosition, long id) {
+						return true; // This way the expander cannot be collapsed
+					}
+				});
+
 		}
 	}
 

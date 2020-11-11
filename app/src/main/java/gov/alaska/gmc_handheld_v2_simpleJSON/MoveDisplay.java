@@ -41,12 +41,13 @@ public class MoveDisplay extends BaseActivity {
 		final Button move_button = findViewById(R.id.move_button);
 		final Button add_button = findViewById(R.id.add_container_button);
 		containerListLV = findViewById(R.id.listViewGetContainersToMove);
-		long timeLastClick;
+//		final ScrollView moveScrollView = findViewById(R.id.moveScrollView);
 
 		containerList = new ArrayList<>();
 
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		containerListLV.setAdapter(adapter);
+
 
 
 		add_button.setOnClickListener(new View.OnClickListener() {
@@ -58,13 +59,16 @@ public class MoveDisplay extends BaseActivity {
 						containerList.add(container);
 						adapter.add(container);
 						adapter.notifyDataSetChanged();
+						moveCountTV.setText(String.valueOf(containerList.size()));
+//						moveScrollView.fullScroll(ScrollView.FOCUS_DOWN);
 					}
 					moveContainerET.setText("");
-					moveCountTV.setText(String.valueOf(containerList.size()));
+
 				}
 				moveContainerET.requestFocus();
 			}
 		});
+
 
 		final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
 
@@ -153,9 +157,7 @@ public class MoveDisplay extends BaseActivity {
 						moveContainerET.setText("");
 						moveDestinationET.setText("");
 						moveCountTV.setText("");
-						System.out.println(containerList);
 						containerList.clear();
-						System.out.println(containerList);
 					}
 				}
 			});

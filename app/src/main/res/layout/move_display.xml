@@ -1,26 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fillViewport="true"
+    android:id="@+id/moveScrollView">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
             android:text="To:"
             android:textAllCaps="true"
             android:textColor="@android:color/black"
@@ -31,10 +41,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="1.0"
             android:layout_marginLeft="5dp"
             android:layout_marginEnd="42dp"
             android:layout_marginRight="42dp"
+            android:layout_weight="1.0"
             android:inputType="text"
 
             android:paddingLeft="16dp"
@@ -50,8 +60,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="5dp"
             android:text="Item:"
             android:textAllCaps="true"
@@ -63,8 +73,8 @@
             android:id="@+id/moveContainerET"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
             android:layout_gravity="center"
+            android:layout_weight="1.0"
             android:inputType="text"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
@@ -76,10 +86,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Add"
-            android:textSize="10sp"
+            android:minWidth="40dip"
             android:minHeight="40dip"
-            android:minWidth="40dip"/>
+            android:text="Add"
+            android:textSize="10sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -90,13 +100,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="5dp"
             android:text="Number of items added:"
             android:textAllCaps="true"
             android:textColor="@android:color/black"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/moveCountTV"
@@ -108,46 +118,31 @@
             android:paddingRight="10dp" />
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="5dp">
 
-        <ListView
+        <gov.alaska.gmc_handheld_v2_simpleJSON.NonScrollListView
             android:id="@+id/listViewGetContainersToMove"
-            android:transcriptMode="alwaysScroll"
-            android:layout_width="306dp"
-            android:layout_height="447dp"
-            android:layout_above="@+id/move_button"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="5dp"
-            android:fadeScrollbars="false" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingClass" />
+
 
         <Button
             android:id="@+id/move_button"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="12dp"
-            android:paddingLeft="5dp"
+            android:minWidth="40dip"
+            android:minHeight="40dip"
             android:paddingStart="5dp"
-            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
             android:paddingEnd="5dp"
+            android:paddingRight="5dp"
             android:text="Submit"
             android:textSize="12dp"
-            android:textStyle="bold"
-            android:minHeight="40dip"
-            android:minWidth="40dip"
-             />
-    </RelativeLayout>
-</LinearLayout>
+            android:textStyle="bold" />
 
-
-
-<!--    android:textColor="#fff"-->
-<!--    android:background="#ff567b95"-->
+    </LinearLayout>
+</ScrollView>
