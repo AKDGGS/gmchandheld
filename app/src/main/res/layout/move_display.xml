@@ -118,6 +118,11 @@
             android:paddingRight="10dp" />
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp">
+
 
         <gov.alaska.gmc_handheld_v2_simpleJSON.NonScrollListView
             android:id="@+id/listViewGetContainersToMove"
@@ -143,6 +148,6 @@
             android:text="Submit"
             android:textSize="12dp"
             android:textStyle="bold" />
-
+    </RelativeLayout>
     </LinearLayout>
 </ScrollView>

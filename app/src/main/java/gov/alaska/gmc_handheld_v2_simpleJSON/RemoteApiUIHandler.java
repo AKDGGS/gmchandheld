@@ -48,7 +48,7 @@ public class RemoteApiUIHandler {
 	AsyncTask asyncTask = null;
 
 	@SuppressLint("StaticFieldLeak")
-	public void processDataForDisplay(final String url, final String query, final String containerListStr, final Context context) {
+	public void processDataForDisplay(final String url, final String query, final String containerListStr, final Context context, final ArrayList<String> containerList) {
 
 //		SharedPreferences sp = context.getApplicationContext().getSharedPreferences("", Context.MODE_PRIVATE);
 //		String s2 = sp.getString("lookupHistoryString", "");
@@ -73,7 +73,6 @@ public class RemoteApiUIHandler {
 					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 					View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) context).findViewById(R.id.downloading_alert_root));
 					alertDialog.setView(layout);
-
 
 					TextView title = new TextView(context);
 					title.setText("Processing " + query);
@@ -210,7 +209,9 @@ public class RemoteApiUIHandler {
 										break;
 									case "MoveDisplay":
 										EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
-//										destinationET.setText(queryOrDestination);
+										destinationET.setText(query);
+										EditText  moveContainerET = ((Activity) context).findViewById(R.id.moveContainerET);
+										moveContainerET.requestFocus();
 										break;
 								}
 							}
@@ -225,7 +226,7 @@ public class RemoteApiUIHandler {
 							case "LookupDisplay":
 							case "Lookup": {
 								LookupLogicForDisplay lookupLogicForDisplayObj;
-								lookupLogicForDisplayObj = new LookupLogicForDisplay();
+								lookupLogicForDisplayObj = new LookupLogicForDisplay(context);
 								LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
 
 								lookupLogicForDisplayObj.setBarcodeQuery(query);
@@ -265,7 +266,7 @@ public class RemoteApiUIHandler {
 								break;
 							}
 							case "MoveDisplay": {
-//								containerList.clear();
+								containerList.clear();
 								ListView containerListLV = ((Activity) context).findViewById(R.id.listViewGetContainersToMove);
 								ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
 								adapter.clear();

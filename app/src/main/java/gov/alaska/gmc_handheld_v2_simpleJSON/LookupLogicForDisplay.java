@@ -1,5 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
@@ -29,9 +30,14 @@ public class LookupLogicForDisplay {
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
 	private boolean radiationWarningFlag;
 	private String barcodeQuery;
+	Context context;
+
+	public static final String SHARED_PREFS = "sharedPrefs";
+	public static final String SHOW_NAME_LABEL_SWITCH_TEXT = "showNameLabelSwitchText";
 
 
-	public LookupLogicForDisplay() {
+	public LookupLogicForDisplay(Context context) {
+		this.context = context;
 		keyList = new ArrayList<>();
 		displayDict = new HashMap<>();
 		radiationWarningFlag = false;
@@ -67,6 +73,8 @@ public class LookupLogicForDisplay {
 	//*********************************************************************************************
 
 	public void processRawJSON(String rawJSON) throws Exception {
+
+
 
 		if (rawJSON.trim().charAt(0) == '[') {
 			JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
@@ -185,7 +193,7 @@ public class LookupLogicForDisplay {
 					newName += " / " + o.optString("barcode");
 				}
 				io = new InventoryObject(newName);
-			} else {
+			}else {
 				io = new InventoryObject(name);
 			}
 		} else {

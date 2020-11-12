@@ -23,6 +23,7 @@ public class Configuration extends BaseActivity {
 	public static final String API_TEXT = "apiText";
 	public static final String DETAILS_SWITCH_TEXT = "detailsSwitchText";
 
+
 	private EditText urlInput;
 	private EditText apiInput;
 	private TextView buildDateTV;
@@ -31,6 +32,7 @@ public class Configuration extends BaseActivity {
 
 	private SwitchCompat detailsSwitch;
 	private boolean detailsSwitchOnOff;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +49,6 @@ public class Configuration extends BaseActivity {
 
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
-
-//		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-//		boolean onOff = sharedPreferences.getBoolean("expandedListShowDetailsSwitch", false);
-
-
 		detailsSwitch = findViewById(R.id.expandedListShowDetailsSwitch);
 
 		final Button save_button = findViewById(R.id.save_button);
@@ -109,7 +106,8 @@ public class Configuration extends BaseActivity {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		url = sharedPreferences.getString(URL_TEXT, "");
 		apiKey = sharedPreferences.getString(API_TEXT, "");
-		detailsSwitchOnOff = sharedPreferences.getBoolean(DETAILS_SWITCH_TEXT, false);
+		detailsSwitchOnOff = sharedPreferences.getBoolean(DETAILS_SWITCH_TEXT, true);
+
 //		url = sharedPreferences.getString(URL_TEXT, "http://maps.dggs.alaska.gov/gmc/");
 //		apiKey = sharedPreferences.getString(API_TEXT, "thXAgLfS68TRpmixfvr2nksFQYrzZf5F");
 	}

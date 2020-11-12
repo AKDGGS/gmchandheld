@@ -29,4 +29,7 @@ public class NonScrollListView extends ListView {
 		ViewGroup.LayoutParams params = getLayoutParams();
 		params.height = getMeasuredHeight();
 	}
+
+
+
 }

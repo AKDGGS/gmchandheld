@@ -13,8 +13,6 @@ public class RemoteAPITask {
 	public RemoteAPITask() {
 	}
 
-//	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-//	private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
 	private String containerListStr;
 	private String query = null;
 
@@ -73,7 +71,7 @@ public class RemoteAPITask {
 		}
 
 		RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-		remoteApiUIHandler.processDataForDisplay(url, queryOrDestination, containerListStr, context);
+		remoteApiUIHandler.processDataForDisplay(url, queryOrDestination, containerListStr, context, containerList);
 	}
 
 
