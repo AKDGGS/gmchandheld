@@ -1,93 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fillViewport="true"
     app:backgroundTint="@color/colorPrimary"
     tools:context=".Lookup">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
-
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-
-
-        <EditText
-            android:id="@+id/getBarcodeEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_weight="1"
-            android:inputType="text"
-            android:paddingLeft="16dp"
-            android:paddingStart="16dp"
-            android:paddingRight="16dp"
-            android:paddingEnd="16dp"
-            android:text=""/>
-
-
-
-    </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/history"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="5dp"
-        android:text="History"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="#ff353535"
-        android:layout_marginStart="5dp" />
-
-    <LinearLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="5dp"
         android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/listViewGetBarcodeHistory"
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_weight="1.0"/>
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/submit_button"
+
+            <EditText
+                android:id="@+id/getBarcodeEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:paddingStart="16dp"
+                android:paddingLeft="16dp"
+                android:paddingEnd="16dp"
+                android:paddingRight="16dp"
+                android:text="" />
+
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/history"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="12dp"
-            android:paddingLeft="5dp"
-            android:paddingStart="5dp"
-            android:paddingRight="5dp"
-            android:paddingEnd="5dp"
-            android:text="Submit"
-            android:textSize="12dp"
-            android:textStyle="bold"
-            android:minHeight="40dip"
-            android:minWidth="40dip"
-            />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:text="History"
+            android:textColor="#ff353535"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp">
+
+
+            <gov.alaska.gmc_handheld_v2_simpleJSON.NonScrollListView
+                android:id="@+id/listViewGetBarcodeHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingClass" />
+
+
+            <Button
+                android:id="@+id/submit_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="12dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:minWidth="40dip"
+                android:minHeight="40dip"
+                android:paddingStart="5dp"
+                android:paddingLeft="5dp"
+                android:paddingEnd="5dp"
+                android:paddingRight="5dp"
+                android:text="Submit"
+                android:textSize="12dp"
+                android:textStyle="bold" />
+        </RelativeLayout>
     </LinearLayout>
 
-
-</LinearLayout>
+</ScrollView>

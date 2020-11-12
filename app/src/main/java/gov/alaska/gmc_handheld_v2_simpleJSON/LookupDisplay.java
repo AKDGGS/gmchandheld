@@ -2,7 +2,6 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -94,12 +93,6 @@ public class LookupDisplay extends BaseActivity {
 			ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
 			expandableListView.setAdapter(listAdapter);
 
-			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-			boolean onOff = sharedPreferences.getBoolean(DETAILS_SWITCH_TEXT, false);
-
-			System.out.println(onOff);
-
-			if(onOff) {
 				if (listAdapter.getGroupCount() >= 1) {
 				for (int i = 0; i < listAdapter.getGroupCount(); i++) {
 					expandableListView.expandGroup(i);
@@ -113,7 +106,7 @@ public class LookupDisplay extends BaseActivity {
 					return true; // This way the expander cannot be collapsed
 				}
 			});
-			}
+
 		}
 	}
 
