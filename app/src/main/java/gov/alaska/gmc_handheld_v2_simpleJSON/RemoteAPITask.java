@@ -10,30 +10,24 @@ import java.util.ArrayList;
 
 public class RemoteAPITask {
 
-	public RemoteAPITask() {
-	}
-
+	public static final String SHARED_PREFS = "sharedPrefs";
 	private String containerListStr;
 	private String query = null;
-
-	public static final String SHARED_PREFS = "sharedPrefs";
-//	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
-
 	private boolean downloading = false;
+	private ArrayList<String> containerList;
 
 	public boolean isDownloading() {
 		return downloading;
 	}
-
 	public void setDownloading(boolean downloading) {
 		this.downloading = downloading;
 	}
 
-	public void processDataForDisplay(final String queryOrDestination, final ArrayList<String> containerList, final Context context) {
+	public void setContainerList(ArrayList<String> containerList) {this.containerList = containerList;}
 
-//		SharedPreferences sp = context.getApplicationContext().getSharedPreferences("", Context.MODE_PRIVATE);
-//		String s2 = sp.getString("lookupHistoryString", "");
-//		System.out.println(s2);
+	public RemoteAPITask() { }
+
+	public void processDataForDisplay(final String queryOrDestination, final Context context) {
 
 		SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
 		String url = sharedPreferences.getString("urlText", "");
@@ -71,7 +65,10 @@ public class RemoteAPITask {
 		}
 
 		RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-		remoteApiUIHandler.processDataForDisplay(url, queryOrDestination, containerListStr, context, containerList);
+		RemoteApiUIHandler.setContainerList(containerList);
+		RemoteApiUIHandler.setQueryOrDestination(queryOrDestination);
+		RemoteApiUIHandler.setContainerListStr(containerListStr);
+		remoteApiUIHandler.processDataForDisplay(url, context);
 	}
 
 

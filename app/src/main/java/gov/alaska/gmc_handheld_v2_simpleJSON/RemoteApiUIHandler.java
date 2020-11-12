@@ -30,35 +30,31 @@ public class RemoteApiUIHandler {
 
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
-	private String containerListStr;
 
 	public static final String SHARED_PREFS = "sharedPrefs";
-//	public static final String LOOKUPHISTORYSP = "lookupHistorySP";
 
 	private boolean downloading = false;
-
 	public boolean isDownloading() {
 		return downloading;
 	}
-
 	public void setDownloading(boolean downloading) {
 		this.downloading = downloading;
 	}
 
+	private static ArrayList<String> containerList;
+	public static void setContainerList(ArrayList<String> moveList) {containerList = moveList;}
+
+	private static String queryOrDestination;
+	public static void setQueryOrDestination(String query) {RemoteApiUIHandler.queryOrDestination = query;}
+
+	private static String containerListStr;
+
+	public static void setContainerListStr(String moveListStr) {containerListStr = moveListStr;}
+
 	AsyncTask asyncTask = null;
 
 	@SuppressLint("StaticFieldLeak")
-	public void processDataForDisplay(final String url, final String query, final String containerListStr, final Context context, final ArrayList<String> containerList) {
-
-//		SharedPreferences sp = context.getApplicationContext().getSharedPreferences("", Context.MODE_PRIVATE);
-//		String s2 = sp.getString("lookupHistoryString", "");
-//		System.out.println(s2);
-
-//		SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-//		String url = sharedPreferences.getString("urlText", "");
-
-
-
+	public void processDataForDisplay(final String url, final Context context) {
 
 		if (!downloading) {
 			asyncTask = new AsyncTask<String, Integer, RemoteAPIDownload>() {
@@ -75,7 +71,7 @@ public class RemoteApiUIHandler {
 					alertDialog.setView(layout);
 
 					TextView title = new TextView(context);
-					title.setText("Processing " + query);
+					title.setText("Processing " + queryOrDestination);
 					title.setGravity(Gravity.CENTER);
 					title.setTextSize(16);
 					alertDialog.setCustomTitle(title);
@@ -93,11 +89,11 @@ public class RemoteApiUIHandler {
 					alert.show();
 					alert.setCanceledOnTouchOutside(false);
 
-					if (!query.isEmpty()) {
+					if (!queryOrDestination.isEmpty()) {
 						switch (context.getClass().getSimpleName()) {
 							case "Lookup": {
 
-								lastAddedToHistory(context, query);
+								lastAddedToHistory(context, queryOrDestination);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetBarcodeHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(lookupHistory);
@@ -107,7 +103,7 @@ public class RemoteApiUIHandler {
 							}
 							case "Summary": {
 
-								lastAddedToHistory(context, query);
+								lastAddedToHistory(context, queryOrDestination);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetSummaryHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(summaryHistory);
@@ -131,12 +127,12 @@ public class RemoteApiUIHandler {
 							case "Summary":
 							case "SummaryDisplay": {
 								remoteAPIDownload = new RemoteAPIDownload(url, context);
-								remoteAPIDownload.setQueryOrDestination(query);
+								remoteAPIDownload.setQueryOrDestination(queryOrDestination);
 								break;
 							}
 							case "MoveDisplay": {
 								remoteAPIDownload = new RemoteAPIDownload(url, context);
-								remoteAPIDownload.setQueryOrDestination(query);
+								remoteAPIDownload.setQueryOrDestination(queryOrDestination);
 								remoteAPIDownload.setContainerListStr(containerListStr);
 
 								break;
@@ -209,8 +205,8 @@ public class RemoteApiUIHandler {
 										break;
 									case "MoveDisplay":
 										EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
-										destinationET.setText(query);
-										EditText  moveContainerET = ((Activity) context).findViewById(R.id.moveContainerET);
+										destinationET.setText(queryOrDestination);
+										EditText moveContainerET = ((Activity) context).findViewById(R.id.moveContainerET);
 										moveContainerET.requestFocus();
 										break;
 								}
@@ -229,7 +225,7 @@ public class RemoteApiUIHandler {
 								lookupLogicForDisplayObj = new LookupLogicForDisplay(context);
 								LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
 
-								lookupLogicForDisplayObj.setBarcodeQuery(query);
+								lookupLogicForDisplayObj.setBarcodeQuery(queryOrDestination);
 
 								try {
 									lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
@@ -238,10 +234,10 @@ public class RemoteApiUIHandler {
 								}
 								Intent intent = new Intent(context, LookupDisplay.class);
 								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-								intent.putExtra("barcode", query);  //this barcode refers to the query barcode.
+								intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
 								context.startActivity(intent);
 
-								lastAddedToHistory(context, query);
+								lastAddedToHistory(context, queryOrDestination);
 								break;
 							}
 							case "Summary":
@@ -250,7 +246,7 @@ public class RemoteApiUIHandler {
 								summaryLogicForDisplayObj = new SummaryLogicForDisplay();
 								SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
 
-								summaryLogicForDisplayObj.setBarcodeQuery(query);
+								summaryLogicForDisplayObj.setBarcodeQuery(queryOrDestination);
 
 								try {
 									summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
@@ -260,9 +256,9 @@ public class RemoteApiUIHandler {
 
 								Intent intent = new Intent(context, SummaryDisplay.class);
 								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-								intent.putExtra("barcode", query);  //this barcode refers to the query barcode.
+								intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
 								context.startActivity(intent);
-								lastAddedToHistory(context, query);
+								lastAddedToHistory(context, queryOrDestination);
 								break;
 							}
 							case "MoveDisplay": {
@@ -276,20 +272,11 @@ public class RemoteApiUIHandler {
 								EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
 								destinationET.requestFocus();
 							}
-
 						}
 					}
 				}
 			}.execute();
-
-////				Save LookupHistory list-- Test for audit and move.
-//					SharedPreferences prefs = context.getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
-//					SharedPreferences.Editor editor = prefs.edit();
-//					editor.putString("lookupHistoryString", lookupHistory.toString());
-//					editor.commit();
-
 		}
-
 	}
 
 	private void lastAddedToHistory(Context context, String barcodeQuery) {

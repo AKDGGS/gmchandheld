@@ -152,9 +152,6 @@ public class MoveDisplay extends BaseActivity {
 						moveContainerET.setText("");
 						moveDestinationET.setText("");
 						moveCountTV.setText("");
-//						containerList.clear();
-//						adapter.clear();
-//						adapter.notifyDataSetChanged();
 					}
 				}
 			});
@@ -169,7 +166,8 @@ public class MoveDisplay extends BaseActivity {
 	public void moveContainer() {
 		RemoteAPITask remoteAPITask = new RemoteAPITask();
 		remoteAPITask.setDownloading(true);
-		remoteAPITask.processDataForDisplay(getDestination(), containerList, this);
+		remoteAPITask.setContainerList(containerList);
+		remoteAPITask.processDataForDisplay(getDestination(), this);
 
 	}
 

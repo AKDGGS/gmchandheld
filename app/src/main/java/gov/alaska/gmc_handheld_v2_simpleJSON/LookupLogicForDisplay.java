@@ -29,6 +29,8 @@ public class LookupLogicForDisplay {
 	private int ID;
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
 	private boolean radiationWarningFlag;
+	private String typeFlag;
+	private ArrayList<String> typeFlagList = new ArrayList<>();
 	private String barcodeQuery;
 	Context context;
 
@@ -61,20 +63,18 @@ public class LookupLogicForDisplay {
 		return radiationWarningFlag;
 	}
 
-	public void setBarcodeQuery(String barcodeQuery) {
-		this.barcodeQuery = barcodeQuery;
-	}
+	public ArrayList<String> getTypeFlagList() {return typeFlagList;}
 
-	public String getBarcodeQuery() {
-		return barcodeQuery;
-	}
+	public void setTypeFlag(String typeFlag) {this.typeFlagList.add(typeFlag);}
+
+	public void setBarcodeQuery(String barcodeQuery) {this.barcodeQuery = barcodeQuery;}
+
+	public String getBarcodeQuery() {return barcodeQuery;}
 
 
 	//*********************************************************************************************
 
 	public void processRawJSON(String rawJSON) throws Exception {
-
-
 
 		if (rawJSON.trim().charAt(0) == '[') {
 			JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
@@ -141,7 +141,7 @@ public class LookupLogicForDisplay {
 					ssb = createIndentedText(ssb, 6, indentationIncrement * 2);
 				} else if (!Character.isWhitespace(ssb.charAt(9))) {
 					ssb = createIndentedText(ssb, 9, indentationIncrement * 3);
-				}  else {
+				} else {
 					ssb = createIndentedText(ssb, 0, indentationIncrement * 4);
 				}
 				displayList.add(ssb);
@@ -191,11 +191,11 @@ public class LookupLogicForDisplay {
 				String newName = "ID " + o.optInt("ID");
 				if (!"".equals(o.optString("barcode"))) {
 					newName += " / " + o.optString("barcode");
-				}else if(!"".equals(o.optString("altBarcode"))){
+				} else if (!"".equals(o.optString("altBarcode"))) {
 					newName += " / " + o.optString("altBarcode");
 				}
 				io = new InventoryObject(newName);
-			}else {
+			} else {
 				io = new InventoryObject(name);
 			}
 		} else {
@@ -215,6 +215,7 @@ public class LookupLogicForDisplay {
 						newName += " ID " + id;
 					}
 					io = new InventoryObject(newName, null, 100);
+					setTypeFlag("Borehole");
 					break;
 				}
 				case "collection":
@@ -248,6 +249,7 @@ public class LookupLogicForDisplay {
 						newName += " ID " + id;
 					}
 					io = new InventoryObject(newName, null, 100);
+					setTypeFlag("Outcrop");
 					break;
 				}
 				case "prospect": {
@@ -257,6 +259,7 @@ public class LookupLogicForDisplay {
 						newName += " ID " + id;
 					}
 					io = new InventoryObject(newName, null);
+					setTypeFlag("Prospect");
 					break;
 				}
 				case "shotline": {
@@ -275,6 +278,7 @@ public class LookupLogicForDisplay {
 						newName += " ID " + id;
 					}
 					io = new InventoryObject(newName, null, 50);
+					setTypeFlag("Shotpoint");
 					break;
 				}
 				case "qualities": {
@@ -299,6 +303,7 @@ public class LookupLogicForDisplay {
 						newName += " ID " + id;
 					}
 					io = new InventoryObject(newName, null, 100);
+					setTypeFlag("Well");
 					break;
 				}
 				default: {
@@ -311,6 +316,10 @@ public class LookupLogicForDisplay {
 		for (Iterator<String> it = o.keys(); it.hasNext(); ) {
 			String key = it.next();
 			io.addChild(parseTree(o, key, o.get(key)));
+		}
+
+		if(typeFlagList.isEmpty()){
+			typeFlagList.add("No type");
 		}
 
 		return io;

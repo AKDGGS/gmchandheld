@@ -64,7 +64,7 @@ public class Lookup extends BaseActivity {
 				public void onClick(View v) {
 					if(!getBarcode().isEmpty()) {
 						remoteAPITaskObj.setDownloading(true);
-						remoteAPITaskObj.processDataForDisplay(getBarcode(), null, Lookup.this);
+						remoteAPITaskObj.processDataForDisplay(getBarcode(), Lookup.this);
 					}
 				}
 			});

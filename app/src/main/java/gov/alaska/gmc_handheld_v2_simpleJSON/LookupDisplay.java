@@ -20,8 +20,6 @@ import androidx.core.content.ContextCompat;
 
 public class LookupDisplay extends BaseActivity {
 	private ExpandableListView expandableListView;
-	public static final String SHARED_PREFS = "sharedPrefs";
-	public static final String DETAILS_SWITCH_TEXT = "detailsSwitchText";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +46,10 @@ public class LookupDisplay extends BaseActivity {
 				if (invisibleEditText.getText().toString().trim().length() != 0) {
 
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-						remoteAPITaskObj.processDataForDisplay(invisibleEditText.getText().toString(), null, LookupDisplay.this);
+						remoteAPITaskObj.processDataForDisplay(invisibleEditText.getText().toString(), LookupDisplay.this);
 						return true;
 					}
-				}else {
+				} else {
 					invisibleEditText.setText("");
 				}
 				return false;
@@ -59,8 +57,7 @@ public class LookupDisplay extends BaseActivity {
 
 		});
 
-		LookupLogicForDisplay lookupLogicForDisplayObj;
-		lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
+		LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
 
 		if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
 			LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + lookupLogicForDisplayObj.getBarcodeQuery() + "</font> </small> </strong>"));
@@ -93,11 +90,11 @@ public class LookupDisplay extends BaseActivity {
 			ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
 			expandableListView.setAdapter(listAdapter);
 
-				if (listAdapter.getGroupCount() >= 1) {
+			if (listAdapter.getGroupCount() >= 1) {
 				for (int i = 0; i < listAdapter.getGroupCount(); i++) {
 					expandableListView.expandGroup(i);
 				}
-				}
+			}
 
 			expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 				@Override
@@ -106,7 +103,6 @@ public class LookupDisplay extends BaseActivity {
 					return true; // This way the expander cannot be collapsed
 				}
 			});
-
 		}
 	}
 
@@ -138,13 +134,6 @@ public class LookupDisplay extends BaseActivity {
 		}
 		return true;
 	}
-
-//	@Override
-//	public void onBackPressed() {
-//		Intent get_barcode = new Intent(this, MainActivity.class);
-//		startActivity(get_barcode);
-//	}
-
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
@@ -183,6 +172,4 @@ public class LookupDisplay extends BaseActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
-
-
 }

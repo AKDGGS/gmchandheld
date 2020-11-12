@@ -26,6 +26,8 @@ public class SummaryLogicForDisplay {
 	private Map<String, List<SpannableStringBuilder>> displayDict;
 	private int ID;
 	private String barcodeQuery;
+	private String typeFlag;
+	private ArrayList<String> typeFlagList = new ArrayList<>();
 
 
 	public SummaryLogicForDisplay() {
@@ -53,6 +55,10 @@ public class SummaryLogicForDisplay {
 	}
 
 	public String getBarcodeQuery(){return barcodeQuery;}
+
+	public ArrayList<String> getTypeFlagList() {return typeFlagList;}
+
+	public void setTypeFlag(String typeFlag) {this.typeFlagList.add(typeFlag);}
 
 
 	//*********************************************************************************************
@@ -193,6 +199,7 @@ public class SummaryLogicForDisplay {
 				case "boreholes": {
 					String newName = "Object Borehole";
 					io = new InventoryObject(newName, null, 100);
+					setTypeFlag("Borehole");
 					break;
 				}
 				case "containers":
@@ -213,6 +220,7 @@ public class SummaryLogicForDisplay {
 						newName += " ID " + id;
 					}
 					io = new InventoryObject("Object " + newName, null, 100);
+					setTypeFlag("Outcrop");
 					break;
 				}
 				case "prospect": {
@@ -222,6 +230,7 @@ public class SummaryLogicForDisplay {
 						newName += " ID " + id;
 					}
 					io = new InventoryObject("Object " + newName, null);
+					setTypeFlag("Prospect");
 					break;
 				}
 				case "shotline": {
@@ -240,12 +249,14 @@ public class SummaryLogicForDisplay {
 						newName += " ID " + id;
 					}
 					io = new InventoryObject("Object " + newName, null, 50);
+					setTypeFlag("Shotpoint");
 					break;
 				}
 				case "wells":
 					String id = o.optString("ID");
 					String newName = "Well";
 					io = new InventoryObject("Object " + newName, null, 100);
+					setTypeFlag("Well");
 					break;
 				default:
 					io = new InventoryObject(name);
@@ -256,6 +267,10 @@ public class SummaryLogicForDisplay {
 		for (Iterator<String> it = o.keys(); it.hasNext(); ) {
 			String key = it.next();
 			io.addChild(parseTree(o, key, o.get(key)));
+		}
+
+		if(typeFlagList.isEmpty()){
+			typeFlagList.add("No type");
 		}
 
 		return io;

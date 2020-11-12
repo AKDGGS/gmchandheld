@@ -41,7 +41,7 @@ public class SummaryDisplay extends BaseActivity {
 
 				if (invisibleEditText.getText().toString().trim().length() != 0) {
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-						remoteAPITaskObj.processDataForDisplay(invisibleEditText.getText().toString(), null, SummaryDisplay.this);
+						remoteAPITaskObj.processDataForDisplay(invisibleEditText.getText().toString(), SummaryDisplay.this);
 						return true;
 					}
 				} else {

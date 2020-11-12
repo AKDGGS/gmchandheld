@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
@@ -82,13 +83,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		String expListParentLabel = (String) getGroup(groupPosition);
 		ParentViewHolder parentHolder = new ParentViewHolder();
 
-//		if (convertView == null) {
-//			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//			convertView = inflater.inflate(R.layout.exp_list_parent, null);
-//		}
-//
-//		TextView txtParent = convertView.findViewById(R.id.txtParent);
-
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.exp_list_parent, null);
@@ -97,31 +91,43 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		}
 
 		parentHolder = (ParentViewHolder) convertView.getTag();
-
-		List<String> myList = Arrays.asList("Wells", "Outcrops", "Boreholes", "Shotpoints");
-		int count = 0;
-		for (String s : myList) {
-			if (inventoryDetailsDict.toString().contains(s)) {
-				count++;
-				setInventoryObjType(s);
+		Set<String> inventoryObjTypeSet = null;
+		System.out.println(context.getClass().getSimpleName());
+		switch(context.getClass().getSimpleName()){
+			case "LookupDisplay":{
+				LookupLogicForDisplay obj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
+				inventoryObjTypeSet = new HashSet<String>(obj.getTypeFlagList());
+				System.out.println(inventoryObjTypeSet);
+				break;
+			}
+			case "SummaryDisplay":{
+				SummaryLogicForDisplay obj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
+				inventoryObjTypeSet = new HashSet<String>(obj.getTypeFlagList());
+				System.out.println(inventoryObjTypeSet);
+				break;
 			}
 		}
 
-		if (inventoryObjType == null || count > 1) {
+		if (!inventoryObjTypeSet.isEmpty() && inventoryObjTypeSet.size() == 1) {
+			setInventoryObjType((String) inventoryObjTypeSet.toArray()[0]);
+		} else if (inventoryObjTypeSet.size() == 2 && (inventoryObjTypeSet.contains("Borehole") && inventoryObjTypeSet.contains("Prospect"))) {
+			setInventoryObjType("Borehole");
+		}else{
+
 			setInventoryObjType("No Type");
 		}
 
 		switch (getInventoryObjType()) {
-			case "Wells":
+			case "Well":
 				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ff92cbff"));
 				break;
-			case "Boreholes":
+			case "Borehole":
 				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ff63ba00")); //Green
 				break;
-			case "Outcrops":
+			case "Outcrop":
 				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffe6b101")); // yellow-orange
 				break;
-			case "Shotpoints":
+			case "Shotpoint":
 				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffff8a86"));
 				break;
 			default:
@@ -146,8 +152,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		TextView txtChild = convertView.findViewById(R.id.txtChild);
 
 		switch (getInventoryObjType()) {
-
-			case "Boreholes":
+			case "Borehole":
 			case "Prospect":
 				if (childPosition % 2 != 0) {
 					txtChild.setBackgroundColor(Color.parseColor("#ffa9d479")); // darker green
@@ -155,21 +160,21 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 					txtChild.setBackgroundColor(Color.parseColor("#ffbdd4a2")); //lighter green
 				}
 				break;
-			case "Wells":
+			case "Well":
 				if (childPosition % 2 != 0) {
 					txtChild.setBackgroundColor(Color.parseColor("#ffb9e0ff")); //Light blue
 				} else {
 					txtChild.setBackgroundColor(Color.parseColor("#ffd2ebff")); //very light blue
 				}
 				break;
-			case "Outcrops":
+			case "Outcrop":
 				if (childPosition % 2 != 0) {
 					txtChild.setBackgroundColor(Color.parseColor("#ffe6cb71")); //ochre
 				} else {
 					txtChild.setBackgroundColor(Color.parseColor("#ffead698")); //pale ochre
 				}
 				break;
-			case "Shotpoints":
+			case "Shotpoint":
 				if (childPosition % 2 != 0) {
 					txtChild.setBackgroundColor(Color.parseColor("#ffffcecd"));
 				} else {
@@ -185,7 +190,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				}
 				break;
 		}
-
 
 
 		txtChild.setText(expListChildContents);

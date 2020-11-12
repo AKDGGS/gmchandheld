@@ -59,7 +59,7 @@ public class Summary extends BaseActivity {
                 public void onClick(View v) {
                     if(!getBarcode().isEmpty()) {
                         remoteAPITaskObj.setDownloading(true);
-                        remoteAPITaskObj.processDataForDisplay(getBarcode(), null, Summary.this);
+                        remoteAPITaskObj.processDataForDisplay(getBarcode(),  Summary.this);
                     }
                 }
             });
