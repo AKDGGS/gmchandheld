@@ -191,6 +191,8 @@ public class LookupLogicForDisplay {
 				String newName = "ID " + o.optInt("ID");
 				if (!"".equals(o.optString("barcode"))) {
 					newName += " / " + o.optString("barcode");
+				}else if(!"".equals(o.optString("altBarcode"))){
+					newName += " / " + o.optString("altBarcode");
 				}
 				io = new InventoryObject(newName);
 			}else {
