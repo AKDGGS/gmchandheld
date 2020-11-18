@@ -1,5 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -157,6 +158,13 @@ public class MoveDisplay extends BaseActivity {
 			});
 		}
 	}
+
+	@Override
+    public void onBackPressed() {
+        Intent get_barcode = new Intent(this, Summary.class);
+        startActivity(get_barcode);
+    }
+
 
 	public String getDestination() {
 		EditText destinationInput = findViewById(R.id.destinationET);
