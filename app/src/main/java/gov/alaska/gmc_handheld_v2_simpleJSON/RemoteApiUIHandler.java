@@ -1,6 +1,5 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -35,7 +34,7 @@ public class RemoteApiUIHandler {
 
 	private boolean downloading = false;
 	public boolean isDownloading() {
-		return downloading;
+		return !downloading;
 	}
 	public void setDownloading(boolean downloading) {
 		this.downloading = downloading;
@@ -47,17 +46,16 @@ public class RemoteApiUIHandler {
 	private static String queryOrDestination;
 	public static void setQueryOrDestination(String query) {RemoteApiUIHandler.queryOrDestination = query;}
 
-	private static String containerListStr;
-
-	public static void setContainerListStr(String moveListStr) {containerListStr = moveListStr;}
+	public static void setContainerListStr(String moveListStr) {
+	}
 
 	AsyncTask asyncTask = null;
 
-	@SuppressLint("StaticFieldLeak")
-	public void processDataForDisplay(final String url, final Context context) {
 
-		if (!downloading) {
-			asyncTask = new AsyncTask<String, Integer, RemoteAPIDownload>() {
+	public void processDataForDisplay( final Context context) {
+
+		if (downloading) {
+			asyncTask = new AsyncTask<String, Integer, RemoteApiDownload>() {
 
 				AlertDialog alert;  //onPreExec
 
@@ -92,7 +90,6 @@ public class RemoteApiUIHandler {
 					if (!queryOrDestination.isEmpty()) {
 						switch (context.getClass().getSimpleName()) {
 							case "Lookup": {
-
 								lastAddedToHistory(context, queryOrDestination);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetBarcodeHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
@@ -102,7 +99,6 @@ public class RemoteApiUIHandler {
 								break;
 							}
 							case "Summary": {
-
 								lastAddedToHistory(context, queryOrDestination);
 								ListView listView = ((Activity) context).findViewById(R.id.listViewGetSummaryHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
@@ -117,28 +113,26 @@ public class RemoteApiUIHandler {
 				}
 
 				@Override
-				protected RemoteAPIDownload doInBackground(String... strings) {
+				protected RemoteApiDownload doInBackground(String... strings) {
 
 					if (!isCancelled()) {
-						RemoteAPIDownload remoteAPIDownload = null;
+						RemoteApiDownload remoteAPIDownload = null;
 						switch (context.getClass().getSimpleName()) {
 							case "Lookup":
 							case "LookupDisplay":
 							case "Summary":
 							case "SummaryDisplay": {
-								remoteAPIDownload = new RemoteAPIDownload(url, context);
+								remoteAPIDownload = new RemoteApiDownload(context);
 								remoteAPIDownload.setQueryOrDestination(queryOrDestination);
 								break;
 							}
 							case "MoveDisplay": {
-								remoteAPIDownload = new RemoteAPIDownload(url, context);
+								remoteAPIDownload = new RemoteApiDownload(context);
 								remoteAPIDownload.setQueryOrDestination(queryOrDestination);
-								remoteAPIDownload.setContainerListStr(containerListStr);
-
+								remoteAPIDownload.setContainerList(containerList);
 								break;
 							}
 						}
-
 						remoteAPIDownload.getDataFromURL();
 						return remoteAPIDownload;
 					}
@@ -146,7 +140,7 @@ public class RemoteApiUIHandler {
 				}
 
 				@Override
-				protected void onPostExecute(RemoteAPIDownload obj) {
+				protected void onPostExecute(RemoteApiDownload obj) {
 					//Dismisses the downloading alert.  This is needed if the download fails.
 					alert.dismiss();
 
@@ -217,7 +211,7 @@ public class RemoteApiUIHandler {
 						AlertDialog alert = alertDialog.create();
 						alert.setCanceledOnTouchOutside(false);
 						alert.show();
-					} else if (obj.getRawJson().length() > 2) {
+					} else  {
 						switch (context.getClass().getSimpleName()) {
 							case "LookupDisplay":
 							case "Lookup": {
@@ -304,23 +298,4 @@ public class RemoteApiUIHandler {
 			}
 		}
 	}
-
-	public String containersToMoveStr(ArrayList<String> list) {
-		String delim = "&c=";
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(delim);
-		int i = 0;
-		while (i < list.size() - 1) {
-			sb.append(list.get(i));
-			sb.append(delim);
-			i++;
-		}
-		sb.append(list.get(i));
-
-		String res = sb.toString();
-		return res;
-	}
-
 }

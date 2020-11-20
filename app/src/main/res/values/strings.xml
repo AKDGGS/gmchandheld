@@ -3,34 +3,15 @@
     <string name="lookup">Lookup</string>
     <string name="add_container">add container</string>
     <string name="help">Help</string>
-    <string name="summary">summary</string>
     <string name="recode">recode</string>
     <string name="add_inventory">add inventory</string>
-    <string name="audit">audit</string>
-    <string name="what_is_being_audited">What is being audited?</string>
-    <string name="maps_dggs_alaska_gov_gmc">maps.dggs.alaska.gov/gmc</string>
-    <string name="container_to_move">Container to move:</string>
-    <string name="destination">Destination:</string>
     <string name="move">Move</string>
-    <string name="search_query">Search Query</string>
-    <string name="host">Host:</string>
     <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="api_key_label">API Key:</string>
     <string name="url_label">URL:</string>
-    <string name="soft_keyboard">Soft Keyboard</string>
-    <string name="save_all">Save All</string>
     <string name="app_name">GMC Inventory</string> <!--name of app-->
 </resources>

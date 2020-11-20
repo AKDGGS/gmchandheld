@@ -27,15 +27,13 @@ public class LookupDisplay extends BaseActivity {
 		setContentView(R.layout.lookup_display);
 		expandableListView = findViewById(R.id.expandableListView);
 
-
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
 		invisibleEditText.setInputType(InputType.TYPE_NULL);
-		final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
+		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
-		remoteAPITaskObj.setDownloading(true);
 		invisibleEditText.setFocusable(true);
 
 		invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
@@ -46,7 +44,9 @@ public class LookupDisplay extends BaseActivity {
 				if (invisibleEditText.getText().toString().trim().length() != 0) {
 
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-						remoteAPITaskObj.processDataForDisplay(invisibleEditText.getText().toString(), LookupDisplay.this);
+						remoteApiUIHandler.setDownloading(true);
+						remoteApiUIHandler.processDataForDisplay(LookupDisplay.this);
+						RemoteApiUIHandler.setQueryOrDestination(invisibleEditText.getText().toString());
 						return true;
 					}
 				} else {
@@ -95,7 +95,6 @@ public class LookupDisplay extends BaseActivity {
 					expandableListView.expandGroup(i);
 				}
 			}
-
 			expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 				@Override
 				public boolean onGroupClick(ExpandableListView parent, View v,
@@ -106,12 +105,9 @@ public class LookupDisplay extends BaseActivity {
 		}
 	}
 
-
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
-
 		invisibleEditText.setText((char) event.getUnicodeChar() + "");
 		invisibleEditText.setSelection(invisibleEditText.getText().length());
 		invisibleEditText.requestFocus();

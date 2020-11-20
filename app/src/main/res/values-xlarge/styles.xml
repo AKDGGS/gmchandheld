@@ -10,10 +10,5 @@
         <item name="android:textSize">30sp</item>  <!-- controls the size of the drop down menu items -->
     </style>
 
-    <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">30sp</item>
-    </style>
-
-
 
 </resources>

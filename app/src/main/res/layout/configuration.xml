@@ -39,7 +39,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1.0">
 
             <LinearLayout
@@ -129,7 +129,7 @@
             android:paddingRight="5dp"
             android:paddingEnd="5dp"
             android:text="Save All"
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:textStyle="bold"
             android:minHeight="40dip"
             android:minWidth="40dip"

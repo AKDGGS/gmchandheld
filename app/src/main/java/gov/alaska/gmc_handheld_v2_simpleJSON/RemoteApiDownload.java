@@ -15,33 +15,35 @@ import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-public class RemoteAPIDownload {
+public class RemoteApiDownload {
 	private Exception exception = null;
 	private StringBuilder sb;
 	private int responseCode;
 	private String responseMsg;
-	private final String url;
 	private String rawJson;
 	private String queryOrDestination;
-	private String containerListStr;
-	private final Context context;
-
+	private ArrayList<String> containerList;
+	private Context context;
+	SimpleDateFormat sdf;
 
 	public static final String SHARED_PREFS = "sharedPrefs";
 
-	public RemoteAPIDownload(String url, Context context){
-		this.url = url;
+	public RemoteApiDownload(Context context){
 		this.context = context;
+		sdf = new SimpleDateFormat(
+				"EEE, dd MMM yyyy HH:mm:ss zzz"
+		);
 	}
 
 	public void setQueryOrDestination(String queryOrDestination){this.queryOrDestination = queryOrDestination;}
-	public void setContainerListStr(String containerListStr){this.containerListStr = containerListStr;}
+	public void setContainerList(ArrayList<String> containerList){this.containerList = containerList;}
 
 	public boolean isErrored() {
 		return exception != null;
@@ -54,7 +56,6 @@ public class RemoteAPIDownload {
 	public int getResponseCode() {
 		return responseCode;
 	}
-
 	public String getResponseMsg() {
 		return responseMsg;
 	}
@@ -66,11 +67,10 @@ public class RemoteAPIDownload {
 	public void getDataFromURL() {
 		InputStream inputStream;
 		HttpURLConnection connection;
+		SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+		String url = sharedPreferences.getString("urlText", "");
 
 		try {
-			URL myURL = new URL(url);
-			connection = (HttpURLConnection) myURL.openConnection();
-
 			Date date = new Date();
 			String HDATE = getDateFormat().format(date);
 
@@ -89,6 +89,7 @@ public class RemoteAPIDownload {
 						e.printStackTrace();
 					}
 					QUERYPARAM = "barcode=" + query;
+					url = url + "inventory.json?barcode=" + queryOrDestination;
 					break;
 				}
 				case "MoveDisplay":{
@@ -98,20 +99,22 @@ public class RemoteAPIDownload {
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}
-					query = "d=" + query + containerListStr;
+					query = "d=" + query + containersToMoveStr(containerList);
 
 					QUERYPARAM = query;
+					url = url +"move.json?" +  query;
 					break;
 				}
 			}
 
 			String message = HDATE + "\n" + QUERYPARAM;
 
-			SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
 			String APIKEY = sharedPreferences.getString("apiText", "");
 
 			String AUTH_DGST = getDGST(APIKEY, message);
 
+			URL myURL = new URL(url);
+			connection = (HttpURLConnection) myURL.openConnection();
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Authorization", "BASE64-HMAC-SHA256 " + AUTH_DGST);
 			connection.setRequestProperty("Date", HDATE);
@@ -170,9 +173,6 @@ public class RemoteAPIDownload {
 	}
 
 	public SimpleDateFormat getDateFormat() {
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				"EEE, dd MMM yyyy HH:mm:ss zzz"
-		);
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return sdf;
 	}
@@ -191,5 +191,26 @@ public class RemoteAPIDownload {
 			e.printStackTrace();
 		}
 		return android.util.Base64.encodeToString(hmac256, android.util.Base64.DEFAULT);
+	}
+
+	public String containersToMoveStr(ArrayList<String> list) {
+		String delim = "&c=";
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(delim);
+		int i = 0;
+		while (i < list.size() - 1) {
+
+			try {
+				sb.append(URLEncoder.encode(list.get(i), "utf-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			sb.append(delim);
+			i++;
+		}
+		sb.append(list.get(i));
+		return sb.toString();
 	}
 }

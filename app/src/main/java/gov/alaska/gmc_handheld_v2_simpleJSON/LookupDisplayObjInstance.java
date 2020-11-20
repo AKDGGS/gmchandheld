@@ -9,7 +9,5 @@ public class LookupDisplayObjInstance {
 			obj = new LookupDisplayObjInstance();
 		return obj;
 	}
-
 	public LookupLogicForDisplay lookupLogicForDisplayObj;
-
 }

@@ -23,7 +23,6 @@ public class Lookup extends BaseActivity {
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	public static final String SHARED_PREFS = "sharedPrefs";
 
-
 	@Override
 	public void onRestart() {
 		super.onRestart();
@@ -49,7 +48,7 @@ public class Lookup extends BaseActivity {
 
 		final EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
 		final Button submit_button = findViewById(R.id.submit_button);
-		final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
+		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
 		// populates the history list
 		listView = findViewById(R.id.listViewGetBarcodeHistory);
@@ -58,30 +57,31 @@ public class Lookup extends BaseActivity {
 		adapter.notifyDataSetChanged();
 		listView.setAdapter(adapter);
 
-        // Submit barcode query
-		if (!remoteAPITaskObj.isDownloading()) {
+		// Submit barcode query
+		if (remoteApiUIHandler.isDownloading()) {
 			// onClickListener listens if the submit button is clicked
 			submit_button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if(!getBarcode().isEmpty()) {
-						remoteAPITaskObj.setDownloading(true);
-						remoteAPITaskObj.processDataForDisplay(getBarcode(), Lookup.this);
+					if (!getBarcode().isEmpty()) {
+						remoteApiUIHandler.setDownloading(true);
+						RemoteApiUIHandler.setQueryOrDestination(getBarcode());
+						remoteApiUIHandler.processDataForDisplay(Lookup.this);
 					}
 				}
 			});
 
-            // KeyListener listens if enter is pressed
-            barcodeInput.setOnKeyListener(new View.OnKeyListener() {
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    // if "enter" is pressed
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        submit_button.performClick();
-                        return true;
-                    }
-                    return false;
-                }
-            });
+			// KeyListener listens if enter is pressed
+			barcodeInput.setOnKeyListener(new View.OnKeyListener() {
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+					// if "enter" is pressed
+					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+						submit_button.performClick();
+						return true;
+					}
+					return false;
+				}
+			});
 
 			// Clicking barcode in history list.
 			listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -100,11 +100,10 @@ public class Lookup extends BaseActivity {
 	}
 
 	@Override
-	public void onBackPressed() {
-		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
-		super.onBackPressed();
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		System.out.println(event.getDisplayLabel());
+		return super.onKeyDown(keyCode, event);
 	}
-
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {

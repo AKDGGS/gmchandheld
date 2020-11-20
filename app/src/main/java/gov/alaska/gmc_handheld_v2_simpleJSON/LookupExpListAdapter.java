@@ -92,23 +92,22 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 		parentHolder = (ParentViewHolder) convertView.getTag();
 		Set<String> inventoryObjTypeSet = null;
-		System.out.println(context.getClass().getSimpleName());
+
 		switch(context.getClass().getSimpleName()){
 			case "LookupDisplay":{
 				LookupLogicForDisplay obj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
-				inventoryObjTypeSet = new HashSet<String>(obj.getTypeFlagList());
-				System.out.println(inventoryObjTypeSet);
+				inventoryObjTypeSet = new HashSet<>(obj.getTypeFlagList());
 				break;
 			}
 			case "SummaryDisplay":{
 				SummaryLogicForDisplay obj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
-				inventoryObjTypeSet = new HashSet<String>(obj.getTypeFlagList());
-				System.out.println(inventoryObjTypeSet);
+				inventoryObjTypeSet = new HashSet<>(obj.getTypeFlagList());
 				break;
 			}
 		}
 
-		if (!inventoryObjTypeSet.isEmpty() && inventoryObjTypeSet.size() == 1) {
+		assert inventoryObjTypeSet != null;
+		if (inventoryObjTypeSet.size() == 1) {
 			setInventoryObjType((String) inventoryObjTypeSet.toArray()[0]);
 		} else if (inventoryObjTypeSet.size() == 2 && (inventoryObjTypeSet.contains("Borehole") && inventoryObjTypeSet.contains("Prospect"))) {
 			setInventoryObjType("Borehole");

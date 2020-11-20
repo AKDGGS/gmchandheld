@@ -22,15 +22,13 @@ public class SummaryDisplay extends BaseActivity {
 		setContentView(R.layout.summary_display);
 		expandableListView = findViewById(R.id.expandableListView);
 
-
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
 		invisibleEditText.setInputType(InputType.TYPE_NULL);
-		final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
+		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
-		remoteAPITaskObj.setDownloading(true);
 		invisibleEditText.setFocusable(true);
 
 		invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
@@ -41,7 +39,9 @@ public class SummaryDisplay extends BaseActivity {
 
 				if (invisibleEditText.getText().toString().trim().length() != 0) {
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-						remoteAPITaskObj.processDataForDisplay(invisibleEditText.getText().toString(), SummaryDisplay.this);
+						remoteApiUIHandler.setDownloading(true);
+						RemoteApiUIHandler.setQueryOrDestination(invisibleEditText.getText().toString());
+						remoteApiUIHandler.processDataForDisplay(SummaryDisplay.this);
 						return true;
 					}
 				} else {

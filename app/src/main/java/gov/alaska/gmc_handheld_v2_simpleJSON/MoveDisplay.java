@@ -1,6 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,11 +17,14 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MoveDisplay extends BaseActivity {
+	public static final String SHARED_PREFS = "sharedPrefs";
 
 	ListView containerListLV;
-
 	ArrayList<String> containerList;
 	ArrayAdapter<String> adapter;
 
@@ -43,10 +46,19 @@ public class MoveDisplay extends BaseActivity {
 		final Button add_button = findViewById(R.id.add_container_button);
 		containerListLV = findViewById(R.id.listViewGetContainersToMove);
 
-		containerList = new ArrayList<>();
-
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		containerListLV.setAdapter(adapter);
+
+		final SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		if(sharedPreferences.getString(SHARED_PREFS, "savedDestination") != null){
+			moveDestinationET.setText(sharedPreferences.getString("savedDestination", ""));
+		}
+		if(sharedPreferences.getStringSet("savedContainerList", null) != null) {
+			containerList = new ArrayList<>(sharedPreferences.getStringSet("savedContainerList", null));
+			adapter.addAll(containerList);
+		}else {
+			containerList = new ArrayList<>();
+		}
 
 		add_button.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -65,25 +77,9 @@ public class MoveDisplay extends BaseActivity {
 			}
 		});
 
+		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
-		final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
-
-		if (!remoteAPITaskObj.isDownloading()) {
-
-			//Long click option to remove added elements
-
-//			containerListLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//				@Override
-//				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-//					final int which_item = position;
-//					adapter.remove(containerList.get(which_item));
-//					containerList.remove(which_item);
-//					adapter.notifyDataSetChanged();
-//					moveCountTV.setText(String.valueOf(containerList.size()));
-//					return false;
-//				}
-//			});
-
+		if (remoteApiUIHandler.isDownloading()) {
 			//double click to remove elements
 			containerListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				long startTime = System.currentTimeMillis();
@@ -93,13 +89,12 @@ public class MoveDisplay extends BaseActivity {
 					clicks++;
 
 					Handler handler = new Handler();
-					handler.postDelayed(new Runnable(){
+					handler.postDelayed(new Runnable() {
 						@Override
 						public void run() {
-							if(clicks == 2){
-								final int which_item = position;
-								adapter.remove(containerList.get(which_item));
-								containerList.remove(which_item);
+							if (clicks == 2) {
+								adapter.remove(containerList.get(position));
+								containerList.remove(position);
 								adapter.notifyDataSetChanged();
 								moveCountTV.setText(String.valueOf(containerList.size()));
 							}
@@ -108,7 +103,6 @@ public class MoveDisplay extends BaseActivity {
 					}, 500);
 				}
 			});
-
 
 			// KeyListener listens if enter is pressed
 			moveContainerET.setOnKeyListener(new View.OnKeyListener() {
@@ -123,14 +117,12 @@ public class MoveDisplay extends BaseActivity {
 				}
 			});
 
-
 			// KeyListener listens if enter is pressed
 			moveDestinationET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					if (!(TextUtils.isEmpty(moveContainerET.getText()))) {
+					if (!(TextUtils.isEmpty(moveDestinationET.getText()))) {
 						// if "enter" is pressed
 						if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-							add_button.performClick();
 							moveContainerET.requestFocus();
 							return true;
 						}
@@ -139,32 +131,22 @@ public class MoveDisplay extends BaseActivity {
 				}
 			});
 
-
 			// onClickListener listens if the submit button is clicked
 			move_button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if ((TextUtils.isEmpty(moveContainerET.getText())) && (containerList.size() == 0)) {
-//						moveContainerET.setError("A container is required!");
-					} else if (TextUtils.isEmpty(moveDestinationET.getText())) {
-//						moveDestinationET.setError("A destination is required!");
-					} else {
+					if (!(TextUtils.isEmpty(moveDestinationET.getText())) && (containerList.size() > 0)) {
 						moveContainer();
 						moveContainerET.setText("");
 						moveDestinationET.setText("");
 						moveCountTV.setText("");
+						sharedPreferences.edit().remove("savedContainerList").apply();
+						sharedPreferences.edit().remove("savedDestination").apply();
 					}
 				}
 			});
 		}
 	}
-
-	@Override
-    public void onBackPressed() {
-        Intent get_barcode = new Intent(this, Summary.class);
-        startActivity(get_barcode);
-    }
-
 
 	public String getDestination() {
 		EditText destinationInput = findViewById(R.id.destinationET);
@@ -172,12 +154,27 @@ public class MoveDisplay extends BaseActivity {
 	}
 
 	public void moveContainer() {
-		RemoteAPITask remoteAPITask = new RemoteAPITask();
-		remoteAPITask.setDownloading(true);
-		remoteAPITask.setContainerList(containerList);
-		remoteAPITask.processDataForDisplay(getDestination(), this);
+		RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
+		RemoteApiUIHandler.setQueryOrDestination(getDestination());
+		RemoteApiUIHandler.setContainerList(containerList);
 
+		remoteApiUIHandler.setDownloading(true);
+		remoteApiUIHandler.processDataForDisplay(this);
 	}
 
+	@Override
+	public void onBackPressed() {
+		String[] containerArray = containerList.toArray(new String[0]);
+		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
+		final EditText moveDestinationET = findViewById(R.id.destinationET);
 
+		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putStringSet("savedContainerList", containerSet);
+		editor.putString("savedDestination", moveDestinationET.getText().toString());
+
+		editor.apply();
+
+		super.onBackPressed();
+	}
 }

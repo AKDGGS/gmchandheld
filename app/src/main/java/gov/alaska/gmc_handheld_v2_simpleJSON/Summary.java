@@ -43,7 +43,7 @@ public class Summary extends BaseActivity {
 
         final EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
         final Button submit_button = findViewById(R.id.submit_button);
-        final RemoteAPITask remoteAPITaskObj = new RemoteAPITask();
+        final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
         // populates the history list
         listView = findViewById(R.id.listViewGetSummaryHistory);
@@ -53,15 +53,16 @@ public class Summary extends BaseActivity {
         listView.setAdapter(adapter);
 
         // Submit barcode query
-        if (!remoteAPITaskObj.isDownloading()) {
+        if (remoteApiUIHandler.isDownloading()) {
 
             // onClickListener listens if the submit button is clicked
             submit_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(!getBarcode().isEmpty()) {
-                        remoteAPITaskObj.setDownloading(true);
-                        remoteAPITaskObj.processDataForDisplay(getBarcode(),  Summary.this);
+                        remoteApiUIHandler.setDownloading(true);
+                        RemoteApiUIHandler.setQueryOrDestination(getBarcode());
+                        remoteApiUIHandler.processDataForDisplay(Summary.this);
                     }
                 }
             });

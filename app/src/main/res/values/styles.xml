@@ -11,20 +11,6 @@
 
     </style>
 
-    <style name="Base_ToolbarTheme">
-        <!-- Color used for the title of the Toolbar - as long as not overridden -->
-        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
-        <!-- Used to color back button and three dots -->
-        <item name="android:textColorSecondary">@color/colorRadiation</item>
-    </style>
-
-
-    <style name="CustomTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/colorPrimaryDark</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
 
 </resources>
 
