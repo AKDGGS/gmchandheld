@@ -40,7 +40,6 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".SummaryDisplay"
-            android:launchMode="singleTop"
             android:parentActivityName="gov.alaska.gmc_handheld_v2_simpleJSON.Summary"
             android:theme="@style/Theme.AppCompat.DayNight"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -52,7 +51,6 @@
             android:label="Add Container" />
         <activity
             android:name=".LookupDisplay"
-            android:launchMode="singleTop"
             android:parentActivityName="gov.alaska.gmc_handheld_v2_simpleJSON.Lookup"
             android:theme="@style/Theme.AppCompat.DayNight" />
         <activity

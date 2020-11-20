@@ -42,11 +42,11 @@ public class LookupDisplay extends BaseActivity {
 					invisibleEditText.setText("");
 				}
 				if (invisibleEditText.getText().toString().trim().length() != 0) {
-
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
 						remoteApiUIHandler.setDownloading(true);
-						remoteApiUIHandler.processDataForDisplay(LookupDisplay.this);
 						RemoteApiUIHandler.setQueryOrDestination(invisibleEditText.getText().toString());
+						remoteApiUIHandler.processDataForDisplay(LookupDisplay.this);
+
 						return true;
 					}
 				} else {

@@ -70,6 +70,7 @@ public class RemoteApiUIHandler {
 					alertDialog.setView(layout);
 
 					TextView title = new TextView(context);
+					System.out.println("Alert " + queryOrDestination);
 					title.setText("Processing " + queryOrDestination);
 					title.setGravity(Gravity.CENTER);
 					title.setTextSize(16);
@@ -227,6 +228,8 @@ public class RemoteApiUIHandler {
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
+
+								System.out.println(lookupLogicForDisplayObj.getDisplayDict());
 								Intent intent = new Intent(context, LookupDisplay.class);
 								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 								intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
