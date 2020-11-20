@@ -9,7 +9,6 @@ public class InventoryObject {
 	private final ArrayList<InventoryObject> children;
 	private int displayWeight;
 
-
 	public InventoryObject() {
 		this(null, null, 0);
 	}
@@ -32,25 +31,20 @@ public class InventoryObject {
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
 
-
 	public Object getValue() {
 		return value;
 	}
-
 	public void setValue(Object value) {
 		this.value = value;
 	}
 
-
 	public ArrayList<InventoryObject> getChildren() {
 		return children;
 	}
-
 	public void addChild(InventoryObject child) {
 		if (child != null) {
 			this.children.add(child);
@@ -60,9 +54,7 @@ public class InventoryObject {
 	public Integer getDisplayWeight() {
 		return displayWeight;
 	}
-
 	public void setDisplayWeight(Integer displayWeight) {
 		this.displayWeight = displayWeight;
 	}
-
 }

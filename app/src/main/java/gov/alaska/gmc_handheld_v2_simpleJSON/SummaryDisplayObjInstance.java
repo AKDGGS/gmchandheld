@@ -9,7 +9,5 @@ public class SummaryDisplayObjInstance {
 			obj = new SummaryDisplayObjInstance();
 		return obj;
 	}
-
 	public SummaryLogicForDisplay summaryLogicForDisplayObj;
-
 }

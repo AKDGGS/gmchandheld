@@ -1,17 +1,15 @@
 <resources>
-
     <string name="lookup">Lookup</string>
     <string name="add_container">add container</string>
     <string name="help">Help</string>
     <string name="recode">recode</string>
     <string name="add_inventory">add inventory</string>
     <string name="move">Move</string>
-    <!-- Preference Titles -->
-
-    <!-- Messages Preferences -->
-
-    <!-- Sync Preferences -->
+    <!--  Preference Titles  -->
+    <!--  Messages Preferences  -->
+    <!--  Sync Preferences  -->
     <string name="api_key_label">API Key:</string>
     <string name="url_label">URL:</string>
-    <string name="app_name">GMC Inventory</string> <!--name of app-->
+    <string name="app_name">GMC Inventory</string>
+    <!-- name of app -->
 </resources>

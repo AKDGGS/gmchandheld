@@ -37,7 +37,6 @@ public class LookupLogicForDisplay {
 	public static final String SHARED_PREFS = "sharedPrefs";
 	public static final String SHOW_NAME_LABEL_SWITCH_TEXT = "showNameLabelSwitchText";
 
-
 	public LookupLogicForDisplay(Context context) {
 		this.context = context;
 		keyList = new ArrayList<>();
@@ -64,13 +63,10 @@ public class LookupLogicForDisplay {
 	}
 
 	public ArrayList<String> getTypeFlagList() {return typeFlagList;}
-
 	public void setTypeFlag(String typeFlag) {this.typeFlagList.add(typeFlag);}
 
 	public void setBarcodeQuery(String barcodeQuery) {this.barcodeQuery = barcodeQuery;}
-
 	public String getBarcodeQuery() {return barcodeQuery;}
-
 
 	//*********************************************************************************************
 
@@ -88,7 +84,6 @@ public class LookupLogicForDisplay {
 			JSONObject inputJson = new JSONObject((rawJSON));  // check for jsonobject
 
 			InventoryObject root = parseTree(null, inputJson.opt("barcode").toString(), inputJson);
-
 
 			if (root != null) {
 				getStringForDisplay(root, 1, null, null, getDisplayDict());
@@ -130,10 +125,7 @@ public class LookupLogicForDisplay {
 				ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 						lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 
-
-				//Arbitrary Value
-
-				int indentationIncrement = 42;
+				int indentationIncrement = 42; //Arbitrary Value
 
 				if (!Character.isWhitespace(ssb.charAt(3))) {
 					ssb = createIndentedText(ssb, 3, indentationIncrement);
@@ -223,15 +215,6 @@ public class LookupLogicForDisplay {
 						return new InventoryObject("Collection", o.get("name"), 500);
 					}
 					return null;
-//				case "issues": {
-//					String id = o.optString("ID");
-//					String newName = "Issue";
-//					if (!"".equals(Integer.toString(ID))) {
-//						newName += " ID " + id;
-//					}
-//					io = new InventoryObject(newName, null, 100);
-//					break;
-//				}
 				case "operators": {
 					String newName = "Operator";
 					if (o.has("current")) {
@@ -312,7 +295,6 @@ public class LookupLogicForDisplay {
 			}
 		}
 
-
 		for (Iterator<String> it = o.keys(); it.hasNext(); ) {
 			String key = it.next();
 			io.addChild(parseTree(o, key, o.get(key)));
@@ -321,10 +303,8 @@ public class LookupLogicForDisplay {
 		if(typeFlagList.isEmpty()){
 			typeFlagList.add("No type");
 		}
-
 		return io;
 	}
-
 
 //*********************************************************************************************
 

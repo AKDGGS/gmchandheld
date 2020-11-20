@@ -28,7 +28,7 @@ public class MoveDisplay extends BaseActivity {
 	ArrayList<String> containerList;
 	ArrayAdapter<String> adapter;
 
-	int clicks = 0;
+	int clicks = 0;  //used to count double clicks for deletion
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +65,9 @@ public class MoveDisplay extends BaseActivity {
 			public void onClick(View v) {
 				String container = moveContainerET.getText().toString();
 				if (!container.isEmpty()) {
-					if (!containerList.contains(container)) {
-						containerList.add(container);
-						adapter.add(container);
+					if (!(container.equals(moveDestinationET.getText().toString()) && (!containerList.contains(container)))) {
+						containerList.add(0, container);
+						adapter.insert(container, 0);
 						adapter.notifyDataSetChanged();
 						moveCountTV.setText(String.valueOf(containerList.size()));
 					}

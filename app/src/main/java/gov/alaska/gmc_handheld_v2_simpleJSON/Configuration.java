@@ -26,8 +26,6 @@ public class Configuration extends BaseActivity {
 	private String url;
 	private String apiKey;
 
-
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,7 +63,6 @@ public class Configuration extends BaseActivity {
 			url = url + '/';
 		}
 		return url;
-
 	}
 
 	public String getApiKey() {

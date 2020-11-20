@@ -89,7 +89,6 @@ public class SummaryDisplay extends BaseActivity {
 						return true; // This way the expander cannot be collapsed
 					}
 				});
-
 		}
 	}
 
@@ -105,12 +104,6 @@ public class SummaryDisplay extends BaseActivity {
 		return super.onKeyDown(keyCode, event);
 	}
 
-//    @Override
-//    public void onBackPressed() {
-//        Intent get_barcode = new Intent(this, Summary.class);
-//        startActivity(get_barcode);
-//    }
-
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		int action, keycode;
@@ -118,7 +111,6 @@ public class SummaryDisplay extends BaseActivity {
 		action = event.getAction();
 		keycode = event.getKeyCode();
 		AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-
 
 		switch (keycode) {
 			case KeyEvent.KEYCODE_VOLUME_UP: {

@@ -1,7 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 import android.text.style.LeadingMarginSpan;
@@ -189,11 +188,8 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				}
 				break;
 		}
-
-
 		txtChild.setText(expListChildContents);
 		return convertView;
-
 	}
 
 	@Override
@@ -207,13 +203,4 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
 		return text;
 	}
-
-	public static int getScreenWidth() {
-		//https://stackoverflow.com/a/31377616
-		return Resources.getSystem().getDisplayMetrics().widthPixels;
-	}
-
-
 }
-
-// GMC-000197640

@@ -18,7 +18,5 @@ public class SummaryHistoryHolder {	// https://stackoverflow.com/a/51344957
 		}
 		return instance;
 	}
-
 	private static SummaryHistoryHolder instance;
-
 }

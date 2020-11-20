@@ -45,11 +45,9 @@ public class BaseActivity extends AppCompatActivity {
 
 			if (summaryLogicForDisplayObj == null) {
 				Intent get_barcode = new Intent(this, Summary.class);
-//				get_barcode.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				startActivity(get_barcode);
 			} else {
 				Intent summary = new Intent(this, SummaryDisplay.class);
-//				summary.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				startActivity(summary);
 			}
 			return true;
@@ -59,23 +57,19 @@ public class BaseActivity extends AppCompatActivity {
 
 			if (lookupLogicForDisplayObj == null) {
 				Intent get_barcode = new Intent(this, Lookup.class);
-//				get_barcode.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				startActivity(get_barcode);
 			} else {
 				Intent lookup = new Intent(this, LookupDisplay.class);
-//				lookup.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				startActivity(lookup);
 			}
 			return true;
 		} else if (item.getItemId() == (R.id.configuration)) {
 			Intent intent_configuration = new Intent(this, Configuration.class);
-			intent_configuration.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			this.startActivity(intent_configuration);
 			return true;
 		} else if (item.getItemId() == (R.id.move)) {
 			Intent intent_move = new Intent(this, MoveDisplay.class);
 			intent_move.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//			this.startActivityForResult(intent_move, 1);
 			this.startActivity(intent_move);
 			return true;
 		}else {

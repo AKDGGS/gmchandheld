@@ -1,6 +1,7 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -35,6 +36,7 @@ public class RemoteApiDownload {
 
 	public static final String SHARED_PREFS = "sharedPrefs";
 
+	@SuppressLint("SimpleDateFormat")
 	public RemoteApiDownload(Context context){
 		this.context = context;
 		sdf = new SimpleDateFormat(
@@ -78,10 +80,7 @@ public class RemoteApiDownload {
 
 			switch (context.getClass().getSimpleName()){
 				case "Lookup":
-				case "LookupDisplay":
-				case "Summary":
-				case "SummaryDisplay":{
-
+				case "LookupDisplay":{
 					String query = null;
 					try {
 						query = URLEncoder.encode(queryOrDestination, "utf-8");
@@ -91,6 +90,19 @@ public class RemoteApiDownload {
 					QUERYPARAM = "barcode=" + query;
 					url = url + "inventory.json?barcode=" + queryOrDestination;
 					break;
+				}
+				case "Summary":
+				case "SummaryDisplay":{
+					String query = null;
+					try {
+						query = URLEncoder.encode(queryOrDestination, "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					QUERYPARAM = "barcode=" + query;
+					url = url + "summary.json?barcode=" + queryOrDestination;
+					break;
+
 				}
 				case "MoveDisplay":{
 					String query = null;

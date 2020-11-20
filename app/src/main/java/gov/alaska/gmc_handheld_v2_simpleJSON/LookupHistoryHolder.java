@@ -21,6 +21,5 @@ public class LookupHistoryHolder {
 	}
 
 	private static LookupHistoryHolder instance;
-
 }
 

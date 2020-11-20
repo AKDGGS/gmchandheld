@@ -1,5 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -51,7 +52,7 @@ public class RemoteApiUIHandler {
 
 	AsyncTask asyncTask = null;
 
-
+	@SuppressLint("StaticFieldLeak")  //Can be ignored because the Asynctask is short lived.  https://stackoverflow.com/a/46166223
 	public void processDataForDisplay( final Context context) {
 
 		if (downloading) {

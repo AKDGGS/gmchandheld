@@ -29,7 +29,6 @@ public class SummaryLogicForDisplay {
 	private String typeFlag;
 	private ArrayList<String> typeFlagList = new ArrayList<>();
 
-
 	public SummaryLogicForDisplay() {
 		keyList = new ArrayList<>();
 		displayDict = new HashMap<>();
@@ -53,13 +52,10 @@ public class SummaryLogicForDisplay {
 	public void setBarcodeQuery(String barcodeQuery){
 		this.barcodeQuery = barcodeQuery;
 	}
-
 	public String getBarcodeQuery(){return barcodeQuery;}
 
 	public ArrayList<String> getTypeFlagList() {return typeFlagList;}
-
 	public void setTypeFlag(String typeFlag) {this.typeFlagList.add(typeFlag);}
-
 
 	//*********************************************************************************************
 
@@ -105,9 +101,7 @@ public class SummaryLogicForDisplay {
 					// Indentation is 3 spaces
 					// If this changes, you might need to change LookupExpListAdapter getChildView
 					// in order to deal with multiline indentations.
-
 					ssb.append("   ");
-
 				}
 				int lengthOfSsb;
 
@@ -120,9 +114,7 @@ public class SummaryLogicForDisplay {
 				ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 						lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 
-				//Arbitrary value
-				int indentationIncrement = 42;
-
+				int indentationIncrement = 42; //Arbitrary value
 				if (!Character.isWhitespace(ssb.charAt(3))) {
 					ssb = createIndentedText(ssb, 3, indentationIncrement);
 				} else if (!Character.isWhitespace(ssb.charAt(6))) {
@@ -133,14 +125,12 @@ public class SummaryLogicForDisplay {
 					ssb = createIndentedText(ssb, 0, indentationIncrement * 4);
 				}
 
-
 				displayList.add(ssb);
 				dict.put(currKey, displayList);
 			}
 		}
 
 		for (InventoryObject child : o.getChildren()) {
-
 			if (child.getName() != null) {
 				getStringForDisplay(child, depth + 1, currKey, displayList, dict);
 			}
@@ -173,9 +163,7 @@ public class SummaryLogicForDisplay {
 	//*********************************************************************************************
 
 	private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
-
 		InventoryObject io;
-
 		if (name == null) {
 			if (!"".equals(o.optString("ID"))) {
 				String newName = "ID " + o.optInt("ID");
@@ -263,7 +251,6 @@ public class SummaryLogicForDisplay {
 			}
 		}
 
-
 		for (Iterator<String> it = o.keys(); it.hasNext(); ) {
 			String key = it.next();
 			io.addChild(parseTree(o, key, o.get(key)));
@@ -272,17 +259,13 @@ public class SummaryLogicForDisplay {
 		if(typeFlagList.isEmpty()){
 			typeFlagList.add("No type");
 		}
-
 		return io;
 	}
-
 
 //*********************************************************************************************
 
 	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
-
 		InventoryObject io;
-
 		if (name == null) {
 			io = new InventoryObject(name);
 		} else {
@@ -332,18 +315,8 @@ public class SummaryLogicForDisplay {
 			// Items are sorted internally first, and the externally in processForDisplay()
 			case "barcode":
 				return new InventoryObject("Barcode", o, 1000);
-
 			case "borehole":
-//				Object newO = o;
-//				if (parent instanceof JSONObject) {
-//					JSONObject pjo = (JSONObject) parent;
-//					if (pjo.has("total")) {
-//						newO = newO + " Count: " + pjo.optString("total");
-//					}
-//				}
-//				return new InventoryObject("Borehole", newO, 900);
 				return new InventoryObject("Borehole", o, 900);
-
 			case "keywords":
 				return new InventoryObject("Keywords", o, 700);
 			case "total":
@@ -355,10 +328,8 @@ public class SummaryLogicForDisplay {
 		}
 	}
 
-
 	public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
 		//https://www.programmersought.com/article/45371641877/
-
 		text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
 		return text;
 	}
