@@ -14,16 +14,12 @@
             android:hint="Transparent EditText"
             android:background="@android:color/transparent"
             android:inputType="text">
-
             <requestFocus />
         </EditText>
-
 
     <ExpandableListView
         android:id="@+id/expandableListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:groupIndicator="@null" />
-
-
 </LinearLayout>

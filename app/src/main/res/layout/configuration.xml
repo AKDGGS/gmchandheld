@@ -21,13 +21,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:paddingStart="5dp"
                 android:paddingLeft="5dp"
                 android:paddingTop="15dp"
                 android:paddingBottom="5dp"
-                android:text="Build Date: "
+                android:text="@string/build_date"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                 />
 
             <TextView
                 android:id="@+id/buildDateTV"
@@ -117,7 +118,6 @@
             </LinearLayout>
         </ScrollView>
 
-
         <Button
             android:id="@+id/save_button"
             android:layout_width="match_parent"
@@ -128,15 +128,10 @@
             android:paddingStart="5dp"
             android:paddingRight="5dp"
             android:paddingEnd="5dp"
-            android:text="Save All"
+            android:text="@string/save_all"
             android:textSize="12sp"
             android:textStyle="bold"
             android:minHeight="40dip"
-            android:minWidth="40dip"
-            />
-
+            android:minWidth="40dip" />
     </LinearLayout>
 </LinearLayout>
-
-
-    <!--    thXAgLfS68TRpmixfvr2nksFQYrzZf5F"-->

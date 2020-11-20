@@ -27,7 +27,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="10dp"
-                android:text="To:"
+                android:text="@string/to"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
@@ -57,7 +57,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="5dp"
-                android:text="Item:"
+                android:text="@string/item"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
@@ -81,7 +81,7 @@
                 android:layout_gravity="center"
                 android:minWidth="40dip"
                 android:minHeight="40dip"
-                android:text="Add"
+                android:text="@string/add"
                 android:textSize="10sp" />
         </LinearLayout>
 
@@ -96,7 +96,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="5dp"
-                android:text="Number of items added:"
+                android:text="@string/number_of_items_added"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
@@ -140,8 +140,8 @@
                 android:paddingLeft="5dp"
                 android:paddingEnd="5dp"
                 android:paddingRight="5dp"
-                android:text="Submit"
-                android:textSize="12dp"
+                android:text="@string/submit"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </RelativeLayout>
     </LinearLayout>

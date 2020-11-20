@@ -42,14 +42,13 @@
                 android:text="" />
         </LinearLayout>
 
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:text="History"
+            android:text="@string/history"
             android:textColor="#ff353535"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -69,7 +68,6 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="60dp"/>
 
-
                 <Button
                     android:id="@+id/submit_button"
                     android:layout_width="match_parent"
@@ -86,19 +84,10 @@
                     android:paddingLeft="5dp"
                     android:paddingEnd="5dp"
                     android:paddingRight="5dp"
-                    android:text="Submit"
-                    android:textSize="12dp"
+                    android:text="@string/submit"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
         </RelativeLayout>
-
     </LinearLayout>
-
 </LinearLayout>
-
-
-    <!--<gov.alaska.gmc_handheld_v2_simpleJSON.NonScrollListView-->
-    <!--android:id="@+id/listViewGetBarcodeHistory"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--tools:ignore="MissingClass" />-->
