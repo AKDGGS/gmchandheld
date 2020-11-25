@@ -72,7 +72,17 @@ public class BaseActivity extends AppCompatActivity {
 			intent_move.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			this.startActivity(intent_move);
 			return true;
-		}else {
+		} else if (item.getItemId() == (R.id.add_container)) {
+			Intent intent_configuration = new Intent(this, AddContainer.class);
+			this.startActivity(intent_configuration);
+			return true;
+		}
+//		else if (item.getItemId() == (R.id.notes)) {
+//			Intent intent_configuration = new Intent(this, Notes.class);
+//			this.startActivity(intent_configuration);
+//			return true;
+//		}
+		else {
 			return super.onOptionsItemSelected(item);
 		}
 

@@ -1,6 +1,7 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ public class Lookup extends BaseActivity {
 
 	private ListView listView;
 	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-	public static final String SHARED_PREFS = "sharedPrefs";
+	private SharedPreferences prefs = null;
 
 	@Override
 	public void onRestart() {
@@ -29,6 +30,7 @@ public class Lookup extends BaseActivity {
 		finish();
 		startActivity(getIntent());
 	}
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class Lookup extends BaseActivity {
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
 //        String s2 =  sp.getString("lookupHistoryString", "");
 //        System.out.println("TEST " + s2);
+
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -101,7 +104,6 @@ public class Lookup extends BaseActivity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		System.out.println(event.getDisplayLabel());
 		return super.onKeyDown(keyCode, event);
 	}
 

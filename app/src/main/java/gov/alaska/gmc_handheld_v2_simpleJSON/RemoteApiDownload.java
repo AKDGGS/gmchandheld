@@ -30,6 +30,8 @@ public class RemoteApiDownload {
 	private String responseMsg;
 	private String rawJson;
 	private String queryOrDestination;
+	private String addedContainerName;
+	private String addedContainerRemark;
 	private ArrayList<String> containerList;
 	private Context context;
 	SimpleDateFormat sdf;
@@ -46,6 +48,10 @@ public class RemoteApiDownload {
 
 	public void setQueryOrDestination(String queryOrDestination){this.queryOrDestination = queryOrDestination;}
 	public void setContainerList(ArrayList<String> containerList){this.containerList = containerList;}
+
+	public void setAddedContainerName(String addedContainerName) {this.addedContainerName = addedContainerName;}
+
+	public void setAddedContainerRemark(String addedContainerRemark) {this.addedContainerRemark = addedContainerRemark;}
 
 	public boolean isErrored() {
 		return exception != null;
@@ -115,6 +121,25 @@ public class RemoteApiDownload {
 
 					QUERYPARAM = query;
 					url = url +"move.json?" +  query;
+					break;
+				}
+				case "AddContainer":{
+					String query = null;
+					String name = null;
+					String remark = null;
+					try {
+						query = URLEncoder.encode(queryOrDestination, "utf-8");
+						name = URLEncoder.encode(addedContainerName, "utf-8");
+						remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+
+					query = "barcode=" + query + "&name=" + name + "&remark=" + remark ;
+
+					QUERYPARAM = query;
+					url = url +"addcontainer.json?" +  query;
+
 					break;
 				}
 			}

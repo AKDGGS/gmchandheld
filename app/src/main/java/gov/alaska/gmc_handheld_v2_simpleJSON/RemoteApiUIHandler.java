@@ -47,8 +47,18 @@ public class RemoteApiUIHandler {
 	private static String queryOrDestination;
 	public static void setQueryOrDestination(String query) {RemoteApiUIHandler.queryOrDestination = query;}
 
-	public static void setContainerListStr(String moveListStr) {
+	public static String addContainerName;
+
+	public static void setAddContainerName(String addContainerName) {
+		RemoteApiUIHandler.addContainerName = addContainerName;
 	}
+
+	public static String addContainerRemark;
+	public static void setAddContainerRemark(String addContainerRemark) {
+		RemoteApiUIHandler.addContainerRemark = addContainerRemark;
+	}
+
+	public static void setContainerListStr(String moveListStr) {}
 
 	AsyncTask asyncTask = null;
 
@@ -70,7 +80,6 @@ public class RemoteApiUIHandler {
 					alertDialog.setView(layout);
 
 					TextView title = new TextView(context);
-					System.out.println("Alert " + queryOrDestination);
 					title.setText("Processing " + queryOrDestination);
 					title.setGravity(Gravity.CENTER);
 					title.setTextSize(16);
@@ -132,6 +141,13 @@ public class RemoteApiUIHandler {
 								remoteAPIDownload = new RemoteApiDownload(context);
 								remoteAPIDownload.setQueryOrDestination(queryOrDestination);
 								remoteAPIDownload.setContainerList(containerList);
+								break;
+							}
+							case "AddContainer":{
+								remoteAPIDownload = new RemoteApiDownload(context);
+								remoteAPIDownload.setQueryOrDestination(queryOrDestination);
+								remoteAPIDownload.setAddedContainerName(addContainerName);
+								remoteAPIDownload.setAddedContainerRemark(addContainerRemark);
 								break;
 							}
 						}
@@ -229,7 +245,6 @@ public class RemoteApiUIHandler {
 									e.printStackTrace();
 								}
 
-								System.out.println(lookupLogicForDisplayObj.getDisplayDict());
 								Intent intent = new Intent(context, LookupDisplay.class);
 								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 								intent.putExtra("barcode", queryOrDestination);  //this barcode refers to the query barcode.
@@ -269,6 +284,16 @@ public class RemoteApiUIHandler {
 										Toast.LENGTH_LONG).show();
 								EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
 								destinationET.requestFocus();
+							}
+							case "AddContainer": {
+//								containerList.clear();
+//								ListView containerListLV = ((Activity) context).findViewById(R.id.listVie);
+//								ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
+//								adapter.clear();
+//								adapter.notifyDataSetChanged();
+								Toast.makeText(context, "The container was added.",
+										Toast.LENGTH_LONG).show();
+								EditText destinationET = ((Activity) context).findViewById(R.id.getBarcodeEditText);
 							}
 						}
 					}

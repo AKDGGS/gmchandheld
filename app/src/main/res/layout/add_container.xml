@@ -1,19 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    app:backgroundTint="@color/colorPrimary"
+    tools:context=".Lookup"
+    android:weightSum="5">
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20pt"
-        android:text="@string/add_container"
-        android:textAllCaps="true"
-        android:textColor="@color/colorPrimaryDark" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fadeScrollbars="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Barcode:"
+                        android:textColor="#ff353535"
+                        android:textStyle="bold" />
+
+
+                    <EditText
+                        android:id="@+id/getBarcodeEditText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="3"
+                        android:inputType="text"
+                        android:paddingStart="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingRight="16dp"
+                        android:text=""
+                        android:maxLength="25"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Name:"
+                        android:textColor="#ff353535"
+                        android:textStyle="bold" />
+
+
+                    <EditText
+                        android:id="@+id/getNameEditText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="3"
+                        android:paddingStart="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingRight="16dp"
+                        android:text=""
+                        android:inputType="text|textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:maxLength="50"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Remark:"
+                        android:textColor="#ff353535"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/getRemarkEditText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="3"
+                        android:paddingStart="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingRight="16dp"
+                        android:text=""
+                        android:inputType="text|textMultiLine"
+                        android:scrollHorizontally="false"/>
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="3"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:text="Added Containers"
+        android:textColor="#ff353535"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/listViewAddedContainerHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="60dp" />
+
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:minWidth="40dip"
+            android:minHeight="40dip"
+            android:paddingStart="5dp"
+            android:paddingLeft="5dp"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:text="Add Container"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</LinearLayout>
 </LinearLayout>
