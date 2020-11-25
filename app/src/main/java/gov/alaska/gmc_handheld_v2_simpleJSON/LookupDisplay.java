@@ -26,7 +26,6 @@ public class LookupDisplay extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_display);
 		expandableListView = findViewById(R.id.expandableListView);
-
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);

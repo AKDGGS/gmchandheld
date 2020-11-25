@@ -19,9 +19,8 @@ import java.util.Set;
 
 public class AddContainer extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
-	ListView addedContainerListLV;
-	ArrayAdapter<String> adapter;
-
+	private ListView addedContainerListLV;
+	private ArrayAdapter<String> adapter;
 	private LinkedList<String> addedContainerList  = AddContainerHistoryHolder.getInstance().getAddContainerHistory();
 
 	@Override
@@ -45,8 +44,10 @@ public class AddContainer extends BaseActivity {
 		adapter.addAll(addedContainerList);
 		addedContainerListLV.setAdapter(adapter);
 
+		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
+
 //		final SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-//		if(sharedPreferences.getString(SHARED_PREFS, "saved") != null){
+//		if(sharedPreferences.getString(SHARED_PREFS, "savedDestination") != null){
 //			moveDestinationET.setText(sharedPreferences.getString("savedDestination", ""));
 //		}
 //		if(sharedPreferences.getStringSet("savedContainerList", null) != null) {
@@ -55,8 +56,6 @@ public class AddContainer extends BaseActivity {
 //		}else {
 //			containerList = new ArrayList<>();
 //		}
-
-		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
 		if (remoteApiUIHandler.isDownloading()) {
 			// onClickListener listens if the submit button is clicked
@@ -73,11 +72,9 @@ public class AddContainer extends BaseActivity {
 							adapter.notifyDataSetChanged();
 						}
 						addContainerBarcodeET.setText("");
-
-//                        moveDestinationET.setText("");
-
-//                        sharedPreferences.edit().remove("savedAddedContainerList").apply();
-//                        sharedPreferences.edit().remove("savedAddedContainerBarcode").apply();
+						addContainerNameET.setText("");
+						addContainerRemark.setText("");
+						addContainerBarcodeET.requestFocus();
 					}
 				}
 			});

@@ -90,8 +90,6 @@
                 android:text="@string/submit"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
         </RelativeLayout>
     </LinearLayout>
-
 </LinearLayout>

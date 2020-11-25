@@ -13,13 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Notes"></activity>
+        <activity android:name=".BaseActivity" />
         <activity
             android:name=".Configuration"
             android:label="Configuration"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".BaseActivity" />
         <activity
             android:name=".AuditDisplay"
             android:label="Audit" />
@@ -29,11 +28,7 @@
         <activity
             android:name=".Recode"
             android:label="Recode" />
-        <activity
-            android:name=".MoveDisplay"
-            android:label="Move"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity
             android:name=".Summary"
             android:label="Summary"
@@ -50,11 +45,23 @@
         <activity
             android:name=".AddContainer"
             android:label="Add Container"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".LookupDisplay"
             android:parentActivityName=".Lookup"
             android:theme="@style/Theme.AppCompat.DayNight" />
+        <activity
+            android:name=".MoveDisplay"
+            android:label="Move"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".Notes"
+            android:label="Notes"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+
         <activity
             android:name=".Lookup"
             android:label="@string/lookup"
@@ -67,6 +74,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

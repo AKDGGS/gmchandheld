@@ -29,6 +29,7 @@ public class Lookup extends BaseActivity {
 		super.onRestart();
 		finish();
 		startActivity(getIntent());
+		System.out.println("onRestart");
 	}
 
 
@@ -46,7 +47,6 @@ public class Lookup extends BaseActivity {
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
 		final EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
