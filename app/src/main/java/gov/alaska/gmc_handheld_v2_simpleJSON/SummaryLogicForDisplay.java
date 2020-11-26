@@ -22,12 +22,12 @@ import static android.graphics.Typeface.BOLD;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class SummaryLogicForDisplay {
-	private List<String> keyList;
-	private Map<String, List<SpannableStringBuilder>> displayDict;
+	private final List<String> keyList;
+	private final Map<String, List<SpannableStringBuilder>> displayDict;
 	private int ID;
 	private String barcodeQuery;
 	private String typeFlag;
-	private ArrayList<String> typeFlagList = new ArrayList<>();
+	private final ArrayList<String> typeFlagList = new ArrayList<>();
 
 	public SummaryLogicForDisplay() {
 		keyList = new ArrayList<>();

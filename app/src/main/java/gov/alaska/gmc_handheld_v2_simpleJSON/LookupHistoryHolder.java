@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class LookupHistoryHolder {
 	// https://stackoverflow.com/a/51344957
-	private LinkedList<String> lookupHistory = new LinkedList<>();
+	private final LinkedList<String> lookupHistory = new LinkedList<>();
 
 	public LinkedList<String> getLookupHistory() {
 		return lookupHistory;

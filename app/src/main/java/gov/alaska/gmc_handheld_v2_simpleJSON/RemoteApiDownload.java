@@ -33,7 +33,7 @@ public class RemoteApiDownload {
 	private String addedContainerName;
 	private String addedContainerRemark;
 	private ArrayList<String> containerList;
-	private Context context;
+	private final Context context;
 	SimpleDateFormat sdf;
 
 	public static final String SHARED_PREFS = "sharedPrefs";

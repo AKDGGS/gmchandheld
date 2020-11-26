@@ -19,7 +19,7 @@ import java.util.LinkedList;
 public class Summary extends BaseActivity {
 
     private ListView listView;
-    private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
+    private final LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
 
     @Override
     public void onRestart() {
@@ -37,7 +37,9 @@ public class Summary extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 

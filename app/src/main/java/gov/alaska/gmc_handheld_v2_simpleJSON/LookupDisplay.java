@@ -17,7 +17,6 @@ import android.widget.ExpandableListView;
 
 import androidx.core.content.ContextCompat;
 
-
 public class LookupDisplay extends BaseActivity {
 	private ExpandableListView expandableListView;
 
@@ -26,8 +25,9 @@ public class LookupDisplay extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_display);
 		expandableListView = findViewById(R.id.expandableListView);
-		getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+		if(getSupportActionBar() != null) {
+			getSupportActionBar().setDisplayShowHomeEnabled(true);
+		}
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
 		invisibleEditText.setInputType(InputType.TYPE_NULL);
@@ -57,15 +57,16 @@ public class LookupDisplay extends BaseActivity {
 		});
 
 		LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
+		if(getSupportActionBar() != null) {
+			if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
+				LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + lookupLogicForDisplayObj.getBarcodeQuery() + "</font> </small> </strong>"));
+				if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
+					LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
+				}
 
-		if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-			LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + lookupLogicForDisplayObj.getBarcodeQuery() + "</font> </small> </strong>"));
-			if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-				LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
-			}
-
-			if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
-				LookupDisplay.this.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
+				if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
+					LookupDisplay.this.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
+				}
 			}
 		}
 
@@ -107,7 +108,8 @@ public class LookupDisplay extends BaseActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
-		invisibleEditText.setText((char) event.getUnicodeChar() + "");
+		String characterInput = (char) event.getUnicodeChar() + "";
+		invisibleEditText.setText(characterInput);
 		invisibleEditText.setSelection(invisibleEditText.getText().length());
 		invisibleEditText.requestFocus();
 		invisibleEditText.setVisibility(View.VISIBLE);

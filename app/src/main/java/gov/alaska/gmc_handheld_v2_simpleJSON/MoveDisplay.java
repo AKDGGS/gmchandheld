@@ -82,7 +82,7 @@ public class MoveDisplay extends BaseActivity {
 		if (remoteApiUIHandler.isDownloading()) {
 			//double click to remove elements
 			containerListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				long startTime = System.currentTimeMillis();
+				final long startTime = System.currentTimeMillis();
 
 				@Override
 				public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
@@ -136,7 +136,7 @@ public class MoveDisplay extends BaseActivity {
 				@Override
 				public void onClick(View v) {
 					if (!(TextUtils.isEmpty(moveDestinationET.getText())) && (containerList.size() > 0)) {
-						moveContainer();
+						moveContainer(moveDestinationET.getText().toString());
 						moveContainerET.setText("");
 						moveDestinationET.setText("");
 						moveCountTV.setText("");
@@ -148,14 +148,9 @@ public class MoveDisplay extends BaseActivity {
 		}
 	}
 
-	public String getDestination() {
-		EditText destinationInput = findViewById(R.id.destinationET);
-		return destinationInput.getText().toString();
-	}
-
-	public void moveContainer() {
+	public void moveContainer(String destinationInput) {
 		RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-		RemoteApiUIHandler.setQueryOrDestination(getDestination());
+		RemoteApiUIHandler.setQueryOrDestination(destinationInput);
 		RemoteApiUIHandler.setContainerList(containerList);
 
 		remoteApiUIHandler.setDownloading(true);
@@ -172,7 +167,6 @@ public class MoveDisplay extends BaseActivity {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putStringSet("savedContainerList", containerSet);
 		editor.putString("savedDestination", moveDestinationET.getText().toString());
-
 		editor.apply();
 
 		super.onBackPressed();

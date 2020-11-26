@@ -4,28 +4,25 @@
 
     <item
         android:id="@+id/lookup"
-        android:title="Lookup"
+        android:title="@string/lookup"
+        android:textSize="12dp"
         app:showAsAction="never" />
     <item
         android:id="@+id/summary"
-        android:title="Summary"
+        android:title="@string/summary"
         app:showAsAction="never" />
     <item
         android:id="@+id/move"
-        android:title="Move"
+        android:title="@string/move"
         app:showAsAction="never" />
     <item
         android:id="@+id/add_container"
-        android:title="Add Container"
+        android:title="@string/add_container"
         app:showAsAction="never" />
-    <item
-    android:id="@+id/notes"
-    android:title="Notes"
-    app:showAsAction="never" />
 
     <item
         android:id="@+id/configuration"
-        android:title="Configuration"
+        android:title="@string/configuration"
         app:showAsAction="never" />
 </menu>
 

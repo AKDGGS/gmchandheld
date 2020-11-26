@@ -28,10 +28,8 @@ public class RemoteApiUIHandler {
 	public RemoteApiUIHandler() {
 	}
 
-	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-	private LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
-
-	public static final String SHARED_PREFS = "sharedPrefs";
+	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+	private final LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
 
 	private boolean downloading = false;
 	public boolean isDownloading() {
@@ -47,20 +45,18 @@ public class RemoteApiUIHandler {
 	private static String queryOrDestination;
 	public static void setQueryOrDestination(String query) {RemoteApiUIHandler.queryOrDestination = query;}
 
-	public static String addContainerName;
+	private static String addContainerName;
 
 	public static void setAddContainerName(String addContainerName) {
 		RemoteApiUIHandler.addContainerName = addContainerName;
 	}
 
-	public static String addContainerRemark;
+	private static String addContainerRemark;
 	public static void setAddContainerRemark(String addContainerRemark) {
 		RemoteApiUIHandler.addContainerRemark = addContainerRemark;
 	}
 
-	public static void setContainerListStr(String moveListStr) {}
-
-	AsyncTask asyncTask = null;
+	AsyncTask<String, Integer, RemoteApiDownload> asyncTask = null;
 
 	@SuppressLint("StaticFieldLeak")  //Can be ignored because the Asynctask is short lived.  https://stackoverflow.com/a/46166223
 	public void processDataForDisplay( final Context context) {
@@ -68,7 +64,7 @@ public class RemoteApiUIHandler {
 		if (downloading) {
 			asyncTask = new AsyncTask<String, Integer, RemoteApiDownload>() {
 
-				AlertDialog alert;  //onPreExec
+				AlertDialog alert;
 
 				@Override
 				protected void onPreExecute() {
@@ -80,7 +76,8 @@ public class RemoteApiUIHandler {
 					alertDialog.setView(layout);
 
 					TextView title = new TextView(context);
-					title.setText("Processing " + queryOrDestination);
+					String processingTitle = "Processing " + queryOrDestination;
+					title.setText(processingTitle);
 					title.setGravity(Gravity.CENTER);
 					title.setTextSize(16);
 					alertDialog.setCustomTitle(title);
@@ -133,6 +130,7 @@ public class RemoteApiUIHandler {
 							case "LookupDisplay":
 							case "Summary":
 							case "SummaryDisplay": {
+
 								remoteAPIDownload = new RemoteApiDownload(context);
 								remoteAPIDownload.setQueryOrDestination(queryOrDestination);
 								break;
@@ -151,6 +149,7 @@ public class RemoteApiUIHandler {
 								break;
 							}
 						}
+						assert remoteAPIDownload != null;
 						remoteAPIDownload.getDataFromURL();
 						return remoteAPIDownload;
 					}
@@ -286,14 +285,8 @@ public class RemoteApiUIHandler {
 								destinationET.requestFocus();
 							}
 							case "AddContainer": {
-//								containerList.clear();
-//								ListView containerListLV = ((Activity) context).findViewById(R.id.listVie);
-//								ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
-//								adapter.clear();
-//								adapter.notifyDataSetChanged();
 								Toast.makeText(context, "The container was added.",
 										Toast.LENGTH_LONG).show();
-								EditText destinationET = ((Activity) context).findViewById(R.id.getBarcodeEditText);
 							}
 						}
 					}

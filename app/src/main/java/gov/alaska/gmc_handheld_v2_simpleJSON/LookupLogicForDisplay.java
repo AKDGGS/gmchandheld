@@ -24,13 +24,13 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupLogicForDisplay {
 
-	private List<String> keyList;
-	private Map<String, List<SpannableStringBuilder>> displayDict;
+	private final List<String> keyList;
+	private final Map<String, List<SpannableStringBuilder>> displayDict;
 	private int ID;
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
 	private boolean radiationWarningFlag;
 	private String typeFlag;
-	private ArrayList<String> typeFlagList = new ArrayList<>();
+	private final ArrayList<String> typeFlagList = new ArrayList<>();
 	private String barcodeQuery;
 	Context context;
 
@@ -62,11 +62,21 @@ public class LookupLogicForDisplay {
 		return radiationWarningFlag;
 	}
 
-	public ArrayList<String> getTypeFlagList() {return typeFlagList;}
-	public void setTypeFlag(String typeFlag) {this.typeFlagList.add(typeFlag);}
+	public ArrayList<String> getTypeFlagList() {
+		return typeFlagList;
+	}
 
-	public void setBarcodeQuery(String barcodeQuery) {this.barcodeQuery = barcodeQuery;}
-	public String getBarcodeQuery() {return barcodeQuery;}
+	public void setTypeFlag(String typeFlag) {
+		this.typeFlagList.add(typeFlag);
+	}
+
+	public void setBarcodeQuery(String barcodeQuery) {
+		this.barcodeQuery = barcodeQuery;
+	}
+
+	public String getBarcodeQuery() {
+		return barcodeQuery;
+	}
 
 	//*********************************************************************************************
 
@@ -300,7 +310,7 @@ public class LookupLogicForDisplay {
 			io.addChild(parseTree(o, key, o.get(key)));
 		}
 
-		if(typeFlagList.isEmpty()){
+		if (typeFlagList.isEmpty()) {
 			typeFlagList.add("No type");
 		}
 		return io;

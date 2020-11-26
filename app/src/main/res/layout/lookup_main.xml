@@ -9,11 +9,6 @@
     app:backgroundTint="@color/colorPrimary"
     tools:context=".Lookup">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
         <include
             android:id="@+id/toolbar"
             layout="@layout/toolbar" />
@@ -72,11 +67,13 @@
                     android:id="@+id/submit_button"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_gravity="center_horizontal"
                     android:layout_alignParentBottom="true"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
                     android:layout_marginBottom="5dp"
                     android:minWidth="40dip"
                     android:minHeight="40dip"
@@ -87,7 +84,5 @@
                     android:text="@string/submit"
                     android:textSize="12sp"
                     android:textStyle="bold" />
-
         </RelativeLayout>
-    </LinearLayout>
 </LinearLayout>

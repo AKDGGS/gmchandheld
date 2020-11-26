@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class AddContainerHistoryHolder {
 	// https://stackoverflow.com/a/51344957
-	private LinkedList<String> addContainerHistoryList = new LinkedList<>();
+	private final LinkedList<String> addContainerHistoryList = new LinkedList<>();
 
 	public LinkedList<String> getAddContainerHistory() {
 		return addContainerHistoryList;

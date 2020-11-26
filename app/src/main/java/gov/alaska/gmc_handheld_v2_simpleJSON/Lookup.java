@@ -1,7 +1,6 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -19,10 +18,8 @@ import java.util.LinkedList;
 
 
 public class Lookup extends BaseActivity {
-
 	private ListView listView;
-	private LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-	private SharedPreferences prefs = null;
+	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 
 	@Override
 	public void onRestart() {
@@ -31,7 +28,6 @@ public class Lookup extends BaseActivity {
 		startActivity(getIntent());
 		System.out.println("onRestart");
 	}
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +39,6 @@ public class Lookup extends BaseActivity {
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
 //        String s2 =  sp.getString("lookupHistoryString", "");
 //        System.out.println("TEST " + s2);
-
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -66,9 +61,9 @@ public class Lookup extends BaseActivity {
 			submit_button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (!getBarcode().isEmpty()) {
+					if (!barcodeInput.getText().toString().isEmpty()) {
 						remoteApiUIHandler.setDownloading(true);
-						RemoteApiUIHandler.setQueryOrDestination(getBarcode());
+						RemoteApiUIHandler.setQueryOrDestination(barcodeInput.getText().toString());
 						remoteApiUIHandler.processDataForDisplay(Lookup.this);
 					}
 				}
@@ -97,16 +92,7 @@ public class Lookup extends BaseActivity {
 		}
 	}
 
-	public String getBarcode() {
-		EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
-		return barcodeInput.getText().toString();
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return super.onKeyDown(keyCode, event);
-	}
-
+	//makes the volume keys scroll up/down
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		int action, keycode;

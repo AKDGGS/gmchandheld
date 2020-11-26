@@ -76,16 +76,17 @@ public class BaseActivity extends AppCompatActivity {
 			Intent intent_configuration = new Intent(this, AddContainer.class);
 			this.startActivity(intent_configuration);
 			return true;
-		}
-		else if (item.getItemId() == (R.id.notes)) {
-			Intent intent_configuration = new Intent(this, Notes.class);
-			this.startActivity(intent_configuration);
-			return true;
-		}
-		else {
+		} else {
 			return super.onOptionsItemSelected(item);
 		}
 
+
+
+//		else if (item.getItemId() == (R.id.notes)) {
+//			Intent intent_configuration = new Intent(this, Notes.class);
+//			this.startActivity(intent_configuration);
+//			return true;
+//		}
 
 //		 else if (item.getItemId() == (R.id.audit)) {
 //			Intent intent_audit = new Intent(this, AuditDisplay.class);
@@ -163,7 +164,6 @@ public class BaseActivity extends AppCompatActivity {
 //				return super.onOptionsItemSelected(item);
 //		}
 	}
-
 
 
 }

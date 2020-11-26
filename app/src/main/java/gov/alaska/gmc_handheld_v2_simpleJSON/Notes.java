@@ -55,7 +55,7 @@ public class Notes extends BaseActivity  {
 
 		//double click to remove elements
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			long startTime = System.currentTimeMillis();
+			final long startTime = System.currentTimeMillis();
 
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {

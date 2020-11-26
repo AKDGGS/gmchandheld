@@ -22,8 +22,9 @@ public class SummaryDisplay extends BaseActivity {
 		setContentView(R.layout.summary_display);
 		expandableListView = findViewById(R.id.expandableListView);
 
-		getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+		if(getSupportActionBar() != null) {
+			getSupportActionBar().setDisplayShowHomeEnabled(true);
+		}
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
 
 		invisibleEditText.setInputType(InputType.TYPE_NULL);
@@ -53,11 +54,12 @@ public class SummaryDisplay extends BaseActivity {
 
 		SummaryLogicForDisplay summaryLogicForDisplayObj;
 		summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
-
-		if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-			SummaryDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + summaryLogicForDisplayObj.getBarcodeQuery() + "</font> </small> </strong>"));
-			if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
-				SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + summaryLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
+		if(getSupportActionBar() != null) {
+			if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
+				SummaryDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + summaryLogicForDisplayObj.getBarcodeQuery() + "</font> </small> </strong>"));
+				if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
+					SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + summaryLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
+				}
 			}
 		}
 
@@ -96,8 +98,8 @@ public class SummaryDisplay extends BaseActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
 		final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
-
-		invisibleEditText.setText((char) event.getUnicodeChar() + "");
+		String characterInput = (char) event.getUnicodeChar() + "";
+		invisibleEditText.setText(characterInput);
 		invisibleEditText.setSelection(invisibleEditText.getText().length());
 		invisibleEditText.requestFocus();
 		invisibleEditText.setVisibility(View.VISIBLE);
