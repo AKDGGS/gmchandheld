@@ -260,6 +260,7 @@ public class RemoteApiUIHandler {
 
 								summaryLogicForDisplayObj.setBarcodeQuery(queryOrDestination);
 
+
 								try {
 									summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
 								} catch (Exception e) {

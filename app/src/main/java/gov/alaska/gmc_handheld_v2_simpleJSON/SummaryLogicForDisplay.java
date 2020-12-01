@@ -61,6 +61,7 @@ public class SummaryLogicForDisplay {
 
 	public void processRawJSON(String rawJSON) throws Exception {
 
+		System.out.println("SummaryLogicForDisplay:" + rawJSON);
 		if (rawJSON.trim().charAt(0) == '[') {
 			JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
 
@@ -72,8 +73,7 @@ public class SummaryLogicForDisplay {
 		} else if (rawJSON.trim().charAt(0) == '{') {
 			JSONObject inputJson = new JSONObject((rawJSON));  // check for jsonobject
 
-			InventoryObject root = parseTree(null, inputJson.opt("barcode").toString(), inputJson);
-
+			InventoryObject root = parseTree(null, barcodeQuery, inputJson);
 			if (root != null) {
 				getStringForDisplay(root, 1, null, null, getDisplayDict());
 			}
@@ -193,7 +193,6 @@ public class SummaryLogicForDisplay {
 				case "containers":
 					if (o.has("container")) {
 						return new InventoryObject("Container", o.get("container"), 500);
-
 					}
 					return null;
 				case "collections":
@@ -272,6 +271,9 @@ public class SummaryLogicForDisplay {
 			switch (name) {
 
 				//Create these nodes
+				case "barcodes":
+					io = new InventoryObject("Barcodes", null, 0);
+					break;
 				case "boreholes":
 					io = new InventoryObject("Boreholes", null, 50);
 					break;
@@ -280,6 +282,9 @@ public class SummaryLogicForDisplay {
 					break;
 				case "containers":
 					io = new InventoryObject("Containers", null, 1000);
+					break;
+				case "keywords":
+					io = new InventoryObject("Keywords", null, 1000);
 					break;
 				case "outcrops":
 					io = new InventoryObject("Outcrops", null, 50);
@@ -313,12 +318,14 @@ public class SummaryLogicForDisplay {
 		switch (name) {
 			// Higher the displayWeight, the higher a priority an key has.
 			// Items are sorted internally first, and the externally in processForDisplay()
-			case "barcode":
-				return new InventoryObject("Barcode", o, 1000);
+			case "barcodes":
+				return new InventoryObject("Barcodes", o, 0);
 			case "borehole":
 				return new InventoryObject("Borehole", o, 900);
 			case "keywords":
 				return new InventoryObject("Keywords", o, 700);
+			case "prospect":
+				return new InventoryObject("Prospect", o, 900);
 			case "total":
 				return new InventoryObject("Total", o, 800);
 			case "well":

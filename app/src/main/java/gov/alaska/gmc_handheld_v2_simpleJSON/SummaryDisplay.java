@@ -112,23 +112,31 @@ public class SummaryDisplay extends BaseActivity {
 
 		action = event.getAction();
 		keycode = event.getKeyCode();
+
 		AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
 		switch (keycode) {
+			case KeyEvent.KEYCODE_DPAD_UP:
 			case KeyEvent.KEYCODE_VOLUME_UP: {
 				manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
 				manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
-
+				if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+					expandableListView.smoothScrollToPosition(0, 0);
+				}
 				if (KeyEvent.ACTION_UP == action) {
-
-					expandableListView.smoothScrollByOffset(3);
+					expandableListView.smoothScrollByOffset(-3);
 				}
 				return true;
 			}
+			case KeyEvent.KEYCODE_DPAD_DOWN:
 			case KeyEvent.KEYCODE_VOLUME_DOWN: {
+				System.out.println(keycode);
+				if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+					expandableListView.smoothScrollToPosition(expandableListView.getCount());
+				}
 
 				if (KeyEvent.ACTION_UP == action) {
-					expandableListView.smoothScrollByOffset(-3);
+					expandableListView.smoothScrollByOffset(3);
 				}
 				return true;
 			}
