@@ -34,7 +34,8 @@
                 android:paddingLeft="16dp"
                 android:paddingEnd="16dp"
                 android:paddingRight="16dp"
-                android:text="" />
+                android:text=""
+                android:selectAllOnFocus="true"/>
         </LinearLayout>
 
 
@@ -67,7 +68,7 @@
 
 
             <Button
-                android:id="@+id/submit_button"
+                android:id="@+id/submitButton"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"

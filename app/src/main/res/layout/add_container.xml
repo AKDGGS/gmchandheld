@@ -59,7 +59,8 @@
                         android:paddingEnd="16dp"
                         android:paddingRight="16dp"
                         android:text=""
-                        android:maxLength="25"/>
+                        android:maxLength="25"
+                        android:selectAllOnFocus="true"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -94,7 +95,7 @@
                         android:text=""
                         android:inputType="text"
                         android:maxLength="50"
-                        />
+                        android:selectAllOnFocus="true" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -127,7 +128,8 @@
                         android:paddingRight="16dp"
                         android:text=""
                         android:inputType="text|textMultiLine"
-                        android:scrollHorizontally="false"/>
+                        android:scrollHorizontally="false"
+                        android:selectAllOnFocus="true"/>
                 </LinearLayout>
 
             </LinearLayout>

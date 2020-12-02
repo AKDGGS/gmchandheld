@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
+def getDateTime() {
+    DateFormat df = new SimpleDateFormat("yyyyMMddHHmm");
+    return df.format(new Date());
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -11,7 +19,7 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
-
+        setProperty("archivesBaseName", "Appname-$dateTime-v$versionName")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -20,6 +28,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
     }
 
 }
@@ -35,5 +44,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'org.apache.commons:commons-lang3:3.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1'
-
 }

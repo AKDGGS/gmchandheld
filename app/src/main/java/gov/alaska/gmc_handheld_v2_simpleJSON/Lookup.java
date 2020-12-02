@@ -24,9 +24,8 @@ public class Lookup extends BaseActivity {
 	@Override
 	public void onRestart() {
 		super.onRestart();
-		finish();
-		startActivity(getIntent());
-		System.out.println("onRestart");
+		EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
+		barcodeInput.selectAll();
 	}
 
 	@Override

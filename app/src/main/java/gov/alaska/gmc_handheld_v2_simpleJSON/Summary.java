@@ -22,8 +22,8 @@ public class Summary extends BaseActivity {
     @Override
     public void onRestart() {
         super.onRestart();
-        finish();
-        startActivity(getIntent());
+        EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
+        barcodeInput.selectAll();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class Summary extends BaseActivity {
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
         final EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
-        final Button submit_button = findViewById(R.id.submit_button);
+        final Button submitButton = findViewById(R.id.submitButton);
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
         // populates the history list
@@ -56,7 +56,7 @@ public class Summary extends BaseActivity {
         if (remoteApiUIHandler.isDownloading()) {
 
             // onClickListener listens if the submit button is clicked
-            submit_button.setOnClickListener(new View.OnClickListener() {
+            submitButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(!getBarcode().isEmpty()) {
@@ -72,7 +72,7 @@ public class Summary extends BaseActivity {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     // if "enter" is pressed
                     if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        submit_button.performClick();
+                        submitButton.performClick();
                         return true;
                     }
                     return false;
@@ -84,7 +84,7 @@ public class Summary extends BaseActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     barcodeInput.setText(listView.getItemAtPosition(position).toString());
-                    submit_button.performClick();
+                    submitButton.performClick();
                 }
             });
         }

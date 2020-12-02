@@ -13,7 +13,7 @@
         android:ems="0"
         android:background="@android:color/transparent"
         android:inputType="text"
-        >
+        android:selectAllOnFocus="true" >
         <requestFocus />
     </EditText>
 
