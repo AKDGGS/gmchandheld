@@ -14,7 +14,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class Configuration extends BaseActivity {
 
@@ -43,14 +42,6 @@ public class Configuration extends BaseActivity {
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
 
-
-		final Button updateAPKButton = findViewById(R.id.updateApk);
-		updateAPKButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				updateApk();
-			}
-		});
 
 		final Button saveButton = findViewById(R.id.saveButton);
 		// onClickListener listens if the save button is clicked
@@ -103,25 +94,6 @@ public class Configuration extends BaseActivity {
 		}
 	}
 
-	public void updateApk(){
-		final UpdateAPK updateApk = new UpdateAPK();
-
-		new Thread(new Runnable()
-		{
-			public void run()
-			{
-				final List<String> addressList = updateApk.getTextFromWeb("http://maps.dggs.alaska.gov/gmcdev/app/test.txt"); // format your URL
-				runOnUiThread(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						//update ui
-					}
-				});
-			}
-		}).start();
-	}
 
 	public void loadData() {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
