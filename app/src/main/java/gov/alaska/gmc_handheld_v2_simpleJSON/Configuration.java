@@ -3,6 +3,7 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +43,14 @@ public class Configuration extends BaseActivity {
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
 
+		final Button updateButton = findViewById(R.id.updateButton);
+
+		updateButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				downloadApk();
+			}
+		});
 
 		final Button saveButton = findViewById(R.id.saveButton);
 		// onClickListener listens if the save button is clicked
@@ -94,6 +103,10 @@ public class Configuration extends BaseActivity {
 		}
 	}
 
+	public void downloadApk(){
+		Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("http://maps.dggs.alaska.gov/gmcdev/app/app-release.apk"));
+		startActivity(intent);
+	}
 
 	public void loadData() {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
