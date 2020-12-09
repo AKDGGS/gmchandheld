@@ -44,19 +44,20 @@ public class MoveDisplay extends BaseActivity {
 		final TextView moveCountTV = findViewById(R.id.moveCountTV);
 		final Button move_button = findViewById(R.id.move_button);
 		final Button add_button = findViewById(R.id.add_container_button);
+		final Button clear_all_button = findViewById(R.id.clear_all_button);
 		containerListLV = findViewById(R.id.listViewGetContainersToMove);
 
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		containerListLV.setAdapter(adapter);
 
 		final SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		if(sharedPreferences.getString(SHARED_PREFS, "savedDestination") != null){
+		if (sharedPreferences.getString(SHARED_PREFS, "savedDestination") != null) {
 			moveDestinationET.setText(sharedPreferences.getString("savedDestination", ""));
 		}
-		if(sharedPreferences.getStringSet("savedContainerList", null) != null) {
+		if (sharedPreferences.getStringSet("savedContainerList", null) != null) {
 			containerList = new ArrayList<>(sharedPreferences.getStringSet("savedContainerList", null));
 			adapter.addAll(containerList);
-		}else {
+		} else {
 			containerList = new ArrayList<>();
 		}
 
@@ -74,6 +75,21 @@ public class MoveDisplay extends BaseActivity {
 					moveContainerET.setText("");
 				}
 				moveContainerET.requestFocus();
+			}
+		});
+
+		clear_all_button.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String container = moveContainerET.getText().toString();
+				moveContainerET.setText("");
+
+				moveContainerET.requestFocus();
+				containerList.clear();
+				adapter.clear();
+				adapter.notifyDataSetChanged();
+				moveCountTV.setText(String.valueOf(containerList.size()));
+
 			}
 		});
 

@@ -24,6 +24,7 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 public class SummaryLogicForDisplay {
 	private final List<String> keyList;
 	private final Map<String, List<SpannableStringBuilder>> displayDict;
+	private int numberOfBoxes = 0;
 	private int ID;
 	private String barcodeQuery;
 	private String typeFlag;
@@ -36,6 +37,8 @@ public class SummaryLogicForDisplay {
 		nf.setMinimumFractionDigits(0);
 		nf.setMaximumFractionDigits(1);
 	}
+
+	public int getNumberOfBoxes(){return numberOfBoxes;}
 
 	public List<String> getKeyList() {
 		return keyList;
@@ -61,7 +64,6 @@ public class SummaryLogicForDisplay {
 
 	public void processRawJSON(String rawJSON) throws Exception {
 
-		System.out.println("SummaryLogicForDisplay:" + rawJSON);
 		if (rawJSON.trim().charAt(0) == '[') {
 			JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
 
@@ -315,10 +317,12 @@ public class SummaryLogicForDisplay {
 			return null;
 		}
 
+
 		switch (name) {
 			// Higher the displayWeight, the higher a priority an key has.
 			// Items are sorted internally first, and the externally in processForDisplay()
 			case "barcodes":
+				numberOfBoxes++;
 				return new InventoryObject("Barcodes", o, 0);
 			case "borehole":
 				return new InventoryObject("Borehole", o, 900);

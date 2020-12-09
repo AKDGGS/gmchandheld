@@ -61,7 +61,7 @@ public class LookupDisplay extends BaseActivity {
 			if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
 				LookupDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + lookupLogicForDisplayObj.getBarcodeQuery() + "</font> </small> </strong>"));
 				if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-					LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
+					LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s)" + "</font>"));
 				}
 
 				if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
@@ -82,7 +82,7 @@ public class LookupDisplay extends BaseActivity {
 				}
 
 				if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-					LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
+					LookupDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + lookupLogicForDisplayObj.getKeyList().size() + " Result(s)" + "</font>"));
 				}
 			}
 

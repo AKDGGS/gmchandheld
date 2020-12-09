@@ -56,9 +56,10 @@ public class SummaryDisplay extends BaseActivity {
 		summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
 		if(getSupportActionBar() != null) {
 			if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-				SummaryDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <small> <font color='#000000'>" + summaryLogicForDisplayObj.getBarcodeQuery() + "</font> </small> </strong>"));
-				if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
-					SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<font color='#000000'>" + summaryLogicForDisplayObj.getKeyList().size() + " Result(s) </font>"));
+				SummaryDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <larger> <font color='#000000'>" + summaryLogicForDisplayObj.getBarcodeQuery() + "</font> </larger> </strong>"));
+				if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
+					SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<strong> <larger> <font color='#000000'>" + summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s) </font> </larger> </strong>"));
+					System.out.println(summaryLogicForDisplayObj.getNumberOfBoxes());
 				}
 			}
 		}
@@ -68,10 +69,10 @@ public class SummaryDisplay extends BaseActivity {
 			String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
 
 			if (barcode != null) {
-				SummaryDisplay.this.getSupportActionBar().setTitle(barcode);
+				SummaryDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <larger> <font color='#000000'>" + summaryLogicForDisplayObj.getBarcodeQuery() + "</font> </larger> </strong>"));
 
-				if (summaryLogicForDisplayObj.getKeyList().size() > 0) {
-					SummaryDisplay.this.getSupportActionBar().setSubtitle(summaryLogicForDisplayObj.getKeyList().size() + " Result(s)");
+				if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
+					SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<strong> <larger> <font color='#000000'>" + summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)" + "</font> </larger> </strong>"));
 				}
 			}
 

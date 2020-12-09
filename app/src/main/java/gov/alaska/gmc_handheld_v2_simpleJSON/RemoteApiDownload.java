@@ -39,19 +39,28 @@ public class RemoteApiDownload {
 	public static final String SHARED_PREFS = "sharedPrefs";
 
 	@SuppressLint("SimpleDateFormat")
-	public RemoteApiDownload(Context context){
+	public RemoteApiDownload(Context context) {
 		this.context = context;
 		sdf = new SimpleDateFormat(
 				"EEE, dd MMM yyyy HH:mm:ss zzz"
 		);
 	}
 
-	public void setQueryOrDestination(String queryOrDestination){this.queryOrDestination = queryOrDestination;}
-	public void setContainerList(ArrayList<String> containerList){this.containerList = containerList;}
+	public void setQueryOrDestination(String queryOrDestination) {
+		this.queryOrDestination = queryOrDestination;
+	}
 
-	public void setAddedContainerName(String addedContainerName) {this.addedContainerName = addedContainerName;}
+	public void setContainerList(ArrayList<String> containerList) {
+		this.containerList = containerList;
+	}
 
-	public void setAddedContainerRemark(String addedContainerRemark) {this.addedContainerRemark = addedContainerRemark;}
+	public void setAddedContainerName(String addedContainerName) {
+		this.addedContainerName = addedContainerName;
+	}
+
+	public void setAddedContainerRemark(String addedContainerRemark) {
+		this.addedContainerRemark = addedContainerRemark;
+	}
 
 	public boolean isErrored() {
 		return exception != null;
@@ -64,6 +73,7 @@ public class RemoteApiDownload {
 	public int getResponseCode() {
 		return responseCode;
 	}
+
 	public String getResponseMsg() {
 		return responseMsg;
 	}
@@ -84,46 +94,46 @@ public class RemoteApiDownload {
 
 			String QUERYPARAM = null;
 
-			switch (context.getClass().getSimpleName()){
+			switch (context.getClass().getSimpleName()) {
 				case "Lookup":
-				case "LookupDisplay":{
+				case "LookupDisplay": {
 					String query = null;
 					try {
 						query = URLEncoder.encode(queryOrDestination, "utf-8");
 					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
+						exception = new Exception(e.getMessage());
 					}
 					QUERYPARAM = "barcode=" + query;
 					url = url + "inventory.json?barcode=" + queryOrDestination;
 					break;
 				}
 				case "Summary":
-				case "SummaryDisplay":{
+				case "SummaryDisplay": {
 					String query = null;
 					try {
 						query = URLEncoder.encode(queryOrDestination, "utf-8");
 					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
+						exception = new Exception(e.getMessage());
 					}
 					QUERYPARAM = "barcode=" + query;
 					url = url + "summary.json?barcode=" + queryOrDestination;
 					break;
 
 				}
-				case "MoveDisplay":{
+				case "MoveDisplay": {
 					String query = null;
 					try {
 						query = URLEncoder.encode(queryOrDestination, "utf-8");
 					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
+						exception = new Exception(e.getMessage());
 					}
 					query = "d=" + query + containersToMoveStr(containerList);
 
 					QUERYPARAM = query;
-					url = url +"move.json?" +  query;
+					url = url + "move.json?" + query;
 					break;
 				}
-				case "AddContainer":{
+				case "AddContainer": {
 					String query = null;
 					String name = null;
 					String remark = null;
@@ -132,14 +142,23 @@ public class RemoteApiDownload {
 						name = URLEncoder.encode(addedContainerName, "utf-8");
 						remark = URLEncoder.encode(addedContainerRemark, "utf-8");
 					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
+						exception = new Exception(e.getMessage());
 					}
 
-					query = "barcode=" + query + "&name=" + name + "&remark=" + remark ;
+					StringBuilder sb = new StringBuilder();
+					if(query != null) {
+						sb.append("barcode=" + query);
+					}
+					if(name != null){
+						sb.append("&name=" + name);
+					}
+					if(remark != null){
+						sb.append("&remark=" + remark);
+					}
 
-					QUERYPARAM = query;
-					url = url +"addcontainer.json?" +  query;
 
+					QUERYPARAM = sb.toString();
+					url = url + "addcontainer.json?" + sb.toString();
 					break;
 				}
 			}

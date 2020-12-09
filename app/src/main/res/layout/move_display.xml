@@ -103,13 +103,21 @@
 
             <TextView
                 android:id="@+id/moveCountTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:selectAllOnFocus="true"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/clear_all_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:padding="3dp"
-                android:paddingRight="10dp"
-                android:selectAllOnFocus="true"/>
+                android:layout_gravity="center"
+                android:minWidth="40dip"
+                android:minHeight="40dip"
+                android:text="Clear"
+                android:textSize="10sp" />
         </LinearLayout>
 
     <TextView
