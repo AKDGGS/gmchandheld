@@ -11,15 +11,18 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import java.io.File;
 import java.util.LinkedList;
 
 
 public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+
 
 	@Override
 	public void onRestart() {
@@ -33,6 +36,11 @@ public class Lookup extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
+
+
+		deleteMessageFromSDCard();
+
+		//	/mnt/sdcard/Download/app-release-1.apk
 
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -129,4 +137,38 @@ public class Lookup extends BaseActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
+
+
+	//Delete text file method
+	private void deleteMessageFromSDCard() {
+//		File fileDirectory = new File(Environment.getExternalStorageDirectory() + "/Download");
+
+		File fileDirectory = new File("/mnt/sdcard/Download/app-release-1.apk");
+
+		//Check if main directory is present or not
+		if (!fileDirectory.exists()) {
+			Toast.makeText(getBaseContext(), "There is no main directory present.",
+					Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(getBaseContext(), "The main directory is present.",
+					Toast.LENGTH_SHORT).show();
+			File savedFile =  fileDirectory;
+//			File savedFile = new File(fileDirectory.getAbsolutePath() + "/test.txt");
+
+			savedFile.setWritable(true, false);
+			deleteRecursive(savedFile);
+		}
+	}
+
+	public static void deleteRecursive(File fileOrDirectory) {
+		if (fileOrDirectory.isDirectory()) {
+			for (File child : fileOrDirectory.listFiles()) {
+				deleteRecursive(child);
+			}
+		}
+	}
+
 }
+
+
+

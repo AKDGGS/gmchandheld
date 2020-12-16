@@ -1,10 +1,15 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -48,7 +54,7 @@ public class Configuration extends BaseActivity {
 		updateButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				downloadApk();
+				downloadInstallApk();
 			}
 		});
 
@@ -103,10 +109,44 @@ public class Configuration extends BaseActivity {
 		}
 	}
 
-	public void downloadApk(){
-		Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("http://maps.dggs.alaska.gov/gmcdev/app/app-release.apk"));
-		startActivity(intent);
+	public void downloadInstallApk(){
+
+		String file = "app-release-1.apk";
+		DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+		final Uri downloadUri = Uri.parse("http://maps.dggs.alaska.gov/gmcdev/app/app-release.apk");
+
+		final File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "app-release-1.apk");
+
+		DownloadManager.Request request = new DownloadManager.Request(downloadUri);
+
+		request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE)
+				.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS + File.separator, file)
+				.setTitle(file).setDescription("apk")
+				.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+		dm.enqueue(request);
+
+
+		//set BroadcastReceiver to install app when .apk is downloaded
+		BroadcastReceiver onComplete = new BroadcastReceiver() {
+			public void onReceive(Context ctxt, Intent intent) {
+				Uri uriFile = Uri.fromFile(outputFile);
+				// Intent to open apk
+				intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, downloadUri);
+				intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
+				intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+				startActivity(intent);
+
+				unregisterReceiver(this);
+				finish();
+			}
+		};
+		//register receiver for when .apk download is compete
+		registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+
 	}
+
 
 	public void loadData() {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
