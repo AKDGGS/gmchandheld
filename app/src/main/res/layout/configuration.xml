@@ -117,6 +117,26 @@
                     android:layout_marginHorizontal="10dp"
                     android:background="@android:color/darker_gray" />
 
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    <Button
+                        android:id="@+id/updateBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Check for Updates 999"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        />
+
+            </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@android:color/darker_gray" />
             </LinearLayout>
 
         </ScrollView>
@@ -141,5 +161,5 @@
 </LinearLayout>
 
 
-<!--URL "http://maps.dggs.alaska.gov/gmcdev/"-->
-<!--API Key "thXAgLfS68TRpmixfvr2nksFQYrzZf5F"-->
+    <!--URL "http://maps.dggs.alaska.gov/gmcdev/"-->
+    <!--API Key "thXAgLfS68TRpmixfvr2nksFQYrzZf5F"-->

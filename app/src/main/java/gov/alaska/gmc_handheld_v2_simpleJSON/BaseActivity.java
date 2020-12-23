@@ -82,7 +82,7 @@ public class BaseActivity extends AppCompatActivity {
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			this.startActivity(intentAddContainer);
 			return true;
-		} else {
+		}else {
 			return super.onOptionsItemSelected(item);
 		}
 

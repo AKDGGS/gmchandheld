@@ -324,6 +324,8 @@ public class SummaryLogicForDisplay {
 			case "barcodes":
 				numberOfBoxes++;
 				return new InventoryObject("Barcodes", o, 0);
+			case "barcodes_count":
+				return new InventoryObject("Barcodes Count", o, 0);
 			case "borehole":
 				return new InventoryObject("Borehole", o, 900);
 			case "keywords":

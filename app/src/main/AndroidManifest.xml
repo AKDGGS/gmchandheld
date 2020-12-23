@@ -8,8 +8,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".Lookup"
             android:label="@string/lookup"
@@ -28,20 +25,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".BaseActivity" />
-
         <activity
             android:name=".AddContainer"
             android:label="Add Container"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".AuditDisplay"
             android:label="Audit" />
         <activity
             android:name=".AddInventory"
             android:label="Add Inventory" />
-
         <activity
             android:name=".Configuration"
             android:label="Configuration"
@@ -56,12 +50,10 @@
         <activity
             android:name=".MoveDisplay"
             android:label="Move"
-
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Recode"
             android:label="Recode" />
-
         <activity
             android:name=".Summary"
             android:label="Summary"
