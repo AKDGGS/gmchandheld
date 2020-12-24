@@ -17,13 +17,18 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Configuration extends BaseActivity {
@@ -37,6 +42,7 @@ public class Configuration extends BaseActivity {
 	private String url;
 	private String apiKey;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,9 +52,11 @@ public class Configuration extends BaseActivity {
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
 
-		TextView buildDateTV = findViewById(R.id.buildDateTV);
 		Date buildDate = new Date(BuildConfig.TIMESTAMP);
+		TextView buildDateTV = findViewById(R.id.buildDateTV);
 		buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
+
+
 
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
@@ -126,7 +134,7 @@ public class Configuration extends BaseActivity {
 	}
 
 	public void updateAPK() {
-		final String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/app-release-1.apk";
+		final String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/currentVersion.txt";
 
 		Button updateBtn = findViewById(R.id.updateBtn);
 
@@ -138,51 +146,87 @@ public class Configuration extends BaseActivity {
 		});
 	}
 
+
 	class DownloadFileFromURL extends AsyncTask<String, String, String> {
-		//		https://stackoverflow.com/a/15758953
+		StringBuilder sb;
+		DateFormat simple = new SimpleDateFormat("yyyyMMddHHmm");
+		String currentBuildTime = simple.format(new Date(BuildConfig.TIMESTAMP));
+
 		@Override
 		protected String doInBackground(String... f_url) {
 			int count;
 			try {
 				URL url = new URL(f_url[0]);
 				URLConnection connection = url.openConnection();
+
 //				connection.setConnectTimeout(10000);
 //				connection.setReadTimeout(10000);
 				connection.connect();
+				String version = "";
+				sb = new StringBuilder();
 				InputStream input = new BufferedInputStream(url.openStream(), 8192);
-				OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
-				byte data[] = new byte[1024];
-				long total = 0;
-
-				while ((count = input.read(data)) != -1) {
-					total += count;
-					// writing data to file
-					output.write(data, 0, count);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+				while (true) {
+					try {
+						if ((version = reader.readLine()) == null) break;
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					sb.append(version);
 				}
-				output.flush();
-				output.close();
 				input.close();
+				
+				if (Double.parseDouble(currentBuildTime) < Double.parseDouble(sb.toString())) {
+					String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/app-release-1.apk";
+					try {
+						url = new URL(fileUrl);
+						connection = url.openConnection();
+//				connection.setConnectTimeout(10000);
+//				connection.setReadTimeout(10000);
+						connection.connect();
+						input = new BufferedInputStream(url.openStream(), 8192);
+						OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
+						byte data[] = new byte[1024];
+						long total = 0;
 
-			} catch (Exception e) {
-				Log.e("Error: ", e.getMessage());
+						while ((count = input.read(data)) != -1) {
+							total += count;
+							// writing data to file
+							output.write(data, 0, count);
+						}
+						output.flush();
+						output.close();
+						input.close();
+
+					} catch (Exception e) {
+						Log.e("Error: ", e.getMessage());
+					}
+				}
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 			return null;
 		}
 
+
 		@Override
-		protected void onPostExecute(String file_url) {
-			Uri uriFile = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk"));
-			// Intent to open apk
+		protected void onPostExecute(String fileUrl) {
 			Intent intent = new Intent();
-			intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
-			intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
-			intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-			startActivity(intent);
+			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
+			if (Double.parseDouble(currentBuildTime) < Double.parseDouble(sb.toString())) {
+				Uri uriFile = Uri.fromFile(file);
+				Toast.makeText(getBaseContext(), "Update available....Installing.", Toast.LENGTH_SHORT).show();
+//				 Intent to open apk
+				intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
+				intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
+				intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(intent);
+			} else {
+				Toast.makeText(getBaseContext(), "No update available.", Toast.LENGTH_LONG).show();
+			}
 		}
-	}
-
-	private void web_update() {
-		int versionCode = BuildConfig.VERSION_CODE;
-
 	}
 }
