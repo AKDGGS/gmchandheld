@@ -55,6 +55,11 @@ public class Lookup extends BaseActivity {
 //        String s2 =  sp.getString("lookupHistoryString", "");
 //        System.out.println("TEST " + s2);
 
+
+
+
+
+
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
@@ -118,6 +123,8 @@ public class Lookup extends BaseActivity {
 
 		action = event.getAction();
 		keycode = event.getKeyCode();
+
+		System.out.println(keycode);
 
 		AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 

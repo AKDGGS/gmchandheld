@@ -22,6 +22,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -137,7 +140,7 @@ public class Configuration extends BaseActivity {
 	}
 
 	public void updateAPK() {
-		final String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/currentVersion.txt";
+		final String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
 
 		final Context mContext = this;
 		final AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
@@ -165,6 +168,9 @@ public class Configuration extends BaseActivity {
 		String currentBuildTime = simple.format(new Date(BuildConfig.TIMESTAMP));
 		int responseCode = 200;
 		int responseCode2 = 200;
+		String rawJSON;
+		String build;
+		String filename;
 
 		@Override
 		protected String doInBackground(String... f_url) {
@@ -180,10 +186,7 @@ public class Configuration extends BaseActivity {
 					HttpURLConnection.setFollowRedirects(false);
 					HttpURLConnection con = (HttpURLConnection) new URL(f_url[0]).openConnection();
 					con.setRequestMethod("HEAD");
-					System.out.println(con.getResponseCode());
 					if (con.getResponseCode() == 200) {
-
-						System.out.println("response: 200");
 						String version = "";
 						sb = new StringBuilder();
 						InputStream input = new BufferedInputStream(url.openStream(), 8192);
@@ -194,26 +197,32 @@ public class Configuration extends BaseActivity {
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-							sb.append(version);
+							rawJSON = sb.append(version).toString();
+							try {
+								JSONObject inputJson = new JSONObject(rawJSON);
+								build = inputJson.optString("build");
+								filename = inputJson.optString("filename");
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
 						}
 						input.close();
 
 
-						if ((responseCode == 200) && (Double.parseDouble(currentBuildTime) < Double.parseDouble(sb.toString()))) {
-							String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/app-release-1.apk";
+						if ((responseCode == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
+							String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/" + filename;
+							System.out.println(fileUrl);
 							try {
 								con = (HttpURLConnection) new URL(fileUrl).openConnection();
 								con.setRequestMethod("HEAD");
-								System.out.println("app-release-1: " + con.getResponseCode());
 								if (con.getResponseCode() == 200) {
-									System.out.println("app-release-1: " + con.getResponseCode());
 									url = new URL(fileUrl);
 									connection = url.openConnection();
 //				connection.setConnectTimeout(10000);
 //				connection.setReadTimeout(10000);
 									connection.connect();
 									input = new BufferedInputStream(url.openStream(), 8192);
-									OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
+									OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
 									byte data[] = new byte[1024];
 									long total = 0;
 
@@ -227,7 +236,6 @@ public class Configuration extends BaseActivity {
 									output.close();
 									input.close();
 								} else {
-									System.out.println("Inner file doesn't exist");
 									responseCode2 = con.getResponseCode();
 								}
 							} catch (IOException e) {
@@ -252,9 +260,8 @@ public class Configuration extends BaseActivity {
 		@Override
 		protected void onPostExecute(String fileUrl) {
 			Intent intent = new Intent();
-			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
-			System.out.println((responseCode == 200) && (responseCode2 == 200));
-			if ((responseCode == 200) && (responseCode2 == 200) && (Double.parseDouble(currentBuildTime) < Double.parseDouble(sb.toString()))) {
+			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
+			if ((responseCode == 200) && (responseCode2 == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
 				Uri uriFile = Uri.fromFile(file);
 				Toast.makeText(getBaseContext(), "Update available....Installing.", Toast.LENGTH_SHORT).show();
 //				 Intent to open apk

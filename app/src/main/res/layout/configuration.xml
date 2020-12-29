@@ -124,10 +124,11 @@
                     <Button
                         android:id="@+id/updateBtn"
                         android:layout_width="wrap_content"
-                        android:layout_height="100dp"
-                        android:text="Check for Updates v0"
+                        android:layout_height="wrap_content"
+                        android:text="Check for Updates"
                         android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"
+                        android:textSize="12sp"/>
 
             </RelativeLayout>
 
