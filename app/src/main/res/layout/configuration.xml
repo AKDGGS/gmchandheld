@@ -124,11 +124,10 @@
                     <Button
                         android:id="@+id/updateBtn"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="100dp"
                         android:text="Check for Updates v0"
                         android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
-                        />
+                        android:layout_centerHorizontal="true"/>
 
             </RelativeLayout>
 
@@ -143,7 +142,7 @@
 
 
         <Button
-            android:id="@+id/saveButton"
+            android:id="@+id/saveBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="5dp"

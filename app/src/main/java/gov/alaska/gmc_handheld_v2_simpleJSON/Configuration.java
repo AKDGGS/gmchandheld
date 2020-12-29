@@ -66,20 +66,20 @@ public class Configuration extends BaseActivity {
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
 
-		final Button saveButton = findViewById(R.id.saveButton);
-		// onClickListener listens if the save button is clicked
-		saveButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				saveData();
-			}
-		});
-
 		final Button updateButton = findViewById(R.id.updateBtn);
 		updateButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				updateAPK();
+			}
+		});
+
+		final Button saveButton = findViewById(R.id.saveBtn);
+		// onClickListener listens if the save button is clicked
+		saveButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				saveData();
 			}
 		});
 
@@ -140,40 +140,32 @@ public class Configuration extends BaseActivity {
 	public void updateAPK() {
 		final String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/currentVersion.txt";
 
-		Button updateBtn = findViewById(R.id.updateBtn);
-
 		final Context mContext = this;
 		final AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
+		ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
+			alertDialog.setMessage("Is the device connected to the internet/network?  " +
+					"Check if the connection has been lost.");
+			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mContext).findViewById(R.id.lookup_error_root));
+			alertDialog.setView(layout);
+			alertDialog.setPositiveButton("Dimiss",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+						}
+					});
 
-		updateBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-				if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
-					alertDialog.setMessage("Is the device connected to the internet/network?  " +
-							"Check if the connection has been lost.");
-					LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-					View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mContext).findViewById(R.id.lookup_error_root));
-					alertDialog.setView(layout);
-					alertDialog.setPositiveButton("Dimiss",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									dialog.cancel();
-								}
-							});
+			AlertDialog alert = alertDialog.create();
+			alert.setCanceledOnTouchOutside(false);
+			alert.show();
 
-					AlertDialog alert = alertDialog.create();
-					alert.setCanceledOnTouchOutside(false);
-					alert.show();
+		} else {
+			new DownloadFileFromURL().execute(fileUrl);
+		}
 
-
-				} else {
-					new DownloadFileFromURL().execute(fileUrl);
-				}
-			}
-		});
 
 	}
 
@@ -267,23 +259,23 @@ public class Configuration extends BaseActivity {
 			return null;
 		}
 
-			@Override
-			protected void onPostExecute (String fileUrl){
-				Intent intent = new Intent();
-				File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
-				System.out.println((responseCode == 200) && (responseCode2 == 200));
-				if ((responseCode == 200) && (responseCode2 == 200) && (Double.parseDouble(currentBuildTime) < Double.parseDouble(sb.toString()))) {
-					Uri uriFile = Uri.fromFile(file);
-					Toast.makeText(getBaseContext(), "Update available....Installing.", Toast.LENGTH_SHORT).show();
+		@Override
+		protected void onPostExecute(String fileUrl) {
+			Intent intent = new Intent();
+			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
+			System.out.println((responseCode == 200) && (responseCode2 == 200));
+			if ((responseCode == 200) && (responseCode2 == 200) && (Double.parseDouble(currentBuildTime) < Double.parseDouble(sb.toString()))) {
+				Uri uriFile = Uri.fromFile(file);
+				Toast.makeText(getBaseContext(), "Update available....Installing.", Toast.LENGTH_SHORT).show();
 //				 Intent to open apk
-					intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
-					intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
-					intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-					startActivity(intent);
-				} else {
-					Toast.makeText(getBaseContext(), "No update available.", Toast.LENGTH_LONG).show();
-				}
+				intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
+				intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
+				intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(intent);
+			} else {
+				Toast.makeText(getBaseContext(), "No update available.", Toast.LENGTH_LONG).show();
 			}
 		}
 	}
+}

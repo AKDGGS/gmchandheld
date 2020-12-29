@@ -45,6 +45,7 @@ public class Lookup extends BaseActivity {
 //			Toast.makeText(getBaseContext(), "The file doesn't exist.", Toast.LENGTH_SHORT).show();
 		}
 
+
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
 //        String s2 =  sp.getString("lookupHistoryString", "");
