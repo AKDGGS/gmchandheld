@@ -3,7 +3,6 @@ package gov.alaska.gmc_handheld_v2_simpleJSON;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -150,14 +149,7 @@ public class Configuration extends BaseActivity {
 			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
 			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mContext).findViewById(R.id.lookup_error_root));
 			alertDialog.setView(layout);
-			alertDialog.setPositiveButton("Dimiss",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.cancel();
-						}
-					});
-
+			alertDialog.setPositiveButton("Dimiss", null);
 			AlertDialog alert = alertDialog.create();
 			alert.setCanceledOnTouchOutside(false);
 			alert.show();

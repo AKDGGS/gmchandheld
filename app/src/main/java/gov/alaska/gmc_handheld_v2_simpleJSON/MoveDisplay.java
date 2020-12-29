@@ -65,17 +65,19 @@ public class MoveDisplay extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				String container = moveContainerET.getText().toString();
-				if (!container.isEmpty()) {
-					if (!(container.equals(moveDestinationET.getText().toString()) && (!containerList.contains(container)))) {
-						containerList.add(0, container);
-						adapter.insert(container, 0);
-						adapter.notifyDataSetChanged();
-						moveCountTV.setText(String.valueOf(containerList.size()));
+
+					if (!container.isEmpty()) {
+						if (!(container.equals(moveDestinationET.getText().toString()) && (!containerList.contains(container)))) {
+							containerList.add(0, container);
+							adapter.insert(container, 0);
+							adapter.notifyDataSetChanged();
+							moveCountTV.setText(String.valueOf(containerList.size()));
+						}
+						moveContainerET.setText("");
 					}
-					moveContainerET.setText("");
+					moveContainerET.requestFocus();
 				}
-				moveContainerET.requestFocus();
-			}
+
 		});
 
 		clear_all_button.setOnClickListener(new View.OnClickListener() {
@@ -151,13 +153,16 @@ public class MoveDisplay extends BaseActivity {
 			move_button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (!(TextUtils.isEmpty(moveDestinationET.getText())) && (containerList.size() > 0)) {
-						moveContainer(moveDestinationET.getText().toString());
-						moveContainerET.setText("");
-						moveDestinationET.setText("");
-						moveCountTV.setText("");
-						sharedPreferences.edit().remove("savedContainerList").apply();
-						sharedPreferences.edit().remove("savedDestination").apply();
+					CheckConfiguration checkConfiguration = new CheckConfiguration();
+					if (checkConfiguration.checkConfiguration(MoveDisplay.this)) {
+						if (!(TextUtils.isEmpty(moveDestinationET.getText())) && (containerList.size() > 0)) {
+							moveContainer(moveDestinationET.getText().toString());
+							moveContainerET.setText("");
+							moveDestinationET.setText("");
+							moveCountTV.setText("");
+							sharedPreferences.edit().remove("savedContainerList").apply();
+							sharedPreferences.edit().remove("savedDestination").apply();
+						}
 					}
 				}
 			});

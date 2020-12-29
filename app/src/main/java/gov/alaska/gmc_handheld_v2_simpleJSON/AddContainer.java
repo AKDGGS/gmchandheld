@@ -32,22 +32,25 @@ public class AddContainer extends BaseActivity {
 			submit_button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
+					CheckConfiguration checkConfiguration = new CheckConfiguration();
+					if (checkConfiguration.checkConfiguration(AddContainer.this)) {
+						if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
 
-						String container = addContainerBarcodeET.getText().toString();
-						if (!container.isEmpty()) {
-							RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-							RemoteApiUIHandler.setQueryOrDestination(addContainerBarcodeET.getText().toString());
-							RemoteApiUIHandler.setAddContainerName(addContainerNameET.getText().toString());
-							RemoteApiUIHandler.setAddContainerRemark(addContainerRemarkET.getText().toString());
+							String container = addContainerBarcodeET.getText().toString();
+							if (!container.isEmpty()) {
+								RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
+								RemoteApiUIHandler.setQueryOrDestination(addContainerBarcodeET.getText().toString());
+								RemoteApiUIHandler.setAddContainerName(addContainerNameET.getText().toString());
+								RemoteApiUIHandler.setAddContainerRemark(addContainerRemarkET.getText().toString());
 
-							remoteApiUIHandler.setDownloading(true);
-							remoteApiUIHandler.processDataForDisplay(AddContainer.this);
+								remoteApiUIHandler.setDownloading(true);
+								remoteApiUIHandler.processDataForDisplay(AddContainer.this);
+							}
+							addContainerBarcodeET.setText("");
+							addContainerNameET.setText("");
+							addContainerRemarkET.setText("");
+							addContainerBarcodeET.requestFocus();
 						}
-						addContainerBarcodeET.setText("");
-						addContainerNameET.setText("");
-						addContainerRemarkET.setText("");
-						addContainerBarcodeET.requestFocus();
 					}
 				}
 			});

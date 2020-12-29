@@ -32,6 +32,8 @@ public class Summary extends BaseActivity {
         setContentView(R.layout.summary_get_barcode);
         SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = null;
 
+
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -55,17 +57,21 @@ public class Summary extends BaseActivity {
         // Submit barcode query
         if (remoteApiUIHandler.isDownloading()) {
 
-            // onClickListener listens if the submit button is clicked
-            submitButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(!getBarcode().isEmpty()) {
-                        remoteApiUIHandler.setDownloading(true);
-                        RemoteApiUIHandler.setQueryOrDestination(getBarcode());
-                        remoteApiUIHandler.processDataForDisplay(Summary.this);
+                // onClickListener listens if the submit button is clicked
+                submitButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CheckConfiguration checkConfiguration = new CheckConfiguration();
+                        if (checkConfiguration.checkConfiguration(Summary.this)) {
+                            if (!getBarcode().isEmpty()) {
+                                remoteApiUIHandler.setDownloading(true);
+                                RemoteApiUIHandler.setQueryOrDestination(getBarcode());
+                                remoteApiUIHandler.processDataForDisplay(Summary.this);
+                            }
+                        }
                     }
-                }
-            });
+                });
+
 
             // KeyListener listens if enter is pressed
             barcodeInput.setOnKeyListener(new View.OnKeyListener() {
