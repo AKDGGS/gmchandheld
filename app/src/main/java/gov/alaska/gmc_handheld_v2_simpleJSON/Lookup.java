@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -41,9 +40,9 @@ public class Lookup extends BaseActivity {
 		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
 		if(file.exists()) {
 			file.delete();
-			Toast.makeText(getBaseContext(), "The file is deleted.", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(getBaseContext(), "The file is deleted.", Toast.LENGTH_SHORT).show();
 		}else{
-			Toast.makeText(getBaseContext(), "The file doesn't exist.", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(getBaseContext(), "The file doesn't exist.", Toast.LENGTH_SHORT).show();
 		}
 
 ////         test for accessing lookupHistory from shared preferences.
