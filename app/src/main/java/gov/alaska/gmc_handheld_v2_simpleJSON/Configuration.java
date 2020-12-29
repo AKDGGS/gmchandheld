@@ -165,8 +165,6 @@ public class Configuration extends BaseActivity {
 		} else {
 			new DownloadFileFromURL().execute(fileUrl);
 		}
-
-
 	}
 
 	class DownloadFileFromURL extends AsyncTask<String, String, String> {

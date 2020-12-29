@@ -1,6 +1,8 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -23,6 +25,13 @@ public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 
+	public static final String SHARED_PREFS = "sharedPrefs";
+	public static final String URL_TEXT = "urlText";
+	public static final String API_TEXT = "apiText";
+	private EditText urlInput;
+	private EditText apiInput;
+	private String url;
+	private String apiKey;
 
 	@Override
 	public void onRestart() {
@@ -38,13 +47,26 @@ public class Lookup extends BaseActivity {
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
 
 		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
-		if(file.exists()) {
+		if (file.exists()) {
 			file.delete();
 //			Toast.makeText(getBaseContext(), "The file is deleted.", Toast.LENGTH_SHORT).show();
-		}else{
+		} else {
 //			Toast.makeText(getBaseContext(), "The file doesn't exist.", Toast.LENGTH_SHORT).show();
 		}
 
+		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		url = sharedPreferences.getString(URL_TEXT, "");
+		apiKey = sharedPreferences.getString(API_TEXT, "");
+
+		if ((url.isEmpty()) || (apiKey.isEmpty())) {
+			// setup the alert builder
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Problem with the URL or API Key");
+			builder.setMessage("Go to configuration page to correct the URL or the API.");        // add a button
+			builder.setPositiveButton("OK", null);        // create and show the alert dialog
+			AlertDialog dialog = builder.create();
+			dialog.show();
+		}
 
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -66,40 +88,42 @@ public class Lookup extends BaseActivity {
 		adapter.notifyDataSetChanged();
 		listView.setAdapter(adapter);
 
-		// Submit barcode query
-		if (remoteApiUIHandler.isDownloading()) {
-			// onClickListener listens if the submit button is clicked
-			submit_button.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (!barcodeInput.getText().toString().isEmpty()) {
-						remoteApiUIHandler.setDownloading(true);
-						RemoteApiUIHandler.setQueryOrDestination(barcodeInput.getText().toString());
-						remoteApiUIHandler.processDataForDisplay(Lookup.this);
+		if (!(url.isEmpty()) || !(apiKey.isEmpty())) {
+			// Submit barcode query
+			if (remoteApiUIHandler.isDownloading()) {
+				// onClickListener listens if the submit button is clicked
+				submit_button.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						if (!barcodeInput.getText().toString().isEmpty()) {
+							remoteApiUIHandler.setDownloading(true);
+							RemoteApiUIHandler.setQueryOrDestination(barcodeInput.getText().toString());
+							remoteApiUIHandler.processDataForDisplay(Lookup.this);
+						}
 					}
-				}
-			});
+				});
 
-			// KeyListener listens if enter is pressed
-			barcodeInput.setOnKeyListener(new View.OnKeyListener() {
-				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					// if "enter" is pressed
-					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+				// KeyListener listens if enter is pressed
+				barcodeInput.setOnKeyListener(new View.OnKeyListener() {
+					public boolean onKey(View v, int keyCode, KeyEvent event) {
+						// if "enter" is pressed
+						if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+							submit_button.performClick();
+							return true;
+						}
+						return false;
+					}
+				});
+
+				// Clicking barcode in history list.
+				listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						barcodeInput.setText(listView.getItemAtPosition(position).toString());
 						submit_button.performClick();
-						return true;
 					}
-					return false;
-				}
-			});
-
-			// Clicking barcode in history list.
-			listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					barcodeInput.setText(listView.getItemAtPosition(position).toString());
-					submit_button.performClick();
-				}
-			});
+				});
+			}
 		}
 	}
 
