@@ -8,15 +8,34 @@ def getDateTime() {
     return df.format(new Date());
 }
 
+// Load keystore
+def keystorePropertiesFile = rootProject.file("keystore.properties");
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
+
     signingConfigs {
         debug {
-            storeFile file('/media/zwe/garage/D/DNR/APK/2020-10-7_GMC_scanner.jks')
-            storePassword '123456'
-            keyAlias 'key0'
-            keyPassword '123456'
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
 
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+
+//        debug {
+//            storeFile file('/media/zwe/garage/D/DNR/APK/2020-10-7_GMC_scanner.jks')
+//            storePassword '123456'
+//            keyPassword '123456'
+//            keyAlias 'key0'
+//        }
     }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -36,10 +55,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
-
     }
-
 }
 
 dependencies {

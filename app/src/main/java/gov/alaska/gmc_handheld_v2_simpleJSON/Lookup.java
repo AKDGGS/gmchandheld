@@ -58,8 +58,6 @@ public class Lookup extends BaseActivity {
 
 
 
-
-
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
