@@ -45,17 +45,12 @@ public class Lookup extends BaseActivity {
 		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
 		if (file.exists()) {
 			file.delete();
-//			Toast.makeText(getBaseContext(), "The file is deleted.", Toast.LENGTH_SHORT).show();
-		} else {
-//			Toast.makeText(getBaseContext(), "The file doesn't exist.", Toast.LENGTH_SHORT).show();
 		}
 
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
 //        String s2 =  sp.getString("lookupHistoryString", "");
 //        System.out.println("TEST " + s2);
-
-
 
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
@@ -111,18 +106,14 @@ public class Lookup extends BaseActivity {
 				}
 			});
 		}
-
 	}
 
 	//makes the volume keys scroll up/down
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		int action, keycode;
-
 		action = event.getAction();
 		keycode = event.getKeyCode();
-
-		System.out.println(keycode);
 
 		AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
@@ -154,33 +145,6 @@ public class Lookup extends BaseActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
-
-//	private boolean checkConfiguration() {
-//		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-//		url = sharedPreferences.getString(URL_TEXT, "");
-//		apiKey = sharedPreferences.getString(API_TEXT, "");
-//
-//		if ((url.isEmpty()) || (apiKey.isEmpty())) {
-//			// setup the alert builder
-//			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//			builder.setTitle("Problem with the URL or API Key");
-//			builder.setMessage("Go to configuration page to correct the URL or the API.");        // add a button
-//			builder.setPositiveButton("Go to Configuration", new DialogInterface.OnClickListener() {
-//				@Override
-//				public void onClick(DialogInterface dialog, int which) {
-//					Intent intentConfiguration = new Intent(getApplicationContext(), Configuration.class);
-//					intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//					startActivity(intentConfiguration);
-//				}
-//			});
-//			builder.setNegativeButton("Dismiss", null);
-//			AlertDialog dialog = builder.create();
-//			dialog.show();
-//			return false;
-//		}else{
-//			return true;
-//		}
-//	}
 }
 
 

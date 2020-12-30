@@ -29,13 +29,6 @@ android {
             storeFile file(keystoreProperties['storeFile'])
             storePassword keystoreProperties['storePassword']
         }
-
-//        debug {
-//            storeFile file('/media/zwe/garage/D/DNR/APK/2020-10-7_GMC_scanner.jks')
-//            storePassword '123456'
-//            keyPassword '123456'
-//            keyAlias 'key0'
-//        }
     }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"

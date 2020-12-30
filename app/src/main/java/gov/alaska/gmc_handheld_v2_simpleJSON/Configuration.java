@@ -77,7 +77,6 @@ public class Configuration extends BaseActivity {
 		});
 
 		final Button saveButton = findViewById(R.id.saveBtn);
-		// onClickListener listens if the save button is clicked
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -120,7 +119,7 @@ public class Configuration extends BaseActivity {
 				editor.putString(API_TEXT, getApiKey());
 
 				editor.apply();
-				Toast.makeText(this, "Changes to configuration saved.", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "Changes saved.", Toast.LENGTH_LONG).show();
 
 				Intent intent = new Intent(this, Lookup.class);
 				startActivity(intent);
@@ -166,10 +165,11 @@ public class Configuration extends BaseActivity {
 		StringBuilder sb;
 		DateFormat simple = new SimpleDateFormat("yyyyMMddHHmm");
 		String currentBuildTime = simple.format(new Date(BuildConfig.TIMESTAMP));
-		int responseCode = 200;
-		int responseCode2 = 200;
+		int versionJsonResponseCode = 200;
+		int appFileResponseCode = 200;
 		String rawJSON;
 		String build;
+
 		String filename;
 
 		@Override
@@ -186,7 +186,8 @@ public class Configuration extends BaseActivity {
 					HttpURLConnection.setFollowRedirects(false);
 					HttpURLConnection con = (HttpURLConnection) new URL(f_url[0]).openConnection();
 					con.setRequestMethod("HEAD");
-					if (con.getResponseCode() == 200) {
+					versionJsonResponseCode = con.getResponseCode();
+					if (versionJsonResponseCode == 200) {
 						String version = "";
 						sb = new StringBuilder();
 						InputStream input = new BufferedInputStream(url.openStream(), 8192);
@@ -208,10 +209,8 @@ public class Configuration extends BaseActivity {
 						}
 						input.close();
 
-
-						if ((responseCode == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
+						if ((versionJsonResponseCode == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
 							String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/" + filename;
-							System.out.println(fileUrl);
 							try {
 								con = (HttpURLConnection) new URL(fileUrl).openConnection();
 								con.setRequestMethod("HEAD");
@@ -236,7 +235,7 @@ public class Configuration extends BaseActivity {
 									output.close();
 									input.close();
 								} else {
-									responseCode2 = con.getResponseCode();
+									appFileResponseCode = con.getResponseCode();
 								}
 							} catch (IOException e) {
 								Log.e("Error: ", e.getMessage());
@@ -261,9 +260,9 @@ public class Configuration extends BaseActivity {
 		protected void onPostExecute(String fileUrl) {
 			Intent intent = new Intent();
 			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
-			if ((responseCode == 200) && (responseCode2 == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
+			if ((versionJsonResponseCode == 200) && (appFileResponseCode == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
 				Uri uriFile = Uri.fromFile(file);
-				Toast.makeText(getBaseContext(), "Update available....Installing.", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(getBaseContext(), "Update available....Installing.", Toast.LENGTH_SHORT).show();
 //				 Intent to open apk
 				intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
 				intent.setDataAndType(uriFile, "application/vnd.android.package-archive");

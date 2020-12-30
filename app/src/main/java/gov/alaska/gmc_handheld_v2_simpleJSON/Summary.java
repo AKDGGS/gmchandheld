@@ -32,8 +32,6 @@ public class Summary extends BaseActivity {
         setContentView(R.layout.summary_get_barcode);
         SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = null;
 
-
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -56,7 +54,6 @@ public class Summary extends BaseActivity {
 
         // Submit barcode query
         if (remoteApiUIHandler.isDownloading()) {
-
                 // onClickListener listens if the submit button is clicked
                 submitButton.setOnClickListener(new View.OnClickListener() {
                     @Override
