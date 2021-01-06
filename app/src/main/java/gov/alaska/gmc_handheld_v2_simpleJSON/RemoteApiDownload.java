@@ -33,6 +33,8 @@ public class RemoteApiDownload {
 	private String addedContainerName;
 	private String addedContainerRemark;
 	private ArrayList<String> containerList;
+	private String oldBarcode;
+	private String newBarcode;
 	private final Context context;
 	SimpleDateFormat sdf;
 
@@ -159,6 +161,28 @@ public class RemoteApiDownload {
 
 					QUERYPARAM = sb.toString();
 					url = url + "addcontainer.json?" + sb.toString();
+					break;
+				}
+				case "Recode": {
+					String query = null;
+
+					try {
+						oldBarcode = URLEncoder.encode(oldBarcode, "utf-8");
+						newBarcode = URLEncoder.encode(newBarcode, "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						exception = new Exception(e.getMessage());
+					}
+
+					StringBuilder sb = new StringBuilder();
+					if(query != null) {
+						sb.append("barcode=" + query);
+					}
+					if(name != null){
+						sb.append("&name=" + name);
+					}
+
+					QUERYPARAM = query;
+					url = url + "rcode.json?" + query;
 					break;
 				}
 			}

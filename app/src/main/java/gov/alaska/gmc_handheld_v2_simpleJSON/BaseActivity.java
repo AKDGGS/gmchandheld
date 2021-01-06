@@ -82,10 +82,14 @@ public class BaseActivity extends AppCompatActivity {
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			this.startActivity(intentAddContainer);
 			return true;
-		}else {
+		} else if (item.getItemId() == (R.id.recode)) {
+			Intent intentAddContainer = new Intent(this, Recode.class);
+			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			this.startActivity(intentAddContainer);
+			return true;
+		}else{
 			return super.onOptionsItemSelected(item);
 		}
-
 
 
 //		else if (item.getItemId() == (R.id.notes)) {

@@ -34,7 +34,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "gov.alaska.gmc_handheld_v2"
+        applicationId "gov.alaska.gmc_handheld_v2_simpleJSON"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1

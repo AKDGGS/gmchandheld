@@ -1,16 +1,20 @@
 package gov.alaska.gmc_handheld_v2_simpleJSON;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,8 +59,22 @@ public class Configuration extends BaseActivity {
 	private String url;
 	private String apiKey;
 
+	// Storage Permissions
+	private static final int REQUEST_EXTERNAL_STORAGE = 1;
+	private static String[] PERMISSIONS_STORAGE = {
+			Manifest.permission.READ_EXTERNAL_STORAGE,
+			Manifest.permission.WRITE_EXTERNAL_STORAGE,
+			Manifest.permission.REQUEST_INSTALL_PACKAGES
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+		StrictMode.setVmPolicy(builder.build());
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+			builder.detectFileUriExposure();
+		}
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.configuration);
 
@@ -139,7 +160,12 @@ public class Configuration extends BaseActivity {
 	}
 
 	public void updateAPK() {
-		final String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
+		final String fileUrl;
+		if (Build.VERSION.SDK_INT <= 16) {
+			fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
+		}else{
+			fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/version.json";
+		}
 
 		final Context mContext = this;
 		final AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
@@ -155,9 +181,8 @@ public class Configuration extends BaseActivity {
 			AlertDialog alert = alertDialog.create();
 			alert.setCanceledOnTouchOutside(false);
 			alert.show();
-
 		} else {
-			new DownloadFileFromURL().execute(fileUrl);
+			new DownloadFileFromURL(this).execute(fileUrl);
 		}
 	}
 
@@ -169,14 +194,21 @@ public class Configuration extends BaseActivity {
 		int appFileResponseCode = 200;
 		String rawJSON;
 		String build;
-
 		String filename;
+
+		private WeakReference<Context> contextRef;
+
+		public DownloadFileFromURL(Context context) {
+			contextRef = new WeakReference<>(context);
+		}
+
 
 		@Override
 		protected String doInBackground(String... f_url) {
 			int count;
 			try {
 				URL url = new URL(f_url[0]);
+
 				URLConnection connection = url.openConnection();
 
 //				connection.setConnectTimeout(10000);
@@ -210,7 +242,13 @@ public class Configuration extends BaseActivity {
 						input.close();
 
 						if ((versionJsonResponseCode == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
-							String fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/" + filename;
+							String fileUrl;
+							if (Build.VERSION.SDK_INT <= 16) {
+								fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/" + filename;
+							}else{
+								fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/" + filename;
+							}
+
 							try {
 								con = (HttpURLConnection) new URL(fileUrl).openConnection();
 								con.setRequestMethod("HEAD");
@@ -221,6 +259,7 @@ public class Configuration extends BaseActivity {
 //				connection.setReadTimeout(10000);
 									connection.connect();
 									input = new BufferedInputStream(url.openStream(), 8192);
+									verifyStoragePermissions(Configuration.this);
 									OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
 									byte data[] = new byte[1024];
 									long total = 0;
@@ -259,19 +298,48 @@ public class Configuration extends BaseActivity {
 		@Override
 		protected void onPostExecute(String fileUrl) {
 			Intent intent = new Intent();
-			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
+			File apkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
+			Uri apkURI = Uri.fromFile(apkFile);
+			Context context = contextRef.get();
+
 			if ((versionJsonResponseCode == 200) && (appFileResponseCode == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
-				Uri uriFile = Uri.fromFile(file);
-//				Toast.makeText(getBaseContext(), "Update available....Installing.", Toast.LENGTH_SHORT).show();
+				Uri uriFile = Uri.fromFile(apkFile);
+				if (context != null){
+					if (Build.VERSION.SDK_INT >= 24) {
+					uriFile = FileProvider.getUriForFile(context, getApplicationContext().getPackageName() + ".provider",
+							apkFile);
+
+					}
+				}
 //				 Intent to open apk
 				intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
 				intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
-				intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(intent);
 			} else {
 				Toast.makeText(getBaseContext(), "No update available.", Toast.LENGTH_LONG).show();
 			}
+		}
+	}
+
+	/**
+	 * Checks if the app has permission to write to device storage
+	 *
+	 * If the app does not has permission then the user will be prompted to grant permissions
+	 *
+	 * @param activity
+	 */
+	public static void verifyStoragePermissions(Activity activity) {
+		// Check if we have write permission
+		int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+		if (permission != PackageManager.PERMISSION_GRANTED) {
+			// We don't have permission so prompt the user
+			ActivityCompat.requestPermissions(
+					activity,
+					PERMISSIONS_STORAGE,
+					REQUEST_EXTERNAL_STORAGE
+			);
 		}
 	}
 }

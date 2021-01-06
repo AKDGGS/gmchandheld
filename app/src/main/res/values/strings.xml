@@ -1,6 +1,6 @@
 <resources>
     <string name="help">Help</string>
-    <string name="recode">recode</string>
+    <string name="recode">Recode</string>
     <string name="add_inventory">add inventory</string>
     <string name="api_key_label">API Key:</string>
     <string name="url_label">URL:</string>
@@ -23,6 +23,8 @@
     <string name="add_container">Add Container</string>
     <string name="configuration">Configuration</string>
     <string name="warning">Warning</string>
+    <string name="old_barcode">Old Barcode:</string>
+    <string name="new_barcode">New Barcode:</string>
 
 
 </resources>
