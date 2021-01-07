@@ -23,15 +23,18 @@
         android:id="@+id/add_container"
         android:title="@string/add_container"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/configuration"
-        android:title="@string/configuration"
-        app:showAsAction="never" />
 
     <item
         android:id="@+id/recode"
         android:title="@string/recode"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/configuration"
+        android:title="@string/configuration"
+        app:showAsAction="never" />
+
+
 
 </menu>
 

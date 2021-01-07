@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="gov.alaska.gmc_handheld_v2_simpleJSON">
+    package="gov.alaska.gmchandheld">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -12,13 +12,13 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="GMC Handheld"
+        android:label="gmchandheld"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".Lookup"
+            android:name="gov.alaska.gmchandheld.Lookup"
             android:label="@string/lookup"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateAlwaysHidden">
@@ -28,45 +28,45 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BaseActivity" />
+        <activity android:name="gov.alaska.gmchandheld.BaseActivity" />
         <activity
-            android:name=".AddContainer"
+            android:name="gov.alaska.gmchandheld.AddContainer"
             android:label="Add Container"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".AuditDisplay"
+            android:name="gov.alaska.gmchandheld.AuditDisplay"
             android:label="Audit" />
         <activity
-            android:name=".AddInventory"
+            android:name="gov.alaska.gmchandheld.AddInventory"
             android:label="Add Inventory" />
         <activity
-            android:name=".Configuration"
+            android:name="gov.alaska.gmchandheld.Configuration"
             android:label="Configuration"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".Help"
+            android:name="gov.alaska.gmchandheld.Help"
             android:label="Help" />
         <activity
-            android:name=".LookupDisplay"
-            android:parentActivityName=".Lookup"
+            android:name="gov.alaska.gmchandheld.LookupDisplay"
+            android:parentActivityName="gov.alaska.gmchandheld.Lookup"
             android:theme="@style/Theme.AppCompat.DayNight" />
         <activity
-            android:name=".MoveDisplay"
+            android:name="gov.alaska.gmchandheld.MoveDisplay"
             android:label="Move"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".Recode"
+            android:name="gov.alaska.gmchandheld.Recode"
             android:label="Recode"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".Summary"
+            android:name="gov.alaska.gmchandheld.Summary"
             android:label="Summary"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".SummaryDisplay"
-            android:parentActivityName=".Summary"
+            android:name="gov.alaska.gmchandheld.SummaryDisplay"
+            android:parentActivityName="gov.alaska.gmchandheld.Summary"
             android:theme="@style/Theme.AppCompat.DayNight"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
