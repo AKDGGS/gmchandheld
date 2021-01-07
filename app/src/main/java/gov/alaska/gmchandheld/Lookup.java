@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,7 +17,10 @@ import android.widget.ListView;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class Lookup extends BaseActivity {
@@ -42,10 +46,7 @@ public class Lookup extends BaseActivity {
 		setContentView(R.layout.lookup_main);
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
 
-		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/app-release-1.apk");
-		if (file.exists()) {
-			file.delete();
-		}
+		deleteApkFile();
 
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -144,6 +145,23 @@ public class Lookup extends BaseActivity {
 			}
 		}
 		return super.dispatchKeyEvent(event);
+	}
+
+	private void deleteApkFile(){
+		File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+
+		File [] files = dir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				System.out.println(name + " " + name.matches("(gmc-app-[0-9]+-release\\.apk)"));
+				return name.matches("(gmc-app-[0-9]+-release\\.apk)");
+
+			}
+		});
+
+		for (File f : files) {
+			f.delete();
+		}
 	}
 }
 

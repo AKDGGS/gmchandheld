@@ -40,7 +40,7 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
-        setProperty("archivesBaseName", "app-$dateTime")
+        setProperty("archivesBaseName", "gmc-app-$dateTime")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
