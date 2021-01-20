@@ -15,6 +15,12 @@
         android:id="@+id/move"
         android:title="@string/move"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/moveContent"
+        android:title="@string/moveContent"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/add_container"
         android:title="@string/add_container"

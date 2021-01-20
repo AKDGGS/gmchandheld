@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="gov.alaska.gmchandheld.Lookup"
+            android:name=".Lookup"
             android:label="@string/lookup"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateAlwaysHidden">
@@ -28,45 +28,47 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="gov.alaska.gmchandheld.BaseActivity" />
+        <activity android:name=".BaseActivity" />
         <activity
-            android:name="gov.alaska.gmchandheld.AddContainer"
+            android:name=".AddContainer"
             android:label="Add Container"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="gov.alaska.gmchandheld.AuditDisplay"
+            android:name=".AuditDisplay"
             android:label="Audit" />
         <activity
-            android:name="gov.alaska.gmchandheld.AddInventory"
+            android:name=".AddInventory"
             android:label="Add Inventory" />
         <activity
-            android:name="gov.alaska.gmchandheld.Configuration"
+            android:name=".Configuration"
             android:label="Configuration"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="gov.alaska.gmchandheld.Help"
+            android:name=".Help"
             android:label="Help" />
         <activity
-            android:name="gov.alaska.gmchandheld.LookupDisplay"
-            android:parentActivityName="gov.alaska.gmchandheld.Lookup"
+            android:name=".LookupDisplay"
+            android:parentActivityName=".Lookup"
             android:theme="@style/Theme.AppCompat.DayNight" />
         <activity
-            android:name="gov.alaska.gmchandheld.MoveDisplay"
+            android:name=".MoveContents"
+            android:label="Move Contents"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".MoveDisplay"
             android:label="Move"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
-            android:name="gov.alaska.gmchandheld.Recode"
+            android:name=".Recode"
             android:label="Recode"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
-            android:name="gov.alaska.gmchandheld.Summary"
+            android:name=".Summary"
             android:label="Summary"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="gov.alaska.gmchandheld.SummaryDisplay"
-            android:parentActivityName="gov.alaska.gmchandheld.Summary"
+            android:name=".SummaryDisplay"
+            android:parentActivityName=".Summary"
             android:theme="@style/Theme.AppCompat.DayNight"
             android:windowSoftInputMode="stateAlwaysHidden" />
 

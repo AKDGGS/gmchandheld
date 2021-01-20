@@ -77,6 +77,11 @@ public class BaseActivity extends AppCompatActivity {
 			intentMove.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			this.startActivity(intentMove);
 			return true;
+		} else if (item.getItemId() == (R.id.moveContent)) {
+			Intent intentMove = new Intent(this, MoveContents.class);
+			intentMove.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			this.startActivity(intentMove);
+			return true;
 		} else if (item.getItemId() == (R.id.add_container)) {
 			Intent intentAddContainer = new Intent(this, AddContainer.class);
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

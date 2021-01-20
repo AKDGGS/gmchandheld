@@ -26,6 +26,10 @@
     <string name="old_barcode">Old Barcode:</string>
     <string name="new_barcode">New Barcode:</string>
     <string name="current_barcode">Current Barcode</string>
+    <string name="destination">Destination</string>
+    <string name="moveContent">Move Content</string>
+    <string name="source">Source</string>
+    <string name="from">From:</string>
 
 
 </resources>

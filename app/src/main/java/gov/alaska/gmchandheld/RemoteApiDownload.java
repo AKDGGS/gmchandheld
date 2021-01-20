@@ -34,6 +34,10 @@ public class RemoteApiDownload {
 	private String addedContainerRemark;
 	private ArrayList<String> containerList;
 	private String newBarcode;
+
+
+
+	private String destinationBarcode;
 	private final Context context;
 	SimpleDateFormat sdf;
 
@@ -62,6 +66,11 @@ public class RemoteApiDownload {
 	public void setAddedContainerRemark(String addedContainerRemark) {
 		this.addedContainerRemark = addedContainerRemark;
 	}
+
+	public void setDestinationBarcode(String destinationBarcode) {
+		this.destinationBarcode = destinationBarcode;
+	}
+
 
 
 	public void setNewBarcode(String newBarcode) {
@@ -124,7 +133,29 @@ public class RemoteApiDownload {
 					QUERYPARAM = "barcode=" + barcode;
 					url = url + "summary.json?barcode=" + urlFirstParameter;
 					break;
+				}
+				case "MoveContents": {
+					String source = null;
+					String destination = null;
 
+					try {
+						source = URLEncoder.encode(urlFirstParameter, "utf-8");
+						destination = URLEncoder.encode(destinationBarcode, "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						exception = new Exception(e.getMessage());
+					}
+
+					StringBuilder sb = new StringBuilder();
+					if(source != null) {
+						sb.append("src=" + source);
+					}
+					if(destination != null){
+						sb.append("&dest=" + destination);
+					}
+
+					QUERYPARAM = sb.toString();
+					url = url + "movecontents.json?" + sb.toString();
+					break;
 				}
 				case "MoveDisplay": {
 					String destination = null;
@@ -139,6 +170,7 @@ public class RemoteApiDownload {
 					url = url + "move.json?" + destination;
 					break;
 				}
+
 				case "AddContainer": {
 					String barcode = null;
 					String name = null;

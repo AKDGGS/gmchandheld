@@ -45,6 +45,9 @@ public class RemoteApiUIHandler {
 	private static String urlFirstParameter;
 	public static void setUrlFirstParameter(String query) {RemoteApiUIHandler.urlFirstParameter = query;}
 
+	private static String destinationBarcode;
+	public static void setDestinationBarcode(String destinationBarcode) {RemoteApiUIHandler.destinationBarcode = destinationBarcode;}
+
 	private static String addContainerName;
 	public static void setAddContainerName(String addContainerName) {
 		RemoteApiUIHandler.addContainerName = addContainerName;
@@ -126,7 +129,6 @@ public class RemoteApiUIHandler {
 
 				@Override
 				protected RemoteApiDownload doInBackground(String... strings) {
-
 					if (!isCancelled()) {
 						RemoteApiDownload remoteAPIDownload = null;
 						switch (context.getClass().getSimpleName()) {
@@ -145,6 +147,14 @@ public class RemoteApiUIHandler {
 								remoteAPIDownload.setContainerList(containerList);
 								break;
 							}
+
+							case "MoveContents": {
+								remoteAPIDownload = new RemoteApiDownload(context);
+								remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
+								remoteAPIDownload.setDestinationBarcode(destinationBarcode);
+								break;
+							}
+
 							case "AddContainer":{
 								remoteAPIDownload = new RemoteApiDownload(context);
 								remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
@@ -212,30 +222,42 @@ public class RemoteApiUIHandler {
 								downloading = true;
 								switch (context.getClass().getSimpleName()) {
 									case "Lookup":
-									case "Summary":
+									case "Summary": {
 										EditText getBarcodeEditText = ((Activity) context).findViewById(R.id.getBarcodeEditText);
 										getBarcodeEditText.setText("");
 										getBarcodeEditText.requestFocus();
 										break;
+									}
 									case "SummaryDisplay":
-									case "LookupDisplay":
+									case "LookupDisplay": {
 //										lastAddedToHistory(context, queryOrDestination);
 										EditText invisibleEditText = ((Activity) context).findViewById(R.id.invisibleEditText);
 										invisibleEditText.setText("");
 										invisibleEditText.requestFocus();
 										break;
-									case "MoveDisplay":
+									}
+									case "MoveContents": {
+										EditText sourceET = ((Activity) context).findViewById(R.id.sourceET);
+										sourceET.setText(urlFirstParameter);
+										EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
+										destinationET.setText(destinationBarcode);
+										destinationET.requestFocus();
+										break;
+									}
+									case "MoveDisplay": {
 										EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
 										destinationET.setText(urlFirstParameter);
 										EditText moveContainerET = ((Activity) context).findViewById(R.id.moveContainerET);
 										moveContainerET.requestFocus();
 										break;
-									case "Recode":
+									}
+									case "Recode": {
 										EditText oldBarcodeET = ((Activity) context).findViewById(R.id.getOldBarcodeEditText);
 										oldBarcodeET.setText(urlFirstParameter);
 										EditText newBarcodeET = ((Activity) context).findViewById(R.id.getNewBarcodeEditText);
 										oldBarcodeET.requestFocus();
 										break;
+									}
 								}
 							}
 
@@ -290,6 +312,11 @@ public class RemoteApiUIHandler {
 								lastAddedToHistory(context, urlFirstParameter);
 								break;
 							}
+							case "MoveContents": {
+								Toast.makeText(context, "The contents were moved.",
+										Toast.LENGTH_LONG).show();
+								break;
+							}
 							case "MoveDisplay": {
 								containerList.clear();
 								ListView containerListLV = ((Activity) context).findViewById(R.id.listViewGetContainersToMove);
@@ -300,16 +327,19 @@ public class RemoteApiUIHandler {
 										Toast.LENGTH_LONG).show();
 								EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
 								destinationET.requestFocus();
+								break;
 							}
 							case "AddContainer": {
 								Toast.makeText(context, "The container was added.",
 										Toast.LENGTH_LONG).show();
+								break;
 							}
 							case "Recode": {
 								EditText oldBarcodeET = ((Activity) context).findViewById(R.id.getOldBarcodeEditText);
 								oldBarcodeET.requestFocus();
 								Toast.makeText(context, "Recode successful.",
 										Toast.LENGTH_LONG).show();
+								break;
 							}
 						}
 					}
