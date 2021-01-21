@@ -2,30 +2,18 @@ package gov.alaska.gmchandheld;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
@@ -47,20 +35,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Configuration extends BaseActivity {
-
-	public static final String SHARED_PREFS = "sharedPrefs";
-	public static final String URL_TEXT = "urlText";
-	public static final String API_TEXT = "apiText";
-
-	private EditText urlInput;
-	private EditText apiInput;
-	private String url;
-	private String apiKey;
+public class ExecutableService extends BroadcastReceiver {
+	Context mContext;
+	private Activity activity;
 
 	// Storage Permissions
 	private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -71,123 +51,30 @@ public class Configuration extends BaseActivity {
 	};
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onReceive(Context context, Intent intent) {
+
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
 			builder.detectFileUriExposure();
 		}
 
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.configuration);
+		mContext = context;
 
-		Toolbar toolbar = findViewById(R.id.toolbar);
-		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-		setSupportActionBar(toolbar);
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY);
+		int minute = now.get(Calendar.MINUTE);
+		int second = now.get(Calendar.SECOND);
+		System.out.println(hour + " " + minute);
 
-		Date buildDate = new Date(BuildConfig.TIMESTAMP);
-		TextView buildDateTV = findViewById(R.id.buildDateTV);
-		buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
-
-		urlInput = findViewById(R.id.url_editText);
-		apiInput = findViewById(R.id.api_editText);
-
-		final Button updateButton = findViewById(R.id.updateBtn);
-		updateButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				updateAPK();
-			}
-		});
-
-		final Button saveButton = findViewById(R.id.saveBtn);
-		saveButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				saveData();
-			}
-		});
-
-		loadData();
-		updateViews();
-
-	}
-
-	public String getUrl() {
-		urlInput = findViewById(R.id.url_editText);
-
-		url = urlInput.getText().toString();
-		if (url.length() > 1 && url.charAt(url.length() - 1) != ('/')) {
-			url = url + '/';
-		}
-		return url;
-	}
-
-	public String getApiKey() {
-		apiInput = findViewById(R.id.api_editText);
-		return apiInput.getText().toString();
-	}
-
-	public void saveData() {
-		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPreferences.edit();
-
-		if ("".equals(getUrl())) {
-			Toast.makeText(this, "You did not enter an URL.", Toast.LENGTH_LONG).show();
-		} else {
-			getUrl();
-			if ("".equals(getApiKey())) {
-				Toast.makeText(this, "You did not enter an API key.", Toast.LENGTH_LONG).show();
-			} else {
-				getApiKey();
-				editor.putString(URL_TEXT, getUrl());
-				editor.putString(API_TEXT, getApiKey());
-
-				editor.apply();
-				Toast.makeText(this, "Changes saved.", Toast.LENGTH_LONG).show();
-
-				Intent intent = new Intent(this, Lookup.class);
-				startActivity(intent);
-			}
-		}
-	}
-
-	public void loadData() {
-		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		url = sharedPreferences.getString(URL_TEXT, "");
-		apiKey = sharedPreferences.getString(API_TEXT, "");
-	}
-
-	public void updateViews() {
-		urlInput.setText(url);
-		apiInput.setText(apiKey);
-	}
-
-	public void updateAPK() {
 		final String fileUrl;
 		if (Build.VERSION.SDK_INT <= 17) {
 			fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
 		}else{
 			fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/version.json";
 		}
+		new DownloadFileFromURL().execute(fileUrl);
 
-		final Context mContext = this;
-		final AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-
-		ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
-			alertDialog.setMessage("Is the device connected to the internet/network?  " +
-					"Check if the connection has been lost.");
-			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mContext).findViewById(R.id.lookup_error_root));
-			alertDialog.setView(layout);
-			alertDialog.setPositiveButton("Dimiss", null);
-			AlertDialog alert = alertDialog.create();
-			alert.setCanceledOnTouchOutside(false);
-			alert.show();
-		} else {
-			new DownloadFileFromURL(this).execute(fileUrl);
-		}
 	}
 
 	class DownloadFileFromURL extends AsyncTask<String, String, String> {
@@ -200,11 +87,6 @@ public class Configuration extends BaseActivity {
 		String build;
 		String filename;
 
-		private WeakReference<Context> contextRef;
-
-		public DownloadFileFromURL(Context context) {
-			contextRef = new WeakReference<>(context);
-		}
 
 
 		@Override
@@ -214,7 +96,6 @@ public class Configuration extends BaseActivity {
 				URL url = new URL(f_url[0]);
 				System.out.println(url);
 				URLConnection connection = url.openConnection();
-
 
 //				connection.setConnectTimeout(10000);
 //				connection.setReadTimeout(10000);
@@ -265,7 +146,7 @@ public class Configuration extends BaseActivity {
 //				connection.setReadTimeout(10000);
 									connection.connect();
 									input = new BufferedInputStream(url.openStream(), 8192);
-									verifyStoragePermissions(Configuration.this);
+//									verifyStoragePermissions((Activity) mContext);
 									OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
 									byte data[] = new byte[1024];
 									long total = 0;
@@ -306,25 +187,24 @@ public class Configuration extends BaseActivity {
 			Intent intent = new Intent();
 			File apkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
 			Uri apkURI = Uri.fromFile(apkFile);
-			Context context = contextRef.get();
+//			Context context = contextRef.get();
 
 			if ((versionJsonResponseCode == 200) && (appFileResponseCode == 200)){
 //				&& (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
 				Uri uriFile = Uri.fromFile(apkFile);
-				if (context != null){
-					if (Build.VERSION.SDK_INT >= 24) {
-					uriFile = FileProvider.getUriForFile(context, getApplicationContext().getPackageName() + ".provider",
-							apkFile);
-
-					}
-				}
+//				if (context != null){
+//					if (Build.VERSION.SDK_INT >= 24) {
+//						uriFile = FileProvider.getUriForFile(context, getApplicationContext().getPackageName() + ".provider",
+//								apkFile);
+//					}
+//				}
 //				 Intent to open apk
 				intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
 				intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
 				intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(intent);
+				mContext.startActivity(intent);
 			} else {
-				Toast.makeText(getBaseContext(), "No update available.", Toast.LENGTH_LONG).show();
+//				Toast.makeText(getBaseContext(), "No update available.", Toast.LENGTH_LONG).show();
 			}
 		}
 	}

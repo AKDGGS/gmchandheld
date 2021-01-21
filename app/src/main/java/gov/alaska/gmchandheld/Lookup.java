@@ -1,5 +1,6 @@
 package gov.alaska.gmchandheld;
 
+import android.Manifest;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -19,6 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,6 +34,15 @@ public class Lookup extends BaseActivity {
 	public static final String API_TEXT = "apiText";
 	private String url;
 	private String apiKey;
+
+
+	// Storage Permissions
+	private static final int REQUEST_EXTERNAL_STORAGE = 1;
+	private static String[] PERMISSIONS_STORAGE = {
+			Manifest.permission.READ_EXTERNAL_STORAGE,
+			Manifest.permission.WRITE_EXTERNAL_STORAGE,
+			Manifest.permission.REQUEST_INSTALL_PACKAGES
+	};
 
 	@Override
 	public void onRestart() {
@@ -47,6 +58,14 @@ public class Lookup extends BaseActivity {
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
 
 		deleteApkFile();
+
+// Used for the auto update feature
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY);
+		int minute = now.get(Calendar.MINUTE);
+		int second = now.get(Calendar.SECOND);
+		System.out.println(hour + " " + minute);
+		updateAlarm(this);
 
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -150,18 +169,28 @@ public class Lookup extends BaseActivity {
 	private void deleteApkFile(){
 		File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
 
-		File [] files = dir.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				System.out.println(name + " " + name.matches("(gmc-app-[0-9]+-release\\.apk)"));
-				return name.matches("(gmc-app-[0-9]+-release\\.apk)");
+		if(dir.exists()) {
+			File[] files = dir.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					System.out.println(name + " " + name.matches("(gmc-app-[0-9]+-release\\.apk)"));
+					return name.matches("(gmc-app-[0-9]+-release\\.apk)");
 
+				}
+			});
+
+			if(files != null && files.length > 0) {
+				for (File f : files) {
+					f.delete();
+				}
 			}
-		});
-
-		for (File f : files) {
-			f.delete();
 		}
+	}
+
+	public static void updateAlarm(Context context){
+		AlarmHandler alarmHandler = new AlarmHandler(context);
+		alarmHandler.cancelAlarmManager();
+		alarmHandler.setAlarmManager();
 	}
 }
 
