@@ -2,14 +2,11 @@ package gov.alaska.gmchandheld;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -17,14 +14,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
@@ -47,8 +43,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
-import java.util.Calendar;
 import java.util.Date;
 
 public class Configuration extends BaseActivity {
@@ -56,6 +50,9 @@ public class Configuration extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
 	public static final String URL_TEXT = "urlText";
 	public static final String API_TEXT = "apiText";
+	public static final String UPDATE_SWITCH_TEXT = "updateSwitchOnOff";
+	private SwitchCompat autoUpdateSwitch;
+	private boolean autoUpdateOnOff;
 
 	private EditText urlInput;
 	private EditText apiInput;
@@ -91,6 +88,9 @@ public class Configuration extends BaseActivity {
 
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
+		autoUpdateSwitch = findViewById(R.id.autoUpdateSwitch);
+
+
 
 		final Button updateButton = findViewById(R.id.updateBtn);
 		updateButton.setOnClickListener(new View.OnClickListener() {
@@ -132,30 +132,33 @@ public class Configuration extends BaseActivity {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 
-		if ("".equals(getUrl())) {
-			Toast.makeText(this, "You did not enter an URL.", Toast.LENGTH_LONG).show();
-		} else {
-			getUrl();
-			if ("".equals(getApiKey())) {
-				Toast.makeText(this, "You did not enter an API key.", Toast.LENGTH_LONG).show();
-			} else {
+//		if ("".equals(getUrl())) {
+//			Toast.makeText(this, "You did not enter an URL.", Toast.LENGTH_LONG).show();
+//		} else {
+//			getUrl();
+//			if ("".equals(getApiKey())) {
+//				Toast.makeText(this, "You did not enter an API key.", Toast.LENGTH_LONG).show();
+//			} else {
 				getApiKey();
 				editor.putString(URL_TEXT, getUrl());
 				editor.putString(API_TEXT, getApiKey());
+				editor.putBoolean(UPDATE_SWITCH_TEXT, autoUpdateSwitch.isChecked());
 
 				editor.apply();
 				Toast.makeText(this, "Changes saved.", Toast.LENGTH_LONG).show();
 
 				Intent intent = new Intent(this, Lookup.class);
 				startActivity(intent);
-			}
-		}
+//			}
+//		}
 	}
 
 	public void loadData() {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		url = sharedPreferences.getString(URL_TEXT, "");
 		apiKey = sharedPreferences.getString(API_TEXT, "");
+		autoUpdateOnOff = sharedPreferences.getBoolean(UPDATE_SWITCH_TEXT , false);
+
 	}
 
 	public void updateViews() {
@@ -164,30 +167,31 @@ public class Configuration extends BaseActivity {
 	}
 
 	public void updateAPK() {
-		final String fileUrl;
-		if (Build.VERSION.SDK_INT <= 17) {
-			fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
-		}else{
-			fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/version.json";
-		}
-
-		final Context mContext = this;
-		final AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-
-		ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
-			alertDialog.setMessage("Is the device connected to the internet/network?  " +
-					"Check if the connection has been lost.");
-			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mContext).findViewById(R.id.lookup_error_root));
-			alertDialog.setView(layout);
-			alertDialog.setPositiveButton("Dimiss", null);
-			AlertDialog alert = alertDialog.create();
-			alert.setCanceledOnTouchOutside(false);
-			alert.show();
-		} else {
-			new DownloadFileFromURL(this).execute(fileUrl);
-		}
+		new UpdateCheckLastModifiedDate(this).execute();
+//		final String fileUrl;
+//		if (Build.VERSION.SDK_INT <= 17) {
+//			fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
+//		}else{
+//			fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/version.json";
+//		}
+//
+//		final Context mContext = this;
+//		final AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+//
+//		ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+//		if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
+//			alertDialog.setMessage("Is the device connected to the internet/network?  " +
+//					"Check if the connection has been lost.");
+//			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+//			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mContext).findViewById(R.id.lookup_error_root));
+//			alertDialog.setView(layout);
+//			alertDialog.setPositiveButton("Dimiss", null);
+//			AlertDialog alert = alertDialog.create();
+//			alert.setCanceledOnTouchOutside(false);
+//			alert.show();
+//		} else {
+//			new DownloadFileFromURL(this).execute(fileUrl);
+//		}
 	}
 
 	class DownloadFileFromURL extends AsyncTask<String, String, String> {
@@ -205,8 +209,6 @@ public class Configuration extends BaseActivity {
 		public DownloadFileFromURL(Context context) {
 			contextRef = new WeakReference<>(context);
 		}
-
-
 		@Override
 		protected String doInBackground(String... f_url) {
 			int count;
@@ -222,7 +224,6 @@ public class Configuration extends BaseActivity {
 					connection.connect();
 					HttpURLConnection.setFollowRedirects(false);
 					HttpURLConnection con = (HttpURLConnection) new URL(f_url[0]).openConnection();
-					con.setRequestMethod("HEAD");
 					versionJsonResponseCode = con.getResponseCode();
 
 					if (versionJsonResponseCode == 200) {

@@ -2,11 +2,11 @@ package gov.alaska.gmchandheld;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,10 +19,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
-import java.util.List;
 
 
 public class Lookup extends BaseActivity {
@@ -32,6 +30,7 @@ public class Lookup extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
 	public static final String URL_TEXT = "urlText";
 	public static final String API_TEXT = "apiText";
+	public static final String Update_SWITCH_TEXT  = "updateSwitchOnOff";
 	private String url;
 	private String apiKey;
 
@@ -58,14 +57,13 @@ public class Lookup extends BaseActivity {
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
 
 		deleteApkFile();
+		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		boolean autoUpdateOnOff = sharedPreferences.getBoolean(Update_SWITCH_TEXT , false);
 
-// Used for the auto update feature
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY);
-		int minute = now.get(Calendar.MINUTE);
-		int second = now.get(Calendar.SECOND);
-		System.out.println(hour + " " + minute);
-		updateAlarm(this);
+		if(autoUpdateOnOff) {
+			updateAlarm(this);
+		}
+
 
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -188,9 +186,13 @@ public class Lookup extends BaseActivity {
 	}
 
 	public static void updateAlarm(Context context){
-		AlarmHandler alarmHandler = new AlarmHandler(context);
-		alarmHandler.cancelAlarmManager();
-		alarmHandler.setAlarmManager();
+		UpdateAlarmHandler updateAlarmHandler = new UpdateAlarmHandler(context);
+		updateAlarmHandler.cancelAlarmManager();
+		updateAlarmHandler.setAlarmManager();
+	}
+
+	public Context getLookupContext(){
+		return this;
 	}
 }
 

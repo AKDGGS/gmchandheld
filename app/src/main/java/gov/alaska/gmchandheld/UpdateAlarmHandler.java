@@ -7,18 +7,21 @@ import android.content.Intent;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
-public class AlarmHandler {
+public class UpdateAlarmHandler {
 	private Context context;
 
-	public AlarmHandler(Context context) {
+	public UpdateAlarmHandler(Context context) {
 		this.context = context;
 	}
 
+
+
 	public void setAlarmManager(){
 		System.out.println("Set Alarm called");
-		Intent intent = new Intent(context, ExecutableService.class);
+		Intent intent = new Intent(context, UpdateExecutableService.class);
 		PendingIntent sender = PendingIntent.getBroadcast(context, 2, intent, 0);
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		if(am != null){
@@ -32,15 +35,23 @@ public class AlarmHandler {
 				e.printStackTrace();
 			}
 
-			long time= d.getTime();
-			long triggerAfter = time + 10 * 1000;
-			long triggerEvery = 60 * 60 * 1000;
-			am.setRepeating(AlarmManager.RTC_WAKEUP, triggerAfter, triggerEvery, sender);
+			Calendar alarmOffTime = Calendar.getInstance();
+			alarmOffTime.set(Calendar.HOUR_OF_DAY, 15);
+			alarmOffTime.set(Calendar.MINUTE, 24);
+			alarmOffTime.set(Calendar.SECOND, 0);
+
+			if(alarmOffTime.before(Calendar.getInstance())){
+				alarmOffTime.add(Calendar.DATE, 1);
+			}
+
+			long triggerEvery = 1 * 60 * 1000;
+			am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), triggerEvery, sender);
 		}
 	}
 
 	public void cancelAlarmManager(){
-		Intent intent = new Intent(context, ExecutableService.class);
+
+		Intent intent = new Intent(context, UpdateExecutableService.class);
 		PendingIntent sender = PendingIntent.getBroadcast(context, 2, intent, 0);
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		if(am != null) {
