@@ -17,16 +17,13 @@ public class UpdateAlarmHandler {
 		this.context = context;
 	}
 
-
-
 	public void setAlarmManager(){
-		System.out.println("Set Alarm called");
-		Intent intent = new Intent(context, UpdateExecutableService.class);
+
+		Intent intent = new Intent(context, UpdateBroadcastReceiver.class);
 		PendingIntent sender = PendingIntent.getBroadcast(context, 2, intent, 0);
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		if(am != null){
 			String strTime = "2021-01-20 14:07:00";
-			System.out.println(strTime);
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			Date d = null;
 			try {
@@ -36,8 +33,8 @@ public class UpdateAlarmHandler {
 			}
 
 			Calendar alarmOffTime = Calendar.getInstance();
-			alarmOffTime.set(Calendar.HOUR_OF_DAY, 15);
-			alarmOffTime.set(Calendar.MINUTE, 24);
+			alarmOffTime.set(Calendar.HOUR_OF_DAY, 14);
+			alarmOffTime.set(Calendar.MINUTE, 32);
 			alarmOffTime.set(Calendar.SECOND, 0);
 
 			if(alarmOffTime.before(Calendar.getInstance())){
@@ -50,8 +47,7 @@ public class UpdateAlarmHandler {
 	}
 
 	public void cancelAlarmManager(){
-
-		Intent intent = new Intent(context, UpdateExecutableService.class);
+		Intent intent = new Intent(context, UpdateBroadcastReceiver.class);
 		PendingIntent sender = PendingIntent.getBroadcast(context, 2, intent, 0);
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		if(am != null) {

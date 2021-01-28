@@ -20,9 +20,6 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 
 	@Override
 	protected Long doInBackground(Void... voids) {
-		Date currentTime = Calendar.getInstance().getTime();
-		System.out.println("Current Time: " + currentTime);
-
 		String urlStr = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
 
 		HttpURLConnection httpCon = null;
@@ -35,8 +32,6 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 			httpCon.setRequestMethod("HEAD");
 
 			lastModified = httpCon.getLastModified();
-			System.out.println("Date as long: " + lastModified);
-			System.out.println("Last Modified: " + new Date(lastModified));
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -53,13 +48,18 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 		Date updateBuildDate = new Date(lastModifiedDate);
 		Date buildDate = new Date(BuildConfig.TIMESTAMP);
 
-		if(updateBuildDate.compareTo(buildDate) > 0){
-			System.out.println("Update Ready.");
+		if(updateBuildDate.compareTo(buildDate) < 0){
+			// Update available
+			final Intent intent = new Intent(mContext, UpdateTranslucentActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			mContext.startActivity(intent);
 		}else{
-			System.out.println("No update.");
-			Intent i = new Intent(mContext, Lookup.class);
-			mContext.startActivity(i);
+			// No update available
+			Intent intent2 = new Intent(mContext, Lookup.class);
+			intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			mContext.startActivity(intent2);
 		}
-
 	}
+
+
 }

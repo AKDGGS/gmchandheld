@@ -1,12 +1,15 @@
 package gov.alaska.gmchandheld;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,11 +31,11 @@ public class Lookup extends BaseActivity {
 	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 
 	public static final String SHARED_PREFS = "sharedPrefs";
-	public static final String URL_TEXT = "urlText";
-	public static final String API_TEXT = "apiText";
-	public static final String Update_SWITCH_TEXT  = "updateSwitchOnOff";
-	private String url;
-	private String apiKey;
+//	public static final String URL_TEXT = "urlText";
+//	public static final String API_TEXT = "apiText";
+	public static final String UPDATE_SWITCH_TEXT  = "updateSwitchText";
+//	private String url;
+//	private String apiKey;
 
 
 	// Storage Permissions
@@ -57,13 +60,14 @@ public class Lookup extends BaseActivity {
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
 
 		deleteApkFile();
+
+
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		boolean autoUpdateOnOff = sharedPreferences.getBoolean(Update_SWITCH_TEXT , false);
+		boolean autoUpdateOnOff = sharedPreferences.getBoolean(UPDATE_SWITCH_TEXT , false);
 
 		if(autoUpdateOnOff) {
 			updateAlarm(this);
 		}
-
 
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -191,9 +195,6 @@ public class Lookup extends BaseActivity {
 		updateAlarmHandler.setAlarmManager();
 	}
 
-	public Context getLookupContext(){
-		return this;
-	}
 }
 
 

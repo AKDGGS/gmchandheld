@@ -13,32 +13,19 @@
 
     </style>
 
+<!--    https://vapoyan.medium.com/android-show-allertdialog-before-the-application-starts-80588d6f2dda-->
+    <style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+       <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
 
 
 </resources>
 
-
-
-<!--<style name="Base_ToolbarStyle">-->
-<!--<item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>-->
-<!--<item name="android:background">?colorPrimary</item>-->
-<!--<item name="android:theme">@style/Base_ToolbarTheme</item>-->
-<!--<item name="titleTextAppearance">@style/CustomTitleTextAppearance</item>-->
-<!--<item name="subtitleTextAppearance">@style/CustomSubTitleTextAppearance</item>-->
-<!--</style>-->
-
-<!--<style name="Base_ToolbarTheme">-->
-<!--&lt;!&ndash; Color used for the title of the Toolbar - as long as not overridden &ndash;&gt;-->
-<!--<item name="android:textColorPrimary">@color/colorPrimaryDark</item>-->
-<!--&lt;!&ndash; Used to color back button and three dots &ndash;&gt;-->
-<!--<item name="android:textColorSecondary">@color/colorAccent</item>-->
-<!--</style>-->
-
-
-
-<!--<style name="CustomSubTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">-->
-
-<!--<item name="android:textSize">10sp</item>-->
-<!--<item name="android:textColor">@color/colorPrimary</item>-->
-<!--<item name="android:textStyle">italic</item>-->
-<!--</style>-->
+<!--<item name="android:background">@android:color/transparent</item>-->
+<!--<item name="android:windowAnimationStyle">@null</item>-->
+<!--<item name="android:colorBackgroundCacheHint">@null</item>-->

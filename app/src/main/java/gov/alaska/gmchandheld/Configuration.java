@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -14,12 +15,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -50,22 +54,15 @@ public class Configuration extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
 	public static final String URL_TEXT = "urlText";
 	public static final String API_TEXT = "apiText";
-	public static final String UPDATE_SWITCH_TEXT = "updateSwitchOnOff";
-	private SwitchCompat autoUpdateSwitch;
-	private boolean autoUpdateOnOff;
+
+	public static final String UPDATE_SWITCH_TEXT = "updateSwitchText";
+	private SwitchCompat updateSwitch;
+	private boolean updateSwitchOnOff;
 
 	private EditText urlInput;
 	private EditText apiInput;
 	private String url;
 	private String apiKey;
-
-	// Storage Permissions
-	private static final int REQUEST_EXTERNAL_STORAGE = 1;
-	private static String[] PERMISSIONS_STORAGE = {
-			Manifest.permission.READ_EXTERNAL_STORAGE,
-			Manifest.permission.WRITE_EXTERNAL_STORAGE,
-			Manifest.permission.REQUEST_INSTALL_PACKAGES
-	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +85,7 @@ public class Configuration extends BaseActivity {
 
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
-		autoUpdateSwitch = findViewById(R.id.autoUpdateSwitch);
-
-
+		updateSwitch = findViewById(R.id.autoUpdateSwitch);
 
 		final Button updateButton = findViewById(R.id.updateBtn);
 		updateButton.setOnClickListener(new View.OnClickListener() {
@@ -131,223 +126,33 @@ public class Configuration extends BaseActivity {
 	public void saveData() {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		SharedPreferences.Editor editor = sharedPreferences.edit();
+		getApiKey();
+		editor.putString(URL_TEXT, getUrl());
+		editor.putString(API_TEXT, getApiKey());
+		editor.putBoolean(UPDATE_SWITCH_TEXT, updateSwitch.isChecked());
 
-//		if ("".equals(getUrl())) {
-//			Toast.makeText(this, "You did not enter an URL.", Toast.LENGTH_LONG).show();
-//		} else {
-//			getUrl();
-//			if ("".equals(getApiKey())) {
-//				Toast.makeText(this, "You did not enter an API key.", Toast.LENGTH_LONG).show();
-//			} else {
-				getApiKey();
-				editor.putString(URL_TEXT, getUrl());
-				editor.putString(API_TEXT, getApiKey());
-				editor.putBoolean(UPDATE_SWITCH_TEXT, autoUpdateSwitch.isChecked());
+		editor.apply();
+		Toast.makeText(this, "Changes saved.", Toast.LENGTH_LONG).show();
 
-				editor.apply();
-				Toast.makeText(this, "Changes saved.", Toast.LENGTH_LONG).show();
-
-				Intent intent = new Intent(this, Lookup.class);
-				startActivity(intent);
-//			}
-//		}
+		Intent intent = new Intent(this, Lookup.class);
+		startActivity(intent);
 	}
 
 	public void loadData() {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		url = sharedPreferences.getString(URL_TEXT, "");
 		apiKey = sharedPreferences.getString(API_TEXT, "");
-		autoUpdateOnOff = sharedPreferences.getBoolean(UPDATE_SWITCH_TEXT , false);
-
+		updateSwitchOnOff = sharedPreferences.getBoolean(UPDATE_SWITCH_TEXT, false);
 	}
 
 	public void updateViews() {
 		urlInput.setText(url);
 		apiInput.setText(apiKey);
+		updateSwitch.setChecked(updateSwitchOnOff);
 	}
+
 
 	public void updateAPK() {
 		new UpdateCheckLastModifiedDate(this).execute();
-//		final String fileUrl;
-//		if (Build.VERSION.SDK_INT <= 17) {
-//			fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
-//		}else{
-//			fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/version.json";
-//		}
-//
-//		final Context mContext = this;
-//		final AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-//
-//		ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-//		if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
-//			alertDialog.setMessage("Is the device connected to the internet/network?  " +
-//					"Check if the connection has been lost.");
-//			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-//			View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mContext).findViewById(R.id.lookup_error_root));
-//			alertDialog.setView(layout);
-//			alertDialog.setPositiveButton("Dimiss", null);
-//			AlertDialog alert = alertDialog.create();
-//			alert.setCanceledOnTouchOutside(false);
-//			alert.show();
-//		} else {
-//			new DownloadFileFromURL(this).execute(fileUrl);
-//		}
-	}
-
-	class DownloadFileFromURL extends AsyncTask<String, String, String> {
-		StringBuilder sb;
-		DateFormat simple = new SimpleDateFormat("yyyyMMddHHmm");
-		String currentBuildTime = simple.format(new Date(BuildConfig.TIMESTAMP));
-		int versionJsonResponseCode = 200;
-		int appFileResponseCode = 200;
-		String rawJSON;
-		String build;
-		String filename;
-
-		private WeakReference<Context> contextRef;
-
-		public DownloadFileFromURL(Context context) {
-			contextRef = new WeakReference<>(context);
-		}
-		@Override
-		protected String doInBackground(String... f_url) {
-			int count;
-			try {
-				URL url = new URL(f_url[0]);
-				System.out.println(url);
-				URLConnection connection = url.openConnection();
-
-
-//				connection.setConnectTimeout(10000);
-//				connection.setReadTimeout(10000);
-				try {
-					connection.connect();
-					HttpURLConnection.setFollowRedirects(false);
-					HttpURLConnection con = (HttpURLConnection) new URL(f_url[0]).openConnection();
-					versionJsonResponseCode = con.getResponseCode();
-
-					if (versionJsonResponseCode == 200) {
-						String version = "";
-						sb = new StringBuilder();
-						InputStream input = new BufferedInputStream(url.openStream(), 8192);
-						BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-						while (true) {
-							try {
-								if ((version = reader.readLine()) == null) break;
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-							rawJSON = sb.append(version).toString();
-							try {
-								JSONObject inputJson = new JSONObject(rawJSON);
-								build = inputJson.optString("build");
-								filename = inputJson.optString("filename");
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
-						input.close();
-
-						if ((versionJsonResponseCode == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
-							String fileUrl;
-							if (Build.VERSION.SDK_INT <= 17) {
-								fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/" + filename;
-							}else{
-								fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/" + filename;
-							}
-
-							try {
-								con = (HttpURLConnection) new URL(fileUrl).openConnection();
-								con.setRequestMethod("HEAD");
-								if (con.getResponseCode() == 200) {
-									url = new URL(fileUrl);
-									connection = url.openConnection();
-//				connection.setConnectTimeout(10000);
-//				connection.setReadTimeout(10000);
-									connection.connect();
-									input = new BufferedInputStream(url.openStream(), 8192);
-									verifyStoragePermissions(Configuration.this);
-									OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
-									byte data[] = new byte[1024];
-									long total = 0;
-
-									while ((count = input.read(data)) != -1) {
-										total += count;
-										// writing data to file
-										output.write(data, 0, count);
-									}
-
-									output.flush();
-									output.close();
-									input.close();
-								} else {
-									appFileResponseCode = con.getResponseCode();
-								}
-							} catch (IOException e) {
-								Log.e("Error: ", e.getMessage());
-							}
-						}
-					}
-
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String fileUrl) {
-			Intent intent = new Intent();
-			File apkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
-			Uri apkURI = Uri.fromFile(apkFile);
-			Context context = contextRef.get();
-
-			if ((versionJsonResponseCode == 200) && (appFileResponseCode == 200)){
-//				&& (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
-				Uri uriFile = Uri.fromFile(apkFile);
-				if (context != null){
-					if (Build.VERSION.SDK_INT >= 24) {
-					uriFile = FileProvider.getUriForFile(context, getApplicationContext().getPackageName() + ".provider",
-							apkFile);
-
-					}
-				}
-//				 Intent to open apk
-				intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
-				intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
-				intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(intent);
-			} else {
-				Toast.makeText(getBaseContext(), "No update available.", Toast.LENGTH_LONG).show();
-			}
-		}
-	}
-
-	/**
-	 * Checks if the app has permission to write to device storage
-	 *
-	 * If the app does not has permission then the user will be prompted to grant permissions
-	 *
-	 * @param activity
-	 */
-	public static void verifyStoragePermissions(Activity activity) {
-		// Check if we have write permission
-		int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-		if (permission != PackageManager.PERMISSION_GRANTED) {
-			// We don't have permission so prompt the user
-			ActivityCompat.requestPermissions(
-					activity,
-					PERMISSIONS_STORAGE,
-					REQUEST_EXTERNAL_STORAGE
-			);
-		}
 	}
 }

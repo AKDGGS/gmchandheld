@@ -16,13 +16,15 @@ public class UpdateAppActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_update_app);
 
 		Context context = this;
-		try {
-			new UpdateCheckLastModifiedDate(context).execute().get();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		new UpdateCheckLastModifiedDate(context).execute();
+//		try {
+//			new UpdateCheckLastModifiedDate(context).execute();
+////			new UpdateCheckLastModifiedDate(context).execute().get();
+//		} catch (ExecutionException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 
 //		UpdateDialog exampleDialog = new UpdateDialog();
 //		exampleDialog.show(getSupportFragmentManager(), "update dialog");
