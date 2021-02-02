@@ -30,6 +30,8 @@
     <string name="moveContent">Move Content</string>
     <string name="source">Source</string>
     <string name="from">From:</string>
+    <string name="hour">Hour (24 hr)</string>
+    <string name="minute">Minute</string>
 
 
 </resources>

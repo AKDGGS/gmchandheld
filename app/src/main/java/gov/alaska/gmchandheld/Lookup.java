@@ -65,9 +65,9 @@ public class Lookup extends BaseActivity {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		boolean autoUpdateOnOff = sharedPreferences.getBoolean(UPDATE_SWITCH_TEXT , false);
 
-		if(autoUpdateOnOff) {
-			updateAlarm(this);
-		}
+//		if(autoUpdateOnOff) {
+//			updateAlarm(this);
+//		}
 
 ////         test for accessing lookupHistory from shared preferences.
 //        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
@@ -189,11 +189,7 @@ public class Lookup extends BaseActivity {
 		}
 	}
 
-	public static void updateAlarm(Context context){
-		UpdateAlarmHandler updateAlarmHandler = new UpdateAlarmHandler(context);
-		updateAlarmHandler.cancelAlarmManager();
-		updateAlarmHandler.setAlarmManager();
-	}
+
 
 }
 
