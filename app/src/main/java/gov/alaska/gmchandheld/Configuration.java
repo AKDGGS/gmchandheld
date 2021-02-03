@@ -108,7 +108,7 @@ public class Configuration extends BaseActivity {
 												 boolean isChecked) {
 
 						if(isChecked){
-/							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
+							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
 							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
 
 							if (am != null) {
@@ -146,8 +146,6 @@ public class Configuration extends BaseActivity {
 						}
 					}
 				});
-
-
 
 		loadData();
 		updateViews();

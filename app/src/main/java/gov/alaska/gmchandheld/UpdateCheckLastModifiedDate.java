@@ -20,8 +20,7 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 
 	@Override
 	protected Long doInBackground(Void... voids) {
-		String urlStr = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
-
+		String urlStr = "http://maps.dggs.alaska.gov/gmcdev/app/current.apk";
 		HttpURLConnection httpCon = null;
 		System.setProperty("http.keepAlive", "false");
 		long lastModified = 0;
@@ -30,9 +29,7 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 			URL url = new URL(urlStr);
 			httpCon = (HttpURLConnection) url.openConnection();
 			httpCon.setRequestMethod("HEAD");
-
 			lastModified = httpCon.getLastModified();
-
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -48,12 +45,15 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 		Date updateBuildDate = new Date(lastModifiedDate);
 		Date buildDate = new Date(BuildConfig.TIMESTAMP);
 
+
 		if(updateBuildDate.compareTo(buildDate) < 0){
 			// Update available
+			System.out.println("Update available.");
 			final Intent intent = new Intent(mContext, UpdateTranslucentActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			mContext.startActivity(intent);
 		}else{
+			System.out.println("No update available.");
 			// No update available
 			Intent intent2 = new Intent(mContext, Lookup.class);
 			intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);

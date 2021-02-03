@@ -61,7 +61,16 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 				.setTitle("Update Available")
 				.setMessage("Tap Update to install the app.")
 				.setCancelable(false)
-				.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+//				.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+//					@Override
+//					public void onClick(DialogInterface dialogInterface, int i) {
+//						Toast.makeText(UpdateTranslucentActivity.this, "Ignore forever.", Toast.LENGTH_LONG).show();
+//						Intent intent = new Intent(UpdateTranslucentActivity.this, Lookup.class);
+//						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//						UpdateTranslucentActivity.this.startActivity(intent);
+//					}
+//				})
+				.setNeutralButton("Ignore", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
 						Toast.makeText(UpdateTranslucentActivity.this, "Ignore forever.", Toast.LENGTH_LONG).show();
@@ -76,13 +85,11 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 						Toast.makeText(UpdateTranslucentActivity.this, "Install.", Toast.LENGTH_LONG).show();
 						final String fileUrl;
 						if (Build.VERSION.SDK_INT <= 17) {
-							fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/version.json";
+							fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/current.apk";
 						} else {
-							fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/version.json";
+							fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/current.apk";
 						}
-
 						new DownloadFileFromURL(UpdateTranslucentActivity.this).execute(fileUrl);
-
 					}
 				})
 				.create();
@@ -92,27 +99,19 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 	@Override
 	public void onClick(DialogInterface dialogInterface, int i) {
 		finish();
-
-		// In my case I also need to kill the applicatiopn process so,
-		// next time the user starts the application, the AlertDialog
-		// is shown agian.
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				android.os.Process.killProcess(android.os.Process.myPid());
 			}
-		},100);
+		}, 100);
 	}
 
 	class DownloadFileFromURL extends AsyncTask<String, String, String> {
-		StringBuilder sb;
 		DateFormat simple = new SimpleDateFormat("yyyyMMddHHmm");
-		String currentBuildTime = simple.format(new Date(BuildConfig.TIMESTAMP));
 		int versionJsonResponseCode = 200;
 		int appFileResponseCode = 200;
-		String rawJSON;
-		String build;
-		String filename;
+		String filename = "current.apk";
 
 		private WeakReference<Context> contextRef;
 
@@ -125,86 +124,41 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 			int count;
 			try {
 				URL url = new URL(f_url[0]);
-				System.out.println(url);
+				System.out.println("URL: " + url);
 				URLConnection connection = url.openConnection();
-
-
-//				connection.setConnectTimeout(10000);
+				//				connection.setConnectTimeout(10000);
 //				connection.setReadTimeout(10000);
+				connection.connect();
+				HttpURLConnection.setFollowRedirects(false);
+				HttpURLConnection con = (HttpURLConnection) new URL(f_url[0]).openConnection();
+				versionJsonResponseCode = con.getResponseCode();
 				try {
-					connection.connect();
-					HttpURLConnection.setFollowRedirects(false);
-					HttpURLConnection con = (HttpURLConnection) new URL(f_url[0]).openConnection();
-					versionJsonResponseCode = con.getResponseCode();
 
-					if (versionJsonResponseCode == 200) {
-						String version = "";
-						sb = new StringBuilder();
+					if (con.getResponseCode() == 200) {
+
+						con.connect();
 						InputStream input = new BufferedInputStream(url.openStream(), 8192);
-						BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-						while (true) {
-							try {
-								if ((version = reader.readLine()) == null) break;
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-							rawJSON = sb.append(version).toString();
-							try {
-								JSONObject inputJson = new JSONObject(rawJSON);
-								build = inputJson.optString("build");
-								filename = inputJson.optString("filename");
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
+						input = new BufferedInputStream(url.openStream(), 8192);
+						verifyStoragePermissions(UpdateTranslucentActivity.this);
+						OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
+						byte data[] = new byte[1024];
+						long total = 0;
+
+						while ((count = input.read(data)) != -1) {
+							total += count;
+							output.write(data, 0, count);
 						}
+
+						output.flush();
+						output.close();
 						input.close();
-
-						if ((versionJsonResponseCode == 200) && (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
-							String fileUrl;
-							if (Build.VERSION.SDK_INT <= 17) {
-								fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/" + filename;
-							} else {
-								fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/" + filename;
-							}
-
-							try {
-								con = (HttpURLConnection) new URL(fileUrl).openConnection();
-								con.setRequestMethod("HEAD");
-								if (con.getResponseCode() == 200) {
-									url = new URL(fileUrl);
-									connection = url.openConnection();
-//				connection.setConnectTimeout(10000);
-//				connection.setReadTimeout(10000);
-									connection.connect();
-									input = new BufferedInputStream(url.openStream(), 8192);
-									verifyStoragePermissions(UpdateTranslucentActivity.this);
-									OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
-									byte data[] = new byte[1024];
-									long total = 0;
-
-									while ((count = input.read(data)) != -1) {
-										total += count;
-										// writing data to file
-										output.write(data, 0, count);
-									}
-
-									output.flush();
-									output.close();
-									input.close();
-								} else {
-									appFileResponseCode = con.getResponseCode();
-								}
-							} catch (IOException e) {
-								Log.e("Error: ", e.getMessage());
-							}
-						}
+					} else {
+						appFileResponseCode = con.getResponseCode();
 					}
-
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.e("Error: ", e.getMessage());
 				}
+
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -221,13 +175,11 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 			Context context = contextRef.get();
 
 			if ((versionJsonResponseCode == 200) && (appFileResponseCode == 200)) {
-//				&& (Double.parseDouble(currentBuildTime) != Double.parseDouble(build))) {
 				Uri uriFile = Uri.fromFile(apkFile);
 				if (context != null) {
 					if (Build.VERSION.SDK_INT >= 24) {
 						uriFile = FileProvider.getUriForFile(context, getApplicationContext().getPackageName() + ".provider",
 								apkFile);
-
 					}
 				}
 //				 Intent to open apk
