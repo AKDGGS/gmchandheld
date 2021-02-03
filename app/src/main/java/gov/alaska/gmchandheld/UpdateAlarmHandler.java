@@ -29,6 +29,7 @@ public class UpdateAlarmHandler {
 		Intent intent = new Intent(context, UpdateBroadcastReceiver.class);
 		PendingIntent sender = PendingIntent.getBroadcast(context, 2, intent, 0);
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
 		if (am != null) {
 			String strTime = "2021-01-20 14:07:00";
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");

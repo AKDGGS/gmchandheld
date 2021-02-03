@@ -1,5 +1,8 @@
 package gov.alaska.gmchandheld;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -12,11 +15,15 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Configuration extends BaseActivity {
@@ -27,9 +34,11 @@ public class Configuration extends BaseActivity {
 	public static final String UPDATE_HOUR = "updateHour";
 	public static final String UPDATE_MINUTE = "updateMinute";
 
-	public static final String UPDATE_SWITCH_TEXT = "updateSwitchText";
-	private SwitchCompat updateSwitch;
-	private boolean updateSwitchSavedState;
+	private ToggleButton autoUpdatebtn;
+
+//	public static final String UPDATE_SWITCH_TEXT = "updateSwitchText";
+//	private SwitchCompat updateSwitch;
+//	private boolean updateSwitchSavedState;
 
 	private EditText hourInput;
 	private EditText minuteInput;
@@ -40,6 +49,12 @@ public class Configuration extends BaseActivity {
 	private EditText apiInput;
 	private String url;
 	private String apiKey;
+
+
+	public static final String HOUR_TEXT = "updateHour";
+	public static final String MINUTE_TEXT = "updateMinute";
+
+//	private boolean switchStateOn = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +67,6 @@ public class Configuration extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.configuration);
 
-
-		System.out.println("Switch State: ****************** " + updateSwitchSavedState);
-
-
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
@@ -66,7 +77,7 @@ public class Configuration extends BaseActivity {
 
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
-		updateSwitch = findViewById(R.id.autoUpdateSwitch);
+		autoUpdatebtn = findViewById(R.id.autoUpdateBtn);
 		hourInput = findViewById(R.id.hour_editText);
 		minuteInput = findViewById(R.id.minute_editText);
 
@@ -86,20 +97,104 @@ public class Configuration extends BaseActivity {
 			}
 		});
 
-		updateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			public void onCheckedChanged(CompoundButton buttonView, boolean updateSwitchIsChecked) {
-				UpdateAlarmHandler updateAlarmHandler = new UpdateAlarmHandler(Configuration.this);
-				System.out.println("Switch State: " + updateSwitchSavedState);
-				if (updateSwitchIsChecked != updateSwitchSavedState) {
-					if (updateSwitchIsChecked) {
-						updateAlarmHandler.cancelAlarmManager();
-						updateAlarmHandler.setAlarmManager();
-					} else {
-						updateAlarmHandler.cancelAlarmManager();
+
+
+		autoUpdatebtn.setOnCheckedChangeListener(
+				new CompoundButton.OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton compoundButton,
+												 boolean isChecked) {
+						String toastMessage;
+
+						if(isChecked){
+							System.out.println("Update toggle button is on.");
+							Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
+							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
+							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
+
+							if (am != null) {
+								String strTime = "2021-01-20 14:07:00";
+								DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+								Date d = null;
+								try {
+									d = dateFormat.parse(strTime);
+								} catch (ParseException e) {
+									e.printStackTrace();
+								}
+
+								SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+								String hour = sharedPreferences.getString(HOUR_TEXT, "24");
+								String minute = sharedPreferences.getString(MINUTE_TEXT, "0");
+
+								Calendar alarmOffTime = Calendar.getInstance();
+								alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+								alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
+								alarmOffTime.set(Calendar.SECOND, 0);
+
+//			if (alarmOffTime.before(Calendar.getInstance())) {
+//				alarmOffTime.add(Calendar.DATE, 1);
+//			}
+
+								long triggerEvery = 1 * 60 * 1000;
+								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), triggerEvery, sender);
+							}
+						} else {
+							Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
+							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
+							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
+							if (am != null) {
+								am.cancel(sender);
+							}
+						}
+
+
+
 					}
-				}
-			}
-		});
+				});
+
+
+//		updateSwitch.setOnCheckedChangeListener(
+//				new CompoundButton.OnCheckedChangeListener() {
+//					UpdateAlarmHandler updateAlarmHandler = new UpdateAlarmHandler(Configuration.this);
+//					@Override
+//					public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+//						if(isChecked){
+//							updateAlarmHandler.cancelAlarmManager();
+//							updateAlarmHandler.setAlarmManager();
+//						}else{
+//							Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
+//							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
+//							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
+//							am.cancel(sender);
+//
+//						}
+//					}
+//				});
+
+
+//		updateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//
+//
+//			public void onCheckedChanged(CompoundButton buttonView, boolean updateSwitchIsChecked) {
+//				UpdateAlarmHandler updateAlarmHandler = new UpdateAlarmHandler(Configuration.this);
+//
+//				switchStateOn = updateSwitchSavedState;
+//				System.out.println("SwitchStateOn: " + switchStateOn);
+//
+//				if (updateSwitch.isPressed() && switchStateOn) {
+//					updateAlarmHandler.cancelAlarmManager();
+//					updateAlarmHandler.setAlarmManager();
+//					switchStateOn = true;
+//				} else {
+//					Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
+//					PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
+//					AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
+//					am.cancel(sender);
+//					switchStateOn = false;
+//				}
+//			}
+//
+//		});
 
 		loadData();
 		updateViews();
@@ -122,14 +217,13 @@ public class Configuration extends BaseActivity {
 	}
 
 	public void saveData() {
-		System.out.println("Switch State: " + updateSwitchSavedState);
 
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		getApiKey();
 		editor.putString(URL_TEXT, getUrl());
 		editor.putString(API_TEXT, getApiKey());
-		editor.putBoolean(UPDATE_SWITCH_TEXT, updateSwitch.isChecked());
+//		editor.putBoolean(UPDATE_SWITCH_TEXT, updateSwitch.isChecked());
 
 		editor.putString(UPDATE_HOUR, hourInput.getText().toString());
 		editor.putString(UPDATE_MINUTE, minuteInput.getText().toString());
@@ -145,7 +239,7 @@ public class Configuration extends BaseActivity {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		url = sharedPreferences.getString(URL_TEXT, "");
 		apiKey = sharedPreferences.getString(API_TEXT, "");
-		updateSwitchSavedState = sharedPreferences.getBoolean(UPDATE_SWITCH_TEXT, false);
+//		updateSwitchSavedState = sharedPreferences.getBoolean(UPDATE_SWITCH_TEXT, false);
 		hour = sharedPreferences.getString(UPDATE_HOUR, "");
 		minute = sharedPreferences.getString(UPDATE_MINUTE, "");
 	}
@@ -153,7 +247,7 @@ public class Configuration extends BaseActivity {
 	public void updateViews() {
 		urlInput.setText(url);
 		apiInput.setText(apiKey);
-		updateSwitch.setChecked(updateSwitchSavedState);
+//		updateSwitch.setChecked(updateSwitchSavedState);
 		hourInput.setText(hour);
 		minuteInput.setText(minute);
 	}
