@@ -97,19 +97,18 @@ public class Configuration extends BaseActivity {
 			}
 		});
 
-
+		final Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
+		boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent, 0) != null);
+		autoUpdatebtn.setChecked(alarmUp);
 
 		autoUpdatebtn.setOnCheckedChangeListener(
 				new CompoundButton.OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton compoundButton,
 												 boolean isChecked) {
-						String toastMessage;
 
 						if(isChecked){
-							System.out.println("Update toggle button is on.");
-							Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
-							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
+/							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
 							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
 
 							if (am != null) {
@@ -131,12 +130,11 @@ public class Configuration extends BaseActivity {
 								alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
 								alarmOffTime.set(Calendar.SECOND, 0);
 
-//			if (alarmOffTime.before(Calendar.getInstance())) {
-//				alarmOffTime.add(Calendar.DATE, 1);
-//			}
+								if (alarmOffTime.before(Calendar.getInstance())) {
+									alarmOffTime.add(Calendar.DATE, 1);
+								}
 
-								long triggerEvery = 1 * 60 * 1000;
-								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), triggerEvery, sender);
+								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
 							}
 						} else {
 							Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
@@ -146,55 +144,10 @@ public class Configuration extends BaseActivity {
 								am.cancel(sender);
 							}
 						}
-
-
-
 					}
 				});
 
 
-//		updateSwitch.setOnCheckedChangeListener(
-//				new CompoundButton.OnCheckedChangeListener() {
-//					UpdateAlarmHandler updateAlarmHandler = new UpdateAlarmHandler(Configuration.this);
-//					@Override
-//					public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-//						if(isChecked){
-//							updateAlarmHandler.cancelAlarmManager();
-//							updateAlarmHandler.setAlarmManager();
-//						}else{
-//							Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
-//							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
-//							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
-//							am.cancel(sender);
-//
-//						}
-//					}
-//				});
-
-
-//		updateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//
-//
-//			public void onCheckedChanged(CompoundButton buttonView, boolean updateSwitchIsChecked) {
-//				UpdateAlarmHandler updateAlarmHandler = new UpdateAlarmHandler(Configuration.this);
-//
-//				switchStateOn = updateSwitchSavedState;
-//				System.out.println("SwitchStateOn: " + switchStateOn);
-//
-//				if (updateSwitch.isPressed() && switchStateOn) {
-//					updateAlarmHandler.cancelAlarmManager();
-//					updateAlarmHandler.setAlarmManager();
-//					switchStateOn = true;
-//				} else {
-//					Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
-//					PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
-//					AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
-//					am.cancel(sender);
-//					switchStateOn = false;
-//				}
-//			}
-//
-//		});
 
 		loadData();
 		updateViews();
