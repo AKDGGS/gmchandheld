@@ -36,10 +36,6 @@ public class Configuration extends BaseActivity {
 
 	private ToggleButton autoUpdatebtn;
 
-//	public static final String UPDATE_SWITCH_TEXT = "updateSwitchText";
-//	private SwitchCompat updateSwitch;
-//	private boolean updateSwitchSavedState;
-
 	private EditText hourInput;
 	private EditText minuteInput;
 	private String hour;
@@ -54,7 +50,7 @@ public class Configuration extends BaseActivity {
 	public static final String HOUR_TEXT = "updateHour";
 	public static final String MINUTE_TEXT = "updateMinute";
 
-//	private boolean switchStateOn = false;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +70,7 @@ public class Configuration extends BaseActivity {
 		Date buildDate = new Date(BuildConfig.TIMESTAMP);
 		TextView buildDateTV = findViewById(R.id.buildDateTV);
 		buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
+
 
 		urlInput = findViewById(R.id.url_editText);
 		apiInput = findViewById(R.id.api_editText);
@@ -107,7 +104,7 @@ public class Configuration extends BaseActivity {
 					public void onCheckedChanged(CompoundButton compoundButton,
 												 boolean isChecked) {
 
-						if(isChecked){
+						if (isChecked) {
 							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
 							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
 
@@ -120,7 +117,6 @@ public class Configuration extends BaseActivity {
 								} catch (ParseException e) {
 									e.printStackTrace();
 								}
-
 								SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 								String hour = sharedPreferences.getString(HOUR_TEXT, "24");
 								String minute = sharedPreferences.getString(MINUTE_TEXT, "0");
@@ -174,7 +170,6 @@ public class Configuration extends BaseActivity {
 		getApiKey();
 		editor.putString(URL_TEXT, getUrl());
 		editor.putString(API_TEXT, getApiKey());
-//		editor.putBoolean(UPDATE_SWITCH_TEXT, updateSwitch.isChecked());
 
 		editor.putString(UPDATE_HOUR, hourInput.getText().toString());
 		editor.putString(UPDATE_MINUTE, minuteInput.getText().toString());
@@ -190,7 +185,6 @@ public class Configuration extends BaseActivity {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		url = sharedPreferences.getString(URL_TEXT, "");
 		apiKey = sharedPreferences.getString(API_TEXT, "");
-//		updateSwitchSavedState = sharedPreferences.getBoolean(UPDATE_SWITCH_TEXT, false);
 		hour = sharedPreferences.getString(UPDATE_HOUR, "");
 		minute = sharedPreferences.getString(UPDATE_MINUTE, "");
 	}
@@ -198,7 +192,6 @@ public class Configuration extends BaseActivity {
 	public void updateViews() {
 		urlInput.setText(url);
 		apiInput.setText(apiKey);
-//		updateSwitch.setChecked(updateSwitchSavedState);
 		hourInput.setText(hour);
 		minuteInput.setText(minute);
 	}

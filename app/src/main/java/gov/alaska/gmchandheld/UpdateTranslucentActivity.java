@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -43,6 +44,7 @@ import java.util.Date;
 // https://vapoyan.medium.com/android-show-allertdialog-before-the-application-starts-80588d6f2dda
 
 public class UpdateTranslucentActivity extends AppCompatActivity implements DialogInterface.OnClickListener {
+	public static final String SHARED_PREFS = "sharedPrefs";
 
 	// Storage Permissions
 	private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -70,9 +72,14 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 //						UpdateTranslucentActivity.this.startActivity(intent);
 //					}
 //				})
-				.setNeutralButton("Ignore", new DialogInterface.OnClickListener() {
+				.setNeutralButton("Ignore Update Forever", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
+
+//						SharedPreferences sharedPreferences = UpdateTranslucentActivity.this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+//						long x  = sharedPreferences.getLong("LAST_MODIFIED_DATE", 0);
+//						System.out.println("************************* " + x);
+
 						Toast.makeText(UpdateTranslucentActivity.this, "Ignore forever.", Toast.LENGTH_LONG).show();
 						Intent intent = new Intent(UpdateTranslucentActivity.this, Lookup.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -82,7 +89,7 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 				.setPositiveButton("Update", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
-						Toast.makeText(UpdateTranslucentActivity.this, "Install.", Toast.LENGTH_LONG).show();
+//						Toast.makeText(UpdateTranslucentActivity.this, "Install.", Toast.LENGTH_LONG).show();
 						final String fileUrl;
 						if (Build.VERSION.SDK_INT <= 17) {
 							fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/current.apk";
@@ -124,18 +131,12 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 			int count;
 			try {
 				URL url = new URL(f_url[0]);
-				System.out.println("URL: " + url);
-				URLConnection connection = url.openConnection();
-				//				connection.setConnectTimeout(10000);
-//				connection.setReadTimeout(10000);
-				connection.connect();
 				HttpURLConnection.setFollowRedirects(false);
-				HttpURLConnection con = (HttpURLConnection) new URL(f_url[0]).openConnection();
+				HttpURLConnection con = (HttpURLConnection) url.openConnection();
 				versionJsonResponseCode = con.getResponseCode();
 				try {
 
 					if (con.getResponseCode() == 200) {
-
 						con.connect();
 						InputStream input = new BufferedInputStream(url.openStream(), 8192);
 						input = new BufferedInputStream(url.openStream(), 8192);
