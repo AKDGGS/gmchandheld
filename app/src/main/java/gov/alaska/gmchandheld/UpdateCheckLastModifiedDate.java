@@ -61,7 +61,7 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 		System.out.println("Update Build Date: " + updateBuildDate);
 		System.out.println("Build Date: " + buildDate);
 
-		if ((updateBuildDate != new Date(lastRefusedUpdate)) & (updateBuildDate.compareTo(buildDate) > 0)) {
+		if ((updateBuildDate != new Date(lastRefusedUpdate)) & (updateBuildDate.compareTo(buildDate) < 0)) {
 			// Update available
 			final Intent intent = new Intent(mContext, UpdateTranslucentActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);

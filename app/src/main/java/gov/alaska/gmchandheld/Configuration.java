@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -38,19 +40,16 @@ public class Configuration extends BaseActivity {
 
 	private EditText hourInput;
 	private EditText minuteInput;
-	private String hour;
-	private String minute;
+	private String hour = "24";
+	private String minute = "0";
 
 	private EditText urlInput;
 	private EditText apiInput;
 	private String url;
 	private String apiKey;
 
-
 	public static final String HOUR_TEXT = "updateHour";
 	public static final String MINUTE_TEXT = "updateMinute";
-
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +70,14 @@ public class Configuration extends BaseActivity {
 		TextView buildDateTV = findViewById(R.id.buildDateTV);
 		buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
 
-
 		urlInput = findViewById(R.id.url_editText);
+		urlInput.requestFocus();
 		apiInput = findViewById(R.id.api_editText);
 		autoUpdatebtn = findViewById(R.id.autoUpdateBtn);
 		hourInput = findViewById(R.id.hour_editText);
+		if (hourInput.getText().equals("")) {
+			hourInput.setText("22");
+		}
 		minuteInput = findViewById(R.id.minute_editText);
 
 		final Button updateButton = findViewById(R.id.updateBtn);
@@ -98,12 +100,94 @@ public class Configuration extends BaseActivity {
 		boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent, 0) != null);
 		autoUpdatebtn.setChecked(alarmUp);
 
+//		hourInputChangeWatcher();
+
+		hourInput.addTextChangedListener(new TextWatcher() {
+			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				editor.putString(UPDATE_HOUR, hourInput.getText().toString()).commit();
+				System.out.println(s);
+				autoUpdatebtn.setChecked(false);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				autoUpdatebtn.setChecked(true);
+			}
+		});
+
+		minuteInput.addTextChangedListener(new TextWatcher() {
+			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				editor.putString(UPDATE_MINUTE, minuteInput.getText().toString()).commit();
+				System.out.println(s);
+				autoUpdatebtn.setChecked(false);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				autoUpdatebtn.setChecked(true);
+			}
+		});
+
+		urlInput.addTextChangedListener(new TextWatcher() {
+			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				editor.putString(URL_TEXT, getUrl()).commit();
+
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				saveData();
+			}
+		});
+
+		apiInput.addTextChangedListener(new TextWatcher() {
+			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				editor.putString(API_TEXT, getApiKey()).commit();
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				saveData();
+			}
+		});
+
+
 		autoUpdatebtn.setOnCheckedChangeListener(
 				new CompoundButton.OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton compoundButton,
 												 boolean isChecked) {
-
 						if (isChecked) {
 							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
 							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
@@ -117,34 +201,54 @@ public class Configuration extends BaseActivity {
 								} catch (ParseException e) {
 									e.printStackTrace();
 								}
+
 								SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 								String hour = sharedPreferences.getString(HOUR_TEXT, "24");
 								String minute = sharedPreferences.getString(MINUTE_TEXT, "0");
 
 								Calendar alarmOffTime = Calendar.getInstance();
-								alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-								alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
+								if (!hour.isEmpty()) {
+									alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+								} else {
+									alarmOffTime.set(Calendar.HOUR_OF_DAY, 24);
+									hourInput = findViewById(R.id.hour_editText);
+									hourInput.setText("24");
+								}
+
+								if (!minute.isEmpty()) {
+									alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
+								} else {
+									alarmOffTime.set(Calendar.MINUTE, 0);
+									minuteInput = findViewById(R.id.minute_editText);
+									minuteInput.setText("0");
+								}
 								alarmOffTime.set(Calendar.SECOND, 0);
 
 								if (alarmOffTime.before(Calendar.getInstance())) {
 									alarmOffTime.add(Calendar.DATE, 1);
 								}
 
-								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
+//								long interval = 60 * 1000;
+
+								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, sender);
+//								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), interval, sender);
+								saveData();
 							}
 						} else {
+
 							Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
 							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
 							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
 							if (am != null) {
 								am.cancel(sender);
 							}
+							saveData();
 						}
 					}
 				});
 
-		loadData();
-		updateViews();
+		loadData(alarmUp);
+		updateViews(alarmUp);
 
 	}
 
@@ -167,37 +271,42 @@ public class Configuration extends BaseActivity {
 
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		SharedPreferences.Editor editor = sharedPreferences.edit();
-		getApiKey();
+
 		editor.putString(URL_TEXT, getUrl());
 		editor.putString(API_TEXT, getApiKey());
-
 		editor.putString(UPDATE_HOUR, hourInput.getText().toString());
 		editor.putString(UPDATE_MINUTE, minuteInput.getText().toString());
 
 		editor.apply();
-		Toast.makeText(this, "Changes saved.", Toast.LENGTH_LONG).show();
-
-		Intent intent = new Intent(this, Lookup.class);
-		startActivity(intent);
 	}
 
-	public void loadData() {
+	public void loadData(boolean mAlarmUp) {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		url = sharedPreferences.getString(URL_TEXT, "");
 		apiKey = sharedPreferences.getString(API_TEXT, "");
-		hour = sharedPreferences.getString(UPDATE_HOUR, "");
-		minute = sharedPreferences.getString(UPDATE_MINUTE, "");
+
+		hour = sharedPreferences.getString(UPDATE_HOUR, "24");
+		minute = sharedPreferences.getString(UPDATE_MINUTE, "0");
+
+		autoUpdatebtn.setChecked(mAlarmUp);
 	}
 
-	public void updateViews() {
+	public void updateViews(boolean mAlarmUp) {
 		urlInput.setText(url);
 		apiInput.setText(apiKey);
 		hourInput.setText(hour);
 		minuteInput.setText(minute);
+		autoUpdatebtn.setChecked(mAlarmUp);
+	}
+
+	private void hourInputChangeWatcher() {
+
 	}
 
 
 	public void updateAPK() {
 		new UpdateCheckLastModifiedDate(this).execute();
 	}
+
+
 }

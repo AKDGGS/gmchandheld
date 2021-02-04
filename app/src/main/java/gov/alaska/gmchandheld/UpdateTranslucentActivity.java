@@ -75,11 +75,6 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 				.setNeutralButton("Ignore Update Forever", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
-
-//						SharedPreferences sharedPreferences = UpdateTranslucentActivity.this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-//						long x  = sharedPreferences.getLong("LAST_MODIFIED_DATE", 0);
-//						System.out.println("************************* " + x);
-
 						Toast.makeText(UpdateTranslucentActivity.this, "Ignore forever.", Toast.LENGTH_LONG).show();
 						Intent intent = new Intent(UpdateTranslucentActivity.this, Lookup.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
