@@ -55,36 +55,38 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 	};
 
 	@Override
+	protected void onRestart() {
+		super.onRestart();
+		UpdateTranslucentActivity.this.finish();
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_translucent);
 
+		alert();
+	}
+
+	private void alert(){
 		final AlertDialog dialog = new AlertDialog.Builder(this)
 				.setTitle("Update Available")
 				.setMessage("Tap Update to install the app.")
 				.setCancelable(false)
-//				.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-//					@Override
-//					public void onClick(DialogInterface dialogInterface, int i) {
-//						Toast.makeText(UpdateTranslucentActivity.this, "Ignore forever.", Toast.LENGTH_LONG).show();
-//						Intent intent = new Intent(UpdateTranslucentActivity.this, Lookup.class);
-//						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//						UpdateTranslucentActivity.this.startActivity(intent);
-//					}
-//				})
+
 				.setNeutralButton("Ignore Update Forever", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
+
 						Toast.makeText(UpdateTranslucentActivity.this, "Ignore forever.", Toast.LENGTH_LONG).show();
 						Intent intent = new Intent(UpdateTranslucentActivity.this, Lookup.class);
-						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 						UpdateTranslucentActivity.this.startActivity(intent);
 					}
 				})
 				.setPositiveButton("Update", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
-//						Toast.makeText(UpdateTranslucentActivity.this, "Install.", Toast.LENGTH_LONG).show();
 						final String fileUrl;
 						if (Build.VERSION.SDK_INT <= 17) {
 							fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/current.apk";
@@ -106,8 +108,9 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 			public void run() {
 				android.os.Process.killProcess(android.os.Process.myPid());
 			}
-		}, 100);
+		}, 10);
 	}
+
 
 	class DownloadFileFromURL extends AsyncTask<String, String, String> {
 		DateFormat simple = new SimpleDateFormat("yyyyMMddHHmm");
@@ -189,13 +192,6 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 		}
 	}
 
-	/**
-	 * Checks if the app has permission to write to device storage
-	 * <p>
-	 * If the app does not has permission then the user will be prompted to grant permissions
-	 *
-	 * @param activity
-	 */
 	public static void verifyStoragePermissions(Activity activity) {
 		// Check if we have write permission
 		int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);

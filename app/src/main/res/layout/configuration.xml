@@ -144,9 +144,6 @@
                         android:textOn="On"
                         android:textOff="Off"
                         android:layout_weight="1"/>
-
-
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -205,8 +202,6 @@
                         android:layout_weight="1"
                         android:gravity="center_horizontal"
                         />
-
-
                 </LinearLayout>
 
                 <View

@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -28,6 +29,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import gov.alaska.gmchandheld.BaseActivity;
+import gov.alaska.gmchandheld.BuildConfig;
+import gov.alaska.gmchandheld.R;
+import gov.alaska.gmchandheld.UpdateBroadcastReceiver;
+import gov.alaska.gmchandheld.UpdateCheckLastModifiedDate;
+
 public class Configuration extends BaseActivity {
 
 	public static final String SHARED_PREFS = "sharedPrefs";
@@ -35,6 +42,8 @@ public class Configuration extends BaseActivity {
 	public static final String API_TEXT = "apiText";
 	public static final String UPDATE_HOUR = "updateHour";
 	public static final String UPDATE_MINUTE = "updateMinute";
+	public static final String HOUR_TEXT = "updateHour";
+	public static final String MINUTE_TEXT = "updateMinute";
 
 	private ToggleButton autoUpdatebtn;
 
@@ -47,9 +56,6 @@ public class Configuration extends BaseActivity {
 	private EditText apiInput;
 	private String url;
 	private String apiKey;
-
-	public static final String HOUR_TEXT = "updateHour";
-	public static final String MINUTE_TEXT = "updateMinute";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +81,6 @@ public class Configuration extends BaseActivity {
 		apiInput = findViewById(R.id.api_editText);
 		autoUpdatebtn = findViewById(R.id.autoUpdateBtn);
 		hourInput = findViewById(R.id.hour_editText);
-		if (hourInput.getText().equals("")) {
-			hourInput.setText("22");
-		}
 		minuteInput = findViewById(R.id.minute_editText);
 
 		final Button updateButton = findViewById(R.id.updateBtn);
@@ -100,28 +103,9 @@ public class Configuration extends BaseActivity {
 		boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent, 0) != null);
 		autoUpdatebtn.setChecked(alarmUp);
 
-//		hourInputChangeWatcher();
+		hourInputChangeWatcher();
 
-		hourInput.addTextChangedListener(new TextWatcher() {
-			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-			SharedPreferences.Editor editor = sharedPreferences.edit();
 
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				editor.putString(UPDATE_HOUR, hourInput.getText().toString()).commit();
-				System.out.println(s);
-				autoUpdatebtn.setChecked(false);
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				autoUpdatebtn.setChecked(true);
-			}
-		});
 
 		minuteInput.addTextChangedListener(new TextWatcher() {
 			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
@@ -130,7 +114,6 @@ public class Configuration extends BaseActivity {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				editor.putString(UPDATE_MINUTE, minuteInput.getText().toString()).commit();
-				System.out.println(s);
 				autoUpdatebtn.setChecked(false);
 			}
 
@@ -228,9 +211,8 @@ public class Configuration extends BaseActivity {
 									alarmOffTime.add(Calendar.DATE, 1);
 								}
 
+								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
 //								long interval = 60 * 1000;
-
-								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, sender);
 //								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), interval, sender);
 								saveData();
 							}
@@ -300,6 +282,26 @@ public class Configuration extends BaseActivity {
 	}
 
 	private void hourInputChangeWatcher() {
+
+		hourInput.addTextChangedListener(new TextWatcher() {
+			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				editor.putString(UPDATE_HOUR, hourInput.getText().toString()).commit();
+				autoUpdatebtn.setChecked(false);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				autoUpdatebtn.setChecked(true);
+			}
+		});
 
 	}
 

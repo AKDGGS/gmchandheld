@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -53,24 +54,26 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 
 		long lastRefusedUpdate = sharedPreferences.getLong("LAST_MODIFIED_DATE", 0);
 
-		SharedPreferences.Editor editor = sharedPreferences.edit();
-		editor.putLong("LAST_MODIFIED_DATE", lastModifiedDate); // Storing long
-		editor.apply();
 
-		System.out.println("Last Refused Update: " + new Date(lastRefusedUpdate));
-		System.out.println("Update Build Date: " + updateBuildDate);
-		System.out.println("Build Date: " + buildDate);
-
-		if ((updateBuildDate != new Date(lastRefusedUpdate)) & (updateBuildDate.compareTo(buildDate) < 0)) {
+		if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) & (buildDate.compareTo(updateBuildDate) < 0)) {
 			// Update available
 			final Intent intent = new Intent(mContext, UpdateTranslucentActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			mContext.startActivity(intent);
 		} else {
-			System.out.println("No update available.");
-			Intent intent2 = new Intent(mContext, Lookup.class);
-			intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-			mContext.startActivity(intent2);
+
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+			editor.putLong("LAST_MODIFIED_DATE", lastModifiedDate);
+			editor.apply();
+
+			Toast t = Toast.makeText(mContext.getApplicationContext(),
+					"No update available.",
+					Toast.LENGTH_SHORT);
+			t.show();
+
+			Intent intent = new Intent(mContext, Lookup.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			mContext.startActivity(intent);
 		}
 	}
 }

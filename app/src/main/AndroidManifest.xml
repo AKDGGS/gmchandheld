@@ -6,7 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
@@ -76,14 +77,12 @@
             android:theme="@style/Theme.AppCompat.DayNight"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
-        <activity android:name=".UpdateTranslucentActivity"
-            android:theme="@style/Theme.AppCompat.Translucent"/>
+        <activity
+            android:name=".UpdateTranslucentActivity"
+            android:theme="@style/Theme.AppCompat.Translucent" />
 
         <activity
-            android:name=".UpdateAppActivity"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTask"
-            android:taskAffinity=""></activity>
+            android:name=".UpdateAppActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -98,7 +97,11 @@
         <receiver
             android:name=".UpdateBroadcastReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

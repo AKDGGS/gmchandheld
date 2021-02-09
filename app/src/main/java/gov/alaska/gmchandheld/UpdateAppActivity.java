@@ -4,11 +4,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import java.util.concurrent.ExecutionException;
 
 public class UpdateAppActivity extends AppCompatActivity {
+
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		Intent intent = new Intent(this, Lookup.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		UpdateAppActivity.this.finish();
+		startActivity(intent);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -17,16 +27,5 @@ public class UpdateAppActivity extends AppCompatActivity {
 
 		Context context = this;
 		new UpdateCheckLastModifiedDate(context).execute();
-//		try {
-//			new UpdateCheckLastModifiedDate(context).execute();
-////			new UpdateCheckLastModifiedDate(context).execute().get();
-//		} catch (ExecutionException e) {
-//			e.printStackTrace();
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-
-//		UpdateDialog exampleDialog = new UpdateDialog();
-//		exampleDialog.show(getSupportFragmentManager(), "update dialog");
 	}
 }

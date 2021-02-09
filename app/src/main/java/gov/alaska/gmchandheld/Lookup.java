@@ -30,13 +30,6 @@ public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 
-	public static final String SHARED_PREFS = "sharedPrefs";
-//	public static final String URL_TEXT = "urlText";
-//	public static final String API_TEXT = "apiText";
-	public static final String UPDATE_SWITCH_TEXT  = "updateSwitchText";
-//	private String url;
-//	private String apiKey;
-
 
 	// Storage Permissions
 	private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -60,20 +53,6 @@ public class Lookup extends BaseActivity {
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
 
 		deleteApkFile();
-
-
-		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		boolean autoUpdateOnOff = sharedPreferences.getBoolean(UPDATE_SWITCH_TEXT , false);
-
-//		if(autoUpdateOnOff) {
-//			updateAlarm(this);
-//		}
-
-////         test for accessing lookupHistory from shared preferences.
-//        SharedPreferences sp = getApplicationContext().getSharedPreferences("LookupHistorySP", Context.MODE_PRIVATE);
-//        String s2 =  sp.getString("lookupHistoryString", "");
-//        System.out.println("TEST " + s2);
-
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -175,9 +154,7 @@ public class Lookup extends BaseActivity {
 			File[] files = dir.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
-					System.out.println(name + " " + name.matches("(gmc-app-[0-9]+-release\\.apk)"));
 					return name.matches("(gmc-app-[0-9]+-release\\.apk)");
-
 				}
 			});
 
