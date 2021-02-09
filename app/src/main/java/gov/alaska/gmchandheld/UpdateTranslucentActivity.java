@@ -68,7 +68,7 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 		alert();
 	}
 
-	private void alert(){
+	private void alert() {
 		final AlertDialog dialog = new AlertDialog.Builder(this)
 				.setTitle("Update Available")
 				.setMessage("Tap Update to install the app.")
@@ -108,14 +108,14 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 			public void run() {
 				android.os.Process.killProcess(android.os.Process.myPid());
 			}
-		}, 10);
+		}, 100);
 	}
 
 
 	class DownloadFileFromURL extends AsyncTask<String, String, String> {
-		DateFormat simple = new SimpleDateFormat("yyyyMMddHHmm");
-		int versionJsonResponseCode = 200;
-		int appFileResponseCode = 200;
+		;
+		int versionJsonResponseCode;
+		int appFileResponseCode;
 		String filename = "current.apk";
 
 		private WeakReference<Context> contextRef;
@@ -134,26 +134,22 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 				versionJsonResponseCode = con.getResponseCode();
 				try {
 
-					if (con.getResponseCode() == 200) {
-						con.connect();
-						InputStream input = new BufferedInputStream(url.openStream(), 8192);
-						input = new BufferedInputStream(url.openStream(), 8192);
-						verifyStoragePermissions(UpdateTranslucentActivity.this);
-						OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
-						byte data[] = new byte[1024];
-						long total = 0;
+					con.connect();
+					InputStream input = new BufferedInputStream(url.openStream(), 8192);
+					input = new BufferedInputStream(url.openStream(), 8192);
+					verifyStoragePermissions(UpdateTranslucentActivity.this);
+					OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
+					byte data[] = new byte[1024];
+					long total = 0;
 
-						while ((count = input.read(data)) != -1) {
-							total += count;
-							output.write(data, 0, count);
-						}
-
-						output.flush();
-						output.close();
-						input.close();
-					} else {
-						appFileResponseCode = con.getResponseCode();
+					while ((count = input.read(data)) != -1) {
+						total += count;
+						output.write(data, 0, count);
 					}
+
+					output.flush();
+					output.close();
+					input.close();
 				} catch (IOException e) {
 					Log.e("Error: ", e.getMessage());
 				}
@@ -173,7 +169,7 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 			Uri apkURI = Uri.fromFile(apkFile);
 			Context context = contextRef.get();
 
-			if ((versionJsonResponseCode == 200) && (appFileResponseCode == 200)) {
+			if ((versionJsonResponseCode == 200)) {
 				Uri uriFile = Uri.fromFile(apkFile);
 				if (context != null) {
 					if (Build.VERSION.SDK_INT >= 24) {
@@ -197,7 +193,7 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 		int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
 		if (permission != PackageManager.PERMISSION_GRANTED) {
-			// We don't have permission so prompt the user
+			// If we don't have permission so prompt the user
 			ActivityCompat.requestPermissions(
 					activity,
 					PERMISSIONS_STORAGE,

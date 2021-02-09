@@ -211,9 +211,9 @@ public class Configuration extends BaseActivity {
 									alarmOffTime.add(Calendar.DATE, 1);
 								}
 
-								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
-//								long interval = 60 * 1000;
-//								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), interval, sender);
+//								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
+								long interval = 60 * 1000;
+								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), interval, sender);
 								saveData();
 							}
 						} else {
@@ -305,10 +305,8 @@ public class Configuration extends BaseActivity {
 
 	}
 
-
 	public void updateAPK() {
 		new UpdateCheckLastModifiedDate(this).execute();
 	}
-
 
 }
