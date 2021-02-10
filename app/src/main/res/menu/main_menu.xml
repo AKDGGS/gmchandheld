@@ -27,6 +27,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/audit"
+        android:title="@string/audit"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/recode"
         android:title="@string/recode"
         app:showAsAction="never" />
@@ -35,6 +40,7 @@
         android:id="@+id/configuration"
         android:title="@string/configuration"
         app:showAsAction="never" />
+
 
 
 </menu>

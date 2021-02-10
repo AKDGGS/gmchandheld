@@ -32,6 +32,7 @@
     <string name="from">From:</string>
     <string name="hour">Hour (24 hr)</string>
     <string name="minute">Minute</string>
+    <string name="audit">Audit</string>
 
 
 </resources>

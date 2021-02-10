@@ -24,9 +24,9 @@ import java.util.Set;
 public class MoveDisplay extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
 
-	ListView containerListLV;
-	ArrayList<String> containerList;
-	ArrayAdapter<String> adapter;
+	private ListView containerListLV;
+	private ArrayList<String> containerList;
+	private ArrayAdapter<String> adapter;
 
 	int clicks = 0;  //used to count double clicks for deletion
 

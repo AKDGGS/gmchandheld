@@ -34,9 +34,6 @@ public class RemoteApiDownload {
 	private String addedContainerRemark;
 	private ArrayList<String> containerList;
 	private String newBarcode;
-
-
-
 	private String destinationBarcode;
 	private final Context context;
 	SimpleDateFormat sdf;
@@ -164,7 +161,7 @@ public class RemoteApiDownload {
 					} catch (UnsupportedEncodingException e) {
 						exception = new Exception(e.getMessage());
 					}
-					destination = "d=" + destination + containersToMoveStr(containerList);
+					destination = "d=" + destination + containersToUrlList(containerList);
 
 					QUERYPARAM = destination;
 					url = url + "move.json?" + destination;
@@ -199,6 +196,20 @@ public class RemoteApiDownload {
 					url = url + "addcontainer.json?" + sb.toString();
 					break;
 				}
+				case "AuditDisplay": {
+					String remark = null;
+					try {
+						remark = URLEncoder.encode(urlFirstParameter, "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						exception = new Exception(e.getMessage());
+					}
+					remark = "remark=" + remark + containersToUrlList(containerList);
+
+					QUERYPARAM = remark;
+					url = url + "audit.json?" + remark;
+					break;
+				}
+
 				case "Recode": {
 					String barcode = null;
 					String mNewBarcode = null;
@@ -310,7 +321,7 @@ public class RemoteApiDownload {
 		return android.util.Base64.encodeToString(hmac256, android.util.Base64.DEFAULT);
 	}
 
-	public String containersToMoveStr(ArrayList<String> list) {
+	public String containersToUrlList(ArrayList<String> list) {
 		String delim = "&c=";
 
 		StringBuilder sb = new StringBuilder();

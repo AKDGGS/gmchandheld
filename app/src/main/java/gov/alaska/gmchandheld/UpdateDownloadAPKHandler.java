@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -21,29 +20,20 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 // https://vapoyan.medium.com/android-show-allertdialog-before-the-application-starts-80588d6f2dda
 
-public class UpdateTranslucentActivity extends AppCompatActivity implements DialogInterface.OnClickListener {
+public class UpdateDownloadAPKHandler extends AppCompatActivity implements DialogInterface.OnClickListener {
 	public static final String SHARED_PREFS = "sharedPrefs";
 
 	// Storage Permissions
@@ -57,7 +47,7 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		UpdateTranslucentActivity.this.finish();
+		UpdateDownloadAPKHandler.this.finish();
 	}
 
 	@Override
@@ -78,10 +68,10 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
 
-						Toast.makeText(UpdateTranslucentActivity.this, "Ignore forever.", Toast.LENGTH_LONG).show();
-						Intent intent = new Intent(UpdateTranslucentActivity.this, Lookup.class);
+						Toast.makeText(UpdateDownloadAPKHandler.this, "Ignore forever.", Toast.LENGTH_LONG).show();
+						Intent intent = new Intent(UpdateDownloadAPKHandler.this, Lookup.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						UpdateTranslucentActivity.this.startActivity(intent);
+						UpdateDownloadAPKHandler.this.startActivity(intent);
 					}
 				})
 				.setPositiveButton("Update", new DialogInterface.OnClickListener() {
@@ -93,7 +83,7 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 						} else {
 							fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/current.apk";
 						}
-						new DownloadFileFromURL(UpdateTranslucentActivity.this).execute(fileUrl);
+						new DownloadFileFromURL(UpdateDownloadAPKHandler.this).execute(fileUrl);
 					}
 				})
 				.create();
@@ -113,9 +103,7 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 
 
 	class DownloadFileFromURL extends AsyncTask<String, String, String> {
-		;
 		int versionJsonResponseCode;
-		int appFileResponseCode;
 		String filename = "current.apk";
 
 		private WeakReference<Context> contextRef;
@@ -137,7 +125,7 @@ public class UpdateTranslucentActivity extends AppCompatActivity implements Dial
 					con.connect();
 					InputStream input = new BufferedInputStream(url.openStream(), 8192);
 					input = new BufferedInputStream(url.openStream(), 8192);
-					verifyStoragePermissions(UpdateTranslucentActivity.this);
+					verifyStoragePermissions(UpdateDownloadAPKHandler.this);
 					OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
 					byte data[] = new byte[1024];
 					long total = 0;

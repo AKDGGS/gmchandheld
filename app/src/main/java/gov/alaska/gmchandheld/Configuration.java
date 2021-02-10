@@ -91,13 +91,13 @@ public class Configuration extends BaseActivity {
 			}
 		});
 
-		final Button saveButton = findViewById(R.id.saveBtn);
-		saveButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				saveData();
-			}
-		});
+//		final Button saveButton = findViewById(R.id.saveBtn);
+//		saveButton.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				saveData();
+//			}
+//		});
 
 		final Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
 		boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent, 0) != null);
@@ -211,9 +211,9 @@ public class Configuration extends BaseActivity {
 									alarmOffTime.add(Calendar.DATE, 1);
 								}
 
-//								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
-								long interval = 60 * 1000;
-								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), interval, sender);
+								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
+//								long interval = 60 * 1000;
+//								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), interval, sender);
 								saveData();
 							}
 						} else {

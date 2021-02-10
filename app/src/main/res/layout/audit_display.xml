@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:orientation="vertical">
 
     <include
@@ -13,138 +14,163 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="10">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="20dp"
-            android:paddingRight="21dp"
-
-            android:text="Auditing:"
+            android:layout_marginRight="10dp"
+            android:text="@string/remark"
             android:textAllCaps="true"
+            android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:layout_weight="2"/>
 
         <EditText
-            android:id="@+id/destinationET"
-            android:layout_width="175dp"
+            android:id="@+id/remarkET"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginRight="15dp"
-
+            android:layout_marginEnd="42dp"
+            android:layout_marginRight="42dp"
+            android:layout_weight="7.5"
             android:inputType="text"
-
             android:paddingLeft="16dp"
             app:backgroundTint="@color/colorPrimary"
-            tools:ignore="RtlSymmetry" />
+            android:selectAllOnFocus="true"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="10">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="5dp"
-            android:text="Container:"
+            android:text="@string/item"
             android:textAllCaps="true"
             android:textColor="@android:color/black"
-            android:textSize="12sp" />
-
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_weight="2"/>
 
         <EditText
-            android:id="@+id/moveContainerET"
-            android:layout_width="175dp"
+            android:id="@+id/remarkContainerET"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_weight="6.0"
             android:inputType="text"
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             app:backgroundTint="@color/colorPrimary"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry"
+            android:selectAllOnFocus="true"/>
 
         <Button
             android:id="@+id/add_container_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="add"
-            android:textSize="16sp" />
+            android:minWidth="40dip"
+            android:minHeight="40dip"
+            android:text="@string/add"
+            android:textSize="10sp"
+            android:layout_weight="2"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="10">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="5"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:padding="3dp"
-            android:text="Containers to audit: (long click to remove item)"
-            android:textColor="#ff353535"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_marginRight="5dp"
+            android:text="@string/number_of_items_added"
+            android:textAllCaps="true"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/moveCountTV"
-            android:layout_width="wrap_content"
+            android:id="@+id/auditCountTV"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:padding="3dp"
-            android:paddingRight="10dp" />
+            android:selectAllOnFocus="true"
+            android:layout_weight="3"/>
+
+        <Button
+            android:id="@+id/clear_all_button"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:minWidth="40dip"
+            android:minHeight="40dip"
+            android:text="Clear"
+            android:textSize="10sp" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:text="Double tap to remove item"
+        android:textColor="#ff353535"
+        android:textSize="12sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ListView
-            android:id="@+id/listViewGetContainersToMove"
-            android:layout_width="306dp"
-            android:layout_height="447dp"
-            android:layout_above="@+id/move_button"
+            android:id="@+id/listViewGetContainersToAudit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginEnd="56dp"
-            android:layout_marginRight="56dp"
-            android:layout_marginBottom="5dp"
-            android:fadeScrollbars="false" />
-
-        <Button
-            android:id="@+id/move_button"
-            android:layout_alignParentBottom="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="12dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:background="#ff567b95"
-            android:text="@string/move"
-            android:textColor="#fff"
-            android:textSize="12sp" />
+            android:layout_marginBottom="60dp" />
+
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="5dp"
+            android:minWidth="40dip"
+            android:minHeight="40dip"
+            android:paddingStart="5dp"
+            android:paddingLeft="5dp"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/submit"
+            android:textSize="12sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 </LinearLayout>
-
-
-

@@ -78,7 +78,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".UpdateTranslucentActivity"
+            android:name=".UpdateDownloadAPKHandler"
             android:theme="@style/Theme.AppCompat.Translucent" />
 
         <activity

@@ -19,7 +19,6 @@ public class LookupHistoryHolder {
 		}
 		return instance;
 	}
-
 	private static LookupHistoryHolder instance;
 }
 

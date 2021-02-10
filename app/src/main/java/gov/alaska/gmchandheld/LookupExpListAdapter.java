@@ -133,7 +133,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		}
 
 		parentHolder.parentText.setText(expListParentLabel);
-//		txtParent.setText(expListParentLabel);
 		return convertView;
 	}
 

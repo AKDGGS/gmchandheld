@@ -77,6 +77,8 @@ public class RemoteApiUIHandler {
 				protected void onPreExecute() {
 					super.onPreExecute();
 
+					System.out.println("OnPreExecute " + urlFirstParameter);
+
 					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 					View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) context).findViewById(R.id.downloading_alert_root));
@@ -162,6 +164,14 @@ public class RemoteApiUIHandler {
 								remoteAPIDownload.setAddedContainerRemark(addContainerRemark);
 								break;
 							}
+
+							case "AuditDisplay":{
+								remoteAPIDownload = new RemoteApiDownload(context);
+								remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
+								remoteAPIDownload.setContainerList(containerList);
+								break;
+							}
+
 							case "Recode":{
 								remoteAPIDownload = new RemoteApiDownload(context);
 								remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
@@ -332,6 +342,18 @@ public class RemoteApiUIHandler {
 							case "AddContainer": {
 								Toast.makeText(context, "The container was added.",
 										Toast.LENGTH_LONG).show();
+								break;
+							}
+							case "AuditDisplay": {
+								containerList.clear();
+								ListView containerListLV = ((Activity) context).findViewById(R.id.listViewGetContainersToAudit);
+								ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
+								adapter.clear();
+								adapter.notifyDataSetChanged();
+								Toast.makeText(context, "Items added to the Audit table.",
+										Toast.LENGTH_LONG).show();
+								EditText remarkET = ((Activity) context).findViewById(R.id.remarkET);
+								remarkET.requestFocus();
 								break;
 							}
 							case "Recode": {

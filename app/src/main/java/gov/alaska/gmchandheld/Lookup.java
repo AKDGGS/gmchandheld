@@ -165,9 +165,6 @@ public class Lookup extends BaseActivity {
 			}
 		}
 	}
-
-
-
 }
 
 
