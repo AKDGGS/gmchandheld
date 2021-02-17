@@ -46,6 +46,9 @@ public class Configuration extends BaseActivity {
 	public static final String MINUTE_TEXT = "updateMinute";
 
 	private ToggleButton autoUpdatebtn;
+	private boolean alarmUp;
+	private ToggleButton cameraToScannerbtn;
+	public static final String CAMERA_ON = "cameraOn";
 
 	private EditText hourInput;
 	private EditText minuteInput;
@@ -83,6 +86,8 @@ public class Configuration extends BaseActivity {
 		hourInput = findViewById(R.id.hour_editText);
 		minuteInput = findViewById(R.id.minute_editText);
 
+		cameraToScannerbtn = findViewById(R.id.cameraToScannerBtn);
+
 		final Button updateButton = findViewById(R.id.updateBtn);
 		updateButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -91,16 +96,8 @@ public class Configuration extends BaseActivity {
 			}
 		});
 
-//		final Button saveButton = findViewById(R.id.saveBtn);
-//		saveButton.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				saveData();
-//			}
-//		});
-
 		final Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
-		boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent, 0) != null);
+		alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent, 0) != null);
 		autoUpdatebtn.setChecked(alarmUp);
 
 		hourInputChangeWatcher();
@@ -229,8 +226,30 @@ public class Configuration extends BaseActivity {
 					}
 				});
 
-		loadData(alarmUp);
-		updateViews(alarmUp);
+//		loadData();
+//		updateViews();
+
+		cameraToScannerbtn.setOnCheckedChangeListener(
+				new CompoundButton.OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton compoundButton,
+												 boolean isChecked) {
+						SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+						SharedPreferences.Editor editor = sharedPreferences.edit();
+						if (isChecked) {
+							editor.putBoolean("cameraOn", true);
+							editor.commit();
+							saveData();
+						}else{
+							editor.putBoolean("cameraOn", false);
+							editor.commit();
+							saveData();
+						}
+					}
+				});
+
+		loadData();
+		updateViews();
 
 	}
 
@@ -259,10 +278,11 @@ public class Configuration extends BaseActivity {
 		editor.putString(UPDATE_HOUR, hourInput.getText().toString());
 		editor.putString(UPDATE_MINUTE, minuteInput.getText().toString());
 
+		editor.putBoolean(CAMERA_ON, cameraToScannerbtn.isChecked() );
 		editor.apply();
 	}
 
-	public void loadData(boolean mAlarmUp) {
+	public void loadData() {
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		url = sharedPreferences.getString(URL_TEXT, "");
 		apiKey = sharedPreferences.getString(API_TEXT, "");
@@ -270,15 +290,17 @@ public class Configuration extends BaseActivity {
 		hour = sharedPreferences.getString(UPDATE_HOUR, "24");
 		minute = sharedPreferences.getString(UPDATE_MINUTE, "0");
 
-		autoUpdatebtn.setChecked(mAlarmUp);
+		autoUpdatebtn.setChecked(alarmUp);
+		cameraToScannerbtn.setChecked(sharedPreferences.getBoolean(CAMERA_ON, false));
 	}
 
-	public void updateViews(boolean mAlarmUp) {
+	public void updateViews() {
 		urlInput.setText(url);
 		apiInput.setText(apiKey);
 		hourInput.setText(hour);
 		minuteInput.setText(minute);
-		autoUpdatebtn.setChecked(mAlarmUp);
+//		autoUpdatebtn.setChecked(alarmUp);
+
 	}
 
 	private void hourInputChangeWatcher() {
