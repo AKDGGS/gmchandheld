@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -21,7 +22,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".CameraToScanner"></activity>
         <activity
             android:name=".Lookup"
             android:label="@string/lookup"
@@ -76,13 +77,10 @@
             android:parentActivityName=".Summary"
             android:theme="@style/Theme.AppCompat.DayNight"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
             android:name=".UpdateDownloadAPKHandler"
             android:theme="@style/Theme.AppCompat.Translucent" />
-
-        <activity
-            android:name=".UpdateAppActivity" />
+        <activity android:name=".UpdateAppActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -99,7 +97,7 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

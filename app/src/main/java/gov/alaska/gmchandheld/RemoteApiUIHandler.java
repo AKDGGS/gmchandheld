@@ -77,8 +77,6 @@ public class RemoteApiUIHandler {
 				protected void onPreExecute() {
 					super.onPreExecute();
 
-					System.out.println("OnPreExecute " + urlFirstParameter);
-
 					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 					LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 					View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) context).findViewById(R.id.downloading_alert_root));

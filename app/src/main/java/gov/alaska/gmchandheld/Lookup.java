@@ -7,18 +7,29 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -29,7 +40,8 @@ import java.util.LinkedList;
 public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-
+	private EditText barcodeInput;
+	public static final String SHARED_PREFS = "sharedPrefs";
 
 	// Storage Permissions
 	private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -42,14 +54,21 @@ public class Lookup extends BaseActivity {
 	@Override
 	public void onRestart() {
 		super.onRestart();
+		this.recreate();
 		EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
 		barcodeInput.selectAll();
 	}
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
+
+		loadLookup();
+	}
+
+	public void loadLookup(){
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
 
 		deleteApkFile();
@@ -58,7 +77,23 @@ public class Lookup extends BaseActivity {
 		setSupportActionBar(toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
-		final EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
+		SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
+
+		Button cameraBtn = findViewById(R.id.cameraBtn);
+		if(!cameraOn){
+			cameraBtn.setVisibility(View.GONE);
+		}
+
+		cameraBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(Lookup.this, CameraToScanner.class);
+				startActivityForResult(intent, 0);
+			}
+		});
+
+		barcodeInput = findViewById(R.id.getBarcodeEditText);
 		final Button submit_button = findViewById(R.id.submit_button);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
@@ -86,6 +121,8 @@ public class Lookup extends BaseActivity {
 				}
 			});
 
+
+
 			// KeyListener listens if enter is pressed
 			barcodeInput.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -106,6 +143,24 @@ public class Lookup extends BaseActivity {
 					submit_button.performClick();
 				}
 			});
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (Build.VERSION.SDK_INT < 24) {
+//			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+//			editText.setText(result.getContents());
+		}else {
+			if (requestCode == 0) {
+				if (resultCode == CommonStatusCodes.SUCCESS) {
+					Barcode barcode = data.getParcelableExtra("barcode");
+					EditText edit_text = findViewById(R.id.getBarcodeEditText);
+					edit_text.setText(barcode.displayValue);
+				}
+			} else {
+				super.onActivityResult(requestCode, resultCode, data);
+			}
 		}
 	}
 
@@ -165,6 +220,9 @@ public class Lookup extends BaseActivity {
 			}
 		}
 	}
+
+
+
 }
 
 

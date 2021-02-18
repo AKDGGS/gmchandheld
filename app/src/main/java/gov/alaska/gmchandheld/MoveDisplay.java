@@ -1,7 +1,9 @@
 package gov.alaska.gmchandheld;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -14,7 +16,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +35,12 @@ public class MoveDisplay extends BaseActivity {
 	private ArrayAdapter<String> adapter;
 
 	int clicks = 0;  //used to count double clicks for deletion
+
+	@Override
+	protected void onRestart() {
+		this.recreate();
+		super.onRestart();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,16 +62,46 @@ public class MoveDisplay extends BaseActivity {
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		containerListLV.setAdapter(adapter);
 
-		final SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		if (sharedPreferences.getString(SHARED_PREFS, "savedDestination") != null) {
-			moveDestinationET.setText(sharedPreferences.getString("savedDestination", ""));
+		final SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		if (sp.getString(SHARED_PREFS, "savedDestination") != null) {
+			moveDestinationET.setText(sp.getString("savedDestination", ""));
 		}
-		if (sharedPreferences.getStringSet("savedContainerList", null) != null) {
-			containerList = new ArrayList<>(sharedPreferences.getStringSet("savedContainerList", null));
+		if (sp.getStringSet("savedContainerList", null) != null) {
+			containerList = new ArrayList<>(sp.getStringSet("savedContainerList", null));
+
 			adapter.addAll(containerList);
 		} else {
 			containerList = new ArrayList<>();
 		}
+
+		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
+
+		Button cameraBtn = findViewById(R.id.cameraBtn);
+		if(!cameraOn){
+			cameraBtn.setVisibility(View.GONE);
+		}
+
+		cameraBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
+				startActivityForResult(intent, 0);
+			}
+		});
+
+
+		Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
+		if(!cameraOn){
+			itemCameraBtn.setVisibility(View.GONE);
+		}
+
+		itemCameraBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
+				startActivityForResult(intent, 0);
+			}
+		});
 
 		add_button.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -69,6 +111,10 @@ public class MoveDisplay extends BaseActivity {
 					if (!container.isEmpty()) {
 						if (!(container.equals(moveDestinationET.getText().toString()) && (!containerList.contains(container)))) {
 							containerList.add(0, container);
+							SharedPreferences.Editor editor = sp.edit();
+							String[] containerArray = containerList.toArray(new String[0]);
+							Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
+							editor.putStringSet("savedContainerList", containerSet).commit();
 							adapter.insert(container, 0);
 							adapter.notifyDataSetChanged();
 							moveCountTV.setText(String.valueOf(containerList.size()));
@@ -85,7 +131,6 @@ public class MoveDisplay extends BaseActivity {
 			public void onClick(View v) {
 				String container = moveContainerET.getText().toString();
 				moveContainerET.setText("");
-
 				moveContainerET.requestFocus();
 				containerList.clear();
 				adapter.clear();
@@ -160,8 +205,8 @@ public class MoveDisplay extends BaseActivity {
 							moveContainerET.setText("");
 							moveDestinationET.setText("");
 							moveCountTV.setText("");
-							sharedPreferences.edit().remove("savedContainerList").apply();
-							sharedPreferences.edit().remove("savedDestination").apply();
+							sp.edit().remove("savedContainerList").apply();
+							sp.edit().remove("savedDestination").apply();
 						}
 					}
 				}
@@ -191,5 +236,25 @@ public class MoveDisplay extends BaseActivity {
 		editor.apply();
 
 		super.onBackPressed();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (Build.VERSION.SDK_INT < 24) {
+//			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+//			editText.setText(result.getContents());
+		}else {
+			if (requestCode == 0) {
+				if (resultCode == CommonStatusCodes.SUCCESS) {
+					Barcode barcode = data.getParcelableExtra("barcode");
+					EditText edit_text = findViewById(R.id.destinationET);
+					if(barcode != null) {
+						edit_text.setText(barcode.displayValue);
+					}
+				}
+			} else {
+				super.onActivityResult(requestCode, resultCode, data);
+			}
+		}
 	}
 }

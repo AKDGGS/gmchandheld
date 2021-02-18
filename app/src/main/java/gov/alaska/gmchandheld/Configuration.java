@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -17,10 +16,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 
-import androidx.appcompat.widget.SwitchCompat;
+import android.widget.ToggleButton;
 import androidx.appcompat.widget.Toolbar;
 
 import java.text.DateFormat;
@@ -29,14 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import gov.alaska.gmchandheld.BaseActivity;
-import gov.alaska.gmchandheld.BuildConfig;
-import gov.alaska.gmchandheld.R;
-import gov.alaska.gmchandheld.UpdateBroadcastReceiver;
-import gov.alaska.gmchandheld.UpdateCheckLastModifiedDate;
-
 public class Configuration extends BaseActivity {
 
+	private SharedPreferences sp;
 	public static final String SHARED_PREFS = "sharedPrefs";
 	public static final String URL_TEXT = "urlText";
 	public static final String API_TEXT = "apiText";
@@ -71,6 +63,8 @@ public class Configuration extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.configuration);
 
+		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
@@ -96,73 +90,43 @@ public class Configuration extends BaseActivity {
 			}
 		});
 
+		hourInputChangeWatcher();
+		minuteInputChangeWatcher();
+		urlInputChangeWatcher();
+		apiInputChangeWatcher();
+		autoUpdateChangeWatcher();
+
+		loadData();
+
+		cameraToScannerChangeWatcher();
+		loadData();
+		updateViews();
+
+
+	}
+
+	private void cameraToScannerChangeWatcher() {
+
+		cameraToScannerbtn.setOnCheckedChangeListener(
+				new CompoundButton.OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton compoundButton,
+												 boolean isChecked) {
+						SharedPreferences.Editor editor = sp.edit();
+						if (isChecked) {
+							editor.putBoolean("cameraOn", true).commit();
+						} else {
+							editor.putBoolean("cameraOn", false).commit();
+						}
+						saveData();
+					}
+				});
+	}
+
+	private void autoUpdateChangeWatcher() {
 		final Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
 		alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent, 0) != null);
 		autoUpdatebtn.setChecked(alarmUp);
-
-		hourInputChangeWatcher();
-
-
-
-		minuteInput.addTextChangedListener(new TextWatcher() {
-			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-			SharedPreferences.Editor editor = sharedPreferences.edit();
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				editor.putString(UPDATE_MINUTE, minuteInput.getText().toString()).commit();
-				autoUpdatebtn.setChecked(false);
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				autoUpdatebtn.setChecked(true);
-			}
-		});
-
-		urlInput.addTextChangedListener(new TextWatcher() {
-			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-			SharedPreferences.Editor editor = sharedPreferences.edit();
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				editor.putString(URL_TEXT, getUrl()).commit();
-
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				saveData();
-			}
-		});
-
-		apiInput.addTextChangedListener(new TextWatcher() {
-			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-			SharedPreferences.Editor editor = sharedPreferences.edit();
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				editor.putString(API_TEXT, getApiKey()).commit();
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				saveData();
-			}
-		});
-
-
 		autoUpdatebtn.setOnCheckedChangeListener(
 				new CompoundButton.OnCheckedChangeListener() {
 					@Override
@@ -214,7 +178,6 @@ public class Configuration extends BaseActivity {
 								saveData();
 							}
 						} else {
-
 							Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
 							PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
 							AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
@@ -225,37 +188,52 @@ public class Configuration extends BaseActivity {
 						}
 					}
 				});
+	}
 
-//		loadData();
-//		updateViews();
+	private void apiInputChangeWatcher() {
 
-		cameraToScannerbtn.setOnCheckedChangeListener(
-				new CompoundButton.OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton compoundButton,
-												 boolean isChecked) {
-						SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-						SharedPreferences.Editor editor = sharedPreferences.edit();
-						if (isChecked) {
-							editor.putBoolean("cameraOn", true);
-							editor.commit();
-							saveData();
-						}else{
-							editor.putBoolean("cameraOn", false);
-							editor.commit();
-							saveData();
-						}
-					}
-				});
+		apiInput.addTextChangedListener(new TextWatcher() {
+			SharedPreferences.Editor editor = sp.edit();
 
-		loadData();
-		updateViews();
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				editor.putString(API_TEXT, getApiKey()).commit();
+			}
 
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				saveData();
+			}
+		});
+	}
+
+	private void urlInputChangeWatcher() {
+
+		urlInput.addTextChangedListener(new TextWatcher() {
+			SharedPreferences.Editor editor = sp.edit();
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				editor.putString(URL_TEXT, getUrl()).commit();
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				saveData();
+			}
+		});
 	}
 
 	public String getUrl() {
 		urlInput = findViewById(R.id.url_editText);
-
 		url = urlInput.getText().toString();
 		if (url.length() > 1 && url.charAt(url.length() - 1) != ('/')) {
 			url = url + '/';
@@ -269,29 +247,25 @@ public class Configuration extends BaseActivity {
 	}
 
 	public void saveData() {
-
-		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPreferences.edit();
+		SharedPreferences.Editor editor = sp.edit();
 
 		editor.putString(URL_TEXT, getUrl());
 		editor.putString(API_TEXT, getApiKey());
 		editor.putString(UPDATE_HOUR, hourInput.getText().toString());
 		editor.putString(UPDATE_MINUTE, minuteInput.getText().toString());
-
-		editor.putBoolean(CAMERA_ON, cameraToScannerbtn.isChecked() );
+		editor.putBoolean(CAMERA_ON, cameraToScannerbtn.isChecked());
 		editor.apply();
 	}
 
 	public void loadData() {
-		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		url = sharedPreferences.getString(URL_TEXT, "");
-		apiKey = sharedPreferences.getString(API_TEXT, "");
+		url = sp.getString(URL_TEXT, "");
+		apiKey = sp.getString(API_TEXT, "");
 
-		hour = sharedPreferences.getString(UPDATE_HOUR, "24");
-		minute = sharedPreferences.getString(UPDATE_MINUTE, "0");
+		hour = sp.getString(UPDATE_HOUR, "24");
+		minute = sp.getString(UPDATE_MINUTE, "0");
 
 		autoUpdatebtn.setChecked(alarmUp);
-		cameraToScannerbtn.setChecked(sharedPreferences.getBoolean(CAMERA_ON, false));
+		cameraToScannerbtn.setChecked(sp.getBoolean(CAMERA_ON, false));
 	}
 
 	public void updateViews() {
@@ -299,15 +273,14 @@ public class Configuration extends BaseActivity {
 		apiInput.setText(apiKey);
 		hourInput.setText(hour);
 		minuteInput.setText(minute);
-//		autoUpdatebtn.setChecked(alarmUp);
-
+		autoUpdatebtn.setChecked(alarmUp);
+		cameraToScannerbtn.setChecked(sp.getBoolean(CAMERA_ON, false));
 	}
 
 	private void hourInputChangeWatcher() {
 
 		hourInput.addTextChangedListener(new TextWatcher() {
-			SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-			SharedPreferences.Editor editor = sharedPreferences.edit();
+			SharedPreferences.Editor editor = sp.edit();
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -324,11 +297,33 @@ public class Configuration extends BaseActivity {
 				autoUpdatebtn.setChecked(true);
 			}
 		});
-
 	}
+
+	private void minuteInputChangeWatcher() {
+		minuteInput.addTextChangedListener(new TextWatcher() {
+			SharedPreferences.Editor editor = sp.edit();
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				editor.putString(UPDATE_MINUTE, minuteInput.getText().toString()).commit();
+				autoUpdatebtn.setChecked(false);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				autoUpdatebtn.setChecked(true);
+			}
+		});
+	}
+
 
 	public void updateAPK() {
 		new UpdateCheckLastModifiedDate(this).execute();
 	}
+
 
 }
