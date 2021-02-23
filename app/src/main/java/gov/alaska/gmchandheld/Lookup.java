@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -42,6 +43,10 @@ public class Lookup extends BaseActivity {
 	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	private EditText barcodeInput;
 	public static final String SHARED_PREFS = "sharedPrefs";
+	private ToneGenerator toneGen1;
+
+	//qr code scanner object
+	private IntentIntegrator qrScan;
 
 	// Storage Permissions
 	private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -84,11 +89,20 @@ public class Lookup extends BaseActivity {
 			cameraBtn.setVisibility(View.GONE);
 		}
 
+		//intializing scan object
+		qrScan = new IntentIntegrator(this);
+
+		toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+
 		cameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(Lookup.this, CameraToScanner.class);
-				startActivityForResult(intent, 0);
+				if (Build.VERSION.SDK_INT < 24) {
+					qrScan.initiateScan();
+				} else {
+					Intent intent = new Intent(Lookup.this, CameraToScanner.class);
+					startActivityForResult(intent, 0);
+				}
 			}
 		});
 
@@ -142,24 +156,6 @@ public class Lookup extends BaseActivity {
 					submit_button.performClick();
 				}
 			});
-		}
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		if (Build.VERSION.SDK_INT < 24) {
-//			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//			editText.setText(result.getContents());
-		}else {
-			if (requestCode == 0) {
-				if (resultCode == CommonStatusCodes.SUCCESS) {
-					Barcode barcode = data.getParcelableExtra("barcode");
-					EditText edit_text = findViewById(R.id.getBarcodeEditText);
-					edit_text.setText(barcode.displayValue);
-				}
-			} else {
-				super.onActivityResult(requestCode, resultCode, data);
-			}
 		}
 	}
 
@@ -220,7 +216,25 @@ public class Lookup extends BaseActivity {
 		}
 	}
 
-
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (Build.VERSION.SDK_INT < 24) {
+			System.out.println("Less than 24");
+			barcodeInput = findViewById(R.id.getBarcodeEditText);
+			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+			barcodeInput.setText(result.getContents());
+		}else {
+			if (requestCode == 0) {
+				if (resultCode == CommonStatusCodes.SUCCESS) {
+					Barcode barcode = data.getParcelableExtra("barcode");
+					EditText edit_text = findViewById(R.id.getBarcodeEditText);
+					edit_text.setText(barcode.displayValue);
+				}
+			} else {
+				super.onActivityResult(requestCode, resultCode, data);
+			}
+		}
+	}
 
 }
 
