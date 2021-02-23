@@ -18,7 +18,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import android.widget.ToggleButton;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -73,14 +78,41 @@ public class Configuration extends BaseActivity {
 		TextView buildDateTV = findViewById(R.id.buildDateTV);
 		buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
 
-		urlInput = findViewById(R.id.url_editText);
+		urlInput = findViewById(R.id.urlET);
 		urlInput.requestFocus();
-		apiInput = findViewById(R.id.api_editText);
+		apiInput = findViewById(R.id.apiET);
 		autoUpdatebtn = findViewById(R.id.autoUpdateBtn);
 		hourInput = findViewById(R.id.hour_editText);
 		minuteInput = findViewById(R.id.minute_editText);
 
 		cameraToScannerbtn = findViewById(R.id.cameraToScannerBtn);
+
+		SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
+
+		Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
+		Button apiCameraBtn = findViewById(R.id.apiCameraBtn);
+
+		if(!cameraOn){
+			urlCameraBtn.setVisibility(View.GONE);
+			apiCameraBtn.setVisibility(View.GONE);
+		}
+
+		urlCameraBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(Configuration.this, CameraToScanner.class);
+				startActivityForResult(intent, 1);
+			}
+		});
+
+		apiCameraBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(Configuration.this, CameraToScanner.class);
+				startActivityForResult(intent, 2);
+			}
+		});
 
 		final Button updateButton = findViewById(R.id.updateBtn);
 		updateButton.setOnClickListener(new View.OnClickListener() {
@@ -233,7 +265,7 @@ public class Configuration extends BaseActivity {
 	}
 
 	public String getUrl() {
-		urlInput = findViewById(R.id.url_editText);
+		urlInput = findViewById(R.id.urlET);
 		url = urlInput.getText().toString();
 		if (url.length() > 1 && url.charAt(url.length() - 1) != ('/')) {
 			url = url + '/';
@@ -242,7 +274,7 @@ public class Configuration extends BaseActivity {
 	}
 
 	public String getApiKey() {
-		apiInput = findViewById(R.id.api_editText);
+		apiInput = findViewById(R.id.apiET);
 		return apiInput.getText().toString();
 	}
 
@@ -326,4 +358,36 @@ public class Configuration extends BaseActivity {
 	}
 
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (Build.VERSION.SDK_INT < 24) {
+//			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+//			editText.setText(result.getContents());
+		} else {
+			switch (requestCode) {
+				case 1: {
+					if (resultCode == CommonStatusCodes.SUCCESS) {
+						Barcode barcode = data.getParcelableExtra("barcode");
+						EditText edit_text = findViewById(R.id.urlET);
+						if (barcode != null) {
+							edit_text.setText(barcode.displayValue);
+						}
+					}
+					break;
+				}
+				case 2: {
+					if (resultCode == CommonStatusCodes.SUCCESS) {
+						Barcode barcode = data.getParcelableExtra("barcode");
+						EditText edit_text = findViewById(R.id.apiET);
+						if (barcode != null) {
+							edit_text.setText(barcode.displayValue);
+						}
+					}
+					break;
+				}
+				default:
+					super.onActivityResult(requestCode, resultCode, data);
+			}
+		}
+	}
 }

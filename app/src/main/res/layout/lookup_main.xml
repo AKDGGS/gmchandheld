@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:layout_marginTop="12dp"
         android:weightSum="8">
 
         <EditText
@@ -28,7 +29,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="15dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="12dp"
+
             android:layout_marginEnd="15dp"
             android:layout_weight="7"
             android:inputType="text"
@@ -41,7 +42,6 @@
             android:id="@+id/cameraBtn"
             android:layout_width="0dp"
             android:layout_height="44dp"
-            android:layout_marginTop="12dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1.0"
             android:drawableBottom="@drawable/ic_scanner_qr"/>

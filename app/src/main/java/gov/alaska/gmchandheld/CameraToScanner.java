@@ -83,16 +83,15 @@ public class CameraToScanner extends AppCompatActivity {
 			@Override
 			public void receiveDetections(@NonNull Detector.Detections<Barcode> detections) {
 				final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-				if(barcodes.size() > 0){
+				if (barcodes.size() > 0) {
 					Intent intent = new Intent();
+					intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 					intent.putExtra("barcode", barcodes.valueAt(0));
-					toneGen1.startTone(ToneGenerator.TONE_PROP_BEEP,  100);
+					toneGen1.startTone(ToneGenerator.TONE_PROP_BEEP, 100);
 					toneGen1.release();
 					setResult(CommonStatusCodes.SUCCESS, intent);
-
 					finish();
 				}
-
 			}
 		});
 	}

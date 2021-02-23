@@ -1,15 +1,30 @@
 package gov.alaska.gmchandheld;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
+
 public class Recode extends BaseActivity {
+
+	public static final String SHARED_PREFS = "sharedPrefs";
+
+	@Override
+	public void onRestart() {
+		super.onRestart();
+		this.recreate();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -20,10 +35,39 @@ public class Recode extends BaseActivity {
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
 
-		final EditText barcodeInput = findViewById(R.id.getOldBarcodeEditText);
-		final EditText newBarcodeInput = findViewById(R.id.getNewBarcodeEditText);
+		final EditText barcodeInput = findViewById(R.id.oldBarcodeET);
+		final EditText newBarcodeInput = findViewById(R.id.newBarcodeET);
 		final Button submit_button = findViewById(R.id.submit_button);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
+
+		SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
+
+		Button oldBarcodeCameraBtn = findViewById(R.id.oldBarcodeCameraBtn);
+		Button newBarcodeCameraBtn = findViewById(R.id.newBarcodeCameraBtn);
+
+		if(!cameraOn){
+			newBarcodeCameraBtn.setVisibility(View.GONE);
+			oldBarcodeCameraBtn.setVisibility(View.GONE);
+		}
+
+
+
+		oldBarcodeCameraBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(Recode.this, CameraToScanner.class);
+				startActivityForResult(intent, 1);
+			}
+		});
+
+		newBarcodeCameraBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(Recode.this, CameraToScanner.class);
+				startActivityForResult(intent, 2);
+			}
+		});
 
 
 		if (remoteApiUIHandler.isDownloading()) {
@@ -57,6 +101,39 @@ public class Recode extends BaseActivity {
 					return false;
 				}
 			});
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (Build.VERSION.SDK_INT < 24) {
+//			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+//			editText.setText(result.getContents());
+		} else {
+			switch (requestCode) {
+				case 1: {
+					if (resultCode == CommonStatusCodes.SUCCESS) {
+						Barcode barcode = data.getParcelableExtra("barcode");
+						EditText edit_text = findViewById(R.id.oldBarcodeET);
+						if (barcode != null) {
+							edit_text.setText(barcode.displayValue);
+						}
+					}
+					break;
+				}
+				case 2: {
+					if (resultCode == CommonStatusCodes.SUCCESS) {
+						Barcode barcode = data.getParcelableExtra("barcode");
+						EditText edit_text = findViewById(R.id.newBarcodeET);
+						if (barcode != null) {
+							edit_text.setText(barcode.displayValue);
+						}
+					}
+					break;
+				}
+				default:
+					super.onActivityResult(requestCode, resultCode, data);
+			}
 		}
 	}
 }

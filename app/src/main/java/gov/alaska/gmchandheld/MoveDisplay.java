@@ -1,5 +1,6 @@
 package gov.alaska.gmchandheld;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -13,7 +14,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -29,6 +32,7 @@ import java.util.Set;
 
 public class MoveDisplay extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
+	SharedPreferences.Editor editor;
 
 	private ListView containerListLV;
 	private ArrayList<String> containerList;
@@ -51,7 +55,7 @@ public class MoveDisplay extends BaseActivity {
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
 
-		final EditText moveContainerET = findViewById(R.id.moveContainerET);
+		final EditText itemET = findViewById(R.id.itemET);
 		final EditText moveDestinationET = findViewById(R.id.destinationET);
 		final TextView moveCountTV = findViewById(R.id.moveCountTV);
 		final Button move_button = findViewById(R.id.move_button);
@@ -66,62 +70,66 @@ public class MoveDisplay extends BaseActivity {
 		if (sp.getString(SHARED_PREFS, "savedDestination") != null) {
 			moveDestinationET.setText(sp.getString("savedDestination", ""));
 		}
+
 		if (sp.getStringSet("savedContainerList", null) != null) {
 			containerList = new ArrayList<>(sp.getStringSet("savedContainerList", null));
-
 			adapter.addAll(containerList);
-		} else {
+		}
+		else {
 			containerList = new ArrayList<>();
 		}
 
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);
+		Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
 		if(!cameraOn){
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+			params.weight = 7.0f;
+
+			itemET.setLayoutParams(params);
 			cameraBtn.setVisibility(View.GONE);
+			itemCameraBtn.setVisibility(View.GONE);
 		}
 
 		cameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
-				startActivityForResult(intent, 0);
+				startActivityForResult(intent, 1);
 			}
 		});
 
-
-		Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
-		if(!cameraOn){
-			itemCameraBtn.setVisibility(View.GONE);
-		}
 
 		itemCameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
-				startActivityForResult(intent, 0);
+				startActivityForResult(intent, 2);
 			}
 		});
+
 
 		add_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String container = moveContainerET.getText().toString();
-
+				String container = itemET.getText().toString();
 					if (!container.isEmpty()) {
 						if (!(container.equals(moveDestinationET.getText().toString()) && (!containerList.contains(container)))) {
 							containerList.add(0, container);
-							SharedPreferences.Editor editor = sp.edit();
+							editor = sp.edit();
 							String[] containerArray = containerList.toArray(new String[0]);
 							Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
 							editor.putStringSet("savedContainerList", containerSet).commit();
+
 							adapter.insert(container, 0);
 							adapter.notifyDataSetChanged();
 							moveCountTV.setText(String.valueOf(containerList.size()));
 						}
-						moveContainerET.setText("");
+						itemET.setText("");
 					}
-					moveContainerET.requestFocus();
+					itemET.requestFocus();
 				}
 
 		});
@@ -129,13 +137,13 @@ public class MoveDisplay extends BaseActivity {
 		clear_all_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String container = moveContainerET.getText().toString();
-				moveContainerET.setText("");
-				moveContainerET.requestFocus();
+				itemET.setText("");
+				itemET.requestFocus();
 				containerList.clear();
 				adapter.clear();
 				adapter.notifyDataSetChanged();
 				moveCountTV.setText(String.valueOf(containerList.size()));
+				sp.edit().remove("savedContainerList").commit();
 
 			}
 		});
@@ -168,12 +176,12 @@ public class MoveDisplay extends BaseActivity {
 			});
 
 			// KeyListener listens if enter is pressed
-			moveContainerET.setOnKeyListener(new View.OnKeyListener() {
+			itemET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					// if "enter" is pressed
 					if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
 						add_button.performClick();
-						moveContainerET.requestFocus();
+						itemET.requestFocus();
 						return true;
 					}
 					return false;
@@ -186,7 +194,7 @@ public class MoveDisplay extends BaseActivity {
 					if (!(TextUtils.isEmpty(moveDestinationET.getText()))) {
 						// if "enter" is pressed
 						if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-							moveContainerET.requestFocus();
+							itemET.requestFocus();
 							return true;
 						}
 					}
@@ -202,7 +210,7 @@ public class MoveDisplay extends BaseActivity {
 					if (checkConfiguration.checkConfiguration(MoveDisplay.this)) {
 						if (!(TextUtils.isEmpty(moveDestinationET.getText())) && (containerList.size() > 0)) {
 							moveContainer(moveDestinationET.getText().toString());
-							moveContainerET.setText("");
+							itemET.setText("");
 							moveDestinationET.setText("");
 							moveCountTV.setText("");
 							sp.edit().remove("savedContainerList").apply();
@@ -230,7 +238,7 @@ public class MoveDisplay extends BaseActivity {
 		final EditText moveDestinationET = findViewById(R.id.destinationET);
 
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor = sharedPreferences.edit();
 		editor.putStringSet("savedContainerList", containerSet);
 		editor.putString("savedDestination", moveDestinationET.getText().toString());
 		editor.apply();
@@ -244,17 +252,31 @@ public class MoveDisplay extends BaseActivity {
 //			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 //			editText.setText(result.getContents());
 		}else {
-			if (requestCode == 0) {
-				if (resultCode == CommonStatusCodes.SUCCESS) {
-					Barcode barcode = data.getParcelableExtra("barcode");
-					EditText edit_text = findViewById(R.id.destinationET);
-					if(barcode != null) {
-						edit_text.setText(barcode.displayValue);
+			switch (requestCode){
+				case 1: {
+					if (resultCode == CommonStatusCodes.SUCCESS) {
+						Barcode barcode = data.getParcelableExtra("barcode");
+						EditText edit_text = findViewById(R.id.destinationET);
+						if (barcode != null) {
+							edit_text.setText(barcode.displayValue);
+						}
 					}
+					break;
 				}
-			} else {
-				super.onActivityResult(requestCode, resultCode, data);
+				case 2:{
+					if (resultCode == CommonStatusCodes.SUCCESS) {
+						Barcode barcode = data.getParcelableExtra("barcode");
+						EditText edit_text = findViewById(R.id.itemET);
+						if(barcode != null) {
+							edit_text.setText(barcode.displayValue);
+						}
+					}
+					break;
+				}
+				default:
+					super.onActivityResult(requestCode, resultCode, data);
 			}
 		}
 	}
+
 }

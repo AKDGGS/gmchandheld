@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include
@@ -57,52 +57,88 @@
                     android:background="@android:color/darker_gray" />
 
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="@string/url_label"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:padding="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:padding="5dp"
+                    android:text="@string/url_label"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="10">
 
                     <EditText
-                        android:id="@+id/url_editText"
-                        android:layout_width="match_parent"
+                        android:id="@+id/urlET"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="8.75"
                         android:inputType="textUri"
                         android:selectAllOnFocus="true"
                         android:text=""
-                        android:textSize="14sp"
-                        android:padding="5dp"/>
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/urlCameraBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1.25"
+                        android:drawableBottom="@drawable/ic_scanner_qr" />
+                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@android:color/darker_gray" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="@string/api_key_label"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:padding="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/api_key_label"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="10">
 
                     <EditText
-                        android:id="@+id/api_editText"
-                        android:layout_width="match_parent"
+                        android:id="@+id/apiET"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:inputType="text"
+                        android:padding="5dp"
                         android:selectAllOnFocus="true"
                         android:text=""
                         android:textSize="14sp"
-                        android:padding="5dp"/>
+                        android:layout_weight="8.75"/>
+
+                    <Button
+                        android:id="@+id/apiCameraBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1.25"
+                        android:drawableBottom="@drawable/ic_scanner_qr" />
+                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -120,21 +156,21 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="3"
                         android:gravity="center_horizontal"
                         android:text="Camera to Scanner"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_weight="3"/>
+                        android:textStyle="bold" />
 
                     <ToggleButton
                         android:id="@+id/cameraToScannerBtn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textOn="On"
+                        android:layout_weight="1"
                         android:textOff="Off"
-                        android:layout_weight="1"/>
+                        android:textOn="On" />
                 </LinearLayout>
 
                 <View
@@ -148,26 +184,26 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="5dp"
-                    android:weightSum="3">
+                    android:weightSum="4">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="3"
                         android:gravity="center_horizontal"
                         android:text="Automatic Updates"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_weight="2"/>
+                        android:textStyle="bold" />
 
                     <ToggleButton
                         android:id="@+id/autoUpdateBtn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textOn="On"
+                        android:layout_weight="1"
                         android:textOff="Off"
-                        android:layout_weight="1"/>
+                        android:textOn="On" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -175,57 +211,56 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
 
-                    android:paddingRight="10dp"
                     android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:paddingBottom="20dp"
                     android:weightSum="6">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:gravity="center_horizontal"
                         android:text="@string/hour"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_weight="2"/>
+                        android:textStyle="bold" />
 
                     <EditText
                         android:id="@+id/hour_editText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
                         android:inputType="text"
+                        android:maxLines="1"
                         android:selectAllOnFocus="true"
                         android:text="24"
-                        android:textSize="14sp"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"/>
+                        android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:gravity="center_horizontal"
                         android:text="@string/minute"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_weight="2"/>
+                        android:textStyle="bold" />
 
                     <EditText
                         android:id="@+id/minute_editText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:inputType="text"
-                        android:selectAllOnFocus="true"
-                        android:text="0"
-                        android:textSize="14sp"
                         android:layout_weight="1"
                         android:gravity="center_horizontal"
-                        />
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:selectAllOnFocus="true"
+                        android:text="0"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <View
@@ -234,20 +269,20 @@
                     android:layout_marginHorizontal="10dp"
                     android:background="@android:color/darker_gray" />
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
                     <Button
                         android:id="@+id/updateBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Check for Updates"
-                        android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
-                        android:textSize="12sp"/>
+                        android:layout_centerVertical="true"
+                        android:text="Check for Updates"
+                        android:textSize="12sp" />
 
-            </RelativeLayout>
+                </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"

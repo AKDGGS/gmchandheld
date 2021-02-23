@@ -255,14 +255,14 @@ public class RemoteApiUIHandler {
 									case "MoveDisplay": {
 										EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
 										destinationET.setText(urlFirstParameter);
-										EditText moveContainerET = ((Activity) context).findViewById(R.id.moveContainerET);
+										EditText moveContainerET = ((Activity) context).findViewById(R.id.itemET);
 										moveContainerET.requestFocus();
 										break;
 									}
 									case "Recode": {
-										EditText oldBarcodeET = ((Activity) context).findViewById(R.id.getOldBarcodeEditText);
+										EditText oldBarcodeET = ((Activity) context).findViewById(R.id.oldBarcodeET);
 										oldBarcodeET.setText(urlFirstParameter);
-										EditText newBarcodeET = ((Activity) context).findViewById(R.id.getNewBarcodeEditText);
+										EditText newBarcodeET = ((Activity) context).findViewById(R.id.newBarcodeET);
 										oldBarcodeET.requestFocus();
 										break;
 									}
@@ -355,7 +355,7 @@ public class RemoteApiUIHandler {
 								break;
 							}
 							case "Recode": {
-								EditText oldBarcodeET = ((Activity) context).findViewById(R.id.getOldBarcodeEditText);
+								EditText oldBarcodeET = ((Activity) context).findViewById(R.id.oldBarcodeET);
 								oldBarcodeET.requestFocus();
 								Toast.makeText(context, "Recode successful.",
 										Toast.LENGTH_LONG).show();
