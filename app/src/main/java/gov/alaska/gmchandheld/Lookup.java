@@ -36,7 +36,6 @@ public class Lookup extends BaseActivity {
 	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	public static final String SHARED_PREFS = "sharedPrefs";
 	private EditText barcodeET;
-	private ToneGenerator toneGen1;
 	private IntentIntegrator qrScan;
 
 	// Storage Permissions
@@ -81,8 +80,8 @@ public class Lookup extends BaseActivity {
 
 		}else{
 			qrScan = new IntentIntegrator(this);
-			//toneGen1 doesn't work in the emulator.
-			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+			qrScan.setOrientationLocked(false);
+			qrScan.setBeepEnabled(true);
 		}
 
 		cameraBtn.setOnClickListener(new View.OnClickListener() {

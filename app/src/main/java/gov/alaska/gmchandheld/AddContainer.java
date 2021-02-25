@@ -24,7 +24,6 @@ import com.google.zxing.integration.android.IntentResult;
 public class AddContainer extends BaseActivity {
 
 	public static final String SHARED_PREFS = "sharedPrefs";
-	private ToneGenerator toneGen1;
 	private IntentIntegrator qrScan;
 	EditText addContainerBarcodeET;
 
@@ -64,8 +63,7 @@ public class AddContainer extends BaseActivity {
 			cameraBtn.setVisibility(View.GONE);
 		}else{
 			qrScan = new IntentIntegrator(this);
-			//toneGen1 doesn't work in the emulator.
-			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+			qrScan.setBeepEnabled(true);
 		}
 
 		cameraBtn.setOnClickListener(new View.OnClickListener() {

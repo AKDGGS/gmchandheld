@@ -31,7 +31,6 @@ public class Summary extends BaseActivity {
     private final LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
     public static final String SHARED_PREFS = "sharedPrefs";
     private EditText barcodeET;
-    private ToneGenerator toneGen1;
     private IntentIntegrator qrScan;
 
 
@@ -77,7 +76,7 @@ public class Summary extends BaseActivity {
             cameraBtn.setVisibility(View.GONE);
         }else{
             qrScan = new IntentIntegrator(this);
-            toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+            qrScan.setBeepEnabled(true);
         }
 
 
@@ -94,13 +93,6 @@ public class Summary extends BaseActivity {
             }
         });
 
-//        cameraBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(Summary.this, CameraToScanner.class);
-//                startActivityForResult(intent, 0);
-//            }
-//        });
 
         // Submit barcode query
         if (remoteApiUIHandler.isDownloading()) {

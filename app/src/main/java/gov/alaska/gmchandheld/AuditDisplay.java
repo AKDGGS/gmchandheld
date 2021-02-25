@@ -40,7 +40,6 @@ public class AuditDisplay extends BaseActivity {
 	private ListView auditContainerListLV;
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
-	private ToneGenerator toneGen1;
 	private IntentIntegrator remarkQrScan;
 	private IntentIntegrator itemQrScan;
 	private EditText auditRemarkET, auditItemET;
@@ -99,8 +98,9 @@ public class AuditDisplay extends BaseActivity {
 			itemCameraBtn.setVisibility(View.GONE);
 		}else{
 			remarkQrScan = new IntentIntegrator(this);
+			remarkQrScan.setBeepEnabled(true);
 			itemQrScan = new IntentIntegrator(this);
-			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+			itemQrScan.setBeepEnabled(true);
 		}
 
 

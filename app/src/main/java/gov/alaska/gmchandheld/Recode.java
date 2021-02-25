@@ -23,7 +23,6 @@ import com.google.zxing.integration.android.IntentResult;
 public class Recode extends BaseActivity {
 
 	public static final String SHARED_PREFS = "sharedPrefs";
-	private ToneGenerator toneGen1;
 	private IntentIntegrator oldBarcodeQrScan;
 	private IntentIntegrator newBarcodeQrScan;
 	private EditText oldBarcodeET, newBarcodeET;
@@ -59,11 +58,10 @@ public class Recode extends BaseActivity {
 			oldBarcodeCameraBtn.setVisibility(View.GONE);
 		}else{
 			oldBarcodeQrScan = new IntentIntegrator(this);
+			oldBarcodeQrScan.setBeepEnabled(true);
 			newBarcodeQrScan = new IntentIntegrator(this);
-			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+			newBarcodeQrScan.setBeepEnabled(true);
 		}
-
-
 
 		oldBarcodeCameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override

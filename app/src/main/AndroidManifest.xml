@@ -22,7 +22,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CameraToScanner"></activity>
+
+
         <activity
             android:name=".Lookup"
             android:label="@string/lookup"
@@ -35,6 +36,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".BaseActivity" />
+
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="fullSensor"
+            tools:replace="android:screenOrientation"
+            android:stateNotNeeded="true"/>
+
+        <activity
+            android:name=".CameraToScanner" />
+
         <activity
             android:name=".AddContainer"
             android:label="Add Container"

@@ -51,7 +51,6 @@ public class Configuration extends BaseActivity {
 	private ToggleButton cameraToScannerbtn;
 	public static final String CAMERA_ON = "cameraOn";
 
-	private ToneGenerator toneGen1;
 	private IntentIntegrator urlQrScan;
 	private IntentIntegrator apiQrScan;
 
@@ -106,8 +105,9 @@ public class Configuration extends BaseActivity {
 			apiCameraBtn.setVisibility(View.GONE);
 		}else{
 			urlQrScan = new IntentIntegrator(this);
+			urlQrScan.setBeepEnabled(true);
 			apiQrScan = new IntentIntegrator(this);
-			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+			apiQrScan.setBeepEnabled(true);
 		}
 
 		urlCameraBtn.setOnClickListener(new View.OnClickListener() {
