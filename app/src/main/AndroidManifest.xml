@@ -52,7 +52,8 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".AuditDisplay"
-            android:label="Audit" />
+            android:label="Audit"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".AddInventory"
             android:label="Add Inventory" />

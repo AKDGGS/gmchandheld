@@ -43,8 +43,6 @@ public class AuditDisplay extends BaseActivity {
 	private IntentIntegrator remarkQrScan;
 	private IntentIntegrator itemQrScan;
 	private EditText auditRemarkET, auditItemET;
-
-
 	int clicks = 0;  //used to count double clicks for deletion
 
 	@Override
@@ -114,7 +112,6 @@ public class AuditDisplay extends BaseActivity {
 					Intent intent = new Intent(AuditDisplay.this, CameraToScanner.class);
 					startActivityForResult(intent, 1);
 				}
-
 			}
 		});
 
@@ -129,7 +126,6 @@ public class AuditDisplay extends BaseActivity {
 					Intent intent = new Intent(AuditDisplay.this, CameraToScanner.class);
 					startActivityForResult(intent, 2);
 				}
-
 			}
 		});
 
@@ -186,6 +182,10 @@ public class AuditDisplay extends BaseActivity {
 							if (clicks == 2) {
 								adapter.remove(containerList.get(position));
 								containerList.remove(position);
+								editor = sp.edit();
+								String[] containerArray = containerList.toArray(new String[0]);
+								Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
+								editor.putStringSet("savedAuditContainerList", containerSet).commit();
 								adapter.notifyDataSetChanged();
 								auditCountTV.setText(String.valueOf(containerList.size()));
 							}
@@ -308,5 +308,4 @@ public class AuditDisplay extends BaseActivity {
 			}
 		}
 	}
-
 }

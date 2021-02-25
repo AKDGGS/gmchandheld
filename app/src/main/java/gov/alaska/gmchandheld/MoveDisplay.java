@@ -191,6 +191,10 @@ public class MoveDisplay extends BaseActivity {
 							if (clicks == 2) {
 								adapter.remove(containerList.get(position));
 								containerList.remove(position);
+								editor = sp.edit();
+								String[] containerArray = containerList.toArray(new String[0]);
+								Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
+								editor.putStringSet("savedContainerList", containerSet).commit();
 								adapter.notifyDataSetChanged();
 								moveCountTV.setText(String.valueOf(containerList.size()));
 							}

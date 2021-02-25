@@ -131,7 +131,7 @@ public class MoveContents extends BaseActivity {
 				case 1: {
 					moveContentsFromET = findViewById(R.id.fromET);
 					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
-					moveContentsToET.setText(result.getContents());
+					moveContentsFromET.setText(result.getContents());
 				}
 				break;
 				case 2:{
@@ -146,9 +146,9 @@ public class MoveContents extends BaseActivity {
 				case 1: {
 					if (resultCode == CommonStatusCodes.SUCCESS) {
 						Barcode barcode = data.getParcelableExtra("barcode");
-						EditText edit_text = findViewById(R.id.fromET);
+						EditText moveContentsFromET = findViewById(R.id.fromET);
 						if (barcode != null) {
-							edit_text.setText(barcode.displayValue);
+							moveContentsFromET.setText(barcode.displayValue);
 						}
 					}
 					break;
@@ -156,9 +156,9 @@ public class MoveContents extends BaseActivity {
 				case 2:{
 					if (resultCode == CommonStatusCodes.SUCCESS) {
 						Barcode barcode = data.getParcelableExtra("barcode");
-						EditText edit_text = findViewById(R.id.toET);
+						EditText moveContentsToET= findViewById(R.id.toET);
 						if(barcode != null) {
-							edit_text.setText(barcode.displayValue);
+							moveContentsToET.setText(barcode.displayValue);
 						}
 					}
 					break;
