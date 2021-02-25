@@ -3,6 +3,8 @@ package gov.alaska.gmchandheld;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -15,10 +17,16 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class Recode extends BaseActivity {
 
 	public static final String SHARED_PREFS = "sharedPrefs";
+	private ToneGenerator toneGen1;
+	private IntentIntegrator oldBarcodeQrScan;
+	private IntentIntegrator newBarcodeQrScan;
+	private EditText oldBarcodeET, newBarcodeET;
 
 	@Override
 	public void onRestart() {
@@ -37,7 +45,7 @@ public class Recode extends BaseActivity {
 
 		final EditText barcodeInput = findViewById(R.id.oldBarcodeET);
 		final EditText newBarcodeInput = findViewById(R.id.newBarcodeET);
-		final Button submit_button = findViewById(R.id.submit_button);
+		final Button submit_button = findViewById(R.id.submitBtn);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
 		SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
@@ -49,6 +57,10 @@ public class Recode extends BaseActivity {
 		if(!cameraOn){
 			newBarcodeCameraBtn.setVisibility(View.GONE);
 			oldBarcodeCameraBtn.setVisibility(View.GONE);
+		}else{
+			oldBarcodeQrScan = new IntentIntegrator(this);
+			newBarcodeQrScan = new IntentIntegrator(this);
+			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 		}
 
 
@@ -56,16 +68,27 @@ public class Recode extends BaseActivity {
 		oldBarcodeCameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(Recode.this, CameraToScanner.class);
-				startActivityForResult(intent, 1);
+				if (Build.VERSION.SDK_INT <= 24) {
+					Intent intent = oldBarcodeQrScan.createScanIntent();
+					startActivityForResult(intent, 1);
+				} else {
+					Intent intent = new Intent(Recode.this, CameraToScanner.class);
+					startActivityForResult(intent, 1);
+				}
 			}
 		});
 
 		newBarcodeCameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(Recode.this, CameraToScanner.class);
-				startActivityForResult(intent, 2);
+				if (Build.VERSION.SDK_INT <= 24) {
+					Intent intent = newBarcodeQrScan.createScanIntent();
+					startActivityForResult(intent, 2);
+				} else {
+					Intent intent = new Intent(Recode.this, CameraToScanner.class);
+					startActivityForResult(intent, 2);
+				}
+
 			}
 		});
 
@@ -106,9 +129,21 @@ public class Recode extends BaseActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		if (Build.VERSION.SDK_INT < 24) {
-//			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//			editText.setText(result.getContents());
+		if (Build.VERSION.SDK_INT <= 24) {
+			switch (requestCode){
+				case 1: {
+					oldBarcodeET = findViewById(R.id.oldBarcodeET);
+					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					oldBarcodeET.setText(result.getContents());
+				}
+				break;
+				case 2:{
+					newBarcodeET = findViewById(R.id.newBarcodeET);
+					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					newBarcodeET.setText(result.getContents());
+				}
+				break;
+			}
 		} else {
 			switch (requestCode) {
 				case 1: {

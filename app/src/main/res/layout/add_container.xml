@@ -48,7 +48,7 @@
                         android:gravity="center_vertical"/>
 
                     <EditText
-                        android:id="@+id/getBarcodeEditText"
+                        android:id="@+id/barcodeET"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
@@ -91,7 +91,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/getNameEditText"
+                        android:id="@+id/nameET"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
@@ -126,7 +126,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/getRemarkEditText"
+                        android:id="@+id/remarkET"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
@@ -155,7 +155,7 @@
         android:layout_weight="3">
 
         <Button
-            android:id="@+id/submit_button"
+            android:id="@+id/submitBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"

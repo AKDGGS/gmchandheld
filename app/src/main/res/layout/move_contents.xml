@@ -32,7 +32,7 @@
             android:textSize="12sp" />
 
         <EditText
-            android:id="@+id/sourceET"
+            android:id="@+id/fromET"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="7.25"
@@ -72,7 +72,7 @@
             android:textSize="12sp" />
 
         <EditText
-            android:id="@+id/destinationET"
+            android:id="@+id/toET"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="7.25"
@@ -99,7 +99,7 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/submit_button"
+            android:id="@+id/submitBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"

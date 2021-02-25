@@ -3,6 +3,8 @@ package gov.alaska.gmchandheld;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +24,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +40,10 @@ public class AuditDisplay extends BaseActivity {
 	private ListView auditContainerListLV;
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
+	private ToneGenerator toneGen1;
+	private IntentIntegrator remarkQrScan;
+	private IntentIntegrator itemQrScan;
+	private EditText auditRemarkET, auditItemET;
 
 
 	int clicks = 0;  //used to count double clicks for deletion
@@ -55,12 +63,12 @@ public class AuditDisplay extends BaseActivity {
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
 
-		final EditText itemET = findViewById(R.id.itemET);
-		final EditText auditRemarkET = findViewById(R.id.remarkET);
+		auditItemET = findViewById(R.id.itemET);
+		auditRemarkET = findViewById(R.id.remarkET);
 		final TextView auditCountTV = findViewById(R.id.auditCountTV);
-		final Button submit_button = findViewById(R.id.submit_button);
-		final Button add_button = findViewById(R.id.add_container_button);
-		final Button clear_all_button = findViewById(R.id.clear_all_button);
+		final Button submitBtn = findViewById(R.id.submitBtn);
+		final Button addBtn = findViewById(R.id.addContainerBtn);
+		final Button clearAllBtn = findViewById(R.id.clearAllBtn);
 		auditContainerListLV = findViewById(R.id.listViewGetContainersToAudit);
 
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
@@ -86,16 +94,27 @@ public class AuditDisplay extends BaseActivity {
 					LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
 			params.weight = 6.75f;
 
-			itemET.setLayoutParams(params);
+			auditItemET.setLayoutParams(params);
 			remarkCameraBtn.setVisibility(View.GONE);
 			itemCameraBtn.setVisibility(View.GONE);
+		}else{
+			remarkQrScan = new IntentIntegrator(this);
+			itemQrScan = new IntentIntegrator(this);
+			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 		}
+
 
 		remarkCameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(AuditDisplay.this, CameraToScanner.class);
-				startActivityForResult(intent, 1);
+				if (Build.VERSION.SDK_INT <= 24) {
+					Intent intent = remarkQrScan.createScanIntent();
+					startActivityForResult(intent, 1);
+				} else {
+					Intent intent = new Intent(AuditDisplay.this, CameraToScanner.class);
+					startActivityForResult(intent, 1);
+				}
+
 			}
 		});
 
@@ -103,15 +122,21 @@ public class AuditDisplay extends BaseActivity {
 		itemCameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(AuditDisplay.this, CameraToScanner.class);
-				startActivityForResult(intent, 2);
+				if (Build.VERSION.SDK_INT <= 24) {
+					Intent intent = itemQrScan.createScanIntent();
+					startActivityForResult(intent, 2);
+				} else {
+					Intent intent = new Intent(AuditDisplay.this, CameraToScanner.class);
+					startActivityForResult(intent, 2);
+				}
+
 			}
 		});
 
-		add_button.setOnClickListener(new View.OnClickListener() {
+		addBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String container = itemET.getText().toString();
+				String container = auditItemET.getText().toString();
 				if (!container.isEmpty() && !containerList.contains(container)) {
 					containerList.add(0, container);
 					editor = sp.edit();
@@ -122,18 +147,18 @@ public class AuditDisplay extends BaseActivity {
 					adapter.notifyDataSetChanged();
 					auditCountTV.setText(String.valueOf(containerList.size()));
 				}
-				itemET.setText("");
-				itemET.requestFocus();
+				auditItemET.setText("");
+				auditItemET.requestFocus();
 			}
 
 		});
 
 
-		clear_all_button.setOnClickListener(new View.OnClickListener() {
+		clearAllBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				itemET.setText("");
-				itemET.requestFocus();
+				auditItemET.setText("");
+				auditItemET.requestFocus();
 				containerList.clear();
 				adapter.clear();
 				adapter.notifyDataSetChanged();
@@ -171,12 +196,12 @@ public class AuditDisplay extends BaseActivity {
 			});
 
 			// KeyListener listens if enter is pressed
-			itemET.setOnKeyListener(new View.OnKeyListener() {
+			auditItemET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					// if "enter" is pressed
 					if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-						add_button.performClick();
-						itemET.requestFocus();
+						addBtn.performClick();
+						auditItemET.requestFocus();
 						return true;
 					}
 					return false;
@@ -189,7 +214,7 @@ public class AuditDisplay extends BaseActivity {
 					if (!(TextUtils.isEmpty(auditRemarkET.getText()))) {
 						// if "enter" is pressed
 						if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-							itemET.requestFocus();
+							auditItemET.requestFocus();
 							return true;
 						}
 					}
@@ -198,14 +223,14 @@ public class AuditDisplay extends BaseActivity {
 			});
 
 			// onClickListener listens if the submit button is clicked
-			submit_button.setOnClickListener(new View.OnClickListener() {
+			submitBtn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					CheckConfiguration checkConfiguration = new CheckConfiguration();
 					if (checkConfiguration.checkConfiguration(AuditDisplay.this)) {
 						if ((containerList.size() > 0)) {
 							auditContainerFn(auditRemarkET.getText().toString());
-							itemET.setText("");
+							auditItemET.setText("");
 							auditRemarkET.setText("");
 							auditCountTV.setText("");
 							sp.edit().remove("savedAuditContainerList").apply();
@@ -241,9 +266,21 @@ public class AuditDisplay extends BaseActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		if (Build.VERSION.SDK_INT < 24) {
-//			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//			editText.setText(result.getContents());
+		if (Build.VERSION.SDK_INT <= 24) {
+			switch (requestCode){
+				case 1: {
+					auditRemarkET = findViewById(R.id.remarkET);
+					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					auditRemarkET.setText(result.getContents());
+				}
+				break;
+				case 2:{
+					auditItemET = findViewById(R.id.itemET);
+					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					auditItemET.setText(result.getContents());
+				}
+				break;
+			}
 		} else {
 			switch (requestCode) {
 				case 1: {

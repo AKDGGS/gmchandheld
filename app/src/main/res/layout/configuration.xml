@@ -228,7 +228,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/hour_editText"
+                        android:id="@+id/hourET"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -251,7 +251,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/minute_editText"
+                        android:id="@+id/minuteET"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

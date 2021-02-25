@@ -1,9 +1,10 @@
 package gov.alaska.gmchandheld;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -24,6 +24,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +39,12 @@ public class MoveDisplay extends BaseActivity {
 	private ListView containerListLV;
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
+	private EditText destinationET;
+	private EditText itemET;
+	private ToneGenerator toneGen1;
+	private IntentIntegrator destinationQrScan;
+	private IntentIntegrator itemQrScan;
+
 
 	int clicks = 0;  //used to count double clicks for deletion
 
@@ -55,20 +63,20 @@ public class MoveDisplay extends BaseActivity {
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
 
-		final EditText itemET = findViewById(R.id.itemET);
-		final EditText moveDestinationET = findViewById(R.id.destinationET);
+		itemET = findViewById(R.id.itemET);
+		destinationET = findViewById(R.id.toET);
 		final TextView moveCountTV = findViewById(R.id.moveCountTV);
-		final Button move_button = findViewById(R.id.move_button);
-		final Button add_button = findViewById(R.id.add_container_button);
-		final Button clear_all_button = findViewById(R.id.clear_all_button);
-		containerListLV = findViewById(R.id.listViewGetContainersToMove);
+		final Button moveBtn = findViewById(R.id.moveBtn);
+		final Button addBtn = findViewById(R.id.addContainerBtn);
+		final Button clearAllBtn = findViewById(R.id.clearAllBtn);
+		containerListLV = findViewById(R.id.listViewContainersToMove);
 
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		containerListLV.setAdapter(adapter);
 
 		final SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		if (sp.getString(SHARED_PREFS, "savedDestination") != null) {
-			moveDestinationET.setText(sp.getString("savedDestination", ""));
+			destinationET.setText(sp.getString("savedDestination", ""));
 		}
 
 		if (sp.getStringSet("savedContainerList", null) != null) {
@@ -91,13 +99,23 @@ public class MoveDisplay extends BaseActivity {
 			itemET.setLayoutParams(params);
 			cameraBtn.setVisibility(View.GONE);
 			itemCameraBtn.setVisibility(View.GONE);
+		}else{
+			destinationQrScan = new IntentIntegrator(this);
+			itemQrScan = new IntentIntegrator(this);
+			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 		}
+
 
 		cameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
-				startActivityForResult(intent, 1);
+				if (Build.VERSION.SDK_INT <= 24) {
+					Intent intent = destinationQrScan.createScanIntent();
+					startActivityForResult(intent, 1);
+				} else {
+					Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
+					startActivityForResult(intent, 1);
+				}
 			}
 		});
 
@@ -105,18 +123,25 @@ public class MoveDisplay extends BaseActivity {
 		itemCameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
-				startActivityForResult(intent, 2);
+
+				if (Build.VERSION.SDK_INT <= 24) {
+					Intent intent = destinationQrScan.createScanIntent();
+					startActivityForResult(intent, 2);
+				} else {
+					Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
+					startActivityForResult(intent, 2);
+				}
+
 			}
 		});
 
 
-		add_button.setOnClickListener(new View.OnClickListener() {
+		addBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				String container = itemET.getText().toString();
 					if (!container.isEmpty()) {
-						if (!(container.equals(moveDestinationET.getText().toString()) && (!containerList.contains(container)))) {
+						if (!(container.equals(destinationET.getText().toString()) && (!containerList.contains(container)))) {
 							containerList.add(0, container);
 							editor = sp.edit();
 							String[] containerArray = containerList.toArray(new String[0]);
@@ -134,7 +159,7 @@ public class MoveDisplay extends BaseActivity {
 
 		});
 
-		clear_all_button.setOnClickListener(new View.OnClickListener() {
+		clearAllBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				itemET.setText("");
@@ -180,7 +205,7 @@ public class MoveDisplay extends BaseActivity {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					// if "enter" is pressed
 					if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-						add_button.performClick();
+						addBtn.performClick();
 						itemET.requestFocus();
 						return true;
 					}
@@ -189,9 +214,9 @@ public class MoveDisplay extends BaseActivity {
 			});
 
 			// KeyListener listens if enter is pressed
-			moveDestinationET.setOnKeyListener(new View.OnKeyListener() {
+			destinationET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					if (!(TextUtils.isEmpty(moveDestinationET.getText()))) {
+					if (!(TextUtils.isEmpty(destinationET.getText()))) {
 						// if "enter" is pressed
 						if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
 							itemET.requestFocus();
@@ -203,15 +228,15 @@ public class MoveDisplay extends BaseActivity {
 			});
 
 			// onClickListener listens if the submit button is clicked
-			move_button.setOnClickListener(new View.OnClickListener() {
+			moveBtn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					CheckConfiguration checkConfiguration = new CheckConfiguration();
 					if (checkConfiguration.checkConfiguration(MoveDisplay.this)) {
-						if (!(TextUtils.isEmpty(moveDestinationET.getText())) && (containerList.size() > 0)) {
-							moveContainer(moveDestinationET.getText().toString());
+						if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
+							moveContainer(destinationET.getText().toString());
 							itemET.setText("");
-							moveDestinationET.setText("");
+							destinationET.setText("");
 							moveCountTV.setText("");
 							sp.edit().remove("savedContainerList").apply();
 							sp.edit().remove("savedDestination").apply();
@@ -235,7 +260,7 @@ public class MoveDisplay extends BaseActivity {
 	public void onBackPressed() {
 		String[] containerArray = containerList.toArray(new String[0]);
 		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-		final EditText moveDestinationET = findViewById(R.id.destinationET);
+		final EditText moveDestinationET = findViewById(R.id.toET);
 
 		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		editor = sharedPreferences.edit();
@@ -248,17 +273,31 @@ public class MoveDisplay extends BaseActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		if (Build.VERSION.SDK_INT < 24) {
-//			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//			editText.setText(result.getContents());
+		if (Build.VERSION.SDK_INT <= 24) {
+
+			switch (requestCode){
+				case 1: {
+					destinationET = findViewById(R.id.toET);
+					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					destinationET.setText(result.getContents());
+				}
+				break;
+				case 2:{
+					itemET = findViewById(R.id.itemET);
+					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					itemET.setText(result.getContents());
+				}
+				break;
+			}
+
 		}else {
 			switch (requestCode){
 				case 1: {
 					if (resultCode == CommonStatusCodes.SUCCESS) {
 						Barcode barcode = data.getParcelableExtra("barcode");
-						EditText edit_text = findViewById(R.id.destinationET);
+						EditText destinationEt = findViewById(R.id.toET);
 						if (barcode != null) {
-							edit_text.setText(barcode.displayValue);
+							destinationEt.setText(barcode.displayValue);
 						}
 					}
 					break;
@@ -266,9 +305,9 @@ public class MoveDisplay extends BaseActivity {
 				case 2:{
 					if (resultCode == CommonStatusCodes.SUCCESS) {
 						Barcode barcode = data.getParcelableExtra("barcode");
-						EditText edit_text = findViewById(R.id.itemET);
+						EditText itemEt = findViewById(R.id.itemET);
 						if(barcode != null) {
-							edit_text.setText(barcode.displayValue);
+							itemEt.setText(barcode.displayValue);
 						}
 					}
 					break;
@@ -278,5 +317,4 @@ public class MoveDisplay extends BaseActivity {
 			}
 		}
 	}
-
 }

@@ -106,7 +106,7 @@ public class RemoteApiUIHandler {
 						switch (context.getClass().getSimpleName()) {
 							case "Lookup": {
 								lastAddedToHistory(context, urlFirstParameter);
-								ListView listView = ((Activity) context).findViewById(R.id.listViewGetBarcodeHistory);
+								ListView listView = ((Activity) context).findViewById(R.id.listViewBarcodeHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(lookupHistory);
 								adapter.notifyDataSetChanged();
@@ -115,7 +115,7 @@ public class RemoteApiUIHandler {
 							}
 							case "Summary": {
 								lastAddedToHistory(context, urlFirstParameter);
-								ListView listView = ((Activity) context).findViewById(R.id.listViewGetSummaryHistory);
+								ListView listView = ((Activity) context).findViewById(R.id.listViewSummaryHistory);
 								ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
 								adapter.addAll(summaryHistory);
 								adapter.notifyDataSetChanged();
@@ -231,7 +231,7 @@ public class RemoteApiUIHandler {
 								switch (context.getClass().getSimpleName()) {
 									case "Lookup":
 									case "Summary": {
-										EditText getBarcodeEditText = ((Activity) context).findViewById(R.id.getBarcodeEditText);
+										EditText getBarcodeEditText = ((Activity) context).findViewById(R.id.barcodeET);
 										getBarcodeEditText.setText("");
 										getBarcodeEditText.requestFocus();
 										break;
@@ -245,15 +245,15 @@ public class RemoteApiUIHandler {
 										break;
 									}
 									case "MoveContents": {
-										EditText sourceET = ((Activity) context).findViewById(R.id.sourceET);
+										EditText sourceET = ((Activity) context).findViewById(R.id.fromET);
 										sourceET.setText(urlFirstParameter);
-										EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
+										EditText destinationET = ((Activity) context).findViewById(R.id.toET);
 										destinationET.setText(destinationBarcode);
 										destinationET.requestFocus();
 										break;
 									}
 									case "MoveDisplay": {
-										EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
+										EditText destinationET = ((Activity) context).findViewById(R.id.toET);
 										destinationET.setText(urlFirstParameter);
 										EditText moveContainerET = ((Activity) context).findViewById(R.id.itemET);
 										moveContainerET.requestFocus();
@@ -327,13 +327,13 @@ public class RemoteApiUIHandler {
 							}
 							case "MoveDisplay": {
 								containerList.clear();
-								ListView containerListLV = ((Activity) context).findViewById(R.id.listViewGetContainersToMove);
+								ListView containerListLV = ((Activity) context).findViewById(R.id.listViewContainersToMove);
 								ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
 								adapter.clear();
 								adapter.notifyDataSetChanged();
 								Toast.makeText(context, "The move was successful.",
 										Toast.LENGTH_LONG).show();
-								EditText destinationET = ((Activity) context).findViewById(R.id.destinationET);
+								EditText destinationET = ((Activity) context).findViewById(R.id.toET);
 								destinationET.requestFocus();
 								break;
 							}

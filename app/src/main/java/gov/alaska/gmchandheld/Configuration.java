@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -24,6 +26,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -47,13 +51,17 @@ public class Configuration extends BaseActivity {
 	private ToggleButton cameraToScannerbtn;
 	public static final String CAMERA_ON = "cameraOn";
 
+	private ToneGenerator toneGen1;
+	private IntentIntegrator urlQrScan;
+	private IntentIntegrator apiQrScan;
+
 	private EditText hourInput;
 	private EditText minuteInput;
 	private String hour = "24";
 	private String minute = "0";
 
-	private EditText urlInput;
-	private EditText apiInput;
+	private EditText urlET;
+	private EditText apiET;
 	private String url;
 	private String apiKey;
 
@@ -78,12 +86,12 @@ public class Configuration extends BaseActivity {
 		TextView buildDateTV = findViewById(R.id.buildDateTV);
 		buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
 
-		urlInput = findViewById(R.id.urlET);
-		urlInput.requestFocus();
-		apiInput = findViewById(R.id.apiET);
+		urlET = findViewById(R.id.urlET);
+		urlET.requestFocus();
+		apiET = findViewById(R.id.apiET);
 		autoUpdatebtn = findViewById(R.id.autoUpdateBtn);
-		hourInput = findViewById(R.id.hour_editText);
-		minuteInput = findViewById(R.id.minute_editText);
+		hourInput = findViewById(R.id.hourET);
+		minuteInput = findViewById(R.id.minuteET);
 
 		cameraToScannerbtn = findViewById(R.id.cameraToScannerBtn);
 
@@ -96,21 +104,35 @@ public class Configuration extends BaseActivity {
 		if(!cameraOn){
 			urlCameraBtn.setVisibility(View.GONE);
 			apiCameraBtn.setVisibility(View.GONE);
+		}else{
+			urlQrScan = new IntentIntegrator(this);
+			apiQrScan = new IntentIntegrator(this);
+			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 		}
 
 		urlCameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(Configuration.this, CameraToScanner.class);
-				startActivityForResult(intent, 1);
+				if (Build.VERSION.SDK_INT <= 24) {
+					Intent intent = urlQrScan.createScanIntent();
+					startActivityForResult(intent, 1);
+				} else {
+					Intent intent = new Intent(Configuration.this, CameraToScanner.class);
+					startActivityForResult(intent, 1);
+				}
 			}
 		});
 
 		apiCameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(Configuration.this, CameraToScanner.class);
-				startActivityForResult(intent, 2);
+				if (Build.VERSION.SDK_INT <= 24) {
+					Intent intent = apiQrScan.createScanIntent();
+					startActivityForResult(intent, 2);
+				} else {
+					Intent intent = new Intent(Configuration.this, CameraToScanner.class);
+					startActivityForResult(intent, 2);
+				}
 			}
 		});
 
@@ -187,7 +209,7 @@ public class Configuration extends BaseActivity {
 									alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
 								} else {
 									alarmOffTime.set(Calendar.HOUR_OF_DAY, 24);
-									hourInput = findViewById(R.id.hour_editText);
+									hourInput = findViewById(R.id.hourET);
 									hourInput.setText("24");
 								}
 
@@ -195,7 +217,7 @@ public class Configuration extends BaseActivity {
 									alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
 								} else {
 									alarmOffTime.set(Calendar.MINUTE, 0);
-									minuteInput = findViewById(R.id.minute_editText);
+									minuteInput = findViewById(R.id.minuteET);
 									minuteInput.setText("0");
 								}
 								alarmOffTime.set(Calendar.SECOND, 0);
@@ -224,7 +246,7 @@ public class Configuration extends BaseActivity {
 
 	private void apiInputChangeWatcher() {
 
-		apiInput.addTextChangedListener(new TextWatcher() {
+		apiET.addTextChangedListener(new TextWatcher() {
 			SharedPreferences.Editor editor = sp.edit();
 
 			@Override
@@ -245,7 +267,7 @@ public class Configuration extends BaseActivity {
 
 	private void urlInputChangeWatcher() {
 
-		urlInput.addTextChangedListener(new TextWatcher() {
+		urlET.addTextChangedListener(new TextWatcher() {
 			SharedPreferences.Editor editor = sp.edit();
 
 			@Override
@@ -265,8 +287,8 @@ public class Configuration extends BaseActivity {
 	}
 
 	public String getUrl() {
-		urlInput = findViewById(R.id.urlET);
-		url = urlInput.getText().toString();
+		urlET = findViewById(R.id.urlET);
+		url = urlET.getText().toString();
 		if (url.length() > 1 && url.charAt(url.length() - 1) != ('/')) {
 			url = url + '/';
 		}
@@ -274,8 +296,8 @@ public class Configuration extends BaseActivity {
 	}
 
 	public String getApiKey() {
-		apiInput = findViewById(R.id.apiET);
-		return apiInput.getText().toString();
+		apiET = findViewById(R.id.apiET);
+		return apiET.getText().toString();
 	}
 
 	public void saveData() {
@@ -301,8 +323,8 @@ public class Configuration extends BaseActivity {
 	}
 
 	public void updateViews() {
-		urlInput.setText(url);
-		apiInput.setText(apiKey);
+		urlET.setText(url);
+		apiET.setText(apiKey);
 		hourInput.setText(hour);
 		minuteInput.setText(minute);
 		autoUpdatebtn.setChecked(alarmUp);
@@ -360,9 +382,21 @@ public class Configuration extends BaseActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		if (Build.VERSION.SDK_INT < 24) {
-//			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//			editText.setText(result.getContents());
+		if (Build.VERSION.SDK_INT <= 24) {
+			switch (requestCode){
+				case 1: {
+					urlET = findViewById(R.id.urlET);
+					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					urlET.setText(result.getContents());
+				}
+				break;
+				case 2:{
+					apiET = findViewById(R.id.apiET);
+					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					apiET.setText(result.getContents());
+				}
+				break;
+			}
 		} else {
 			switch (requestCode) {
 				case 1: {

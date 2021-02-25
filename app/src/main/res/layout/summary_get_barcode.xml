@@ -21,7 +21,7 @@
         android:weightSum="8">
 
         <EditText
-            android:id="@+id/getBarcodeEditText"
+            android:id="@+id/barcodeET"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -65,7 +65,7 @@
             android:orientation="vertical">
 
             <ListView
-                android:id="@+id/listViewGetSummaryHistory"
+                android:id="@+id/listViewSummaryHistory"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
@@ -76,7 +76,7 @@
 
 
             <Button
-                android:id="@+id/submitButton"
+                android:id="@+id/submitBtn"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"

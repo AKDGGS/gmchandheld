@@ -1,7 +1,6 @@
 package gov.alaska.gmchandheld;
 
 import android.Manifest;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,18 +10,13 @@ import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -34,18 +28,15 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Calendar;
 import java.util.LinkedList;
 
 
 public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-	private EditText barcodeInput;
 	public static final String SHARED_PREFS = "sharedPrefs";
+	private EditText barcodeET;
 	private ToneGenerator toneGen1;
-
-	//qr code scanner object
 	private IntentIntegrator qrScan;
 
 	// Storage Permissions
@@ -60,7 +51,7 @@ public class Lookup extends BaseActivity {
 	public void onRestart() {
 		super.onRestart();
 		this.recreate();
-		EditText barcodeInput = findViewById(R.id.getBarcodeEditText);
+		EditText barcodeInput = findViewById(R.id.barcodeET);
 		barcodeInput.selectAll();
 	}
 
@@ -72,7 +63,7 @@ public class Lookup extends BaseActivity {
 		loadLookup();
 	}
 
-	public void loadLookup(){
+	public void loadLookup() {
 		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
 
 		deleteApkFile();
@@ -85,19 +76,19 @@ public class Lookup extends BaseActivity {
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);
-		if(!cameraOn){
+		if (!cameraOn) {
 			cameraBtn.setVisibility(View.GONE);
+
+		}else{
+			qrScan = new IntentIntegrator(this);
+			//toneGen1 doesn't work in the emulator.
+			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 		}
-
-		//intializing scan object
-		qrScan = new IntentIntegrator(this);
-
-		toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 
 		cameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (Build.VERSION.SDK_INT < 24) {
+				if (Build.VERSION.SDK_INT <= 24) {
 					qrScan.initiateScan();
 				} else {
 					Intent intent = new Intent(Lookup.this, CameraToScanner.class);
@@ -106,12 +97,12 @@ public class Lookup extends BaseActivity {
 			}
 		});
 
-		barcodeInput = findViewById(R.id.getBarcodeEditText);
-		final Button submit_button = findViewById(R.id.submit_button);
+		barcodeET = findViewById(R.id.barcodeET);
+		final Button submitBtn = findViewById(R.id.submitBtn);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
 		// populates the history list
-		listView = findViewById(R.id.listViewGetBarcodeHistory);
+		listView = findViewById(R.id.listViewBarcodeHistory);
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		adapter.addAll(lookupHistory);
 		adapter.notifyDataSetChanged();
@@ -120,14 +111,14 @@ public class Lookup extends BaseActivity {
 		// Submit barcode query
 		if (remoteApiUIHandler.isDownloading()) {
 			// onClickListener listens if the submit button is clicked
-			submit_button.setOnClickListener(new View.OnClickListener() {
+			submitBtn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					CheckConfiguration checkConfiguration = new CheckConfiguration();
 					if (checkConfiguration.checkConfiguration(Lookup.this)) {
-						if (!barcodeInput.getText().toString().isEmpty()) {
+						if (!barcodeET.getText().toString().isEmpty()) {
 							remoteApiUIHandler.setDownloading(true);
-							RemoteApiUIHandler.setUrlFirstParameter(barcodeInput.getText().toString());
+							RemoteApiUIHandler.setUrlFirstParameter(barcodeET.getText().toString());
 							remoteApiUIHandler.processDataForDisplay(Lookup.this);
 						}
 					}
@@ -135,13 +126,12 @@ public class Lookup extends BaseActivity {
 			});
 
 
-
 			// KeyListener listens if enter is pressed
-			barcodeInput.setOnKeyListener(new View.OnKeyListener() {
+			barcodeET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					// if "enter" is pressed
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-						submit_button.performClick();
+						submitBtn.performClick();
 						return true;
 					}
 					return false;
@@ -152,8 +142,8 @@ public class Lookup extends BaseActivity {
 			listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					barcodeInput.setText(listView.getItemAtPosition(position).toString());
-					submit_button.performClick();
+					barcodeET.setText(listView.getItemAtPosition(position).toString());
+					submitBtn.performClick();
 				}
 			});
 		}
@@ -197,10 +187,10 @@ public class Lookup extends BaseActivity {
 		return super.dispatchKeyEvent(event);
 	}
 
-	private void deleteApkFile(){
+	private void deleteApkFile() {
 		File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
 
-		if(dir.exists()) {
+		if (dir.exists()) {
 			File[] files = dir.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
@@ -208,7 +198,7 @@ public class Lookup extends BaseActivity {
 				}
 			});
 
-			if(files != null && files.length > 0) {
+			if (files != null && files.length > 0) {
 				for (File f : files) {
 					f.delete();
 				}
@@ -218,16 +208,15 @@ public class Lookup extends BaseActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		if (Build.VERSION.SDK_INT < 24) {
-			System.out.println("Less than 24");
-			barcodeInput = findViewById(R.id.getBarcodeEditText);
+		if (Build.VERSION.SDK_INT <= 24) {
+			barcodeET = findViewById(R.id.barcodeET);
 			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-			barcodeInput.setText(result.getContents());
-		}else {
+			barcodeET.setText(result.getContents());
+		} else {
 			if (requestCode == 0) {
 				if (resultCode == CommonStatusCodes.SUCCESS) {
 					Barcode barcode = data.getParcelableExtra("barcode");
-					EditText edit_text = findViewById(R.id.getBarcodeEditText);
+					EditText edit_text = findViewById(R.id.barcodeET);
 					edit_text.setText(barcode.displayValue);
 				}
 			} else {
@@ -235,6 +224,7 @@ public class Lookup extends BaseActivity {
 			}
 		}
 	}
+
 
 }
 
