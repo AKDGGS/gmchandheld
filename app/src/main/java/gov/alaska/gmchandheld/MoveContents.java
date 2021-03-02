@@ -23,7 +23,6 @@ public class MoveContents extends BaseActivity {
 
 	public static final String SHARED_PREFS = "sharedPrefs";
 	private IntentIntegrator fromQrScan;
-	private IntentIntegrator toQrScan;
 	private EditText moveContentsFromET, moveContentsToET;
 
 	@Override
@@ -83,7 +82,7 @@ public class MoveContents extends BaseActivity {
 		}else{
 			fromQrScan = new IntentIntegrator(this);
 			fromQrScan.setBeepEnabled(true);
-			toQrScan = new IntentIntegrator(this);
+			IntentIntegrator toQrScan = new IntentIntegrator(this);
 			toQrScan.setBeepEnabled(true);
 		}
 

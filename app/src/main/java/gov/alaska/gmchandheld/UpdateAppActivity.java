@@ -2,12 +2,9 @@ package gov.alaska.gmchandheld;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import java.util.concurrent.ExecutionException;
 
 public class UpdateAppActivity extends AppCompatActivity {
 

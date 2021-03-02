@@ -3,8 +3,6 @@ package gov.alaska.gmchandheld;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,7 +35,6 @@ public class AuditDisplay extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
 	private SharedPreferences.Editor editor;
 
-	private ListView auditContainerListLV;
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
 	private IntentIntegrator remarkQrScan;
@@ -66,7 +63,7 @@ public class AuditDisplay extends BaseActivity {
 		final Button submitBtn = findViewById(R.id.submitBtn);
 		final Button addBtn = findViewById(R.id.addContainerBtn);
 		final Button clearAllBtn = findViewById(R.id.clearAllBtn);
-		auditContainerListLV = findViewById(R.id.listViewGetContainersToAudit);
+		ListView auditContainerListLV = findViewById(R.id.listViewGetContainersToAudit);
 
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		auditContainerListLV.setAdapter(adapter);

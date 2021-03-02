@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -77,7 +76,7 @@ public class Lookup extends BaseActivity {
 		if (!cameraOn) {
 			cameraBtn.setVisibility(View.GONE);
 
-		}else{
+		} else {
 			qrScan = new IntentIntegrator(this);
 			qrScan.setOrientationLocked(false);
 			qrScan.setBeepEnabled(true);
@@ -211,10 +210,10 @@ public class Lookup extends BaseActivity {
 			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 			barcodeET.setText(result.getContents());
 		} else {
-			if (requestCode == 0) {
-				if (resultCode == CommonStatusCodes.SUCCESS) {
-					Barcode barcode = data.getParcelableExtra("barcode");
-					EditText edit_text = findViewById(R.id.barcodeET);
+			if (resultCode == CommonStatusCodes.SUCCESS) {
+				Barcode barcode = data.getParcelableExtra("barcode");
+				EditText edit_text = findViewById(R.id.barcodeET);
+				if (null != barcode.displayValue) {
 					edit_text.setText(barcode.displayValue);
 				}
 			} else {

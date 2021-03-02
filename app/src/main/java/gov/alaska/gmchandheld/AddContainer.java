@@ -3,8 +3,6 @@ package gov.alaska.gmchandheld;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -117,12 +115,11 @@ public class AddContainer extends BaseActivity {
 			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 			addContainerBarcodeET.setText(result.getContents());
 		}else {
-			if (requestCode == 0) {
-				if (resultCode == CommonStatusCodes.SUCCESS) {
-					Barcode barcode = data.getParcelableExtra("barcode");
-					EditText edit_text = findViewById(R.id.barcodeET);
-					edit_text.setText(barcode.displayValue);
-				}
+			if (resultCode == CommonStatusCodes.SUCCESS) {
+				Barcode barcode = data.getParcelableExtra("barcode");
+				EditText edit_text = findViewById(R.id.barcodeET);
+				assert barcode != null;
+				edit_text.setText(barcode.displayValue);
 			} else {
 				super.onActivityResult(requestCode, resultCode, data);
 			}

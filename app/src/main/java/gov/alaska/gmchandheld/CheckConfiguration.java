@@ -12,13 +12,11 @@ public class CheckConfiguration {
 	public static final String SHARED_PREFS = "sharedPrefs";
 	public static final String URL_TEXT = "urlText";
 	public static final String API_TEXT = "apiText";
-	private String url;
-	private String apiKey;
 
 	public boolean checkConfiguration(final Context mContext) {
 		SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		url = sharedPreferences.getString(URL_TEXT, "");
-		apiKey = sharedPreferences.getString(API_TEXT, "");
+		String url = sharedPreferences.getString(URL_TEXT, "");
+		String apiKey = sharedPreferences.getString(API_TEXT, "");
 
 		if ((url.isEmpty()) || (apiKey.isEmpty())) {
 			// setup the alert builder

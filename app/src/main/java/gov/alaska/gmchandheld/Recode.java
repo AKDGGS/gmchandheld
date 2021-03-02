@@ -3,8 +3,6 @@ package gov.alaska.gmchandheld;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -25,7 +23,6 @@ public class Recode extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
 	private IntentIntegrator oldBarcodeQrScan;
 	private IntentIntegrator newBarcodeQrScan;
-	private EditText oldBarcodeET, newBarcodeET;
 
 	@Override
 	public void onRestart() {
@@ -128,13 +125,13 @@ public class Recode extends BaseActivity {
 		if (Build.VERSION.SDK_INT <= 24) {
 			switch (requestCode){
 				case 1: {
-					oldBarcodeET = findViewById(R.id.oldBarcodeET);
+					EditText oldBarcodeET = findViewById(R.id.oldBarcodeET);
 					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
 					oldBarcodeET.setText(result.getContents());
 				}
 				break;
 				case 2:{
-					newBarcodeET = findViewById(R.id.newBarcodeET);
+					EditText newBarcodeET = findViewById(R.id.newBarcodeET);
 					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
 					newBarcodeET.setText(result.getContents());
 				}

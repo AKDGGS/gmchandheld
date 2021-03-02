@@ -144,10 +144,10 @@ public class RemoteApiDownload {
 
 					StringBuilder sb = new StringBuilder();
 					if(source != null) {
-						sb.append("src=" + source);
+						sb.append("src=").append(source);
 					}
 					if(destination != null){
-						sb.append("&dest=" + destination);
+						sb.append("&dest=").append(destination);
 					}
 
 					QUERYPARAM = sb.toString();
@@ -182,13 +182,13 @@ public class RemoteApiDownload {
 
 					StringBuilder sb = new StringBuilder();
 					if(barcode != null) {
-						sb.append("barcode=" + barcode);
+						sb.append("barcode=").append(barcode);
 					}
 					if(name != null){
-						sb.append("&name=" + name);
+						sb.append("&name=").append(name);
 					}
 					if(remark != null){
-						sb.append("&remark=" + remark);
+						sb.append("&remark=").append(remark);
 					}
 
 
@@ -223,10 +223,10 @@ public class RemoteApiDownload {
 
 					StringBuilder sb = new StringBuilder();
 					if(barcode != null) {
-						sb.append("old=" + barcode);
+						sb.append("old=").append(barcode);
 					}
 					if(mNewBarcode != null){
-						sb.append("&new=" + mNewBarcode);
+						sb.append("&new=").append(mNewBarcode);
 					}
 
 					QUERYPARAM = sb.toString();

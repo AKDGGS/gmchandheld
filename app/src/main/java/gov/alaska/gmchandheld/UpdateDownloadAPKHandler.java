@@ -125,7 +125,7 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 					input = new BufferedInputStream(url.openStream(), 8192);
 					verifyStoragePermissions(UpdateDownloadAPKHandler.this);
 					OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
-					byte data[] = new byte[1024];
+					byte[] data = new byte[1024];
 					long total = 0;
 
 					while ((count = input.read(data)) != -1) {
@@ -137,7 +137,10 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 					output.close();
 					input.close();
 				} catch (IOException e) {
-					Log.e("Error: ", e.getMessage());
+					if (null != e.getMessage()){
+						Log.e("Error: ", e.getMessage());
+					}
+
 				}
 
 			} catch (MalformedURLException e) {

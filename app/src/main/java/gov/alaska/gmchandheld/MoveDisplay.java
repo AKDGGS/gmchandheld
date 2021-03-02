@@ -36,14 +36,11 @@ public class MoveDisplay extends BaseActivity {
 	public static final String SHARED_PREFS = "sharedPrefs";
 	SharedPreferences.Editor editor;
 
-	private ListView containerListLV;
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
 	private EditText destinationET;
 	private EditText itemET;
-	private ToneGenerator toneGen1;
 	private IntentIntegrator destinationQrScan;
-	private IntentIntegrator itemQrScan;
 
 	int clicks = 0;  //used to count double clicks for deletion
 
@@ -68,7 +65,7 @@ public class MoveDisplay extends BaseActivity {
 		final Button moveBtn = findViewById(R.id.moveBtn);
 		final Button addBtn = findViewById(R.id.addContainerBtn);
 		final Button clearAllBtn = findViewById(R.id.clearAllBtn);
-		containerListLV = findViewById(R.id.listViewContainersToMove);
+		ListView containerListLV = findViewById(R.id.listViewContainersToMove);
 
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		containerListLV.setAdapter(adapter);
@@ -100,8 +97,8 @@ public class MoveDisplay extends BaseActivity {
 			itemCameraBtn.setVisibility(View.GONE);
 		}else{
 			destinationQrScan = new IntentIntegrator(this);
-			itemQrScan = new IntentIntegrator(this);
-			toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+			IntentIntegrator itemQrScan = new IntentIntegrator(this);
+			ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 		}
 
 
