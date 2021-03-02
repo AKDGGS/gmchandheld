@@ -38,18 +38,10 @@ import java.util.Date;
 public class Configuration extends BaseActivity {
 
 	private SharedPreferences sp;
-	public static final String SHARED_PREFS = "sharedPrefs";
-	public static final String URL_TEXT = "urlText";
-	public static final String API_TEXT = "apiText";
-	public static final String UPDATE_HOUR = "updateHour";
-	public static final String UPDATE_MINUTE = "updateMinute";
-	public static final String HOUR_TEXT = "updateHour";
-	public static final String MINUTE_TEXT = "updateMinute";
 
 	private ToggleButton autoUpdatebtn;
 	private boolean alarmUp;
 	private ToggleButton cameraToScannerbtn;
-	public static final String CAMERA_ON = "cameraOn";
 
 	private IntentIntegrator urlQrScan;
 	private IntentIntegrator apiQrScan;
@@ -63,6 +55,12 @@ public class Configuration extends BaseActivity {
 	private EditText apiET;
 	private String url;
 	private String apiKey;
+
+	@Override
+	public void onRestart() {
+		super.onRestart();
+		this.recreate();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +92,6 @@ public class Configuration extends BaseActivity {
 
 		cameraToScannerbtn = findViewById(R.id.cameraToScannerBtn);
 
-		SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
@@ -155,12 +152,9 @@ public class Configuration extends BaseActivity {
 		cameraToScannerChangeWatcher();
 		loadData();
 		updateViews();
-
-
 	}
 
 	private void cameraToScannerChangeWatcher() {
-
 		cameraToScannerbtn.setOnCheckedChangeListener(
 				new CompoundButton.OnCheckedChangeListener() {
 					@Override
@@ -200,9 +194,9 @@ public class Configuration extends BaseActivity {
 									e.printStackTrace();
 								}
 
-								SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-								String hour = sharedPreferences.getString(HOUR_TEXT, "24");
-								String minute = sharedPreferences.getString(MINUTE_TEXT, "0");
+								SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences("sharedPrefs", MODE_PRIVATE);
+								String hour = sharedPreferences.getString("updateHour", "24");
+								String minute = sharedPreferences.getString("updateMinute", "0");
 
 								Calendar alarmOffTime = Calendar.getInstance();
 								if (!hour.isEmpty()) {
@@ -227,8 +221,6 @@ public class Configuration extends BaseActivity {
 								}
 
 								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
-//								long interval = 60 * 1000;
-//								am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), interval, sender);
 								saveData();
 							}
 						} else {
@@ -251,12 +243,11 @@ public class Configuration extends BaseActivity {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				editor.putString(API_TEXT, getApiKey()).commit();
+				editor.putString("apiText", getApiKey()).commit();
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
 			@Override
 			public void afterTextChanged(Editable s) {
@@ -272,12 +263,11 @@ public class Configuration extends BaseActivity {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				editor.putString(URL_TEXT, getUrl()).commit();
+				editor.putString("urlText", getUrl()).commit();
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
 			@Override
 			public void afterTextChanged(Editable s) {
@@ -303,23 +293,23 @@ public class Configuration extends BaseActivity {
 	public void saveData() {
 		SharedPreferences.Editor editor = sp.edit();
 
-		editor.putString(URL_TEXT, getUrl());
-		editor.putString(API_TEXT, getApiKey());
-		editor.putString(UPDATE_HOUR, hourInput.getText().toString());
-		editor.putString(UPDATE_MINUTE, minuteInput.getText().toString());
-		editor.putBoolean(CAMERA_ON, cameraToScannerbtn.isChecked());
+		editor.putString("urlText", getUrl());
+		editor.putString("apiText", getApiKey());
+		editor.putString("updateHour", hourInput.getText().toString());
+		editor.putString("updateMinute", minuteInput.getText().toString());
+		editor.putBoolean("cameraOn", cameraToScannerbtn.isChecked());
 		editor.apply();
 	}
 
 	public void loadData() {
-		url = sp.getString(URL_TEXT, "");
-		apiKey = sp.getString(API_TEXT, "");
+		url = sp.getString("urlText", "");
+		apiKey = sp.getString("apiText", "");
 
-		hour = sp.getString(UPDATE_HOUR, "24");
-		minute = sp.getString(UPDATE_MINUTE, "0");
+		hour = sp.getString("updateHour", "24");
+		minute = sp.getString("updateMinute", "0");
 
 		autoUpdatebtn.setChecked(alarmUp);
-		cameraToScannerbtn.setChecked(sp.getBoolean(CAMERA_ON, false));
+		cameraToScannerbtn.setChecked(sp.getBoolean("cameraOn", false));
 	}
 
 	public void updateViews() {
@@ -328,7 +318,7 @@ public class Configuration extends BaseActivity {
 		hourInput.setText(hour);
 		minuteInput.setText(minute);
 		autoUpdatebtn.setChecked(alarmUp);
-		cameraToScannerbtn.setChecked(sp.getBoolean(CAMERA_ON, false));
+		cameraToScannerbtn.setChecked(sp.getBoolean("cameraOn", false));
 	}
 
 	private void hourInputChangeWatcher() {
@@ -338,7 +328,7 @@ public class Configuration extends BaseActivity {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				editor.putString(UPDATE_HOUR, hourInput.getText().toString()).commit();
+				editor.putString("updateHour", hourInput.getText().toString()).commit();
 				autoUpdatebtn.setChecked(false);
 			}
 
@@ -359,7 +349,7 @@ public class Configuration extends BaseActivity {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				editor.putString(UPDATE_MINUTE, minuteInput.getText().toString()).commit();
+				editor.putString("updateMinute", minuteInput.getText().toString()).commit();
 				autoUpdatebtn.setChecked(false);
 			}
 
@@ -373,7 +363,6 @@ public class Configuration extends BaseActivity {
 			}
 		});
 	}
-
 
 	public void updateAPK() {
 		new UpdateCheckLastModifiedDate(this).execute();

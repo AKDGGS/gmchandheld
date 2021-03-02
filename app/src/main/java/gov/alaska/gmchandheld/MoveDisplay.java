@@ -45,7 +45,6 @@ public class MoveDisplay extends BaseActivity {
 	private IntentIntegrator destinationQrScan;
 	private IntentIntegrator itemQrScan;
 
-
 	int clicks = 0;  //used to count double clicks for deletion
 
 	@Override

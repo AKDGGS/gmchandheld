@@ -86,10 +86,8 @@ public class Recode extends BaseActivity {
 					Intent intent = new Intent(Recode.this, CameraToScanner.class);
 					startActivityForResult(intent, 2);
 				}
-
 			}
 		});
-
 
 		if (remoteApiUIHandler.isDownloading()) {
 			// onClickListener listens if the submit button is clicked

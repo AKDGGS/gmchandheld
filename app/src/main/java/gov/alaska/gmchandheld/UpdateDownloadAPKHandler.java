@@ -54,7 +54,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_translucent);
-
 		alert();
 	}
 
@@ -121,7 +120,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 				HttpURLConnection con = (HttpURLConnection) url.openConnection();
 				versionJsonResponseCode = con.getResponseCode();
 				try {
-
 					con.connect();
 					InputStream input = new BufferedInputStream(url.openStream(), 8192);
 					input = new BufferedInputStream(url.openStream(), 8192);
@@ -165,7 +163,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 								apkFile);
 					}
 				}
-//				 Intent to open apk
 				intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
 				intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
 				intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

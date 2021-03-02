@@ -49,7 +49,7 @@ public class BaseActivity extends AppCompatActivity {
 				startActivity(intentGetBarcode);
 			} else {
 				Intent intentSummary = new Intent(this, SummaryDisplay.class);
-//				intentSummary.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				intentSummary.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				startActivity(intentSummary);
 			}
 			return true;
@@ -63,6 +63,7 @@ public class BaseActivity extends AppCompatActivity {
 				startActivity(intentGetBarcode);
 			} else {
 				Intent intentLookup = new Intent(this, LookupDisplay.class);
+				intentLookup.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				startActivity(intentLookup);
 			}
 			return true;

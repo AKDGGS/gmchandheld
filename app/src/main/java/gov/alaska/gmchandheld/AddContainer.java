@@ -60,6 +60,8 @@ public class AddContainer extends BaseActivity {
 			params.rightMargin = 15;
 
 			addContainerBarcodeET.setLayoutParams(params);
+			addContainerNameET.setLayoutParams(params);
+			addContainerRemarkET.setLayoutParams(params);
 			cameraBtn.setVisibility(View.GONE);
 		}else{
 			qrScan = new IntentIntegrator(this);
@@ -75,7 +77,6 @@ public class AddContainer extends BaseActivity {
 					Intent intent = new Intent(AddContainer.this, CameraToScanner.class);
 					startActivityForResult(intent, 0);
 				}
-
 			}
 		});
 

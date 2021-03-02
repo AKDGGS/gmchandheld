@@ -61,7 +61,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:padding="5dp"
                     android:text="@string/url_label"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
@@ -125,12 +124,12 @@
                         android:id="@+id/apiET"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="8.75"
                         android:inputType="text"
                         android:padding="5dp"
                         android:selectAllOnFocus="true"
                         android:text=""
-                        android:textSize="14sp"
-                        android:layout_weight="8.75"/>
+                        android:textSize="14sp" />
 
                     <Button
                         android:id="@+id/apiCameraBtn"

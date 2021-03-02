@@ -26,7 +26,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		TextView parentText;
 	}
 
-
 	public String getInventoryObjType() {
 		return inventoryObjType;
 	}

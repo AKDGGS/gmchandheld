@@ -79,8 +79,6 @@ public class Summary extends BaseActivity {
             qrScan.setBeepEnabled(true);
         }
 
-
-
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,7 +90,6 @@ public class Summary extends BaseActivity {
                 }
             }
         });
-
 
         // Submit barcode query
         if (remoteApiUIHandler.isDownloading()) {
@@ -110,7 +107,6 @@ public class Summary extends BaseActivity {
                         }
                     }
                 });
-
 
             // KeyListener listens if enter is pressed
             barcodeET.setOnKeyListener(new View.OnKeyListener() {

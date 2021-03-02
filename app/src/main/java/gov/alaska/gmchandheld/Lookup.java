@@ -54,7 +54,6 @@ public class Lookup extends BaseActivity {
 		barcodeInput.selectAll();
 	}
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -223,8 +222,6 @@ public class Lookup extends BaseActivity {
 			}
 		}
 	}
-
-
 }
 
 

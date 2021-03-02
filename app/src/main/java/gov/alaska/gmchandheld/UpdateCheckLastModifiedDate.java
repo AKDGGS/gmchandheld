@@ -54,7 +54,6 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 		long lastRefusedUpdate = sharedPreferences.getLong("LAST_MODIFIED_DATE", 0);
 
 		if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) & (buildDate.compareTo(updateBuildDate) < 0)) {
-
 			// Update available
 			final Intent intent = new Intent(mContext, UpdateDownloadAPKHandler.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
