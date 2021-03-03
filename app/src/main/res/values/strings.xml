@@ -5,7 +5,7 @@
     <string name="api_key_label">API Key:</string>
     <string name="url_label">URL:</string>
     <string name="app_name">gmchandheld</string> <!-- name of app -->
-    <string name="build_date">Build Date:</string>
+    <string name="build_date">Build Date:\u0020</string>
     <string name="save_all">Save All</string>
     <string name="child_text">child text</string>
     <string name="submit">Submit</string>

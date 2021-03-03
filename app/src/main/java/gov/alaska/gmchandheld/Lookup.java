@@ -58,6 +58,11 @@ public class Lookup extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
 		loadLookup();
+
+//		SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+//
+//		long lastRefusedUpdate = sharedPreferences.getLong("ignoreUpdateSP", 0);
+//		System.out.println("IgnoreUpdate: " + lastRefusedUpdate);
 	}
 
 	public void loadLookup() {

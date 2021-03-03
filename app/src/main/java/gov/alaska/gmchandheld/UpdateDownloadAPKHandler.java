@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -58,6 +59,10 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 	}
 
 	private void alert() {
+		Intent intent = getIntent();
+		final Long lastModifiedRefused = intent.getLongExtra("LAST_MODIFIED_DATE", 0);
+
+
 		final AlertDialog dialog = new AlertDialog.Builder(this)
 				.setTitle("Update Available")
 				.setMessage("Tap Update to install the app.")
@@ -66,8 +71,13 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 				.setNeutralButton("Ignore Update Forever", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
-
 						Toast.makeText(UpdateDownloadAPKHandler.this, "Ignore forever.", Toast.LENGTH_LONG).show();
+
+						//If a user refuses an update, the last modified date for that update is saved in shared preferences,
+						SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+						SharedPreferences.Editor editor = sp.edit();
+						editor.putLong("ignoreUpdateDateSP", lastModifiedRefused).commit();
+
 						Intent intent = new Intent(UpdateDownloadAPKHandler.this, Lookup.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 						UpdateDownloadAPKHandler.this.startActivity(intent);
@@ -76,13 +86,10 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 				.setPositiveButton("Update", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
-						final String fileUrl;
-						if (Build.VERSION.SDK_INT <= 17) {
-							fileUrl = "http://maps.dggs.alaska.gov/gmcdev/app/current.apk";
-						} else {
-							fileUrl = "https://maps.dggs.alaska.gov/gmcdev/app/current.apk";
-						}
-						new DownloadFileFromURL(UpdateDownloadAPKHandler.this).execute(fileUrl);
+						final String urlStr;
+						SharedPreferences sharedPreferences = UpdateDownloadAPKHandler.this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+						urlStr = sharedPreferences.getString("urlText", "") + "app/current.apk";
+						new DownloadFileFromURL(UpdateDownloadAPKHandler.this).execute(urlStr);
 					}
 				})
 				.create();
@@ -140,7 +147,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 					if (null != e.getMessage()){
 						Log.e("Error: ", e.getMessage());
 					}
-
 				}
 
 			} catch (MalformedURLException e) {

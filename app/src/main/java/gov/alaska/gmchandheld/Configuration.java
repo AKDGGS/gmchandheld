@@ -37,6 +37,14 @@ public class Configuration extends BaseActivity {
 
 	private SharedPreferences sp;
 
+	public static final String SHARED_PREFS = "sharedPrefs";
+//	public static final String URL_TEXT = "urlText";
+//	public static final String API_TEXT = "apiText";
+//	public static final String UPDATE_HOUR = "updateHour";
+//	public static final String UPDATE_MINUTE = "updateMinute";
+//	public static final String HOUR_TEXT = "updateHour";
+//	public static final String MINUTE_TEXT = "updateMinute";
+
 	private ToggleButton autoUpdatebtn;
 	private boolean alarmUp;
 	private ToggleButton cameraToScannerbtn;
@@ -135,6 +143,7 @@ public class Configuration extends BaseActivity {
 		updateButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				System.out.println("Update Button Pressed.");
 				updateAPK();
 			}
 		});
@@ -261,6 +270,7 @@ public class Configuration extends BaseActivity {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				System.out.println(getUrl());
 				editor.putString("urlText", getUrl()).commit();
 			}
 
@@ -291,6 +301,7 @@ public class Configuration extends BaseActivity {
 	public void saveData() {
 		SharedPreferences.Editor editor = sp.edit();
 
+
 		editor.putString("urlText", getUrl());
 		editor.putString("apiText", getApiKey());
 		editor.putString("updateHour", hourInput.getText().toString());
@@ -302,6 +313,7 @@ public class Configuration extends BaseActivity {
 	public void loadData() {
 		url = sp.getString("urlText", "");
 		apiKey = sp.getString("apiText", "");
+
 
 		hour = sp.getString("updateHour", "24");
 		minute = sp.getString("updateMinute", "0");

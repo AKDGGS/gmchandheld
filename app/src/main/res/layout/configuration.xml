@@ -27,7 +27,7 @@
                 android:paddingLeft="5dp"
                 android:paddingTop="15dp"
                 android:paddingBottom="5dp"
-                android:text="@string/build_date"
+                android:text= "@string/build_date"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
