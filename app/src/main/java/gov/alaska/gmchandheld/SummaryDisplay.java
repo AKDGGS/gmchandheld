@@ -2,10 +2,15 @@ package gov.alaska.gmchandheld;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -54,12 +59,18 @@ public class SummaryDisplay extends BaseActivity {
 
         SummaryLogicForDisplay summaryLogicForDisplayObj;
         summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
+
+        SpannableString title = new SpannableString(summaryLogicForDisplayObj.getBarcodeQuery());
+        SpannableString subtitle = new SpannableString(summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");
+
         if (getSupportActionBar() != null) {
             if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-                SummaryDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <larger> <font color='#000000'>" + summaryLogicForDisplayObj.getBarcodeQuery() + "</font> </larger> </strong>"));
+                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                SummaryDisplay.this.getSupportActionBar().setTitle(title);
+
                 if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
-                    SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<strong> <larger> <font color='#000000'>" + summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s) </font> </larger> </strong>"));
-                    System.out.println(summaryLogicForDisplayObj.getNumberOfBoxes());
+                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    SummaryDisplay.this.getSupportActionBar().setSubtitle(subtitle);
                 }
             }
         }
@@ -69,10 +80,13 @@ public class SummaryDisplay extends BaseActivity {
             String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
 
             if (barcode != null) {
-                SummaryDisplay.this.getSupportActionBar().setTitle(Html.fromHtml("<strong> <larger> <font color='#000000'>" + summaryLogicForDisplayObj.getBarcodeQuery() + "</font> </larger> </strong>"));
+
+                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                SummaryDisplay.this.getSupportActionBar().setTitle(title);
 
                 if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
-                    SummaryDisplay.this.getSupportActionBar().setSubtitle(Html.fromHtml("<strong> <larger> <font color='#000000'>" + summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)" + "</font> </larger> </strong>"));
+                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    SummaryDisplay.this.getSupportActionBar().setSubtitle(subtitle);
                 }
             }
 

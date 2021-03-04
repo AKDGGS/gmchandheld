@@ -1,6 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,13 +7,11 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.text.style.TypefaceSpan;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -65,18 +62,19 @@ public class LookupDisplay extends BaseActivity {
         });
 
         LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
+        SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
+        SpannableString subtitle = new SpannableString(lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
+
         if (getSupportActionBar() != null) {
             if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-                SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
+
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 LookupDisplay.this.getSupportActionBar().setTitle(title);
 
                 if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-                    SpannableString subtitle = new SpannableString(lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
                     subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
                 }
-
                 if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
                     LookupDisplay.this.getSupportActionBar()
                                       .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
@@ -89,7 +87,6 @@ public class LookupDisplay extends BaseActivity {
             String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
 
             if (barcode != null) {
-                SpannableString title = new SpannableString(barcode);
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 LookupDisplay.this.getSupportActionBar().setTitle(title);
 
@@ -99,7 +96,6 @@ public class LookupDisplay extends BaseActivity {
                 }
 
                 if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-                    SpannableString subtitle = new SpannableString(lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
                     subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
                 }
