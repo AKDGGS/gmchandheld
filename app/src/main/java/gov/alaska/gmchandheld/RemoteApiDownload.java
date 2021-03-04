@@ -38,7 +38,7 @@ public class RemoteApiDownload {
 	private final Context context;
 	SimpleDateFormat sdf;
 
-	public static final String SHARED_PREFS = "sharedPrefs";
+//	public static final String SHARED_PREFS = "sharedPrefs";
 
 	@SuppressLint("SimpleDateFormat")
 	public RemoteApiDownload(Context context) {
@@ -97,7 +97,7 @@ public class RemoteApiDownload {
 	public void getDataFromURL() {
 		InputStream inputStream;
 		HttpURLConnection connection;
-		SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+		SharedPreferences sharedPreferences = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
 		String url = sharedPreferences.getString("urlText", "");
 
 		try {

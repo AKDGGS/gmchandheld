@@ -21,68 +21,69 @@ import java.util.Map;
 import static android.content.Context.MODE_PRIVATE;
 
 public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
-	public static final String SHARED_PREFS = "sharedPrefs";
+//    public static final String SHARED_PREFS = "sharedPrefs";
 
-	private WeakReference<Activity> mActivity;
-	public UpdateCheckLastModifiedDate(Activity activity) {
-		mActivity = new WeakReference<Activity>(activity);
-	}
+    private WeakReference<Activity> mActivity;
 
-	@Override
-	protected Long doInBackground(Void... voids) {
-		String urlStr;
-		Context mContext = mActivity.get();
-		SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		urlStr = sharedPreferences.getString("urlText", "") + "app/current.apk";
-		HttpURLConnection httpCon;
-		System.setProperty("http.keepAlive", "false");
-		long lastModified = 0;
+    public UpdateCheckLastModifiedDate(Activity activity) {
+        mActivity = new WeakReference<Activity>(activity);
+    }
 
-		try {
-			URL url = new URL(urlStr);
+    @Override
+    protected Long doInBackground(Void... voids) {
+        String urlStr;
+        Context mContext = mActivity.get();
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+        urlStr = sharedPreferences.getString("urlText", "") + "app/current.apk";
+        HttpURLConnection httpCon;
+        System.setProperty("http.keepAlive", "false");
+        long lastModified = 0;
 
-			httpCon = (HttpURLConnection) url.openConnection();
-			httpCon.setRequestMethod("HEAD");
-			lastModified = httpCon.getLastModified();
-			System.out.println(url.toString() + " " + lastModified);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return lastModified;
-	}
+        try {
+            URL url = new URL(urlStr);
 
-	@Override
-	protected void onPostExecute(Long lastModifiedDate) {
-		super.onPostExecute(lastModifiedDate);
+            httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setRequestMethod("HEAD");
+            lastModified = httpCon.getLastModified();
+            System.out.println(url.toString() + " " + lastModified);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lastModified;
+    }
 
-		Date updateBuildDate = new Date(lastModifiedDate);
-		Date buildDate = new Date(BuildConfig.TIMESTAMP);
+    @Override
+    protected void onPostExecute(Long lastModifiedDate) {
+        super.onPostExecute(lastModifiedDate);
 
-		Context mContext = mActivity.get();
-		//gets the last refused modified date from shared preferences. (The last refused modified date comes from
-		//UpdateDownloadAPKHandler
-		SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		long lastRefusedUpdate = sharedPreferences.getLong("ignoreUpdateDateSP", 0);
+        Date updateBuildDate = new Date(lastModifiedDate);
+        Date buildDate = new Date(BuildConfig.TIMESTAMP);
 
-		if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) & (buildDate.compareTo(updateBuildDate) < 0)) {
-			// Update available
-			final Intent intent = new Intent(mContext, UpdateDownloadAPKHandler.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			//each update passes the Last modified date to UpdateDownloadAPKHandler where an update can occur or not depending
-			// on the user's preference
-			intent.putExtra("LAST_MODIFIED_DATE", lastModifiedDate);
-			mContext.startActivity(intent);
-		} else {
-			Toast t = Toast.makeText(mContext.getApplicationContext(),
-					"No update available.",
-					Toast.LENGTH_SHORT);
-			t.show();
+        Context mContext = mActivity.get();
+        //gets the last refused modified date from shared preferences. (The last refused modified date comes from
+        //UpdateDownloadAPKHandler
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+        long lastRefusedUpdate = sharedPreferences.getLong("ignoreUpdateDateSP", 0);
 
-			Intent intent = new Intent(mContext, Lookup.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			mContext.startActivity(intent);
-		}
-	}
+        if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) & (buildDate.compareTo(updateBuildDate) < 0)) {
+            // Update available
+            final Intent intent = new Intent(mContext, UpdateDownloadAPKHandler.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            //each update passes the Last modified date to UpdateDownloadAPKHandler where an update can occur or not depending
+            // on the user's preference
+            intent.putExtra("LAST_MODIFIED_DATE", lastModifiedDate);
+            mContext.startActivity(intent);
+        } else {
+            Toast t = Toast.makeText(mContext.getApplicationContext(),
+                                     "No update available.",
+                                     Toast.LENGTH_SHORT);
+            t.show();
+
+            Intent intent = new Intent(mContext, Lookup.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mContext.startActivity(intent);
+        }
+    }
 }

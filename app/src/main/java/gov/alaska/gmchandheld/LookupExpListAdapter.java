@@ -116,7 +116,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 		switch (getInventoryObjType()) {
 			case "Well":
-				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ff92cbff"));
+				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ff92cbff"));  //blue
 				break;
 			case "Borehole":
 				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ff63ba00")); //Green
@@ -125,10 +125,10 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffe6b101")); // yellow-orange
 				break;
 			case "Shotpoint":
-				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffff8a86"));
+				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffff8a86")); //red
 				break;
 			default:
-				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffd9dddf"));
+				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffd9dddf")); //light gray
 		}
 
 		parentHolder.parentText.setText(expListParentLabel);
@@ -172,17 +172,17 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				break;
 			case "Shotpoint":
 				if (childPosition % 2 != 0) {
-					txtChild.setBackgroundColor(Color.parseColor("#ffffcecd"));
+					txtChild.setBackgroundColor(Color.parseColor("#ffffcecd")); //lighter-red
 				} else {
-					txtChild.setBackgroundColor(Color.parseColor("#ffffbab9"));
+					txtChild.setBackgroundColor(Color.parseColor("#ffffbab9")); //darker-red
 				}
 				break;
 			case "No Type":
 			default:
 				if (childPosition % 2 != 0) {
-					txtChild.setBackgroundColor(Color.parseColor("#fff3f6f8"));
+					txtChild.setBackgroundColor(Color.parseColor("#fff3f6f8")); //very light gray
 				} else {
-					txtChild.setBackgroundColor(Color.parseColor("#fffcfdfe"));
+					txtChild.setBackgroundColor(Color.parseColor("#fffcfdfe")); //extremely light gray
 				}
 				break;
 		}

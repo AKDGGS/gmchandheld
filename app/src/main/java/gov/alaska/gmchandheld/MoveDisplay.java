@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MoveDisplay extends BaseActivity {
-	public static final String SHARED_PREFS = "sharedPrefs";
+//	public static final String SHARED_PREFS = "sharedPrefs";
 	SharedPreferences.Editor editor;
 
 	private ArrayList<String> containerList;
@@ -70,8 +70,8 @@ public class MoveDisplay extends BaseActivity {
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		containerListLV.setAdapter(adapter);
 
-		final SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		if (sp.getString(SHARED_PREFS, "savedDestination") != null) {
+		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+		if (sp.getString(Configuration.SHARED_PREFS, "savedDestination") != null) {
 			destinationET.setText(sp.getString("savedDestination", ""));
 		}
 
@@ -262,7 +262,7 @@ public class MoveDisplay extends BaseActivity {
 		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
 		final EditText moveDestinationET = findViewById(R.id.toET);
 
-		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		SharedPreferences sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		editor = sharedPreferences.edit();
 		editor.putStringSet("savedContainerList", containerSet);
 		editor.putString("savedDestination", moveDestinationET.getText().toString());

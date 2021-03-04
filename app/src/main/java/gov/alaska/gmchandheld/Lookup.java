@@ -33,7 +33,7 @@ import java.util.LinkedList;
 public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-	public static final String SHARED_PREFS = "sharedPrefs";
+//	public static final String SHARED_PREFS = "sharedPrefs";
 	private EditText barcodeET;
 	private IntentIntegrator qrScan;
 
@@ -74,7 +74,7 @@ public class Lookup extends BaseActivity {
 		setSupportActionBar(toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
-		SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);

@@ -32,7 +32,7 @@ import java.util.Set;
 
 
 public class AuditDisplay extends BaseActivity {
-	public static final String SHARED_PREFS = "sharedPrefs";
+//	public static final String SHARED_PREFS = "sharedPrefs";
 	private SharedPreferences.Editor editor;
 
 	private ArrayList<String> containerList;
@@ -68,8 +68,8 @@ public class AuditDisplay extends BaseActivity {
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		auditContainerListLV.setAdapter(adapter);
 
-		final SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-		if (sp.getString(SHARED_PREFS, "savedAuditRemark") != null) {
+		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+		if (sp.getString(Configuration.SHARED_PREFS, "savedAuditRemark") != null) {
 			auditRemarkET.setText(sp.getString("savedAuditRemark", ""));
 		}
 		if (sp.getStringSet("savedAuditContainerList", null) != null) {
@@ -252,7 +252,7 @@ public class AuditDisplay extends BaseActivity {
 		String[] containerArray = containerList.toArray(new String[0]);
 		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
 		final EditText remarkET = findViewById(R.id.remarkET);
-		final SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		editor = sp.edit();
 		editor.putStringSet("savedAuditContainerList", containerSet);
 		editor.putString("savedAuditRemark", remarkET.getText().toString());

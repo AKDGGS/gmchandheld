@@ -20,7 +20,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 public class Recode extends BaseActivity {
 
-	public static final String SHARED_PREFS = "sharedPrefs";
+//	public static final String SHARED_PREFS = "sharedPrefs";
 	private IntentIntegrator oldBarcodeQrScan;
 	private IntentIntegrator newBarcodeQrScan;
 
@@ -44,7 +44,7 @@ public class Recode extends BaseActivity {
 		final Button submit_button = findViewById(R.id.submitBtn);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
-		SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button oldBarcodeCameraBtn = findViewById(R.id.oldBarcodeCameraBtn);

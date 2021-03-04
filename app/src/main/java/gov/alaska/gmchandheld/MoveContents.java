@@ -21,7 +21,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 public class MoveContents extends BaseActivity {
 
-	public static final String SHARED_PREFS = "sharedPrefs";
+//	public static final String SHARED_PREFS = "sharedPrefs";
 	private IntentIntegrator fromQrScan;
 	private EditText moveContentsFromET, moveContentsToET;
 
@@ -71,7 +71,7 @@ public class MoveContents extends BaseActivity {
 			}
 		});
 
-		SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button fromCameraBtn = findViewById(R.id.fromCameraBtn);

@@ -27,7 +27,7 @@ public class Summary extends BaseActivity {
 
     private ListView listView;
     private final LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
-    public static final String SHARED_PREFS = "sharedPrefs";
+    //    public static final String SHARED_PREFS = "sharedPrefs";
     private EditText barcodeET;
     private IntentIntegrator qrScan;
 
@@ -49,7 +49,7 @@ public class Summary extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
@@ -66,13 +66,13 @@ public class Summary extends BaseActivity {
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
 
-        SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
         Button cameraBtn = findViewById(R.id.cameraBtn);
-        if(!cameraOn){
+        if (!cameraOn) {
             cameraBtn.setVisibility(View.GONE);
-        }else{
+        } else {
             qrScan = new IntentIntegrator(this);
             qrScan.setBeepEnabled(true);
         }
@@ -83,28 +83,28 @@ public class Summary extends BaseActivity {
                 if (Build.VERSION.SDK_INT <= 24) {
                     qrScan.initiateScan();
                 } else {
-                Intent intent = new Intent(Summary.this, CameraToScanner.class);
-                startActivityForResult(intent, 0);
+                    Intent intent = new Intent(Summary.this, CameraToScanner.class);
+                    startActivityForResult(intent, 0);
                 }
             }
         });
 
         // Submit barcode query
         if (remoteApiUIHandler.isDownloading()) {
-                // onClickListener listens if the submit button is clicked
-                submitButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        CheckConfiguration checkConfiguration = new CheckConfiguration();
-                        if (checkConfiguration.checkConfiguration(Summary.this)) {
-                            if (!getBarcode().isEmpty()) {
-                                remoteApiUIHandler.setDownloading(true);
-                                RemoteApiUIHandler.setUrlFirstParameter(getBarcode());
-                                remoteApiUIHandler.processDataForDisplay(Summary.this);
-                            }
+            // onClickListener listens if the submit button is clicked
+            submitButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckConfiguration checkConfiguration = new CheckConfiguration();
+                    if (checkConfiguration.checkConfiguration(Summary.this)) {
+                        if (!getBarcode().isEmpty()) {
+                            remoteApiUIHandler.setDownloading(true);
+                            RemoteApiUIHandler.setUrlFirstParameter(getBarcode());
+                            remoteApiUIHandler.processDataForDisplay(Summary.this);
                         }
                     }
-                });
+                }
+            });
 
             // KeyListener listens if enter is pressed
             barcodeET.setOnKeyListener(new View.OnKeyListener() {
@@ -146,7 +146,7 @@ public class Summary extends BaseActivity {
             barcodeET = findViewById(R.id.barcodeET);
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             barcodeET.setText(result.getContents());
-        }else {
+        } else {
             if (requestCode == 0) {
                 if (resultCode == CommonStatusCodes.SUCCESS) {
                     Barcode barcode = data.getParcelableExtra("barcode");

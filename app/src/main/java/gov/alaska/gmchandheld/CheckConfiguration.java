@@ -9,12 +9,12 @@ import android.content.SharedPreferences;
 import static android.content.Context.MODE_PRIVATE;
 
 public class CheckConfiguration {
-	public static final String SHARED_PREFS = "sharedPrefs";
+//	public static final String SHARED_PREFS = "sharedPrefs";
 	public static final String URL_TEXT = "urlText";
 	public static final String API_TEXT = "apiText";
 
 	public boolean checkConfiguration(final Context mContext) {
-		SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		String url = sharedPreferences.getString(URL_TEXT, "");
 		String apiKey = sharedPreferences.getString(API_TEXT, "");
 

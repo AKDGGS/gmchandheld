@@ -21,7 +21,6 @@ import com.google.zxing.integration.android.IntentResult;
 
 public class AddContainer extends BaseActivity {
 
-	public static final String SHARED_PREFS = "sharedPrefs";
 	private IntentIntegrator qrScan;
 	EditText addContainerBarcodeET;
 
@@ -47,7 +46,7 @@ public class AddContainer extends BaseActivity {
 
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
-		SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);
