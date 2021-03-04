@@ -13,6 +13,7 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLOutput;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +41,11 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 
 		try {
 			URL url = new URL(urlStr);
-			System.out.println(url.toString());
+
 			httpCon = (HttpURLConnection) url.openConnection();
 			httpCon.setRequestMethod("HEAD");
 			lastModified = httpCon.getLastModified();
+			System.out.println(url.toString() + " " + lastModified);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -63,6 +65,14 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 		//UpdateDownloadAPKHandler
 		SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 		long lastRefusedUpdate = sharedPreferences.getLong("ignoreUpdateDateSP", 0);
+
+		System.out.println("Updated: " + updateBuildDate);
+		System.out.println("Build: " + buildDate);
+
+		System.out.println(!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) & (buildDate.compareTo(updateBuildDate) < 0));
+		System.out.println((buildDate.compareTo(updateBuildDate) < 0));
+		System.out.println(!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0));
+
 
 
 		if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) & (buildDate.compareTo(updateBuildDate) < 0)) {

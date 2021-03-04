@@ -177,7 +177,7 @@ public class RemoteApiUIHandler {
 								break;
 							}
 						}
-						assert remoteAPIDownload != null;
+
 						remoteAPIDownload.getDataFromURL();
 						return remoteAPIDownload;
 					}
