@@ -33,9 +33,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MoveDisplay extends BaseActivity {
-//	public static final String SHARED_PREFS = "sharedPrefs";
-	SharedPreferences.Editor editor;
 
+//	SharedPreferences.Editor editor;
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
 	private EditText destinationET;
@@ -139,10 +138,10 @@ public class MoveDisplay extends BaseActivity {
 					if (!container.isEmpty()) {
 						if (!(container.equals(destinationET.getText().toString()) && (!containerList.contains(container)))) {
 							containerList.add(0, container);
-							editor = sp.edit();
+							Configuration.editor = sp.edit();
 							String[] containerArray = containerList.toArray(new String[0]);
 							Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-							editor.putStringSet("savedContainerList", containerSet).commit();
+							Configuration.editor.putStringSet("savedContainerList", containerSet).commit();
 
 							adapter.insert(container, 0);
 							adapter.notifyDataSetChanged();
@@ -187,10 +186,10 @@ public class MoveDisplay extends BaseActivity {
 							if (clicks == 2) {
 								adapter.remove(containerList.get(position));
 								containerList.remove(position);
-								editor = sp.edit();
+								Configuration.editor = sp.edit();
 								String[] containerArray = containerList.toArray(new String[0]);
 								Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-								editor.putStringSet("savedContainerList", containerSet).commit();
+								Configuration.editor.putStringSet("savedContainerList", containerSet).commit();
 								adapter.notifyDataSetChanged();
 								moveCountTV.setText(String.valueOf(containerList.size()));
 							}
@@ -263,10 +262,10 @@ public class MoveDisplay extends BaseActivity {
 		final EditText moveDestinationET = findViewById(R.id.toET);
 
 		SharedPreferences sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		editor = sharedPreferences.edit();
-		editor.putStringSet("savedContainerList", containerSet);
-		editor.putString("savedDestination", moveDestinationET.getText().toString());
-		editor.apply();
+		Configuration.editor = sharedPreferences.edit();
+		Configuration.editor.putStringSet("savedContainerList", containerSet);
+		Configuration.editor.putString("savedDestination", moveDestinationET.getText().toString());
+		Configuration.editor.apply();
 
 		super.onBackPressed();
 	}

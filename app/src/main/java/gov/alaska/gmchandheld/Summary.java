@@ -26,8 +26,8 @@ import java.util.LinkedList;
 public class Summary extends BaseActivity {
 
     private ListView listView;
-    private final LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
-    //    public static final String SHARED_PREFS = "sharedPrefs";
+//    private final LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
+    private final LinkedList<String> summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
     private EditText barcodeET;
     private IntentIntegrator qrScan;
 
@@ -44,7 +44,7 @@ public class Summary extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.summary_get_barcode);
-        SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = null;
+        SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = null;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -136,7 +136,7 @@ public class Summary extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = null;
+        SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = null;
         super.onBackPressed();
     }
 

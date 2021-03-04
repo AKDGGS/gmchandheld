@@ -28,8 +28,8 @@ public class RemoteApiUIHandler {
     public RemoteApiUIHandler() {
     }
 
-    private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-    private final LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
+    private final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
+    private final LinkedList<String> summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
 
     private boolean downloading = false;
 
@@ -279,7 +279,7 @@ public class RemoteApiUIHandler {
                             case "Lookup": {
                                 LookupLogicForDisplay lookupLogicForDisplayObj;
                                 lookupLogicForDisplayObj = new LookupLogicForDisplay(context);
-                                LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
+                                LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
 
                                 lookupLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
 
@@ -301,10 +301,8 @@ public class RemoteApiUIHandler {
                             case "SummaryDisplay": {
                                 SummaryLogicForDisplay summaryLogicForDisplayObj;
                                 summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-                                SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
-
+                                SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
                                 summaryLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
-
 
                                 try {
                                     summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());

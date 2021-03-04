@@ -28,18 +28,19 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 
 public class AuditDisplay extends BaseActivity {
-//	public static final String SHARED_PREFS = "sharedPrefs";
-	private SharedPreferences.Editor editor;
-
+	private ListView listView;
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
 	private IntentIntegrator remarkQrScan;
 	private IntentIntegrator itemQrScan;
 	private EditText auditRemarkET, auditItemET;
+
+	AuditDisplayObjInstance auditDisplayObjInstance;
 	int clicks = 0;  //used to count double clicks for deletion
 
 	@Override
@@ -68,17 +69,10 @@ public class AuditDisplay extends BaseActivity {
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		auditContainerListLV.setAdapter(adapter);
 
-		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		if (sp.getString(Configuration.SHARED_PREFS, "savedAuditRemark") != null) {
-			auditRemarkET.setText(sp.getString("savedAuditRemark", ""));
-		}
-		if (sp.getStringSet("savedAuditContainerList", null) != null) {
-			containerList = new ArrayList<>(sp.getStringSet("savedAuditContainerList", null));
-			adapter.addAll(containerList);
-		} else {
-			containerList = new ArrayList<>();
-		}
+		containerList = AuditDisplayObjInstance.getInstance().getAuditList();
+		adapter.addAll(containerList);
 
+		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button remarkCameraBtn = findViewById(R.id.cameraBtn);
@@ -132,10 +126,6 @@ public class AuditDisplay extends BaseActivity {
 				String container = auditItemET.getText().toString();
 				if (!container.isEmpty() && !containerList.contains(container)) {
 					containerList.add(0, container);
-					editor = sp.edit();
-					String[] containerArray = containerList.toArray(new String[0]);
-					Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-					editor.putStringSet("savedAuditContainerList", containerSet).commit();
 					adapter.insert(container, 0);
 					adapter.notifyDataSetChanged();
 					auditCountTV.setText(String.valueOf(containerList.size()));
@@ -179,10 +169,6 @@ public class AuditDisplay extends BaseActivity {
 							if (clicks == 2) {
 								adapter.remove(containerList.get(position));
 								containerList.remove(position);
-								editor = sp.edit();
-								String[] containerArray = containerList.toArray(new String[0]);
-								Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-								editor.putStringSet("savedAuditContainerList", containerSet).commit();
 								adapter.notifyDataSetChanged();
 								auditCountTV.setText(String.valueOf(containerList.size()));
 							}
@@ -251,13 +237,6 @@ public class AuditDisplay extends BaseActivity {
 	public void onBackPressed() {
 		String[] containerArray = containerList.toArray(new String[0]);
 		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-		final EditText remarkET = findViewById(R.id.remarkET);
-		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		editor = sp.edit();
-		editor.putStringSet("savedAuditContainerList", containerSet);
-		editor.putString("savedAuditRemark", remarkET.getText().toString());
-		editor.apply();
-
 		super.onBackPressed();
 	}
 

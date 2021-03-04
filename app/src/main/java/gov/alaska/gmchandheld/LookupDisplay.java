@@ -61,7 +61,8 @@ public class LookupDisplay extends BaseActivity {
 
         });
 
-        LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
+        LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
+
         SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
         SpannableString subtitle = new SpannableString(lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
 
@@ -134,7 +135,7 @@ public class LookupDisplay extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         LookupLogicForDisplay lookupLogicForDisplayObj;
-        lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
+        lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
 
         if (lookupLogicForDisplayObj.getDisplayDict().toString().contains("radiation_risk")) {
             MenuInflater inflater = getMenuInflater();

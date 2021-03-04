@@ -21,7 +21,6 @@ import java.util.Map;
 import static android.content.Context.MODE_PRIVATE;
 
 public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
-//    public static final String SHARED_PREFS = "sharedPrefs";
 
     private WeakReference<Activity> mActivity;
 

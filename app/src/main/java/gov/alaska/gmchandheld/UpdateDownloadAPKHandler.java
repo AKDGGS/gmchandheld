@@ -35,7 +35,6 @@ import java.net.URL;
 // https://vapoyan.medium.com/android-show-allertdialog-before-the-application-starts-80588d6f2dda
 
 public class UpdateDownloadAPKHandler extends AppCompatActivity implements DialogInterface.OnClickListener {
-//    public static final String SHARED_PREFS = "sharedPrefs";
 
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -74,8 +73,8 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 
                         //If a user refuses an update, the last modified date for that update is saved in shared preferences,
                         SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putLong("ignoreUpdateDateSP", lastModifiedRefused).commit();
+                        Configuration.editor = sp.edit();
+                        Configuration.editor.putLong("ignoreUpdateDateSP", lastModifiedRefused).commit();
 
                         Intent intent = new Intent(UpdateDownloadAPKHandler.this, Lookup.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

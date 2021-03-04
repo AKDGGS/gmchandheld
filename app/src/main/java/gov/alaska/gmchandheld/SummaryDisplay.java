@@ -58,7 +58,7 @@ public class SummaryDisplay extends BaseActivity {
         });
 
         SummaryLogicForDisplay summaryLogicForDisplayObj;
-        summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
+        summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj;
 
         SpannableString title = new SpannableString(summaryLogicForDisplayObj.getBarcodeQuery());
         SpannableString subtitle = new SpannableString(summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");

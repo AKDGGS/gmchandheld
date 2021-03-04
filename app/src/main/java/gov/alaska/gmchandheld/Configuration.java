@@ -38,6 +38,7 @@ public class Configuration extends BaseActivity {
     private SharedPreferences sp;
 
     public static final String SHARED_PREFS = "sharedPrefs";
+    public static SharedPreferences.Editor editor;
 
     private ToggleButton autoUpdatebtn;
     private boolean alarmUp;

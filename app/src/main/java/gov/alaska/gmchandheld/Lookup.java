@@ -32,8 +32,9 @@ import java.util.LinkedList;
 
 public class Lookup extends BaseActivity {
 	private ListView listView;
-	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
-//	public static final String SHARED_PREFS = "sharedPrefs";
+//	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
+	private final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
+
 	private EditText barcodeET;
 	private IntentIntegrator qrScan;
 
@@ -58,15 +59,10 @@ public class Lookup extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
 		loadLookup();
-
-//		SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-//
-//		long lastRefusedUpdate = sharedPreferences.getLong("ignoreUpdateSP", 0);
-//		System.out.println("IgnoreUpdate: " + lastRefusedUpdate);
 	}
 
 	public void loadLookup() {
-		LookupDisplayObjInstance.instance().lookupLogicForDisplayObj = null;
+		LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
 
 		deleteApkFile();
 

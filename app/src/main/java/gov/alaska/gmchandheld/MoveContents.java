@@ -21,7 +21,6 @@ import com.google.zxing.integration.android.IntentResult;
 
 public class MoveContents extends BaseActivity {
 
-//	public static final String SHARED_PREFS = "sharedPrefs";
 	private IntentIntegrator fromQrScan;
 	private EditText moveContentsFromET, moveContentsToET;
 
@@ -96,7 +95,6 @@ public class MoveContents extends BaseActivity {
 					Intent intent = new Intent(MoveContents.this, CameraToScanner.class);
 					startActivityForResult(intent, 1);
 				}
-
 			}
 		});
 
@@ -110,7 +108,6 @@ public class MoveContents extends BaseActivity {
 					Intent intent = new Intent(MoveContents.this, CameraToScanner.class);
 					startActivityForResult(intent, 2);
 				}
-
 			}
 		});
 	}

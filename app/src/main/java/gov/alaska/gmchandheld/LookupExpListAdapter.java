@@ -93,12 +93,12 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 		switch(context.getClass().getSimpleName()){
 			case "LookupDisplay":{
-				LookupLogicForDisplay obj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
+				LookupLogicForDisplay obj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
 				inventoryObjTypeSet = new HashSet<>(obj.getTypeFlagList());
 				break;
 			}
 			case "SummaryDisplay":{
-				SummaryLogicForDisplay obj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
+				SummaryLogicForDisplay obj = SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj;
 				inventoryObjTypeSet = new HashSet<>(obj.getTypeFlagList());
 				break;
 			}

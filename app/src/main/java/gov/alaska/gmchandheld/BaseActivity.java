@@ -41,7 +41,7 @@ public class BaseActivity extends AppCompatActivity {
 
 		if (item.getItemId() == (R.id.summary)) {
 			SummaryLogicForDisplay summaryLogicForDisplayObj;
-			summaryLogicForDisplayObj = SummaryDisplayObjInstance.instance().summaryLogicForDisplayObj;
+			summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj;
 
 			if (summaryLogicForDisplayObj == null) {
 				Intent intentGetBarcode = new Intent(this, Summary.class);
@@ -55,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
 			return true;
 		} else if (item.getItemId() == (R.id.lookup)) {
 			LookupLogicForDisplay lookupLogicForDisplayObj;
-			lookupLogicForDisplayObj = LookupDisplayObjInstance.instance().lookupLogicForDisplayObj;
+			lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
 
 			if (lookupLogicForDisplayObj == null) {
 				Intent intentGetBarcode = new Intent(this, Lookup.class);
