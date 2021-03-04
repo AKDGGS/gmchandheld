@@ -23,8 +23,6 @@ public class UpdateAppActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_update_app);
-
-		Context context = this;
-		new UpdateCheckLastModifiedDate(context).execute();
+		new UpdateCheckLastModifiedDate(this).execute();
 	}
 }

@@ -108,14 +108,14 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 	}
 
 
-	class DownloadFileFromURL extends AsyncTask<String, String, String> {
+	private static class DownloadFileFromURL extends AsyncTask<String, String, String> {
 		int versionJsonResponseCode;
 		String filename = "current.apk";
 
-		private WeakReference<Context> contextRef;
+		private WeakReference<UpdateDownloadAPKHandler> mActivity;
 
-		public DownloadFileFromURL(Context context) {
-			contextRef = new WeakReference<>(context);
+		public DownloadFileFromURL(UpdateDownloadAPKHandler context) {
+			mActivity = new WeakReference<UpdateDownloadAPKHandler>(context);
 		}
 
 		@Override
@@ -130,7 +130,7 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 					con.connect();
 					InputStream input = new BufferedInputStream(url.openStream(), 8192);
 					input = new BufferedInputStream(url.openStream(), 8192);
-					verifyStoragePermissions(UpdateDownloadAPKHandler.this);
+					verifyStoragePermissions(mActivity.get());
 					OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
 					byte[] data = new byte[1024];
 					long total = 0;
@@ -162,22 +162,24 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 			Intent intent = new Intent();
 			File apkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
 			Uri apkURI = Uri.fromFile(apkFile);
-			Context context = contextRef.get();
+
+
+			Context context = mActivity.get();
 
 			if ((versionJsonResponseCode == 200)) {
 				Uri uriFile = Uri.fromFile(apkFile);
 				if (context != null) {
 					if (Build.VERSION.SDK_INT >= 24) {
-						uriFile = FileProvider.getUriForFile(context, getApplicationContext().getPackageName() + ".provider",
+						uriFile = FileProvider.getUriForFile(context,  context.getPackageName() + ".provider",
 								apkFile);
 					}
 				}
 				intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
 				intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
 				intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(intent);
+				context.startActivity(intent);
 			} else {
-				Toast.makeText(getBaseContext(), "No update available.", Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "No update available.", Toast.LENGTH_LONG).show();
 			}
 		}
 	}
