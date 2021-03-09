@@ -72,6 +72,8 @@ public class AuditDisplay extends BaseActivity {
 		containerList = AuditDisplayObjInstance.getInstance().getAuditList();
 		adapter.addAll(containerList);
 
+		auditCountTV.setText(String.valueOf(containerList.size()));
+
 		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
@@ -146,7 +148,6 @@ public class AuditDisplay extends BaseActivity {
 				adapter.clear();
 				adapter.notifyDataSetChanged();
 				auditCountTV.setText(String.valueOf(containerList.size()));
-				sp.edit().remove("savedAuditContainerList").commit();
 
 			}
 		});
@@ -216,8 +217,6 @@ public class AuditDisplay extends BaseActivity {
 							auditItemET.setText("");
 							auditRemarkET.setText("");
 							auditCountTV.setText("");
-							sp.edit().remove("savedAuditContainerList").apply();
-							sp.edit().remove("savedAuditRemark").apply();
 						}
 					}
 				}
@@ -233,12 +232,12 @@ public class AuditDisplay extends BaseActivity {
 		remoteApiUIHandler.processDataForDisplay(this);
 	}
 
-	@Override
-	public void onBackPressed() {
-		String[] containerArray = containerList.toArray(new String[0]);
-		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-		super.onBackPressed();
-	}
+//	@Override
+//	public void onBackPressed() {
+//		String[] containerArray = containerList.toArray(new String[0]);
+//		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
+//		super.onBackPressed();
+//	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

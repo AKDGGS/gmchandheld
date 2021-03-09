@@ -34,7 +34,6 @@ import java.util.Set;
 
 public class MoveDisplay extends BaseActivity {
 
-//	SharedPreferences.Editor editor;
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
 	private EditText destinationET;
@@ -69,18 +68,12 @@ public class MoveDisplay extends BaseActivity {
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		containerListLV.setAdapter(adapter);
 
-		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		if (sp.getString(Configuration.SHARED_PREFS, "savedDestination") != null) {
-			destinationET.setText(sp.getString("savedDestination", ""));
-		}
+		containerList = MoveDisplayObjInstance.getInstance().getMoveList();
+		adapter.addAll(containerList);
 
-		if (sp.getStringSet("savedContainerList", null) != null) {
-			containerList = new ArrayList<>(sp.getStringSet("savedContainerList", null));
-			adapter.addAll(containerList);
-		}
-		else {
-			containerList = new ArrayList<>();
-		}
+		moveCountTV.setText(String.valueOf(containerList.size()));
+
+		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
@@ -138,11 +131,6 @@ public class MoveDisplay extends BaseActivity {
 					if (!container.isEmpty()) {
 						if (!(container.equals(destinationET.getText().toString()) && (!containerList.contains(container)))) {
 							containerList.add(0, container);
-							Configuration.editor = sp.edit();
-							String[] containerArray = containerList.toArray(new String[0]);
-							Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-							Configuration.editor.putStringSet("savedContainerList", containerSet).commit();
-
 							adapter.insert(container, 0);
 							adapter.notifyDataSetChanged();
 							moveCountTV.setText(String.valueOf(containerList.size()));
@@ -163,8 +151,6 @@ public class MoveDisplay extends BaseActivity {
 				adapter.clear();
 				adapter.notifyDataSetChanged();
 				moveCountTV.setText(String.valueOf(containerList.size()));
-				sp.edit().remove("savedContainerList").commit();
-
 			}
 		});
 
@@ -186,10 +172,6 @@ public class MoveDisplay extends BaseActivity {
 							if (clicks == 2) {
 								adapter.remove(containerList.get(position));
 								containerList.remove(position);
-								Configuration.editor = sp.edit();
-								String[] containerArray = containerList.toArray(new String[0]);
-								Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-								Configuration.editor.putStringSet("savedContainerList", containerSet).commit();
 								adapter.notifyDataSetChanged();
 								moveCountTV.setText(String.valueOf(containerList.size()));
 							}
@@ -237,8 +219,6 @@ public class MoveDisplay extends BaseActivity {
 							itemET.setText("");
 							destinationET.setText("");
 							moveCountTV.setText("");
-							sp.edit().remove("savedContainerList").apply();
-							sp.edit().remove("savedDestination").apply();
 						}
 					}
 				}
@@ -255,20 +235,14 @@ public class MoveDisplay extends BaseActivity {
 		remoteApiUIHandler.processDataForDisplay(this);
 	}
 
-	@Override
-	public void onBackPressed() {
-		String[] containerArray = containerList.toArray(new String[0]);
-		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-		final EditText moveDestinationET = findViewById(R.id.toET);
-
-		SharedPreferences sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		Configuration.editor = sharedPreferences.edit();
-		Configuration.editor.putStringSet("savedContainerList", containerSet);
-		Configuration.editor.putString("savedDestination", moveDestinationET.getText().toString());
-		Configuration.editor.apply();
-
-		super.onBackPressed();
-	}
+//	@Override
+//	public void onBackPressed() {
+//		String[] containerArray = containerList.toArray(new String[0]);
+//		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
+//		final EditText moveDestinationET = findViewById(R.id.toET);
+//
+//		super.onBackPressed();
+//	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

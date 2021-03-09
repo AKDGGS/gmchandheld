@@ -16,8 +16,10 @@ public class AuditDisplayObjInstance {
 
     public static AuditDisplayObjInstance getInstance()
     {
-        if (obj == null)
+        if (obj == null) {
             obj = new AuditDisplayObjInstance();
+        }
+
         return obj;
     }
     public AuditDisplayObjInstance auditDisplayObjInstance;
