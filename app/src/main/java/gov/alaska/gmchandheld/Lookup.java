@@ -1,7 +1,6 @@
 package gov.alaska.gmchandheld;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +8,6 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,14 +25,11 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.nio.file.Files;
 import java.util.LinkedList;
 
 
 public class Lookup extends BaseActivity {
 	private ListView listView;
-//	private final LinkedList<String> lookupHistory = LookupHistoryHolder.getInstance().getLookupHistory();
 	private final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
 
 	private EditText barcodeET;
@@ -69,7 +64,9 @@ public class Lookup extends BaseActivity {
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+		toolbar.setTitle("Lookup");
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
+
 
 		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
@@ -210,9 +207,6 @@ public class Lookup extends BaseActivity {
 				super.onActivityResult(requestCode, resultCode, data);
 			}
 		}
-	}
-	public void printHello(){
-		System.out.println("Hello");
 	}
 }
 

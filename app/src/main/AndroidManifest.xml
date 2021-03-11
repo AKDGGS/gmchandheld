@@ -18,12 +18,12 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="gmchandheld"
+        android:label="GMC Handheld"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-
+        <!-- From API 24, there is a known bug that prevents the app from having a different name from the launching activity https://stackoverflow.com/a/43544965  -->
         <activity
             android:name=".Lookup"
             android:label="@string/lookup"

@@ -147,7 +147,7 @@
             <Button
                 android:id="@+id/clearAllBtn"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="44dp"
                 android:layout_weight="1.75"
                 android:layout_gravity="center"
                 android:text="Clear"

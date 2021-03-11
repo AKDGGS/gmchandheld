@@ -146,7 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:selectAllOnFocus="true"
-            android:layout_weight="3.35"/>
+            android:layout_weight="3.25"/>
 
         <Button
             android:id="@+id/clearAllBtn"

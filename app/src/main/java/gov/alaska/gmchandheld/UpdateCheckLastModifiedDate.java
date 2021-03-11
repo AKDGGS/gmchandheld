@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -13,10 +12,7 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.SQLOutput;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 

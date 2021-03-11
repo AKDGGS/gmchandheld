@@ -139,7 +139,7 @@ public class RemoteApiUIHandler {
                 @Override
                 protected RemoteApiDownload doInBackground(String... strings) {
                     if (!isCancelled()) {
-                        RemoteApiDownload remoteAPIDownload = null;
+                        RemoteApiDownload remoteAPIDownload;
                         remoteAPIDownload = new RemoteApiDownload(context);
                         switch (context.getClass().getSimpleName()) {
                             case "Lookup":
@@ -181,7 +181,8 @@ public class RemoteApiUIHandler {
                                 break;
                             }
                         }
-                        remoteAPIDownload.getDataFromURL();
+                            remoteAPIDownload.getDataFromURL();
+
                         return remoteAPIDownload;
                     }
                     return null;

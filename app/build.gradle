@@ -4,12 +4,12 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 def getDateTime() {
-    DateFormat df = new SimpleDateFormat("yyyyMMddHHmm");
-    return df.format(new Date());
+    DateFormat df = new SimpleDateFormat("yyyyMMddHHmm")
+    return df.format(new Date())
 }
 
 // Load keystore
-def keystorePropertiesFile = rootProject.file("keystore.properties");
+def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 

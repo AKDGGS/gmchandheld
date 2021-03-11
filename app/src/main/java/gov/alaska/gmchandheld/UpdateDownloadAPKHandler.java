@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
@@ -126,10 +125,10 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
                 versionJsonResponseCode = con.getResponseCode();
                 try {
                     con.connect();
-                    InputStream input = new BufferedInputStream(url.openStream(), 8192);
+//                    InputStream input = new BufferedInputStream(url.openStream(), 8192);
+                    InputStream input;
                     input = new BufferedInputStream(url.openStream(), 8192);
                     verifyStoragePermissions(mActivity.get());
-
                     OutputStream output = new FileOutputStream(mActivity.get().getExternalCacheDir() + "/" + filename);
                     byte[] data = new byte[1024];
                     long total = 0;

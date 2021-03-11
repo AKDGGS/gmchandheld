@@ -2,11 +2,8 @@ package gov.alaska.gmchandheld;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import java.lang.ref.WeakReference;
 
 public class UpdateAppActivity extends AppCompatActivity {
 
