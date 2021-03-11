@@ -138,7 +138,6 @@ public class Configuration extends BaseActivity {
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Update Button Pressed.");
                 updateAPK();
             }
         });
@@ -265,7 +264,6 @@ public class Configuration extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                System.out.println(getUrl());
                 editor.putString("urlText", getUrl()).commit();
             }
 

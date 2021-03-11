@@ -129,7 +129,8 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
                     InputStream input = new BufferedInputStream(url.openStream(), 8192);
                     input = new BufferedInputStream(url.openStream(), 8192);
                     verifyStoragePermissions(mActivity.get());
-                    OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
+
+                    OutputStream output = new FileOutputStream(mActivity.get().getExternalCacheDir() + "/" + filename);
                     byte[] data = new byte[1024];
                     long total = 0;
 
@@ -157,11 +158,9 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 
         @Override
         protected void onPostExecute(String fileUrl) {
-            Intent intent = new Intent();
-            File apkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
+            Intent intent;
+            File apkFile = new File(mActivity.get().getExternalCacheDir() + "/" + filename);
             Uri apkURI = Uri.fromFile(apkFile);
-
-
             Context context = mActivity.get();
 
             if ((versionJsonResponseCode == 200)) {
@@ -175,6 +174,7 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
                 intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
                 intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 context.startActivity(intent);
             } else {
                 Toast.makeText(context, "No update available.", Toast.LENGTH_LONG).show();

@@ -60,7 +60,11 @@
                         android:paddingLeft="16dp"
                         android:text=""
                         android:maxLength="25"
-                        android:selectAllOnFocus="true"/>
+                        android:selectAllOnFocus="true"
+                        android:nextFocusDown="@+id/barcodeET"
+                        android:nextFocusUp="@+id/barcodeET"
+                        android:nextFocusLeft="@+id/barcodeET"
+                        android:nextFocusRight="@+id/barcodeET"/>
 
                     <Button
                         android:id="@+id/cameraBtn"
@@ -69,7 +73,11 @@
                         android:layout_marginTop="12dp"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1.25"
-                        android:drawableBottom="@drawable/ic_scanner_qr"/>
+                        android:drawableBottom="@drawable/ic_scanner_qr"
+                        android:nextFocusDown="@+id/cameraBtn"
+                        android:nextFocusUp="@+id/cameraBtn"
+                        android:nextFocusLeft="@+id/cameraBtn"
+                        android:nextFocusRight="@+id/cameraBtn"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -105,7 +113,11 @@
                         android:text=""
                         android:inputType="text"
                         android:maxLength="50"
-                        android:selectAllOnFocus="true" />
+                        android:selectAllOnFocus="true"
+                        android:nextFocusDown="@+id/nameET"
+                        android:nextFocusUp="@+id/nameET"
+                        android:nextFocusLeft="@+id/nameET"
+                        android:nextFocusRight="@+id/nameET"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -140,7 +152,11 @@
                         android:text=""
                         android:inputType="text|textMultiLine"
                         android:scrollHorizontally="false"
-                        android:selectAllOnFocus="true"/>
+                        android:selectAllOnFocus="true"
+                        android:nextFocusDown="@+id/remarkET"
+                        android:nextFocusUp="@+id/remarkET"
+                        android:nextFocusLeft="@+id/remarkET"
+                        android:nextFocusRight="@+id/remarkET"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -174,6 +190,10 @@
             android:paddingRight="5dp"
             android:text="@string/add_container"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:nextFocusDown="@+id/submitBtn"
+            android:nextFocusUp="@+id/submitBtn"
+            android:nextFocusLeft="@+id/submitBtn"
+            android:nextFocusRight="@+id/submitBtn"/>
     </RelativeLayout>
 </LinearLayout>

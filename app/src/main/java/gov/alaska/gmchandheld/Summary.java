@@ -1,8 +1,10 @@
 package gov.alaska.gmchandheld;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -157,5 +159,43 @@ public class Summary extends BaseActivity {
                 super.onActivityResult(requestCode, resultCode, data);
             }
         }
+    }
+
+    //makes the volume keys scroll up/down
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action, keycode;
+        action = event.getAction();
+        keycode = event.getKeyCode();
+
+        AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+
+        switch (keycode) {
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_VOLUME_UP: {
+                manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
+                manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
+                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+                    listView.smoothScrollToPosition(0, 0);
+                }
+                if (KeyEvent.ACTION_UP == action) {
+                    listView.smoothScrollByOffset(-3);
+                }
+                return true;
+            }
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_DOWN: {
+
+                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+                    listView.smoothScrollToPosition(listView.getCount());
+                }
+
+                if (KeyEvent.ACTION_UP == action) {
+                    listView.smoothScrollByOffset(3);
+                }
+                return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 }

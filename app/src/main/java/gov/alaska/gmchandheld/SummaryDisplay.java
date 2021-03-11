@@ -143,7 +143,6 @@ public class SummaryDisplay extends BaseActivity {
             }
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_VOLUME_DOWN: {
-                System.out.println(keycode);
                 if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
                     expandableListView.smoothScrollToPosition(expandableListView.getCount());
                 }

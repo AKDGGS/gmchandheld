@@ -40,7 +40,11 @@
             android:inputType="text"
             android:paddingLeft="16dp"
             app:backgroundTint="@color/colorPrimary"
-            android:selectAllOnFocus="true"/>
+            android:selectAllOnFocus="true"
+            android:nextFocusDown="@+id/fromET"
+            android:nextFocusUp="@+id/fromET"
+            android:nextFocusLeft="@+id/fromET"
+            android:nextFocusRight="@+id/fromET"/>
 
         <Button
             android:id="@+id/fromCameraBtn"
@@ -49,7 +53,11 @@
             android:layout_marginTop="12dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1.25"
-            android:drawableBottom="@drawable/ic_scanner_qr"/>
+            android:drawableBottom="@drawable/ic_scanner_qr"
+            android:nextFocusDown="@+id/fromCameraBtn"
+            android:nextFocusUp="@+id/fromCameraBtn"
+            android:nextFocusLeft="@+id/fromCameraBtn"
+            android:nextFocusRight="@+id/fromCameraBtn"/>
     </LinearLayout>
 
     <LinearLayout
@@ -78,11 +86,14 @@
             android:layout_weight="7.25"
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
-
             android:inputType="text"
             android:paddingLeft="16dp"
             app:backgroundTint="@color/colorPrimary"
-            android:selectAllOnFocus="true"/>
+            android:selectAllOnFocus="true"
+            android:nextFocusDown="@+id/toET"
+            android:nextFocusUp="@+id/toET"
+            android:nextFocusLeft="@+id/toET"
+            android:nextFocusRight="@+id/toET"/>
 
         <Button
             android:id="@+id/toCameraBtn"
@@ -91,7 +102,11 @@
             android:layout_marginTop="12dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1.25"
-            android:drawableBottom="@drawable/ic_scanner_qr"/>
+            android:drawableBottom="@drawable/ic_scanner_qr"
+            android:nextFocusDown="@+id/toCameraBtn"
+            android:nextFocusUp="@+id/toCameraBtn"
+            android:nextFocusLeft="@+id/toCameraBtn"
+            android:nextFocusRight="@+id/toCameraBtn"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -118,6 +133,10 @@
             android:paddingRight="5dp"
             android:text="@string/submit"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:nextFocusDown="@+id/submitBtn"
+            android:nextFocusUp="@+id/submitBtn"
+            android:nextFocusLeft="@+id/submitBtn"
+            android:nextFocusRight="@+id/submitBtn"/>
     </RelativeLayout>
 </LinearLayout>

@@ -34,7 +34,11 @@
             android:paddingStart="16dp"
             android:paddingLeft="16dp"
             android:text=""
-            android:selectAllOnFocus="true" />
+            android:selectAllOnFocus="true"
+            android:nextFocusDown="@+id/barcodeET"
+            android:nextFocusUp="@+id/barcodeET"
+            android:nextFocusLeft="@+id/barcodeET"
+            android:nextFocusRight="@+id/barcodeET"/>
 
         <Button
             android:id="@+id/cameraBtn"
@@ -43,7 +47,11 @@
             android:layout_marginTop="12dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1.0"
-            android:drawableBottom="@drawable/ic_scanner_qr"/>
+            android:drawableBottom="@drawable/ic_scanner_qr"
+            android:nextFocusDown="@+id/cameraBtn"
+            android:nextFocusUp="@+id/cameraBtn"
+            android:nextFocusLeft="@+id/cameraBtn"
+            android:nextFocusRight="@+id/cameraBtn"/>
     </LinearLayout>
 
 
@@ -95,6 +103,10 @@
                 android:paddingRight="5dp"
                 android:text="@string/submit"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:nextFocusDown="@+id/submitBtn"
+                android:nextFocusUp="@+id/submitBtn"
+                android:nextFocusLeft="@+id/submitBtn"
+                android:nextFocusRight="@+id/submitBtn"/>
         </RelativeLayout>
 </LinearLayout>

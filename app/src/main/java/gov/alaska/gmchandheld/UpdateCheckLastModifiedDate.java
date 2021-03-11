@@ -40,11 +40,9 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 
         try {
             URL url = new URL(urlStr);
-
             httpCon = (HttpURLConnection) url.openConnection();
             httpCon.setRequestMethod("HEAD");
             lastModified = httpCon.getLastModified();
-            System.out.println(url.toString() + " " + lastModified);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

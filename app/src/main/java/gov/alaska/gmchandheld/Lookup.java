@@ -1,6 +1,7 @@
 package gov.alaska.gmchandheld;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Files;
 import java.util.LinkedList;
 
 
@@ -48,23 +50,22 @@ public class Lookup extends BaseActivity {
 
 	@Override
 	public void onRestart() {
-		super.onRestart();
 		this.recreate();
 		EditText barcodeInput = findViewById(R.id.barcodeET);
 		barcodeInput.selectAll();
+		super.onRestart();
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
+		deleteApkFile();
 		loadLookup();
 	}
 
 	public void loadLookup() {
 		LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
-
-		deleteApkFile();
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -186,23 +187,11 @@ public class Lookup extends BaseActivity {
 	}
 
 	private void deleteApkFile() {
-		File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-
-		if (dir.exists()) {
-			File[] files = dir.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.matches("(gmc-app-[0-9]+-release\\.apk)");
-				}
-			});
-
-			if (files != null && files.length > 0) {
-				for (File f : files) {
-					f.delete();
-				}
-			}
-		}
+		File dir = getExternalCacheDir();
+		File file = new File(dir, "current.apk");
+		file.delete();
 	}
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -222,7 +211,9 @@ public class Lookup extends BaseActivity {
 			}
 		}
 	}
+	public void printHello(){
+		System.out.println("Hello");
+	}
 }
-
 
 

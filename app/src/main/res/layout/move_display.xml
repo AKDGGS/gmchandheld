@@ -38,7 +38,11 @@
                 android:inputType="text"
                 android:paddingLeft="16dp"
                 app:backgroundTint="@color/colorPrimary"
-                android:selectAllOnFocus="true" />
+                android:selectAllOnFocus="true"
+                android:nextFocusDown="@+id/toET"
+                android:nextFocusUp="@+id/toET"
+                android:nextFocusLeft="@+id/toET"
+                android:nextFocusRight="@+id/toET"/>
 
             <Button
                 android:id="@+id/cameraBtn"
@@ -47,22 +51,27 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1.25"
-                android:drawableBottom="@drawable/ic_scanner_qr"/>
+                android:drawableBottom="@drawable/ic_scanner_qr"
+                android:nextFocusDown="@+id/cameraBtn"
+                android:nextFocusUp="@+id/cameraBtn"
+                android:nextFocusLeft="@+id/cameraBtn"
+                android:nextFocusRight="@+id/cameraBtn"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:weightSum="10">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1.5"
+                android:layout_weight="1.75"
                 android:layout_height="wrap_content"
-
-                android:layout_marginTop="10dp"
                 android:text="@string/item"
                 android:textAllCaps="true"
                 android:textColor="@android:color/black"
@@ -72,41 +81,52 @@
             <EditText
                 android:id="@+id/itemET"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_weight="5.75"
+                android:layout_weight="5.25"
                 android:inputType="text"
                 app:backgroundTint="@color/colorPrimary"
-                tools:ignore="RtlSymmetry"
-                android:selectAllOnFocus="true"/>
+                android:selectAllOnFocus="true"
+                android:nextFocusDown="@+id/itemET"
+                android:nextFocusUp="@+id/itemET"
+                android:nextFocusLeft="@+id/itemET"
+                android:nextFocusRight="@+id/itemET"/>
 
             <Button
                 android:id="@+id/itemCameraBtn"
                 android:layout_width="0dp"
                 android:layout_height="44dp"
                 android:layout_weight="1.25"
-                android:drawableBottom="@drawable/ic_scanner_qr"/>
+                android:drawableBottom="@drawable/ic_scanner_qr"
+                android:nextFocusDown="@+id/itemCameraBtn"
+                android:nextFocusUp="@+id/itemCameraBtn"
+                android:nextFocusLeft="@+id/itemCameraBtn"
+                android:nextFocusRight="@+id/itemCameraBtn"/>
 
             <Button
                 android:id="@+id/addContainerBtn"
                 android:layout_width="0dp"
-                android:layout_weight="1.5"
-                android:layout_height="wrap_content"
+                android:layout_weight="1.75"
+                android:layout_height="44dp"
                 android:layout_gravity="center"
-                android:minWidth="15dip"
-                android:minHeight="15dip"
                 android:text="@string/add"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                android:nextFocusDown="@+id/addContainerBtn"
+                android:nextFocusUp="@+id/addContainerBtn"
+                android:nextFocusLeft="@+id/addContainerBtn"
+                android:nextFocusRight="@+id/addContainerBtn"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="10">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="5"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="5dp"
@@ -122,17 +142,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:selectAllOnFocus="true"
-                android:layout_weight="1"/>
+                android:layout_weight="3.25"/>
 
             <Button
                 android:id="@+id/clearAllBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1.75"
                 android:layout_gravity="center"
-                android:minWidth="40dip"
-                android:minHeight="40dip"
                 android:text="Clear"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                android:nextFocusDown="@+id/clearAllBtn"
+                android:nextFocusUp="@+id/clearAllBtn"
+                android:nextFocusLeft="@+id/clearAllBtn"
+                android:nextFocusRight="@+id/clearAllBtn" />
         </LinearLayout>
 
     <TextView
@@ -159,7 +182,7 @@
                 android:layout_marginBottom="60dp" />
 
             <Button
-                android:id="@+id/moveBtn"
+                android:id="@+id/submitBtn"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"
@@ -178,6 +201,10 @@
                 android:paddingRight="5dp"
                 android:text="@string/submit"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:nextFocusDown="@+id/submitBtn"
+                android:nextFocusUp="@+id/submitBtn"
+                android:nextFocusLeft="@+id/submitBtn"
+                android:nextFocusRight="@+id/submitBtn"/>
         </RelativeLayout>
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -60,7 +61,7 @@ public class MoveDisplay extends BaseActivity {
 		itemET = findViewById(R.id.itemET);
 		destinationET = findViewById(R.id.toET);
 		final TextView moveCountTV = findViewById(R.id.moveCountTV);
-		final Button moveBtn = findViewById(R.id.moveBtn);
+		final Button moveBtn = findViewById(R.id.submitBtn);
 		final Button addBtn = findViewById(R.id.addContainerBtn);
 		final Button clearAllBtn = findViewById(R.id.clearAllBtn);
 		ListView containerListLV = findViewById(R.id.listViewContainersToMove);
@@ -82,7 +83,7 @@ public class MoveDisplay extends BaseActivity {
 		if(!cameraOn){
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 					LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-			params.weight = 7.0f;
+			params.weight = 6.75f;
 
 			itemET.setLayoutParams(params);
 			cameraBtn.setVisibility(View.GONE);
@@ -194,6 +195,8 @@ public class MoveDisplay extends BaseActivity {
 				}
 			});
 
+
+
 			// KeyListener listens if enter is pressed
 			destinationET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -235,14 +238,6 @@ public class MoveDisplay extends BaseActivity {
 		remoteApiUIHandler.processDataForDisplay(this);
 	}
 
-//	@Override
-//	public void onBackPressed() {
-//		String[] containerArray = containerList.toArray(new String[0]);
-//		Set<String> containerSet = new HashSet<>(Arrays.asList(containerArray));
-//		final EditText moveDestinationET = findViewById(R.id.toET);
-//
-//		super.onBackPressed();
-//	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -290,4 +285,15 @@ public class MoveDisplay extends BaseActivity {
 			}
 		}
 	}
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if (itemET.hasFocus() & event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+			return true;
+		}
+		return super.dispatchKeyEvent(event);
+	}
+
+
+
 }

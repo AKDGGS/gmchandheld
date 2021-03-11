@@ -51,14 +51,22 @@
                     android:inputType="text"
                     android:maxLength="25"
                     android:selectAllOnFocus="true"
-                    android:text="" />
+                    android:text=""
+                    android:nextFocusDown="@+id/oldBarcodeET"
+                    android:nextFocusUp="@+id/oldBarcodeET"
+                    android:nextFocusLeft="@+id/oldBarcodeET"
+                    android:nextFocusRight="@+id/oldBarcodeET"/>
 
                 <Button
                     android:id="@+id/oldBarcodeCameraBtn"
                     android:layout_width="0dp"
                     android:layout_height="44dp"
                     android:layout_weight="1.25"
-                    android:drawableBottom="@drawable/ic_scanner_qr" />
+                    android:drawableBottom="@drawable/ic_scanner_qr"
+                    android:nextFocusDown="@+id/oldBarcodeCameraBtn"
+                    android:nextFocusUp="@+id/oldBarcodeCameraBtn"
+                    android:nextFocusLeft="@+id/oldBarcodeCameraBtn"
+                    android:nextFocusRight="@+id/oldBarcodeCameraBtn"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -94,14 +102,22 @@
                     android:inputType="text"
                     android:maxLength="25"
                     android:selectAllOnFocus="true"
-                    android:text="" />
+                    android:text=""
+                    android:nextFocusDown="@+id/newBarcodeET"
+                    android:nextFocusUp="@+id/newBarcodeET"
+                    android:nextFocusLeft="@+id/newBarcodeET"
+                    android:nextFocusRight="@+id/newBarcodeET"/>
 
                 <Button
                     android:id="@+id/newBarcodeCameraBtn"
                     android:layout_width="0dp"
                     android:layout_height="44dp"
                     android:layout_weight="1.25"
-                    android:drawableBottom="@drawable/ic_scanner_qr" />
+                    android:drawableBottom="@drawable/ic_scanner_qr"
+                    android:nextFocusDown="@+id/newBarcodeCameraBtn"
+                    android:nextFocusUp="@+id/newBarcodeCameraBtn"
+                    android:nextFocusLeft="@+id/newBarcodeCameraBtn"
+                    android:nextFocusRight="@+id/newBarcodeCameraBtn"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -123,6 +139,10 @@
             android:minHeight="50dip"
             android:text="@string/submit"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:nextFocusDown="@+id/submitBtn"
+            android:nextFocusUp="@+id/submitBtn"
+            android:nextFocusLeft="@+id/submitBtn"
+            android:nextFocusRight="@+id/submitBtn"/>
     </RelativeLayout>
 </LinearLayout>

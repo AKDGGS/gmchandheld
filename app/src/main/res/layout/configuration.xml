@@ -85,14 +85,22 @@
                         android:inputType="textUri"
                         android:selectAllOnFocus="true"
                         android:text=""
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:nextFocusDown="@+id/urlET"
+                        android:nextFocusUp="@+id/urlET"
+                        android:nextFocusLeft="@+id/urlET"
+                        android:nextFocusRight="@+id/urlET"/>
 
                     <Button
                         android:id="@+id/urlCameraBtn"
                         android:layout_width="0dp"
                         android:layout_height="44dp"
                         android:layout_weight="1.25"
-                        android:drawableBottom="@drawable/ic_scanner_qr" />
+                        android:drawableBottom="@drawable/ic_scanner_qr"
+                        android:nextFocusDown="@+id/urlCameraBtn"
+                        android:nextFocusUp="@+id/urlCameraBtn"
+                        android:nextFocusLeft="@+id/urlCameraBtn"
+                        android:nextFocusRight="@+id/urlCameraBtn"/>
                 </LinearLayout>
 
                 <View
@@ -129,14 +137,22 @@
                         android:padding="5dp"
                         android:selectAllOnFocus="true"
                         android:text=""
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:nextFocusDown="@+id/apiET"
+                        android:nextFocusUp="@+id/apiET"
+                        android:nextFocusLeft="@+id/apiET"
+                        android:nextFocusRight="@+id/apiET"/>
 
                     <Button
                         android:id="@+id/apiCameraBtn"
                         android:layout_width="0dp"
                         android:layout_height="44dp"
                         android:layout_weight="1.25"
-                        android:drawableBottom="@drawable/ic_scanner_qr" />
+                        android:drawableBottom="@drawable/ic_scanner_qr"
+                        android:nextFocusDown="@+id/apiCameraBtn"
+                        android:nextFocusUp="@+id/apiCameraBtn"
+                        android:nextFocusLeft="@+id/apiCameraBtn"
+                        android:nextFocusRight="@+id/apiCameraBtn"/>
                 </LinearLayout>
 
                 <View
@@ -169,7 +185,11 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textOff="Off"
-                        android:textOn="On" />
+                        android:textOn="On"
+                        android:nextFocusDown="@+id/cameraToScannerBtn"
+                        android:nextFocusUp="@+id/cameraToScannerBtn"
+                        android:nextFocusLeft="@+id/cameraToScannerBtn"
+                        android:nextFocusRight="@+id/cameraToScannerBtn"/>
                 </LinearLayout>
 
                 <View
@@ -202,7 +222,11 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textOff="Off"
-                        android:textOn="On" />
+                        android:textOn="On"
+                        android:nextFocusDown="@+id/autoUpdateBtn"
+                        android:nextFocusUp="@+id/autoUpdateBtn"
+                        android:nextFocusLeft="@+id/autoUpdateBtn"
+                        android:nextFocusRight="@+id/autoUpdateBtn"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -236,7 +260,11 @@
                         android:maxLines="1"
                         android:selectAllOnFocus="true"
                         android:text="24"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:nextFocusDown="@+id/hourET"
+                        android:nextFocusUp="@+id/hourET"
+                        android:nextFocusLeft="@+id/hourET"
+                        android:nextFocusRight="@+id/hourET"/>
 
                     <TextView
                         android:layout_width="0dp"
@@ -259,7 +287,11 @@
                         android:maxLines="1"
                         android:selectAllOnFocus="true"
                         android:text="0"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:nextFocusDown="@+id/minuteET"
+                        android:nextFocusUp="@+id/minuteET"
+                        android:nextFocusLeft="@+id/minuteET"
+                        android:nextFocusRight="@+id/minuteET"/>
                 </LinearLayout>
 
                 <View
@@ -279,7 +311,11 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:text="Check for Updates"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:nextFocusDown="@+id/updateBtn"
+                        android:nextFocusUp="@+id/updateBtn"
+                        android:nextFocusLeft="@+id/updateBtn"
+                        android:nextFocusRight="@+id/updateBtn"/>
 
                 </RelativeLayout>
 
