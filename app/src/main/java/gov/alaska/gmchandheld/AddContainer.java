@@ -47,7 +47,7 @@ public class AddContainer extends BaseActivity {
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
 		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
+		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		if(!cameraOn){

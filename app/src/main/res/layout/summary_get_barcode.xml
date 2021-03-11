@@ -51,7 +51,8 @@
             android:nextFocusDown="@+id/cameraBtn"
             android:nextFocusUp="@+id/cameraBtn"
             android:nextFocusLeft="@+id/cameraBtn"
-            android:nextFocusRight="@+id/cameraBtn"/>
+            android:nextFocusRight="@+id/cameraBtn"
+            android:layout_marginEnd="5dp" />
     </LinearLayout>
 
 

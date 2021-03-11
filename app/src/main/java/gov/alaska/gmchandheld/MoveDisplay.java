@@ -72,7 +72,7 @@ public class MoveDisplay extends BaseActivity {
 
 		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 
-		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
+		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		Button itemCameraBtn = findViewById(R.id.itemCameraBtn);

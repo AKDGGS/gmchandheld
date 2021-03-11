@@ -72,8 +72,8 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 
                         //If a user refuses an update, the last modified date for that update is saved in shared preferences,
                         SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-                        Configuration.editor = sp.edit();
-                        Configuration.editor.putLong("ignoreUpdateDateSP", lastModifiedRefused).commit();
+//                        Configuration.editor = sp.edit();
+                        Configuration.editor.putLong("ignoreUpdateDateSP", lastModifiedRefused).apply();
 
                         Intent intent = new Intent(UpdateDownloadAPKHandler.this, Lookup.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

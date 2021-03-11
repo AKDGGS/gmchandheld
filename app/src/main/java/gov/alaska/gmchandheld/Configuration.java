@@ -93,7 +93,7 @@ public class Configuration extends BaseActivity {
 
         cameraToScannerbtn = findViewById(R.id.cameraToScannerBtn);
 
-        Boolean cameraOn = (sp.getBoolean("cameraOn", false));
+        boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
         Button apiCameraBtn = findViewById(R.id.apiCameraBtn);
@@ -163,7 +163,7 @@ public class Configuration extends BaseActivity {
                                                  boolean isChecked) {
                         SharedPreferences.Editor editor = sp.edit();
                         if (isChecked) {
-                            editor.putBoolean("cameraOn", true).commit();
+                            editor.putBoolean("cameraOn", true).apply();
                         } else {
                             editor.putBoolean("cameraOn", false).commit();
                         }
@@ -186,15 +186,6 @@ public class Configuration extends BaseActivity {
                             AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
 
                             if (am != null) {
-                                String strTime = "2021-01-20 14:07:00";
-                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                                Date d = null;
-                                try {
-                                    d = dateFormat.parse(strTime);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-
                                 SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences("sharedPrefs", MODE_PRIVATE);
                                 String hour = sharedPreferences.getString("updateHour", "24");
                                 String minute = sharedPreferences.getString("updateMinute", "0");
@@ -244,7 +235,7 @@ public class Configuration extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("apiText", getApiKey()).commit();
+                editor.putString("apiText", getApiKey()).apply();
             }
 
             @Override
@@ -264,7 +255,7 @@ public class Configuration extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("urlText", getUrl()).commit();
+                editor.putString("urlText", getUrl()).apply();
             }
 
             @Override
@@ -331,7 +322,7 @@ public class Configuration extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("updateHour", hourInput.getText().toString()).commit();
+                editor.putString("updateHour", hourInput.getText().toString()).apply();
                 autoUpdatebtn.setChecked(false);
             }
 
@@ -352,7 +343,7 @@ public class Configuration extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("updateMinute", minuteInput.getText().toString()).commit();
+                editor.putString("updateMinute", minuteInput.getText().toString()).apply();
                 autoUpdatebtn.setChecked(false);
             }
 

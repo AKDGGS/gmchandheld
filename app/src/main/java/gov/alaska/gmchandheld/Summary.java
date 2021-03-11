@@ -69,7 +69,7 @@ public class Summary extends BaseActivity {
         listView.setAdapter(adapter);
 
         SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-        Boolean cameraOn = (sp.getBoolean("cameraOn", false));
+        boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!cameraOn) {

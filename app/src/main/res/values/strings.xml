@@ -6,7 +6,6 @@
     <string name="url_label">URL:</string>
     <string name="app_name">GMC Handheld</string> <!-- name of app -->
     <string name="build_date">Build Date:\u0020</string>
-    <string name="child_text">child text</string>
     <string name="submit">Submit</string>
     <string name="to">To:</string>
     <string name="item">Item:</string>
@@ -29,6 +28,17 @@
     <string name="hour">Hour (24 hr)</string>
     <string name="minute">Minute</string>
     <string name="audit">Audit</string>
+    <string name="updating_app">Updating App</string>
+    <string name="camera_to_scanner">Camera to Scanner</string>
+    <string name="off">Off</string>
+    <string name="on">On</string>
+    <string name="automatic_updates">Automatic Updates</string>
+    <string name="_24">24</string>
+    <string name="_0">0</string>
+    <string name="check_for_updates">Check for Updates</string>
+    <string name="child_text">child text</string>
+    <string name="clear">Clear</string>
+    <string name="double_tap_to_remove_item">Double tap to remove item</string>
 
 
 </resources>

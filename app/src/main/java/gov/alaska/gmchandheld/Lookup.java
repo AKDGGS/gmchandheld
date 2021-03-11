@@ -1,6 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,17 +30,8 @@ import java.util.LinkedList;
 public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
-
 	private EditText barcodeET;
 	private IntentIntegrator qrScan;
-
-	// Storage Permissions
-	private static final int REQUEST_EXTERNAL_STORAGE = 1;
-	private static String[] PERMISSIONS_STORAGE = {
-			Manifest.permission.READ_EXTERNAL_STORAGE,
-			Manifest.permission.WRITE_EXTERNAL_STORAGE,
-			Manifest.permission.REQUEST_INSTALL_PACKAGES
-	};
 
 	@Override
 	public void onRestart() {
@@ -69,7 +59,7 @@ public class Lookup extends BaseActivity {
 
 
 		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		Boolean cameraOn = (sp.getBoolean("cameraOn", false));
+		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		if (!cameraOn) {
