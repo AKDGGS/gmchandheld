@@ -107,11 +107,11 @@ public class Recode extends BaseActivity {
 			});
 
 			// KeyListener listens if enter is pressed
-			newBarcodeInput.setOnKeyListener(new View.OnKeyListener() {
+			barcodeInput.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					// if "enter" is pressed
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-							submit_button.performClick();
+						newBarcodeInput.requestFocus();
 						return true;
 					}
 					return false;

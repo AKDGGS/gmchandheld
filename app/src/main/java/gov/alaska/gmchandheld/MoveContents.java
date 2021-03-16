@@ -59,17 +59,17 @@ public class MoveContents extends BaseActivity {
 		});
 
 		// KeyListener listens if enter is pressed
-		moveContentsToET.setOnKeyListener(new View.OnKeyListener() {
+		moveContentsFromET.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				// if "enter" is pressed
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-					submitBtn.performClick();
+					moveContentsToET.requestFocus();
 					return true;
 				}
 				return false;
 			}
 		});
-
+		
 		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 

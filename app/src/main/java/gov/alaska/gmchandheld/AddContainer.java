@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -75,6 +76,32 @@ public class AddContainer extends BaseActivity {
 				}
 			}
 		});
+
+		// KeyListener listens if enter is pressed
+		addContainerBarcodeET.setOnKeyListener(new View.OnKeyListener() {
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				// if "enter" is pressed
+				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+					addContainerNameET.requestFocus();
+					return true;
+				}
+				return false;
+			}
+		});
+
+		// KeyListener listens if enter is pressed
+		addContainerNameET.setOnKeyListener(new View.OnKeyListener() {
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				// if "enter" is pressed
+				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+					addContainerRemarkET.requestFocus();
+					return true;
+				}
+				return false;
+			}
+		});
+
+
 
 		if (remoteApiUIHandler.isDownloading()) {
 			// onClickListener listens if the submit button is clicked
