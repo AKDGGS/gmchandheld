@@ -51,8 +51,7 @@ public class AddContainer extends BaseActivity {
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		if(!cameraOn){
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 7.75f;
 			params.rightMargin = 15;
 
@@ -94,7 +93,7 @@ public class AddContainer extends BaseActivity {
 								RemoteApiUIHandler.setAddContainerRemark(addContainerRemarkET.getText().toString());
 
 								remoteApiUIHandler.setDownloading(true);
-								remoteApiUIHandler.processDataForDisplay(AddContainer.this);
+								new RemoteApiUIHandler.ProcessDataForDisplay(AddContainer.this).execute();
 							}
 							addContainerBarcodeET.setText("");
 							addContainerNameET.setText("");

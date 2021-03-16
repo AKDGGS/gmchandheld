@@ -97,7 +97,7 @@ public class Recode extends BaseActivity {
 							remoteApiUIHandler.setDownloading(true);
 							RemoteApiUIHandler.setUrlFirstParameter(barcodeInput.getText().toString());
 							RemoteApiUIHandler.setGetNewBarcode(newBarcodeInput.getText().toString());
-							remoteApiUIHandler.processDataForDisplay(Recode.this);
+							new RemoteApiUIHandler.ProcessDataForDisplay(Recode.this).execute();
 							newBarcodeInput.setText("");
 							barcodeInput.setText("");
 							barcodeInput.requestFocus();

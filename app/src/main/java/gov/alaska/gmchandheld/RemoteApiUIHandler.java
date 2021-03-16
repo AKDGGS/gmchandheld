@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,19 +20,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 
-public class RemoteApiUIHandler {
+public class RemoteApiUIHandler extends AppCompatActivity {
 
     public RemoteApiUIHandler() {
     }
 
-    private final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
-    private final LinkedList<String> summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
+    public static final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
+    private static final LinkedList<String> summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
 
-    private boolean downloading = false;
+    private static boolean downloading = false;
 
     public boolean isDownloading() {
         return !downloading;
@@ -71,302 +75,315 @@ public class RemoteApiUIHandler {
         RemoteApiUIHandler.getNewBarcode = getNewBarcode;
     }
 
-    AsyncTask<String, Integer, RemoteApiDownload> asyncTask = null;
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        RemoteApiUIHandler.this.finish();
+    }
 
-    @SuppressLint("StaticFieldLeak")
-    //Can be ignored because the Asynctask is short lived.  https://stackoverflow.com/a/46166223
-    public void processDataForDisplay(final Context context) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_translucent);
 
-        if (downloading) {
-            asyncTask = new AsyncTask<String, Integer, RemoteApiDownload>() {
+    }
 
-                AlertDialog alert;
+    public static class ProcessDataForDisplay extends AsyncTask<String, String, RemoteApiDownload> {
+
+        private WeakReference<Context> mActivity;
+
+        public ProcessDataForDisplay(Context context) {
+            mActivity = new WeakReference<>(context);
+        }
+
+        AlertDialog alert;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
+            LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
+
+            View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.downloading_alert_root));
+            alertDialog.setView(layout);
+
+            TextView title = new TextView(mActivity.get());
+            String processingTitle = "Processing " + urlFirstParameter;
+            title.setText(processingTitle);
+            title.setGravity(Gravity.CENTER);
+            title.setTextSize(16);
+            alertDialog.setCustomTitle(title);
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
                 @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-                    LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-                    View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) context).findViewById(R.id.downloading_alert_root));
-                    alertDialog.setView(layout);
-
-                    TextView title = new TextView(context);
-                    String processingTitle = "Processing " + urlFirstParameter;
-                    title.setText(processingTitle);
-                    title.setGravity(Gravity.CENTER);
-                    title.setTextSize(16);
-                    alertDialog.setCustomTitle(title);
-                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            asyncTask.cancel(true);
-                            downloading = false;
-                        }
-                    });
-
-                    alert = alertDialog.create();
-
-                    alert.show();
-                    alert.setCanceledOnTouchOutside(false);
-
-                    if (!urlFirstParameter.isEmpty()) {
-                        switch (context.getClass().getSimpleName()) {
-                            case "Lookup": {
-                                lastAddedToHistory(context, urlFirstParameter);
-                                ListView listView = ((Activity) context).findViewById(R.id.listViewBarcodeHistory);
-                                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
-                                adapter.addAll(lookupHistory);
-                                adapter.notifyDataSetChanged();
-                                listView.setAdapter(adapter);
-                                break;
-                            }
-                            case "Summary": {
-                                lastAddedToHistory(context, urlFirstParameter);
-                                ListView listView = ((Activity) context).findViewById(R.id.listViewSummaryHistory);
-                                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
-                                adapter.addAll(summaryHistory);
-                                adapter.notifyDataSetChanged();
-                                listView.setAdapter(adapter);
-                                break;
-                            }
-                        }
-                    }
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    cancel(true);
                     downloading = false;
                 }
+            });
 
-                @Override
-                protected RemoteApiDownload doInBackground(String... strings) {
-                    if (!isCancelled()) {
-                        RemoteApiDownload remoteAPIDownload;
-                        remoteAPIDownload = new RemoteApiDownload(context);
-                        switch (context.getClass().getSimpleName()) {
-                            case "Lookup":
-                            case "LookupDisplay":
-                            case "Summary":
-                            case "SummaryDisplay": {
-                                remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
-                                break;
-                            }
-                            case "MoveDisplay": {
-                                remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
-                                remoteAPIDownload.setContainerList(containerList);
-                                break;
-                            }
+            alert = alertDialog.create();
 
-                            case "MoveContents": {
+            alert.show();
+            alert.setCanceledOnTouchOutside(false);
 
-                                remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
-                                remoteAPIDownload.setDestinationBarcode(destinationBarcode);
-                                break;
-                            }
-
-                            case "AddContainer": {
-                                remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
-                                remoteAPIDownload.setAddedContainerName(addContainerName);
-                                remoteAPIDownload.setAddedContainerRemark(addContainerRemark);
-                                break;
-                            }
-
-                            case "AuditDisplay": {
-                                remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
-                                remoteAPIDownload.setContainerList(containerList);
-                                break;
-                            }
-
-                            case "Recode": {
-                                remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
-                                remoteAPIDownload.setNewBarcode(getNewBarcode);
-                                break;
-                            }
-                        }
-                            remoteAPIDownload.getDataFromURL();
-
-                        return remoteAPIDownload;
+            if (!urlFirstParameter.isEmpty()) {
+                switch (mActivity.get().getClass().getSimpleName()) {
+                    case "Lookup": {
+                        lastAddedToHistory(mActivity.get(), urlFirstParameter);
+                        ListView listView = ((Activity) mActivity.get()).findViewById(R.id.listViewBarcodeHistory);
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity.get(), android.R.layout.simple_list_item_1);
+                        adapter.addAll(lookupHistory);
+                        adapter.notifyDataSetChanged();
+                        listView.setAdapter(adapter);
+                        break;
                     }
-                    return null;
+                    case "Summary": {
+                        lastAddedToHistory(mActivity.get(), urlFirstParameter);
+                        ListView listView = ((Activity) mActivity.get()).findViewById(R.id.listViewSummaryHistory);
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity.get(), android.R.layout.simple_list_item_1);
+                        adapter.addAll(summaryHistory);
+                        adapter.notifyDataSetChanged();
+                        listView.setAdapter(adapter);
+                        break;
+                    }
+                }
+            }
+            downloading = false;
+        }
+
+        protected RemoteApiDownload doInBackground(String... strings) {
+            if (!isCancelled()) {
+                RemoteApiDownload remoteAPIDownload;
+                remoteAPIDownload = new RemoteApiDownload(mActivity.get());
+                switch (mActivity.get().getClass().getSimpleName()) {
+                    case "Lookup":
+                    case "LookupDisplay":
+                    case "Summary":
+                    case "SummaryDisplay": {
+                        remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
+                        break;
+                    }
+                    case "MoveDisplay": {
+                        remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
+                        remoteAPIDownload.setContainerList(containerList);
+                        break;
+                    }
+
+                    case "MoveContents": {
+
+                        remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
+                        remoteAPIDownload.setDestinationBarcode(destinationBarcode);
+                        break;
+                    }
+
+                    case "AddContainer": {
+                        remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
+                        remoteAPIDownload.setAddedContainerName(addContainerName);
+                        remoteAPIDownload.setAddedContainerRemark(addContainerRemark);
+                        break;
+                    }
+
+                    case "AuditDisplay": {
+                        remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
+                        remoteAPIDownload.setContainerList(containerList);
+                        break;
+                    }
+
+                    case "Recode": {
+                        remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
+                        remoteAPIDownload.setNewBarcode(getNewBarcode);
+                        break;
+                    }
+                }
+                remoteAPIDownload.getDataFromURL();
+
+                return remoteAPIDownload;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(RemoteApiDownload obj) {
+            //Dismisses the downloading alert.  This is needed if the download fails.
+            alert.dismiss();
+
+            if (obj.isErrored()) {
+
+                LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
+                View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.lookup_error_root));
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
+
+                int responseCode = obj.getResponseCode();
+                ConnectivityManager cm = (ConnectivityManager) mActivity.get().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                if (responseCode == 403) {
+                    alertDialog.setTitle(obj.getException().getMessage());
+                    alertDialog.setMessage("In the configuration screen, check the API key.");
+                } else if (responseCode == 404) {
+                    alertDialog.setTitle("URL Error");
+                    alertDialog.setMessage("In the configuration screen, check the URL.");
+                } else if (responseCode >= 500) {
+                    alertDialog.setTitle("Internal Server Error");
+                    alertDialog.setMessage(obj.getException().getMessage());
+                } else if ((Settings.System.getInt(mActivity.get().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0)) {
+                    alertDialog.setMessage("Is the device connected to the internet/network?  " +
+                                           "Check if Air Plane mode is on.");
+                } else if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
+                    alertDialog.setMessage("Is the device connected to the internet/network?  " +
+                                           "Check if the connection has been lost.");
+                } else {
+                    alertDialog.setMessage(obj.getException().getMessage());
                 }
 
-                @Override
-                protected void onPostExecute(RemoteApiDownload obj) {
-                    //Dismisses the downloading alert.  This is needed if the download fails.
-                    alert.dismiss();
+                alertDialog.setView(layout);
+                alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
 
-                    if (obj.isErrored()) {
-
-                        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-                        View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) context).findViewById(R.id.lookup_error_root));
-
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-
-                        int responseCode = obj.getResponseCode();
-                        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-                        if (responseCode == 403) {
-                            alertDialog.setTitle(obj.getException().getMessage());
-                            alertDialog.setMessage("In the configuration screen, check the API key.");
-                        } else if (responseCode == 404) {
-                            alertDialog.setTitle("URL Error");
-                            alertDialog.setMessage("In the configuration screen, check the URL.");
-                        } else if (responseCode >= 500) {
-                            alertDialog.setTitle("Internal Server Error");
-                            alertDialog.setMessage(obj.getException().getMessage());
-                        } else if ((Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0)) {
-                            alertDialog.setMessage("Is the device connected to the internet/network?  " +
-                                                   "Check if Air Plane mode is on.");
-                        } else if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
-                            alertDialog.setMessage("Is the device connected to the internet/network?  " +
-                                                   "Check if the connection has been lost.");
-                        } else {
-                            alertDialog.setMessage(obj.getException().getMessage());
-                        }
-
-                        alertDialog.setView(layout);
-                        alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                downloading = true;
-                                switch (context.getClass().getSimpleName()) {
-                                    case "Lookup":
-                                    case "Summary": {
-                                        EditText getBarcodeEditText = ((Activity) context).findViewById(R.id.barcodeET);
-                                        getBarcodeEditText.setText("");
-                                        getBarcodeEditText.requestFocus();
-                                        break;
-                                    }
-                                    case "SummaryDisplay":
-                                    case "LookupDisplay": {
-//										lastAddedToHistory(context, queryOrDestination);
-                                        EditText invisibleEditText = ((Activity) context).findViewById(R.id.invisibleEditText);
-                                        invisibleEditText.setText("");
-                                        invisibleEditText.requestFocus();
-                                        break;
-                                    }
-                                    case "MoveContents": {
-                                        EditText sourceET = ((Activity) context).findViewById(R.id.fromET);
-                                        sourceET.setText(urlFirstParameter);
-                                        EditText destinationET = ((Activity) context).findViewById(R.id.toET);
-                                        destinationET.setText(destinationBarcode);
-                                        destinationET.requestFocus();
-                                        break;
-                                    }
-                                    case "MoveDisplay": {
-                                        EditText destinationET = ((Activity) context).findViewById(R.id.toET);
-                                        destinationET.setText(urlFirstParameter);
-                                        EditText moveContainerET = ((Activity) context).findViewById(R.id.itemET);
-                                        moveContainerET.requestFocus();
-                                        break;
-                                    }
-                                    case "Recode": {
-                                        EditText oldBarcodeET = ((Activity) context).findViewById(R.id.oldBarcodeET);
-                                        oldBarcodeET.setText(urlFirstParameter);
-                                        EditText newBarcodeET = ((Activity) context).findViewById(R.id.newBarcodeET);
-                                        oldBarcodeET.requestFocus();
-                                        break;
-                                    }
-                                }
-                            }
-
-                        });
-
-                        AlertDialog alert = alertDialog.create();
-                        alert.setCanceledOnTouchOutside(false);
-                        alert.show();
-                    } else {
-                        switch (context.getClass().getSimpleName()) {
-                            case "LookupDisplay":
-                            case "Lookup": {
-                                LookupLogicForDisplay lookupLogicForDisplayObj;
-                                lookupLogicForDisplayObj = new LookupLogicForDisplay(context);
-                                LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
-
-                                lookupLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
-
-                                try {
-                                    lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
-                                Intent intent = new Intent(context, LookupDisplay.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.putExtra("barcode", urlFirstParameter);  //this barcode refers to the query barcode.
-                                context.startActivity(intent);
-
-                                lastAddedToHistory(context, urlFirstParameter);
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        downloading = true;
+                        switch (mActivity.get().getClass().getSimpleName()) {
+                            case "Lookup":
+                            case "Summary": {
+                                EditText getBarcodeEditText = ((Activity) mActivity.get()).findViewById(R.id.barcodeET);
+                                getBarcodeEditText.setText("");
+                                getBarcodeEditText.requestFocus();
                                 break;
                             }
-                            case "Summary":
-                            case "SummaryDisplay": {
-                                SummaryLogicForDisplay summaryLogicForDisplayObj;
-                                summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-                                SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
-                                summaryLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
-
-                                try {
-                                    summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
-                                Intent intent = new Intent(context, SummaryDisplay.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.putExtra("barcode", urlFirstParameter);  //this barcode refers to the query barcode.
-                                context.startActivity(intent);
-                                lastAddedToHistory(context, urlFirstParameter);
+                            case "SummaryDisplay":
+                            case "LookupDisplay": {
+//										lastAddedToHistory(context, queryOrDestination);
+                                EditText invisibleEditText = ((Activity) mActivity.get()).findViewById(R.id.invisibleEditText);
+                                invisibleEditText.setText("");
+                                invisibleEditText.requestFocus();
                                 break;
                             }
                             case "MoveContents": {
-                                Toast.makeText(context, "The contents were moved.",
-                                               Toast.LENGTH_LONG).show();
-                                break;
-                            }
-                            case "MoveDisplay": {
-                                containerList.clear();
-                                ListView containerListLV = ((Activity) context).findViewById(R.id.listViewContainersToMove);
-                                ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
-                                adapter.clear();
-                                adapter.notifyDataSetChanged();
-                                Toast.makeText(context, "The move was successful.",
-                                               Toast.LENGTH_LONG).show();
-                                EditText destinationET = ((Activity) context).findViewById(R.id.toET);
+                                EditText sourceET = ((Activity) mActivity.get()).findViewById(R.id.fromET);
+                                sourceET.setText(urlFirstParameter);
+                                EditText destinationET = ((Activity) mActivity.get()).findViewById(R.id.toET);
+                                destinationET.setText(destinationBarcode);
                                 destinationET.requestFocus();
                                 break;
                             }
-                            case "AddContainer": {
-                                Toast.makeText(context, "The container was added.",
-                                               Toast.LENGTH_LONG).show();
-                                break;
-                            }
-                            case "AuditDisplay": {
-                                containerList.clear();
-                                ListView containerListLV = ((Activity) context).findViewById(R.id.listViewGetContainersToAudit);
-                                ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
-                                adapter.clear();
-                                adapter.notifyDataSetChanged();
-                                Toast.makeText(context, "Items added to the Audit table.",
-                                               Toast.LENGTH_LONG).show();
-                                EditText remarkET = ((Activity) context).findViewById(R.id.remarkET);
-                                remarkET.requestFocus();
+                            case "MoveDisplay": {
+                                EditText destinationET = ((Activity) mActivity.get()).findViewById(R.id.toET);
+                                destinationET.setText(urlFirstParameter);
+                                EditText moveContainerET = ((Activity) mActivity.get()).findViewById(R.id.itemET);
+                                moveContainerET.requestFocus();
                                 break;
                             }
                             case "Recode": {
-                                EditText oldBarcodeET = ((Activity) context).findViewById(R.id.oldBarcodeET);
+                                EditText oldBarcodeET = ((Activity) mActivity.get()).findViewById(R.id.oldBarcodeET);
+                                oldBarcodeET.setText(urlFirstParameter);
+                                EditText newBarcodeET = ((Activity) mActivity.get()).findViewById(R.id.newBarcodeET);
                                 oldBarcodeET.requestFocus();
-                                Toast.makeText(context, "Recode successful.",
-                                               Toast.LENGTH_LONG).show();
                                 break;
                             }
                         }
                     }
+
+                });
+
+                AlertDialog alert = alertDialog.create();
+                alert.setCanceledOnTouchOutside(false);
+                alert.show();
+            } else {
+                switch (mActivity.get().getClass().getSimpleName()) {
+                    case "LookupDisplay":
+                    case "Lookup": {
+                        LookupLogicForDisplay lookupLogicForDisplayObj;
+                        lookupLogicForDisplayObj = new LookupLogicForDisplay(mActivity.get());
+                        LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
+
+                        lookupLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
+
+                        try {
+                            lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        Intent intent = new Intent(mActivity.get(), LookupDisplay.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.putExtra("barcode", urlFirstParameter);  //this barcode refers to the query barcode.
+                        mActivity.get().startActivity(intent);
+
+                        lastAddedToHistory(mActivity.get(), urlFirstParameter);
+                        break;
+                    }
+                    case "Summary":
+                    case "SummaryDisplay": {
+                        SummaryLogicForDisplay summaryLogicForDisplayObj;
+                        summaryLogicForDisplayObj = new SummaryLogicForDisplay();
+                        SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
+                        summaryLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
+
+                        try {
+                            summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        Intent intent = new Intent(mActivity.get(), SummaryDisplay.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.putExtra("barcode", urlFirstParameter);  //this barcode refers to the query barcode.
+                        mActivity.get().startActivity(intent);
+                        lastAddedToHistory(mActivity.get(), urlFirstParameter);
+                        break;
+                    }
+                    case "MoveContents": {
+                        Toast.makeText(mActivity.get(), "The contents were moved.",
+                                       Toast.LENGTH_LONG).show();
+                        break;
+                    }
+                    case "MoveDisplay": {
+                        containerList.clear();
+                        ListView containerListLV = ((Activity) mActivity.get()).findViewById(R.id.listViewContainersToMove);
+                        ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
+
+                        adapter.clear();
+                        adapter.notifyDataSetChanged();
+                        Toast.makeText(mActivity.get(), "The move was successful.",
+                                       Toast.LENGTH_LONG).show();
+                        EditText destinationET = ((Activity) mActivity.get()).findViewById(R.id.toET);
+                        destinationET.requestFocus();
+                        break;
+                    }
+                    case "AddContainer": {
+                        Toast.makeText(mActivity.get(), "The container was added.",
+                                       Toast.LENGTH_LONG).show();
+                        break;
+                    }
+                    case "AuditDisplay": {
+                        containerList.clear();
+                        ListView containerListLV = ((Activity) mActivity.get()).findViewById(R.id.listViewGetContainersToAudit);
+                        ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
+                        adapter.clear();
+                        adapter.notifyDataSetChanged();
+                        Toast.makeText(mActivity.get(), "Items added to the Audit table.",
+                                       Toast.LENGTH_LONG).show();
+                        EditText remarkET = ((Activity) mActivity.get()).findViewById(R.id.remarkET);
+                        remarkET.requestFocus();
+                        break;
+                    }
+                    case "Recode": {
+                        EditText oldBarcodeET = ((Activity) mActivity.get()).findViewById(R.id.oldBarcodeET);
+                        oldBarcodeET.requestFocus();
+                        Toast.makeText(mActivity.get(), "Recode successful.",
+                                       Toast.LENGTH_LONG).show();
+                        break;
+                    }
                 }
-            }.execute();
+            }
         }
     }
 
-    private void lastAddedToHistory(Context context, String barcodeQuery) {
+
+    private static void lastAddedToHistory(Context context, String barcodeQuery) {
+
         String lastAdded = null;
         switch (context.getClass().getSimpleName()) {
             case "LookupDisplay":
@@ -391,6 +408,4 @@ public class RemoteApiUIHandler {
             }
         }
     }
-
-
 }

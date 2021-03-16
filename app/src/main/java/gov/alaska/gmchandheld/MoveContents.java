@@ -117,7 +117,7 @@ public class MoveContents extends BaseActivity {
 		RemoteApiUIHandler.setUrlFirstParameter(sourceInput);
 		RemoteApiUIHandler.setDestinationBarcode(destinationInput);
 		remoteApiUIHandler.setDownloading(true);
-		remoteApiUIHandler.processDataForDisplay(this);
+		new RemoteApiUIHandler.ProcessDataForDisplay(MoveContents.this).execute();
 	}
 
 	@Override

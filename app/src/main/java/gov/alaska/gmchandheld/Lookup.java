@@ -105,7 +105,7 @@ public class Lookup extends BaseActivity {
 						if (!barcodeET.getText().toString().isEmpty()) {
 							remoteApiUIHandler.setDownloading(true);
 							RemoteApiUIHandler.setUrlFirstParameter(barcodeET.getText().toString());
-							remoteApiUIHandler.processDataForDisplay(Lookup.this);
+							new RemoteApiUIHandler.ProcessDataForDisplay(Lookup.this).execute();
 						}
 					}
 				}

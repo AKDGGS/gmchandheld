@@ -47,7 +47,7 @@ public class SummaryDisplay extends BaseActivity {
                     if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                         remoteApiUIHandler.setDownloading(true);
                         RemoteApiUIHandler.setUrlFirstParameter(invisibleEditText.getText().toString());
-                        remoteApiUIHandler.processDataForDisplay(SummaryDisplay.this);
+                        new RemoteApiUIHandler.ProcessDataForDisplay(SummaryDisplay.this).execute();
                         return true;
                     }
                 } else {

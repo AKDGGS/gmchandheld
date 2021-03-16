@@ -49,7 +49,7 @@ public class LookupDisplay extends BaseActivity {
                     if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                         remoteApiUIHandler.setDownloading(true);
                         RemoteApiUIHandler.setUrlFirstParameter(invisibleEditText.getText().toString());
-                        remoteApiUIHandler.processDataForDisplay(LookupDisplay.this);
+                        new RemoteApiUIHandler.ProcessDataForDisplay(LookupDisplay.this).execute();
 
                         return true;
                     }

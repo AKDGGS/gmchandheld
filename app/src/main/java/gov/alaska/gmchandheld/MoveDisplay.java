@@ -77,8 +77,7 @@ public class MoveDisplay extends BaseActivity {
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
 		if(!cameraOn){
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 6.75f;
 
 			itemET.setLayoutParams(params);
@@ -231,7 +230,7 @@ public class MoveDisplay extends BaseActivity {
 		RemoteApiUIHandler.setContainerList(containerList);
 
 		remoteApiUIHandler.setDownloading(true);
-		remoteApiUIHandler.processDataForDisplay(this);
+		new RemoteApiUIHandler.ProcessDataForDisplay(MoveDisplay.this).execute();
 	}
 
 

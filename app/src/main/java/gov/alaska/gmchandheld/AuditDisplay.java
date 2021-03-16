@@ -80,8 +80,7 @@ public class AuditDisplay extends BaseActivity {
         Button remarkCameraBtn = findViewById(R.id.cameraBtn);
         Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
         if (!cameraOn) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.weight = 6.75f;
 
             auditItemET.setLayoutParams(params);
@@ -229,7 +228,8 @@ public class AuditDisplay extends BaseActivity {
         RemoteApiUIHandler.setUrlFirstParameter(remarkInput);
         RemoteApiUIHandler.setContainerList(containerList);
         remoteApiUIHandler.setDownloading(true);
-        remoteApiUIHandler.processDataForDisplay(this);
+
+        new RemoteApiUIHandler.ProcessDataForDisplay(AuditDisplay.this).execute();
     }
 
     @Override
@@ -285,9 +285,6 @@ public class AuditDisplay extends BaseActivity {
                 return true;
             }
         }
-//        if (auditItemET.hasFocus() & event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-//            return true;
-//        }
         return super.dispatchKeyEvent(event);
     }
 

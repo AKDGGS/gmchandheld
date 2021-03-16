@@ -28,7 +28,8 @@
             android:name=".Lookup"
             android:label="@string/lookup"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait">
             <intent-filter android:label="@string/app_name"> <!-- name of app -->
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,50 +50,65 @@
         <activity
             android:name=".AddContainer"
             android:label="Add Container"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".AuditDisplay"
             android:label="Audit"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".AddInventory"
-            android:label="Add Inventory" />
+            android:label="Add Inventory"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Configuration"
             android:label="Configuration"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Help"
             android:label="Help" />
         <activity
             android:name=".LookupDisplay"
             android:parentActivityName=".Lookup"
-            android:theme="@style/Theme.AppCompat.DayNight" />
+            android:theme="@style/Theme.AppCompat.DayNight"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MoveContents"
             android:label="Move Contents"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MoveDisplay"
             android:label="Move"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Recode"
             android:label="Recode"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Summary"
             android:label="Summary"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SummaryDisplay"
             android:parentActivityName=".Summary"
             android:theme="@style/Theme.AppCompat.DayNight"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".UpdateDownloadAPKHandler"
-            android:theme="@style/Theme.AppCompat.Translucent" />
-        <activity android:name=".UpdateAppActivity" />
+            android:theme="@style/Theme.AppCompat.Translucent"
+            android:screenOrientation="portrait"/>
+
+
+        <activity android:name=".UpdateAppActivity"
+            android:screenOrientation="portrait"/>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

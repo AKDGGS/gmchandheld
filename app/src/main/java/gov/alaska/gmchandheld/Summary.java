@@ -102,7 +102,7 @@ public class Summary extends BaseActivity {
                         if (!getBarcode().isEmpty()) {
                             remoteApiUIHandler.setDownloading(true);
                             RemoteApiUIHandler.setUrlFirstParameter(getBarcode());
-                            remoteApiUIHandler.processDataForDisplay(Summary.this);
+                            new RemoteApiUIHandler.ProcessDataForDisplay(Summary.this).execute();
                         }
                     }
                 }
