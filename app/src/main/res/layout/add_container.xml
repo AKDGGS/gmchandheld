@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:backgroundTint="@color/colorPrimary"
-    tools:context=".Lookup"
     android:weightSum="5">
 
     <include

@@ -87,6 +87,11 @@ public class BaseActivity extends AppCompatActivity {
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			this.startActivity(intentAddContainer);
 			return true;
+		} else if (item.getItemId() == (R.id.add_inventory)) {
+			Intent intentAddInventory = new Intent(this, AddInventory.class);
+			intentAddInventory.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			this.startActivity(intentAddInventory);
+			return true;
 		} else if (item.getItemId() == (R.id.audit)) {
 			Intent intentAddContainer = new Intent(this, AuditDisplay.class);
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

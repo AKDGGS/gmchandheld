@@ -185,6 +185,12 @@ public class RemoteApiUIHandler extends AppCompatActivity {
                         break;
                     }
 
+                    case "AddInventory": {
+                        remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
+                        remoteAPIDownload.setAddedContainerRemark(addContainerRemark);
+                        break;
+                    }
+
                     case "AuditDisplay": {
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
                         remoteAPIDownload.setContainerList(containerList);
@@ -357,6 +363,13 @@ public class RemoteApiUIHandler extends AppCompatActivity {
                                        Toast.LENGTH_LONG).show();
                         break;
                     }
+
+                    case "AddInventory": {
+                        Toast.makeText(mActivity.get(), "The inventory was added.",
+                                       Toast.LENGTH_LONG).show();
+                        break;
+                    }
+
                     case "AuditDisplay": {
                         containerList.clear();
                         ListView containerListLV = ((Activity) mActivity.get()).findViewById(R.id.listViewGetContainersToAudit);

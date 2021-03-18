@@ -27,6 +27,11 @@
         app:showAsAction="never" />
 
     <item
+    android:id="@+id/add_inventory"
+    android:title="Add Inventory"
+    app:showAsAction="never" />
+
+    <item
         android:id="@+id/audit"
         android:title="@string/audit"
         app:showAsAction="never" />
@@ -73,7 +78,4 @@
     <!--android:id="@+id/recode"-->
     <!--android:title="Recode"-->
     <!--app:showAsAction="never" />-->
-    <!--<item-->
-    <!--android:id="@+id/add_inventory"-->
-    <!--android:title="Add Inventory"-->
-    <!--app:showAsAction="never" />-->
+

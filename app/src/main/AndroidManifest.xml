@@ -60,6 +60,7 @@
         <activity
             android:name=".AddInventory"
             android:label="Add Inventory"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".Configuration"
@@ -105,10 +106,8 @@
             android:theme="@style/Theme.AppCompat.Translucent"
             android:screenOrientation="portrait"/>
 
-
         <activity android:name=".UpdateAppActivity"
             android:screenOrientation="portrait"/>
-
 
         <provider
             android:name="androidx.core.content.FileProvider"

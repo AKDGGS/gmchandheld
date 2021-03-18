@@ -196,6 +196,31 @@ public class RemoteApiDownload {
 					url = url + "addcontainer.json?" + sb.toString();
 					break;
 				}
+
+				case "AddInventory": {
+					String barcode = null;
+					String remark = null;
+					try {
+						barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
+						remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						exception = new Exception(e.getMessage());
+					}
+
+					StringBuilder sb = new StringBuilder();
+					if(barcode != null) {
+						sb.append("barcode=").append(barcode);
+					}
+					if(remark != null){
+						sb.append("&remark=").append(remark);
+					}
+
+
+					QUERYPARAM = sb.toString();
+					url = url + "addinventory.json?" + sb.toString();
+					break;
+				}
+
 				case "AuditDisplay": {
 					String remark = null;
 					try {
