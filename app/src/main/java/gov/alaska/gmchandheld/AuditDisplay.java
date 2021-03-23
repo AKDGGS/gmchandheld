@@ -71,9 +71,6 @@ public class AuditDisplay extends BaseActivity {
 
         auditCountTV.setText(String.valueOf(containerList.size()));
 
-
-
-
         final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
 

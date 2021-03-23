@@ -7,7 +7,7 @@
     android:orientation="vertical"
     app:backgroundTint="@color/colorPrimary"
     tools:context=".Lookup"
-    android:weightSum="5">
+    android:weightSum="10">
 
     <include
         android:id="@+id/toolbar"
@@ -16,7 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="8">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -121,6 +121,25 @@
                         android:nextFocusRight="@+id/remarkET"/>
                 </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <Button
+                    android:id="@+id/issuesBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select Issues" />
+
+                <TextView
+                    android:id="@+id/showIssuesTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
@@ -130,7 +149,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight="3">
+        android:layout_weight="2">
 
         <Button
             android:id="@+id/submitBtn"

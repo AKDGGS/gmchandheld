@@ -188,6 +188,7 @@ public class RemoteApiUIHandler extends AppCompatActivity {
                     case "AddInventory": {
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
                         remoteAPIDownload.setAddedContainerRemark(addContainerRemark);
+                        remoteAPIDownload.setContainerList(containerList);
                         break;
                     }
 

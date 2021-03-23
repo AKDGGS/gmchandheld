@@ -155,16 +155,17 @@ public class RemoteApiDownload {
 					break;
 				}
 				case "MoveDisplay": {
+					String query;
 					String destination = null;
 					try {
 						destination = URLEncoder.encode(urlFirstParameter, "utf-8");
 					} catch (UnsupportedEncodingException e) {
 						exception = new Exception(e.getMessage());
 					}
-					destination = "d=" + destination + containersToUrlList(containerList);
+					query = "d=" + destination + containersToUrlList(containerList, "c");
 
-					QUERYPARAM = destination;
-					url = url + "move.json?" + destination;
+					QUERYPARAM = query;
+					url = url + "move.json?" + query;
 					break;
 				}
 
@@ -191,13 +192,13 @@ public class RemoteApiDownload {
 						sb.append("&remark=").append(remark);
 					}
 
-
 					QUERYPARAM = sb.toString();
 					url = url + "addcontainer.json?" + sb.toString();
 					break;
 				}
 
 				case "AddInventory": {
+					String query;
 					String barcode = null;
 					String remark = null;
 					try {
@@ -215,6 +216,12 @@ public class RemoteApiDownload {
 						sb.append("&remark=").append(remark);
 					}
 
+					query = sb + containersToUrlList(containerList, "i");
+					QUERYPARAM = query;
+					url = url + "audit.json?" + query;
+
+
+
 
 					QUERYPARAM = sb.toString();
 					url = url + "addinventory.json?" + sb.toString();
@@ -222,16 +229,17 @@ public class RemoteApiDownload {
 				}
 
 				case "AuditDisplay": {
+					String query;
 					String remark = null;
 					try {
 						remark = URLEncoder.encode(urlFirstParameter, "utf-8");
 					} catch (UnsupportedEncodingException e) {
 						exception = new Exception(e.getMessage());
 					}
-					remark = "remark=" + remark + containersToUrlList(containerList);
+					query = "remark=" + remark + containersToUrlList(containerList, "c");
 
-					QUERYPARAM = remark;
-					url = url + "audit.json?" + remark;
+					QUERYPARAM = query;
+					url = url + "audit.json?" + query;
 					break;
 				}
 
@@ -346,8 +354,8 @@ public class RemoteApiDownload {
 		return android.util.Base64.encodeToString(hmac256, android.util.Base64.DEFAULT);
 	}
 
-	public String containersToUrlList(ArrayList<String> list) {
-		String delim = "&c=";
+	public String containersToUrlList(ArrayList<String> list, String paramKeyword) {
+		String delim = "&" + paramKeyword + "=";
 
 		StringBuilder sb = new StringBuilder();
 

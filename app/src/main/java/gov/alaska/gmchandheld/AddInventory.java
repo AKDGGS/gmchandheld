@@ -11,19 +11,34 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-public class AddInventory extends BaseActivity {
+import java.util.ArrayList;
+
+public class AddInventory extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
 
     private IntentIntegrator qrScan;
-    EditText addinventoryBarcodeET;
+    private EditText addinventoryBarcodeET;
+    private Button issuesBtn;
+    private TextView showIssuesTV;
+    private ArrayList<String> issuesList;
+
+    public static final ArrayList<String> selectedItems = new ArrayList<>();
+    public static final boolean[] checkedItems = new boolean[9];
+
+    public AddInventory() {
+        selectedItems.add("Needs Inventory");
+        checkedItems[0] = true;
+    }
 
     @Override
     public void onRestart() {
@@ -114,6 +129,20 @@ public class AddInventory extends BaseActivity {
                 }
             });
         }
+
+        showIssuesTV = findViewById(R.id.showIssuesTV);
+        issuesBtn = findViewById(R.id.issuesBtn);
+
+        issuesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                DialogFragment issueDialog = new IssuesFragment();
+                issueDialog.setCancelable(false);
+                issueDialog.show(getSupportFragmentManager(), "Issues Dialog");
+
+            }
+        });
     }
 
     @Override
@@ -132,5 +161,22 @@ public class AddInventory extends BaseActivity {
                 super.onActivityResult(requestCode, resultCode, data);
             }
         }
+    }
+
+    @Override
+    public void onPostitiveButtonClicked(String[] list, ArrayList<String> selectedItems) {
+        StringBuilder sb = new StringBuilder();
+
+        for(String str:selectedItems){
+            sb.append(str + ", ");
+        }
+
+        showIssuesTV.setText(selectedItems.toString());
+    }
+
+    @Override
+    public void onNegativebuttonClicked() {
+
+//        showIssuesTV.setText("Needs Inventory");
     }
 }

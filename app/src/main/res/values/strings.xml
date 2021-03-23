@@ -40,5 +40,17 @@
     <string name="clear">Clear</string>
     <string name="double_tap_to_remove_item">Double tap to remove item</string>
 
+    <string-array name="choice_items">
+        <item>Needs Inventory</item>
+        <item>Unsorted</item>
+        <item>Radiation Risk</item>
+        <item>Materials Damaged</item>
+        <item>Box Damaged</item>
+        <item>Missing</item>
+        <item>Needs Matadata</item>
+        <item>Barcode Missing</item>
+        <item>Label Obscured</item>
+    </string-array>
+
 
 </resources>
