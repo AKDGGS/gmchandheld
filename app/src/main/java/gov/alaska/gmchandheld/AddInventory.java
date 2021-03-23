@@ -36,7 +36,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     public static final boolean[] checkedItems = new boolean[9];
 
     public AddInventory() {
-        selectedItems.add("Needs Inventory");
+        selectedItems.add("needs_inventory");
         checkedItems[0] = true;
     }
 
@@ -117,6 +117,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                                 RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
                                 RemoteApiUIHandler.setUrlFirstParameter(addinventoryBarcodeET.getText().toString());
                                 RemoteApiUIHandler.setAddContainerRemark(addInveotryRemarkET.getText().toString());
+                                RemoteApiUIHandler.setContainerList(selectedItems);
 
                                 remoteApiUIHandler.setDownloading(true);
                                 new RemoteApiUIHandler.ProcessDataForDisplay(AddInventory.this).execute();

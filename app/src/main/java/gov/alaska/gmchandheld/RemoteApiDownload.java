@@ -218,13 +218,8 @@ public class RemoteApiDownload {
 
 					query = sb + containersToUrlList(containerList, "i");
 					QUERYPARAM = query;
-					url = url + "audit.json?" + query;
-
-
-
-
-					QUERYPARAM = sb.toString();
-					url = url + "addinventory.json?" + sb.toString();
+					url = url + "addinventory.json?" + query;
+					System.out.println("******************* " + url.toString());
 					break;
 				}
 

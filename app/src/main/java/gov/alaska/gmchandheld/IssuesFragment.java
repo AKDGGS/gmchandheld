@@ -43,10 +43,19 @@ public class IssuesFragment extends DialogFragment {
                    @Override
                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
                        if (b) {
-                           AddInventory.selectedItems.add(list[i]);
-                       } else {
-                           AddInventory.selectedItems.remove(list[i]);
+                           switch (list[i]) {
+                               case "Needs Inventory":
+                                   AddInventory.selectedItems.add("needs_inventory");
+                                   break;
+                               case "Unsorted":
+                                   AddInventory.selectedItems.add("unsorted");
+                                   break;
+                           }
                        }
+//                           AddInventory.selectedItems.add(list[i]);
+//                       } else {
+//                           AddInventory.selectedItems.remove(list[i]);
+//                       }
                    }
                })
                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
