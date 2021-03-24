@@ -3,8 +3,6 @@ package gov.alaska.gmchandheld;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,7 +35,11 @@ public class MoveDisplay extends BaseActivity {
 	private EditText itemET;
 	private IntentIntegrator destinationQrScan;
 
-	int clicks = 0;  //used to count double clicks for deletion
+	private int clicks;  //used to count double clicks for deletion
+
+	public MoveDisplay() {
+		clicks = 0;
+	}
 
 	@Override
 	protected void onRestart() {
@@ -57,7 +59,7 @@ public class MoveDisplay extends BaseActivity {
 		itemET = findViewById(R.id.itemET);
 		destinationET = findViewById(R.id.toET);
 		final TextView moveCountTV = findViewById(R.id.moveCountTV);
-		final Button moveBtn = findViewById(R.id.submitBtn);
+		final Button submitBtn = findViewById(R.id.submitBtn);
 		final Button addBtn = findViewById(R.id.addContainerBtn);
 		final Button clearAllBtn = findViewById(R.id.clearAllBtn);
 		ListView containerListLV = findViewById(R.id.listViewContainersToMove);
@@ -86,7 +88,6 @@ public class MoveDisplay extends BaseActivity {
 		}else{
 			destinationQrScan = new IntentIntegrator(this);
 			IntentIntegrator itemQrScan = new IntentIntegrator(this);
-			ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 		}
 
 
@@ -207,9 +208,10 @@ public class MoveDisplay extends BaseActivity {
 			});
 
 			// onClickListener listens if the submit button is clicked
-			moveBtn.setOnClickListener(new View.OnClickListener() {
+			submitBtn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					System.out.println("Submit button pressed");
 					CheckConfiguration checkConfiguration = new CheckConfiguration();
 					if (checkConfiguration.checkConfiguration(MoveDisplay.this)) {
 						if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {

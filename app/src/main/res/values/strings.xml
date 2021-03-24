@@ -44,13 +44,13 @@
         <item>Needs Inventory</item>
         <item>Unsorted</item>
         <item>Radiation Risk</item>
-        <item>Materials Damaged</item>
+        <item>Material Damaged</item>
         <item>Box Damaged</item>
         <item>Missing</item>
-        <item>Needs Matadata</item>
+        <item>Needs Metadata</item>
         <item>Barcode Missing</item>
         <item>Label Obscured</item>
+        <item>Insufficient Material</item>
     </string-array>
-
 
 </resources>

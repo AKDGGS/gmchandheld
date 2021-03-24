@@ -23,20 +23,28 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class AddInventory extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
-
     private IntentIntegrator qrScan;
     private EditText addinventoryBarcodeET;
     private Button issuesBtn;
     private TextView showIssuesTV;
-    private ArrayList<String> issuesList;
 
-    public static final ArrayList<String> selectedItems = new ArrayList<>();
-    public static final boolean[] checkedItems = new boolean[9];
+    private ArrayList<String> issuesList;
+    private static int numberOfIssues;
+
+    public static ArrayList<String> selectedItems;
+    public static boolean[] checkedItems;
+    public static ArrayList<String> selectedItemsDisplayList;
 
     public AddInventory() {
+        numberOfIssues = 10;
+        selectedItems = new ArrayList<>();
+        selectedItemsDisplayList = new ArrayList<>();
+        checkedItems = new boolean[numberOfIssues];
         selectedItems.add("needs_inventory");
+        selectedItemsDisplayList.add("Needs Inventory");
         checkedItems[0] = true;
     }
 
@@ -58,6 +66,11 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         addinventoryBarcodeET = findViewById(R.id.barcodeET);
         final EditText addInveotryRemarkET = findViewById(R.id.remarkET);
         final Button submit_button = findViewById(R.id.submitBtn);
+
+        showIssuesTV = findViewById(R.id.showIssuesTV);
+        if(!selectedItemsDisplayList.isEmpty()){
+            showIssuesTV.setText(listToString(selectedItemsDisplayList));
+        }
 
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
@@ -117,6 +130,9 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                                 RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
                                 RemoteApiUIHandler.setUrlFirstParameter(addinventoryBarcodeET.getText().toString());
                                 RemoteApiUIHandler.setAddContainerRemark(addInveotryRemarkET.getText().toString());
+                                if(selectedItems.isEmpty()) {
+                                    selectedItems.add("needs_inventory");
+                                }
                                 RemoteApiUIHandler.setContainerList(selectedItems);
 
                                 remoteApiUIHandler.setDownloading(true);
@@ -125,6 +141,14 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                             addinventoryBarcodeET.setText("");
                             addInveotryRemarkET.setText("");
                             addinventoryBarcodeET.requestFocus();
+                            showIssuesTV.setText("");
+                            selectedItems.clear();
+                            selectedItemsDisplayList.clear();
+                            checkedItems = new boolean[numberOfIssues];
+                            checkedItems[0] = true;
+                            selectedItems.add("needs_inventory");
+                            selectedItemsDisplayList.add("Needs Inventory");
+                            showIssuesTV.setText(listToString(selectedItemsDisplayList));
                         }
                     }
                 }
@@ -137,11 +161,15 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         issuesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (null != selectedItemsDisplayList) {
+                    showIssuesTV.setText(listToString(selectedItemsDisplayList));
 
+                }else if (selectedItemsDisplayList.isEmpty()){
+                    showIssuesTV.setText("Needs Inventory");
+                }
                 DialogFragment issueDialog = new IssuesFragment();
                 issueDialog.setCancelable(false);
                 issueDialog.show(getSupportFragmentManager(), "Issues Dialog");
-
             }
         });
     }
@@ -171,13 +199,19 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         for(String str:selectedItems){
             sb.append(str + ", ");
         }
-
-        showIssuesTV.setText(selectedItems.toString());
+        showIssuesTV.setText(listToString(selectedItemsDisplayList));
     }
 
     @Override
     public void onNegativebuttonClicked() {
 
-//        showIssuesTV.setText("Needs Inventory");
+    }
+
+    public String listToString(ArrayList<String> arrList){
+        StringBuilder sb = new StringBuilder();
+        for (String s : arrList) {
+            sb.append(s + "\n");
+        }
+        return sb.toString();
     }
 }

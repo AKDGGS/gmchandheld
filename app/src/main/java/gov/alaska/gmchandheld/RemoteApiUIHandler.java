@@ -30,6 +30,7 @@ import java.util.LinkedList;
 public class RemoteApiUIHandler extends AppCompatActivity {
 
     public RemoteApiUIHandler() {
+
     }
 
     public static final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
@@ -81,6 +82,7 @@ public class RemoteApiUIHandler extends AppCompatActivity {
         RemoteApiUIHandler.this.finish();
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +126,6 @@ public class RemoteApiUIHandler extends AppCompatActivity {
             });
 
             alert = alertDialog.create();
-
             alert.show();
             alert.setCanceledOnTouchOutside(false);
 
@@ -214,7 +215,9 @@ public class RemoteApiUIHandler extends AppCompatActivity {
         @Override
         protected void onPostExecute(RemoteApiDownload obj) {
             //Dismisses the downloading alert.  This is needed if the download fails.
-            alert.dismiss();
+            if (alert != null) {
+                alert.dismiss();
+            }
 
             if (obj.isErrored()) {
 

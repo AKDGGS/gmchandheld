@@ -16,6 +16,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
         android:layout_weight="8">
 
         <ScrollView
@@ -39,8 +43,6 @@
                         android:layout_width="0dp"
                         android:layout_weight="2.25"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginLeft="5dp"
                         android:layout_marginTop="10dp"
                         android:text="@string/barcode"
                         android:textColor="#ff353535"
@@ -72,14 +74,12 @@
                         android:layout_width="0dp"
                         android:layout_height="44dp"
                         android:layout_marginTop="12dp"
-                        android:layout_marginRight="5dp"
                         android:layout_weight="1.25"
                         android:drawableBottom="@drawable/ic_scanner_qr"
                         android:nextFocusDown="@+id/cameraBtn"
                         android:nextFocusUp="@+id/cameraBtn"
                         android:nextFocusLeft="@+id/cameraBtn"
-                        android:nextFocusRight="@+id/cameraBtn"
-                        android:layout_marginEnd="5dp" />
+                        android:nextFocusRight="@+id/cameraBtn" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -169,7 +169,7 @@
             android:paddingLeft="5dp"
             android:paddingEnd="5dp"
             android:paddingRight="5dp"
-            android:text="@string/add_container"
+            android:text="@string/submit"
             android:textSize="12sp"
             android:textStyle="bold"
             android:nextFocusDown="@+id/submitBtn"
