@@ -219,7 +219,34 @@ public class RemoteApiDownload {
 					query = sb + containersToUrlList(containerList, "i");
 					QUERYPARAM = query;
 					url = url + "addinventory.json?" + query;
-					System.out.println("******************* " + url.toString());
+					break;
+				}
+
+				case "Quality": {
+					String query;
+					String barcode = null;
+					String remark = null;
+					try {
+						barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
+						remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						exception = new Exception(e.getMessage());
+					}
+
+					StringBuilder sb = new StringBuilder();
+					if(barcode != null) {
+						sb.append("barcode=").append(barcode);
+					}
+					if(remark != null){
+						sb.append("&remark=").append(remark);
+					}
+
+					if(!containerList.isEmpty()) {
+						sb.append(containersToUrlList(containerList, "i"));
+					}
+					query = sb.toString();
+					QUERYPARAM = query;
+					url = url + "addinventoryquality.json?" + query;
 					break;
 				}
 
@@ -356,17 +383,19 @@ public class RemoteApiDownload {
 
 		sb.append(delim);
 		int i = 0;
-		while (i < list.size() - 1) {
+		if(list != null) {
+			while (i < list.size() - 1) {
 
-			try {
-				sb.append(URLEncoder.encode(list.get(i), "utf-8"));
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				try {
+					sb.append(URLEncoder.encode(list.get(i), "utf-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				sb.append(delim);
+				i++;
 			}
-			sb.append(delim);
-			i++;
+			sb.append(list.get(i));
 		}
-		sb.append(list.get(i));
 		return sb.toString();
 	}
 }

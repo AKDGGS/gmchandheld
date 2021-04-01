@@ -1,7 +1,7 @@
 <resources>
     <string name="help">Help</string>
     <string name="recode">Recode</string>
-    <string name="add_inventory">add inventory</string>
+    <string name="add_inventory">Add Inventory</string>
     <string name="api_key_label">API Key:</string>
     <string name="url_label">URL:</string>
     <string name="app_name">GMC Handheld</string> <!-- name of app -->
@@ -39,6 +39,7 @@
     <string name="child_text">child text</string>
     <string name="clear">Clear</string>
     <string name="double_tap_to_remove_item">Double tap to remove item</string>
+    <string name="quality">Quality</string>
 
     <string-array name="choice_items">
         <item>Needs Inventory</item>

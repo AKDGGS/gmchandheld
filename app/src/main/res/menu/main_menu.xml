@@ -28,8 +28,13 @@
 
     <item
     android:id="@+id/add_inventory"
-    android:title="Add Inventory"
+    android:title="@string/add_inventory"
     app:showAsAction="never" />
+
+    <item
+        android:id="@+id/quality"
+        android:title="@string/quality"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/audit"

@@ -1,5 +1,10 @@
 package gov.alaska.gmchandheld;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -13,19 +18,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
-
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class AddInventory extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
+public class Quality extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
+
     private IntentIntegrator qrScan;
     private EditText addinventoryBarcodeET;
     private Button issuesBtn;
@@ -38,7 +39,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     public static boolean[] checkedItems;
     public static ArrayList<String> selectedItemsDisplayList;
 
-    public AddInventory() {
+    public Quality() {
         numberOfIssues = 10;
         selectedItems = new ArrayList<>();
         selectedItemsDisplayList = new ArrayList<>();
@@ -57,7 +58,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_inventory);
+        setContentView(R.layout.quality);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
@@ -97,7 +98,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                 if (Build.VERSION.SDK_INT <= 24) {
                     qrScan.initiateScan();
                 } else {
-                    Intent intent = new Intent(AddInventory.this, CameraToScanner.class);
+                    Intent intent = new Intent(Quality.this, CameraToScanner.class);
                     startActivityForResult(intent, 0);
                 }
             }
@@ -122,7 +123,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                 @Override
                 public void onClick(View v) {
                     CheckConfiguration checkConfiguration = new CheckConfiguration();
-                    if (checkConfiguration.checkConfiguration(AddInventory.this)) {
+                    if (checkConfiguration.checkConfiguration(Quality.this)) {
                         if (!(TextUtils.isEmpty(addinventoryBarcodeET.getText()))) {
 
                             String container = addinventoryBarcodeET.getText().toString();
@@ -132,7 +133,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                                 RemoteApiUIHandler.setAddContainerRemark(addInveotryRemarkET.getText().toString());
                                 RemoteApiUIHandler.setContainerList(selectedItems);
                                 remoteApiUIHandler.setDownloading(true);
-                                new RemoteApiUIHandler.ProcessDataForDisplay(AddInventory.this).execute();
+                                new RemoteApiUIHandler.ProcessDataForDisplay(Quality.this).execute();
                             }
                             addinventoryBarcodeET.setText("");
                             addInveotryRemarkET.setText("");
@@ -150,7 +151,6 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                 }
             });
         }
-
         showIssuesTV = findViewById(R.id.showIssuesTV);
         issuesBtn = findViewById(R.id.issuesBtn);
 
@@ -199,9 +199,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     }
 
     @Override
-    public void onNegativebuttonClicked() {
-
-    }
+    public void onNegativebuttonClicked() { }
 
     public String listToString(ArrayList<String> arrList){
         StringBuilder sb = new StringBuilder();

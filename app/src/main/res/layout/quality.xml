@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    app:backgroundTint="@color/colorPrimary"
+    tools:context=".Quality">
+
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="8">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fadeScrollbars="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="2.25"
+                        android:gravity="center_vertical"
+                        android:text="@string/barcode"
+                        android:textColor="#ff353535"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/barcodeET"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="6.5"
+                        android:inputType="text"
+                        android:maxLength="25"
+                        android:nextFocusLeft="@+id/barcodeET"
+                        android:nextFocusRight="@+id/barcodeET"
+                        android:nextFocusUp="@+id/barcodeET"
+                        android:nextFocusDown="@+id/barcodeET"
+                        android:paddingStart="16dp"
+                        android:paddingLeft="16dp"
+                        android:selectAllOnFocus="true"
+                        android:text=""
+                        tools:ignore="RtlSymmetry" />
+
+                    <Button
+                        android:id="@+id/cameraBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_weight="1.25"
+                        android:drawableBottom="@drawable/ic_scanner_qr"
+                        android:nextFocusLeft="@+id/cameraBtn"
+                        android:nextFocusRight="@+id/cameraBtn"
+                        android:nextFocusUp="@+id/cameraBtn"
+                        android:nextFocusDown="@+id/cameraBtn" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="2.25"
+                        android:text="@string/remark"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/remarkET"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="7.75"
+                        android:inputType="text|textMultiLine"
+                        android:nextFocusLeft="@+id/remarkET"
+                        android:nextFocusRight="@+id/remarkET"
+                        android:nextFocusUp="@+id/remarkET"
+                        android:nextFocusDown="@+id/remarkET"
+                        android:paddingStart="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingEnd="5dp"
+                        android:paddingRight="5dp"
+                        android:scrollHorizontally="false"
+                        android:selectAllOnFocus="true"
+                        android:text="" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/issuesBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Select Issues" />
+
+                    <TextView
+                        android:id="@+id/showIssuesTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/submitBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="5dp"
+            android:minWidth="40dip"
+            android:minHeight="40dip"
+            android:nextFocusLeft="@+id/submitBtn"
+            android:nextFocusRight="@+id/submitBtn"
+            android:nextFocusUp="@+id/submitBtn"
+            android:nextFocusDown="@+id/submitBtn"
+            android:paddingStart="5dp"
+            android:paddingLeft="5dp"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/submit"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</LinearLayout>

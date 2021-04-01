@@ -104,54 +104,54 @@ public class RemoteApiUIHandler extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
-            LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
-
-            View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.downloading_alert_root));
-            alertDialog.setView(layout);
-
-            TextView title = new TextView(mActivity.get());
-            String processingTitle = "Processing " + urlFirstParameter;
-            title.setText(processingTitle);
-            title.setGravity(Gravity.CENTER);
-            title.setTextSize(16);
-            alertDialog.setCustomTitle(title);
-            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    cancel(true);
-                    downloading = false;
-                }
-            });
-
-            alert = alertDialog.create();
-            alert.show();
-            alert.setCanceledOnTouchOutside(false);
-
-            if (!urlFirstParameter.isEmpty()) {
-                switch (mActivity.get().getClass().getSimpleName()) {
-                    case "Lookup": {
-                        lastAddedToHistory(mActivity.get(), urlFirstParameter);
-                        ListView listView = ((Activity) mActivity.get()).findViewById(R.id.listViewBarcodeHistory);
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity.get(), android.R.layout.simple_list_item_1);
-                        adapter.addAll(lookupHistory);
-                        adapter.notifyDataSetChanged();
-                        listView.setAdapter(adapter);
-                        break;
-                    }
-                    case "Summary": {
-                        lastAddedToHistory(mActivity.get(), urlFirstParameter);
-                        ListView listView = ((Activity) mActivity.get()).findViewById(R.id.listViewSummaryHistory);
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity.get(), android.R.layout.simple_list_item_1);
-                        adapter.addAll(summaryHistory);
-                        adapter.notifyDataSetChanged();
-                        listView.setAdapter(adapter);
-                        break;
-                    }
-                }
-            }
-            downloading = false;
+//            AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
+//            LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
+//
+//            View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.downloading_alert_root));
+//            alertDialog.setView(layout);
+//
+//            TextView title = new TextView(mActivity.get());
+//            String processingTitle = "Processing " + urlFirstParameter;
+//            title.setText(processingTitle);
+//            title.setGravity(Gravity.CENTER);
+//            title.setTextSize(16);
+//            alertDialog.setCustomTitle(title);
+//            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    cancel(true);
+//                    downloading = false;
+//                }
+//            });
+//
+//            alert = alertDialog.create();
+//            alert.show();
+//            alert.setCanceledOnTouchOutside(false);
+//
+//            if (!urlFirstParameter.isEmpty()) {
+//                switch (mActivity.get().getClass().getSimpleName()) {
+//                    case "Lookup": {
+//                        lastAddedToHistory(mActivity.get(), urlFirstParameter);
+//                        ListView listView = ((Activity) mActivity.get()).findViewById(R.id.listViewBarcodeHistory);
+//                        ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity.get(), android.R.layout.simple_list_item_1);
+//                        adapter.addAll(lookupHistory);
+//                        adapter.notifyDataSetChanged();
+//                        listView.setAdapter(adapter);
+//                        break;
+//                    }
+//                    case "Summary": {
+//                        lastAddedToHistory(mActivity.get(), urlFirstParameter);
+//                        ListView listView = ((Activity) mActivity.get()).findViewById(R.id.listViewSummaryHistory);
+//                        ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity.get(), android.R.layout.simple_list_item_1);
+//                        adapter.addAll(summaryHistory);
+//                        adapter.notifyDataSetChanged();
+//                        listView.setAdapter(adapter);
+//                        break;
+//                    }
+//                }
+//            }
+//            downloading = false;
         }
 
         protected RemoteApiDownload doInBackground(String... strings) {
@@ -186,10 +186,13 @@ public class RemoteApiUIHandler extends AppCompatActivity {
                         break;
                     }
 
-                    case "AddInventory": {
+                    case "AddInventory":
+                    case "Quality": {
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
                         remoteAPIDownload.setAddedContainerRemark(addContainerRemark);
-                        remoteAPIDownload.setContainerList(containerList);
+                        if(!containerList.isEmpty()) {
+                            remoteAPIDownload.setContainerList(containerList);
+                        }
                         break;
                     }
 
@@ -364,13 +367,13 @@ public class RemoteApiUIHandler extends AppCompatActivity {
                     }
                     case "AddContainer": {
                         Toast.makeText(mActivity.get(), "The container was added.",
-                                       Toast.LENGTH_LONG).show();
+                                       Toast.LENGTH_SHORT).show();
                         break;
                     }
 
                     case "AddInventory": {
                         Toast.makeText(mActivity.get(), "The inventory was added.",
-                                       Toast.LENGTH_LONG).show();
+                                       Toast.LENGTH_SHORT).show();
                         break;
                     }
 
