@@ -198,12 +198,13 @@ public class RemoteApiDownload {
 				}
 
 				case "AddInventory": {
-					String query;
 					String barcode = null;
 					String remark = null;
 					try {
 						barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-						remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+						if(addedContainerRemark != null) {
+							remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+						}
 					} catch (UnsupportedEncodingException e) {
 						exception = new Exception(e.getMessage());
 					}
@@ -212,13 +213,17 @@ public class RemoteApiDownload {
 					if(barcode != null) {
 						sb.append("barcode=").append(barcode);
 					}
+
 					if(remark != null){
 						sb.append("&remark=").append(remark);
 					}
 
-					query = sb + containersToUrlList(containerList, "i");
-					QUERYPARAM = query;
-					url = url + "addinventory.json?" + query;
+					if(containerList != null) {
+						sb.append(containersToUrlList(containerList, "i"));
+					}
+
+					QUERYPARAM = sb.toString();
+					url = url + "addinventory.json?" + sb.toString();
 					break;
 				}
 
@@ -228,7 +233,9 @@ public class RemoteApiDownload {
 					String remark = null;
 					try {
 						barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-						remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+						if(remark != null) {
+							remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+						}
 					} catch (UnsupportedEncodingException e) {
 						exception = new Exception(e.getMessage());
 					}
@@ -240,8 +247,7 @@ public class RemoteApiDownload {
 					if(remark != null){
 						sb.append("&remark=").append(remark);
 					}
-
-					if(!containerList.isEmpty()) {
+					if(containerList != null) {
 						sb.append(containersToUrlList(containerList, "i"));
 					}
 					query = sb.toString();
@@ -380,22 +386,20 @@ public class RemoteApiDownload {
 		String delim = "&" + paramKeyword + "=";
 
 		StringBuilder sb = new StringBuilder();
-
-		sb.append(delim);
-		int i = 0;
-		if(list != null) {
-			while (i < list.size() - 1) {
-
-				try {
-					sb.append(URLEncoder.encode(list.get(i), "utf-8"));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
+		if(list != null && list.size() > 0) {
+			sb.append(delim);
+			int i = 0;
+				while (i < list.size() - 1) {
+					try {
+						sb.append(URLEncoder.encode(list.get(i), "utf-8"));
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					sb.append(delim);
+					i++;
 				}
-				sb.append(delim);
-				i++;
+				sb.append(list.get(i));
 			}
-			sb.append(list.get(i));
-		}
 		return sb.toString();
 	}
 }
