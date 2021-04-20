@@ -22,7 +22,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <!-- From API 24, there is a known bug that prevents the app from having a different name from the launching activity https://stackoverflow.com/a/43544965 -->
         <activity
             android:name=".Lookup"
@@ -58,12 +57,11 @@
             android:label="Add Inventory"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <activity android:name=".Quality"
+        <activity
+            android:name=".Quality"
             android:label="Quality"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
             android:name=".Configuration"
             android:label="Configuration"
@@ -110,6 +108,10 @@
         <activity
             android:name=".UpdateAppActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".TakePhoto"
+            android:label="Photo"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -107,7 +107,14 @@ public class BaseActivity extends AppCompatActivity {
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			this.startActivity(intentAddContainer);
 			return true;
-		}else{
+		}else if (item.getItemId() == (R.id.photo)) {
+			Intent intentAddContainer = new Intent(this, TakePhoto.class);
+			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			this.startActivity(intentAddContainer);
+			return true;
+		}
+
+		else{
 			return super.onOptionsItemSelected(item);
 		}
 	}

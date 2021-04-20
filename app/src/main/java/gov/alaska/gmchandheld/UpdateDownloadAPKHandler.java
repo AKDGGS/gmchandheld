@@ -125,7 +125,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
                 versionJsonResponseCode = con.getResponseCode();
                 try {
                     con.connect();
-//                    InputStream input = new BufferedInputStream(url.openStream(), 8192);
                     InputStream input;
                     input = new BufferedInputStream(url.openStream(), 8192);
                     verifyStoragePermissions(mActivity.get());

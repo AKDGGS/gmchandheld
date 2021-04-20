@@ -67,4 +67,7 @@ dependencies {
     //don't update zxing, it will stop working with API 16.
     implementation 'com.journeyapps:zxing-android-embedded:3.4.0'
     implementation 'com.google.android.gms:play-services-vision:20.1.3'
+
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.5.0'
 }
