@@ -2,7 +2,6 @@ package gov.alaska.gmchandheld;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
@@ -40,6 +39,7 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class TakePhoto extends BaseActivity {
 
@@ -173,7 +173,7 @@ public class TakePhoto extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch(requestCode){
+        switch (requestCode) {
             case CAM_REQUEST:
                 if (resultCode == RESULT_OK) {
                     uploadImageIv.setImageURI(image_uri);
@@ -198,7 +198,7 @@ public class TakePhoto extends BaseActivity {
                         super.onActivityResult(requestCode, resultCode, data);
                     }
                 }
-                    break;
+                break;
         }
 
     }
@@ -258,9 +258,18 @@ public class TakePhoto extends BaseActivity {
             }
             MultipartBody body = builder.build();
 
+            ImageFileRequestBody countingBody =
+                    new ImageFileRequestBody(body, new ImageFileRequestBody.Listener() {
+                        @Override
+                        public void onRequestProgress(long bytesWritten, long contentLength) {
+                            float percentage = 100f * bytesWritten / contentLength;
+                            // TODO: Do something useful with the values
+                        }
+                    });
+
             Request request = new Request.Builder()
                     .url(url)
-                    .post(body)
+                    .post(countingBody)
                     .build();
 
             try {
