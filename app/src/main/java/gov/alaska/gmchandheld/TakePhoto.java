@@ -258,18 +258,11 @@ public class TakePhoto extends BaseActivity {
             }
             MultipartBody body = builder.build();
 
-            ImageFileRequestBody countingBody =
-                    new ImageFileRequestBody(body, new ImageFileRequestBody.Listener() {
-                        @Override
-                        public void onRequestProgress(long bytesWritten, long contentLength) {
-                            float percentage = 100f * bytesWritten / contentLength;
-                            // TODO: Do something useful with the values
-                        }
-                    });
+            ImageFileRequestBody imageFileRequestBody = new ImageFileRequestBody(body);
 
             Request request = new Request.Builder()
                     .url(url)
-                    .post(countingBody)
+                    .post(imageFileRequestBody)
                     .build();
 
             try {
