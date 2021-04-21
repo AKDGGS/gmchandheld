@@ -13,29 +13,28 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:orientation="horizontal"
-
-        android:weightSum="10">
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:weightSum="10" >
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="20dp"
+            android:layout_height="match_parent"
             android:text="@string/remark"
-            android:textAllCaps="true"
-            android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:textSize="12sp"
-            android:layout_weight="1.75"
-            android:layout_marginStart="5dp" />
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_weight="2" />
 
         <EditText
             android:id="@+id/remarkET"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="match_parent"
             android:layout_weight="6.75"
             android:inputType="text"
             android:paddingLeft="16dp"
@@ -52,38 +51,35 @@
             android:id="@+id/cameraBtn"
             android:layout_width="0dp"
             android:layout_height="44dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginRight="5dp"
             android:layout_weight="1.25"
             android:drawableBottom="@drawable/ic_scanner_qr"
             android:nextFocusDown="@+id/cameraBtn"
             android:nextFocusUp="@+id/cameraBtn"
             android:nextFocusLeft="@+id/cameraBtn"
-            android:nextFocusRight="@+id/cameraBtn"
-            android:layout_marginEnd="5dp" />
+            android:nextFocusRight="@+id/cameraBtn" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:weightSum="10">
+        android:layout_marginEnd="5dp"
+        android:paddingTop="10dp"
+        android:weightSum="10" >
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="1.75"
-            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:minHeight="40dp"
             android:text="@string/item"
-            android:textAllCaps="true"
             android:textColor="@android:color/black"
             android:textStyle="bold"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/itemET"
@@ -115,7 +111,6 @@
             android:layout_width="0dp"
             android:layout_weight="1.75"
             android:layout_height="44dp"
-            android:layout_gravity="center"
             android:text="@string/add"
             android:textSize="10sp"
             android:nextFocusDown="@+id/addContainerBtn"
@@ -126,18 +121,19 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:layout_height="50dp"
         android:orientation="horizontal"
-        android:weightSum="10">
-
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:paddingTop="10dp"
+        android:weightSum="10" >
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="5dp"
             android:text="@string/number_of_items_added"
             android:textAllCaps="true"
             android:textColor="@android:color/black"
@@ -155,7 +151,7 @@
         <Button
             android:id="@+id/clearAllBtn"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="44dp"
             android:layout_weight="1.75"
             android:layout_gravity="center"
             android:text="@string/clear"

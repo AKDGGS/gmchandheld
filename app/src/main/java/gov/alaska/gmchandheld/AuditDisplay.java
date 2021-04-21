@@ -78,8 +78,9 @@ public class AuditDisplay extends BaseActivity {
         Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
         if (!cameraOn) {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.weight = 6.75f;
+            params.weight = 6.25f;
 
+            auditRemarkET.setLayoutParams(params);
             auditItemET.setLayoutParams(params);
             remarkCameraBtn.setVisibility(View.GONE);
             itemCameraBtn.setVisibility(View.GONE);
@@ -89,7 +90,6 @@ public class AuditDisplay extends BaseActivity {
             itemQrScan = new IntentIntegrator(this);
             itemQrScan.setBeepEnabled(true);
         }
-
 
         remarkCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override

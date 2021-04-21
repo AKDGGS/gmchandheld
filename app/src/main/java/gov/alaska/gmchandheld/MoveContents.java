@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -76,6 +77,12 @@ public class MoveContents extends BaseActivity {
 		Button fromCameraBtn = findViewById(R.id.fromCameraBtn);
 		Button toCameraBtn = findViewById(R.id.toCameraBtn);
 		if(!cameraOn){
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+			params.weight = 8.25f;
+
+			moveContentsFromET.setLayoutParams(params);
+			moveContentsToET.setLayoutParams(params);
+
 			fromCameraBtn.setVisibility(View.GONE);
 			toCameraBtn.setVisibility(View.GONE);
 		}else{

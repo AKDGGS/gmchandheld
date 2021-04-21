@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -23,6 +24,7 @@ public class Recode extends BaseActivity {
 //	public static final String SHARED_PREFS = "sharedPrefs";
 	private IntentIntegrator oldBarcodeQrScan;
 	private IntentIntegrator newBarcodeQrScan;
+	private EditText oldBarcodeET, newBarcodeET;
 
 	@Override
 	public void onRestart() {
@@ -39,8 +41,8 @@ public class Recode extends BaseActivity {
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
 
-		final EditText barcodeInput = findViewById(R.id.oldBarcodeET);
-		final EditText newBarcodeInput = findViewById(R.id.newBarcodeET);
+		oldBarcodeET = findViewById(R.id.oldBarcodeET);
+		newBarcodeET = findViewById(R.id.newBarcodeET);
 		final Button submit_button = findViewById(R.id.submitBtn);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
@@ -51,6 +53,12 @@ public class Recode extends BaseActivity {
 		Button newBarcodeCameraBtn = findViewById(R.id.newBarcodeCameraBtn);
 
 		if(!cameraOn){
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+			params.weight = 8.25f;
+
+			oldBarcodeET.setLayoutParams(params);
+			newBarcodeET.setLayoutParams(params);
+
 			newBarcodeCameraBtn.setVisibility(View.GONE);
 			oldBarcodeCameraBtn.setVisibility(View.GONE);
 		}else{
@@ -93,25 +101,25 @@ public class Recode extends BaseActivity {
 				public void onClick(View v) {
 					CheckConfiguration checkConfiguration = new CheckConfiguration();
 					if (checkConfiguration.checkConfiguration(Recode.this)) {
-						if ((!barcodeInput.getText().toString().isEmpty()) &&(!newBarcodeInput.getText().toString().isEmpty()) ) {
+						if ((!oldBarcodeET.getText().toString().isEmpty()) &&(!newBarcodeET.getText().toString().isEmpty()) ) {
 							remoteApiUIHandler.setDownloading(true);
-							RemoteApiUIHandler.setUrlFirstParameter(barcodeInput.getText().toString());
-							RemoteApiUIHandler.setGetNewBarcode(newBarcodeInput.getText().toString());
+							RemoteApiUIHandler.setUrlFirstParameter(oldBarcodeET.getText().toString());
+							RemoteApiUIHandler.setGetNewBarcode(newBarcodeET.getText().toString());
 							new RemoteApiUIHandler.ProcessDataForDisplay(Recode.this).execute();
-							newBarcodeInput.setText("");
-							barcodeInput.setText("");
-							barcodeInput.requestFocus();
+							newBarcodeET.setText("");
+							oldBarcodeET.setText("");
+							oldBarcodeET.requestFocus();
 						}
 					}
 				}
 			});
 
 			// KeyListener listens if enter is pressed
-			barcodeInput.setOnKeyListener(new View.OnKeyListener() {
+			oldBarcodeET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					// if "enter" is pressed
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-						newBarcodeInput.requestFocus();
+						newBarcodeET.requestFocus();
 						return true;
 					}
 					return false;

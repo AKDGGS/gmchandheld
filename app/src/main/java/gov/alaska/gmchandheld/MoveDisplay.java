@@ -32,7 +32,8 @@ public class MoveDisplay extends BaseActivity {
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
 	private EditText destinationET;
-	private EditText itemET;
+	private EditText itemET, toET;
+	private TextView moveCountTV;
 	private IntentIntegrator destinationQrScan;
 
 	private int clicks;  //used to count double clicks for deletion
@@ -56,6 +57,7 @@ public class MoveDisplay extends BaseActivity {
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
 
+		toET = findViewById(R.id.toET);
 		itemET = findViewById(R.id.itemET);
 		destinationET = findViewById(R.id.toET);
 		final TextView moveCountTV = findViewById(R.id.moveCountTV);
@@ -82,7 +84,13 @@ public class MoveDisplay extends BaseActivity {
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 6.75f;
 
+			LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+			params2.weight = 3f;
+
+			toET.setLayoutParams(params);
 			itemET.setLayoutParams(params);
+			moveCountTV.setLayoutParams(params2);
+
 			cameraBtn.setVisibility(View.GONE);
 			itemCameraBtn.setVisibility(View.GONE);
 		}else{

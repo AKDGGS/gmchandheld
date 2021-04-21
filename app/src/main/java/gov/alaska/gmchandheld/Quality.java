@@ -82,7 +82,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         if(!cameraOn){
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.weight = 7.75f;
-            params.rightMargin = 15;
+
 
             addinventoryBarcodeET.setLayoutParams(params);
             addInveotryRemarkET.setLayoutParams(params);

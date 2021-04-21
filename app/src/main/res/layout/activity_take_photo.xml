@@ -18,55 +18,60 @@
         android:orientation="vertical"
         android:weightSum="10">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:weightSum="10">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_weight="2.5"
-                    android:text="@string/barcode"
-                    android:textAllCaps="true"
-                    android:textColor="@android:color/black"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="2.5"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/barcode"
+                android:textColor="#ff353535"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:gravity="center_vertical"/>
 
-                <EditText
-                    android:id="@+id/barcodeET"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="6.0"
-                    android:inputType="text"
-                    android:nextFocusLeft="@+id/remarkET"
-                    android:nextFocusRight="@+id/remarkET"
-                    android:nextFocusUp="@+id/remarkET"
-                    android:nextFocusDown="@+id/remarkET"
-                    android:paddingStart="16dp"
-                    android:paddingLeft="16dp"
-                    android:selectAllOnFocus="true"
-                    app:backgroundTint="@color/colorPrimary"
-                    tools:ignore="RtlSymmetry" />
+            <EditText
+                android:id="@+id/barcodeET"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginEnd="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_weight="6.25"
+                android:inputType="text"
+                android:paddingStart="16dp"
+                android:paddingLeft="16dp"
+                android:text=""
+                android:maxLength="25"
+                android:selectAllOnFocus="true"
+                android:nextFocusDown="@+id/barcodeET"
+                android:nextFocusUp="@+id/barcodeET"
+                android:nextFocusLeft="@+id/barcodeET"
+                android:nextFocusRight="@+id/barcodeET"
+                tools:ignore="RtlSymmetry" />
 
-                <Button
-                    android:id="@+id/cameraBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1.25"
-                    android:drawableBottom="@drawable/ic_scanner_qr"
-                    android:nextFocusLeft="@+id/cameraBtn"
-                    android:nextFocusRight="@+id/cameraBtn"
-                    android:nextFocusUp="@+id/cameraBtn"
-                    android:nextFocusDown="@+id/cameraBtn" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/cameraBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1.25"
+                android:drawableBottom="@drawable/ic_scanner_qr"
+                android:nextFocusDown="@+id/cameraBtn"
+                android:nextFocusUp="@+id/cameraBtn"
+                android:nextFocusLeft="@+id/cameraBtn"
+                android:nextFocusRight="@+id/cameraBtn"
+                android:layout_marginEnd="5dp" />
+        </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,9 +90,8 @@
                     android:gravity="center_vertical"
                     android:minHeight="40dp"
                     android:text="@string/description"
-                    android:textAllCaps="true"
                     android:textColor="@android:color/black"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -126,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center_horizontal"
-                    android:text="Click to add image"
+                    android:text="Touch to add image"
                     android:textColor="@color/colorPrimary" />
             </FrameLayout>
 

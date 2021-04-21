@@ -59,6 +59,12 @@ public class TakePhoto extends BaseActivity {
     private IntentIntegrator qrScan;
 
     @Override
+    public void onRestart() {
+        super.onRestart();
+        this.recreate();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_photo);
@@ -235,7 +241,6 @@ public class TakePhoto extends BaseActivity {
 
         private okhttp3.Response DoActualRequest(File file) {
             OkHttpClient client = new OkHttpClient();
-//            String url = "http://maps.dggs.alaska.gov/gmcdev/upload2";
             SharedPreferences sharedPreferences = mActivity.get().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
             String urlBase = sharedPreferences.getString("urlText", "");
             String url = urlBase + "/upload2";
