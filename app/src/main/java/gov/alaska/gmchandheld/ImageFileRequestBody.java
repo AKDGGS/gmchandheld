@@ -25,7 +25,6 @@ public class ImageFileRequestBody extends RequestBody {
 
     @Override
     public void writeTo(BufferedSink sink) throws IOException {
-        BufferedSink bufferedSink;
         delegate.writeTo(sink);
         sink.flush();
     }
