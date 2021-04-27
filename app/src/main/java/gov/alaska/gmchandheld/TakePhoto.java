@@ -3,6 +3,8 @@ package gov.alaska.gmchandheld;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -17,9 +19,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +35,7 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -61,8 +66,17 @@ public class TakePhoto extends BaseActivity {
     @Override
     public void onRestart() {
         super.onRestart();
-        this.recreate();
+        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+        boolean cameraOn = (sp.getBoolean("cameraOn", false));
+        View v = findViewById(R.id.cameraBtn);
+        if(!cameraOn) {
+            v.setVisibility(View.GONE);
+        }else{
+            v.setVisibility(View.VISIBLE);
+        }
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +94,6 @@ public class TakePhoto extends BaseActivity {
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
             cameraBtn.setVisibility(View.GONE);
-
         } else {
             qrScan = new IntentIntegrator(this);
             qrScan.setOrientationLocked(false);
@@ -152,7 +165,6 @@ public class TakePhoto extends BaseActivity {
     private void openCamera() {
         filename = "img_" + new SimpleDateFormat("yyyyMMddHHmm'.jpeg'").format(new Date());
         File file = new File("/sdcard/DCIM/Camera/" + filename);
-
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
         image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
@@ -182,10 +194,13 @@ public class TakePhoto extends BaseActivity {
         switch (requestCode) {
             case CAM_REQUEST:
                 if (resultCode == RESULT_OK) {
+                    System.out.println("OK ");
                     uploadImageIv.setImageURI(image_uri);
                     imageViewTv = findViewById(R.id.imageViewTv);
                     imageViewTv.setText("");
                     submitBtn.setEnabled(true);
+                }else{
+                    System.out.println("Failed");
                 }
                 break;
             case SCAN_BARCODE_REQUEST:

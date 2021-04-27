@@ -59,8 +59,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
     private void alert() {
         Intent intent = getIntent();
         final Long lastModifiedRefused = intent.getLongExtra("LAST_MODIFIED_DATE", 0);
-
-
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Update Available")
                 .setMessage("Tap Update to install the app.")
@@ -72,9 +70,8 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
 
                         //If a user refuses an update, the last modified date for that update is saved in shared preferences,
                         SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-//                        Configuration.editor = sp.edit();
+                        Configuration.editor = sp.edit();
                         Configuration.editor.putLong("ignoreUpdateDateSP", lastModifiedRefused).apply();
-
                         Intent intent = new Intent(UpdateDownloadAPKHandler.this, Lookup.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         UpdateDownloadAPKHandler.this.startActivity(intent);

@@ -38,7 +38,11 @@ public class AuditDisplay extends BaseActivity {
     private Button clearAllBtn;
 
     AuditDisplayObjInstance auditDisplayObjInstance;
-    int clicks = 0;  //used to count double clicks for deletion
+    int clicks;  //used to count double clicks for deletion
+
+    public AuditDisplay() {
+        clicks = 0;
+    }
 
     @Override
     public void onRestart() {
@@ -122,7 +126,7 @@ public class AuditDisplay extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String container = auditItemET.getText().toString();
-                if (!container.isEmpty() && !containerList.contains(container)) {
+                if (!containerList.contains(container)) {
                     containerList.add(0, container);
                     adapter.insert(container, 0);
                     adapter.notifyDataSetChanged();
@@ -208,7 +212,7 @@ public class AuditDisplay extends BaseActivity {
                 public void onClick(View v) {
                     CheckConfiguration checkConfiguration = new CheckConfiguration();
                     if (checkConfiguration.checkConfiguration(AuditDisplay.this)) {
-                        if ((containerList.size() > 0)) {
+                        if ((containerList.size() >= 0)) {
                             auditContainerFn(auditRemarkET.getText().toString());
                             auditItemET.setText("");
                             auditRemarkET.setText("");

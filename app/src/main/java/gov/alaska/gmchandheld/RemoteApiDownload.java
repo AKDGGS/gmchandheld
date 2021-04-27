@@ -14,6 +14,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
+import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.TimeZone;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.HttpsURLConnection;
 
 public class RemoteApiDownload {
 	private Exception exception = null;
@@ -303,6 +305,7 @@ public class RemoteApiDownload {
 			String AUTH_DGST = getDGST(APIKEY, message);
 
 			URL myURL = new URL(url);
+
 			connection = (HttpURLConnection) myURL.openConnection();
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Authorization", "BASE64-HMAC-SHA256 " + AUTH_DGST);

@@ -46,7 +46,7 @@ public class Lookup extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
 		deleteApkFile();
-		loadLookup();
+		loadLookup();;
 	}
 
 	public void loadLookup() {
@@ -56,7 +56,6 @@ public class Lookup extends BaseActivity {
 		setSupportActionBar(toolbar);
 		toolbar.setTitle("Lookup");
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-
 
 		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		boolean cameraOn = (sp.getBoolean("cameraOn", false));
