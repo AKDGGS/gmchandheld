@@ -126,7 +126,7 @@ public class AuditDisplay extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String container = auditItemET.getText().toString();
-                if (!containerList.contains(container)) {
+                if (!containerList.contains(container) && !container.isEmpty() ) {
                     containerList.add(0, container);
                     adapter.insert(container, 0);
                     adapter.notifyDataSetChanged();

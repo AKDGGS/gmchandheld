@@ -18,13 +18,21 @@ import android.widget.ListView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 
 public class Lookup extends BaseActivity {
@@ -45,6 +53,27 @@ public class Lookup extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
+
+		try {
+//			https://stackoverflow.com/a/29946540
+			ProviderInstaller.installIfNeeded(this.getApplicationContext());
+		} catch (GooglePlayServicesRepairableException e) {
+			e.printStackTrace();
+		} catch (GooglePlayServicesNotAvailableException e) {
+			e.printStackTrace();
+		}
+
+		SSLContext sslContext = null;
+		try {
+			sslContext = SSLContext.getInstance("TLSv1.2");
+			sslContext.init(null, null, null);
+			SSLEngine engine = sslContext.createSSLEngine();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (KeyManagementException e) {
+			e.printStackTrace();
+		}
+
 		deleteApkFile();
 		loadLookup();;
 	}

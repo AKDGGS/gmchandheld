@@ -46,19 +46,16 @@
         android:title="@string/recode"
         app:showAsAction="never" />
 
-<!--    <item-->
-<!--        android:id="@+id/photo"-->
-<!--        android:title="@string/photo"-->
-<!--        app:showAsAction="never" />-->
+    <item
+        android:id="@+id/photo"
+        android:title="@string/photo"
+        app:showAsAction="never" />
 
 
     <item
         android:id="@+id/configuration"
         android:title="@string/configuration"
         app:showAsAction="never" />
-
-
-
 
 </menu>
 
