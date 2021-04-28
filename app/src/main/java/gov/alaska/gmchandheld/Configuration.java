@@ -76,6 +76,8 @@ public class Configuration extends BaseActivity {
 
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 
+        System.out.println("Url from sp in config: "  + sp.getString("urlText", ""));
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
@@ -141,16 +143,20 @@ public class Configuration extends BaseActivity {
             }
         });
 
+
+        updateViews();
         hourInputChangeWatcher();
         minuteInputChangeWatcher();
         urlInputChangeWatcher();
         apiInputChangeWatcher();
-
         loadData();
         autoUpdateChangeWatcher();
         cameraToScannerChangeWatcher();
+
+
         loadData();
         updateViews();
+        saveData();
     }
 
     private void cameraToScannerChangeWatcher() {
@@ -165,7 +171,7 @@ public class Configuration extends BaseActivity {
                         } else {
                             editor.putBoolean("cameraOn", false).commit();
                         }
-                        saveData();
+//                        saveData();
                     }
                 });
     }
@@ -224,7 +230,7 @@ public class Configuration extends BaseActivity {
                             editor.putBoolean("alarmOn", true);
                         }
 
-                        saveData();
+//                        saveData();
                     }
                 });
     }
@@ -295,7 +301,9 @@ public class Configuration extends BaseActivity {
     }
 
     public void loadData() {
+        System.out.println("Url from sp in load data: "  + sp.getString("urlText", ""));
         url = sp.getString("urlText", "");
+        System.out.println("Url from assignment:" + url);
         apiKey = sp.getString("apiText", "");
         hour = sp.getString("updateHour", "24");
         minute = sp.getString("updateMinute", "0");
@@ -304,7 +312,7 @@ public class Configuration extends BaseActivity {
     }
 
     public void updateViews() {
-        urlET.setText(url);
+        urlET.setText(sp.getString("urlText", ""));
         apiET.setText(apiKey);
         hourInput.setText(hour);
         minuteInput.setText(minute);
@@ -345,8 +353,6 @@ public class Configuration extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 editor.putString("updateMinute", minuteInput.getText().toString()).apply();
-
-
             }
 
             @Override

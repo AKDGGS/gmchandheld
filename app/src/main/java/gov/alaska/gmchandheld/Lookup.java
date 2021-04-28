@@ -41,6 +41,11 @@ public class Lookup extends BaseActivity {
 	private EditText barcodeET;
 	private IntentIntegrator qrScan;
 
+	private SharedPreferences sp;
+
+	public static final String SHARED_PREFS = "sharedPrefs";
+	public static SharedPreferences.Editor editor;
+
 	@Override
 	public void onRestart() {
 		this.recreate();
@@ -53,6 +58,10 @@ public class Lookup extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
+
+		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+
+		System.out.println("Url from sp in Lookup: "  + sp.getString("urlText", ""));
 
 		try {
 //			https://stackoverflow.com/a/29946540
