@@ -64,7 +64,9 @@ public class Lookup extends BaseActivity {
 		System.out.println("Url from sp in Lookup: "  + sp.getString("urlText", ""));
 
 		try {
-//			https://stackoverflow.com/a/29946540
+			// enables TSL-1.2 if Google Play is updated on old devices.
+			// doesn't work with emulators
+			// https://stackoverflow.com/a/29946540
 			ProviderInstaller.installIfNeeded(this.getApplicationContext());
 		} catch (GooglePlayServicesRepairableException e) {
 			e.printStackTrace();

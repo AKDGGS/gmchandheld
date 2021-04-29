@@ -65,6 +65,7 @@ public class Configuration extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -143,16 +144,14 @@ public class Configuration extends BaseActivity {
             }
         });
 
-
         updateViews();
         hourInputChangeWatcher();
         minuteInputChangeWatcher();
         urlInputChangeWatcher();
         apiInputChangeWatcher();
-        loadData();
+//        loadData();
         autoUpdateChangeWatcher();
         cameraToScannerChangeWatcher();
-
 
         loadData();
         updateViews();
@@ -171,7 +170,6 @@ public class Configuration extends BaseActivity {
                         } else {
                             editor.putBoolean("cameraOn", false).commit();
                         }
-//                        saveData();
                     }
                 });
     }
@@ -229,8 +227,6 @@ public class Configuration extends BaseActivity {
                             }
                             editor.putBoolean("alarmOn", true);
                         }
-
-//                        saveData();
                     }
                 });
     }

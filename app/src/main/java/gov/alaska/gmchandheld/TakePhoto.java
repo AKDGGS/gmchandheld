@@ -264,29 +264,10 @@ public class TakePhoto extends BaseActivity {
 
         private okhttp3.Response DoActualRequest(File file) {
             OkHttpClient client = new OkHttpClient();
-            try {
-//			https://stackoverflow.com/a/29946540
-                ProviderInstaller.installIfNeeded(getApplicationContext());
-            } catch (GooglePlayServicesRepairableException e) {
-                e.printStackTrace();
-            } catch (GooglePlayServicesNotAvailableException e) {
-                e.printStackTrace();
-            }
-
-            SSLContext sslContext = null;
-            try {
-                sslContext = SSLContext.getInstance("TLSv1.2");
-                sslContext.init(null, null, null);
-                SSLEngine engine = sslContext.createSSLEngine();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            }
 
             SharedPreferences sharedPreferences = mActivity.get().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
             String urlBase = sharedPreferences.getString("urlText", "");
-            String url = urlBase + "/upload2";
+            String url = urlBase + "/upload.json";
             if (barcodeEt.getText().toString().trim().length() != 0) {
                 barcode = barcodeEt.getText().toString().trim();
             }
