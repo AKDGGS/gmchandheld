@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -42,7 +43,6 @@ public class Lookup extends BaseActivity {
 	private IntentIntegrator qrScan;
 
 	private SharedPreferences sp;
-
 	public static final String SHARED_PREFS = "sharedPrefs";
 	public static SharedPreferences.Editor editor;
 
@@ -58,10 +58,6 @@ public class Lookup extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
-
-		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-
-		System.out.println("Url from sp in Lookup: "  + sp.getString("urlText", ""));
 
 		try {
 			// enables TSL-1.2 if Google Play is updated on old devices.
@@ -85,6 +81,7 @@ public class Lookup extends BaseActivity {
 			e.printStackTrace();
 		}
 
+		checkUrlUsesHttps();
 		deleteApkFile();
 		loadLookup();;
 	}
@@ -97,7 +94,7 @@ public class Lookup extends BaseActivity {
 		toolbar.setTitle("Lookup");
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
-		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+		sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);
@@ -139,6 +136,9 @@ public class Lookup extends BaseActivity {
 			submitBtn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+					String url = sp.getString("urlText", "");
+
 					CheckConfiguration checkConfiguration = new CheckConfiguration();
 					if (checkConfiguration.checkConfiguration(Lookup.this)) {
 						if (!barcodeET.getText().toString().isEmpty()) {
@@ -149,7 +149,6 @@ public class Lookup extends BaseActivity {
 					}
 				}
 			});
-
 
 			// KeyListener listens if enter is pressed
 			barcodeET.setOnKeyListener(new View.OnKeyListener() {
@@ -235,6 +234,17 @@ public class Lookup extends BaseActivity {
 			} else {
 				super.onActivityResult(requestCode, resultCode, data);
 			}
+		}
+	}
+
+	public void checkUrlUsesHttps(){
+		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+		String url = sp.getString("urlText", "");
+		if(!url.startsWith("https")) {
+			Intent intent = new Intent(Lookup.this, Configuration.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			Lookup.this.startActivity(intent);
+			Toast.makeText(Lookup.this, "The URL must be https.", Toast.LENGTH_LONG).show();
 		}
 	}
 }

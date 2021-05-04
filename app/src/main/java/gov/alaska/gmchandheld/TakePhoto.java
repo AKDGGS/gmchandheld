@@ -202,13 +202,10 @@ public class TakePhoto extends BaseActivity {
         switch (requestCode) {
             case CAM_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    System.out.println("OK ");
                     uploadImageIv.setImageURI(image_uri);
                     imageViewTv = findViewById(R.id.imageViewTv);
                     imageViewTv.setText("");
                     submitBtn.setEnabled(true);
-                }else{
-                    System.out.println("Failed");
                 }
                 break;
             case SCAN_BARCODE_REQUEST:

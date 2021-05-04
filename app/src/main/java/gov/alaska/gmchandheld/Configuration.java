@@ -11,12 +11,15 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
@@ -28,8 +31,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -75,13 +76,11 @@ public class Configuration extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.configuration);
 
-        sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-
-        System.out.println("Url from sp in config: "  + sp.getString("urlText", ""));
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
+
+        sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         TextView buildDateTV = findViewById(R.id.buildDateTV);
@@ -140,7 +139,7 @@ public class Configuration extends BaseActivity {
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateAPK();
+                    updateAPK();
             }
         });
 
@@ -149,12 +148,11 @@ public class Configuration extends BaseActivity {
         minuteInputChangeWatcher();
         urlInputChangeWatcher();
         apiInputChangeWatcher();
-//        loadData();
         autoUpdateChangeWatcher();
         cameraToScannerChangeWatcher();
-
-        loadData();
         updateViews();
+        loadData();
+
         saveData();
     }
 
@@ -231,26 +229,6 @@ public class Configuration extends BaseActivity {
                 });
     }
 
-    private void apiInputChangeWatcher() {
-
-        apiET.addTextChangedListener(new TextWatcher() {
-            SharedPreferences.Editor editor = sp.edit();
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("apiText", getApiKey()).apply();
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                saveData();
-            }
-        });
-    }
-
     private void urlInputChangeWatcher() {
 
         urlET.addTextChangedListener(new TextWatcher() {
@@ -265,11 +243,29 @@ public class Configuration extends BaseActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void afterTextChanged(Editable s) {
-                saveData();
-            }
+            public void afterTextChanged(Editable s) { }
         });
     }
+
+
+    private void apiInputChangeWatcher() {
+
+        apiET.addTextChangedListener(new TextWatcher() {
+            SharedPreferences.Editor editor = sp.edit();
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                editor.putString("apiText", getApiKey()).apply();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
+    }
+
 
     public String getUrl() {
         urlET = findViewById(R.id.urlET);
@@ -297,9 +293,7 @@ public class Configuration extends BaseActivity {
     }
 
     public void loadData() {
-        System.out.println("Url from sp in load data: "  + sp.getString("urlText", ""));
         url = sp.getString("urlText", "");
-        System.out.println("Url from assignment:" + url);
         apiKey = sp.getString("apiText", "");
         hour = sp.getString("updateHour", "24");
         minute = sp.getString("updateMinute", "0");
@@ -309,7 +303,7 @@ public class Configuration extends BaseActivity {
 
     public void updateViews() {
         urlET.setText(sp.getString("urlText", ""));
-        apiET.setText(apiKey);
+        apiET.setText(sp.getString("apiText", ""));
         hourInput.setText(hour);
         minuteInput.setText(minute);
         autoUpdatebtn.setChecked(sp.getBoolean("alarmOn", true));
@@ -364,7 +358,6 @@ public class Configuration extends BaseActivity {
                 }
             }
         });
-
     }
 
     public void updateAPK() {
