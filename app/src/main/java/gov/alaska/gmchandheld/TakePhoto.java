@@ -38,6 +38,7 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -47,12 +48,16 @@ import java.util.Date;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.Route;
+import okhttp3.internal.http.HttpHeaders;
 
 public class TakePhoto extends BaseActivity {
 
@@ -247,7 +252,7 @@ public class TakePhoto extends BaseActivity {
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            if (result == 200) {
+            if (result == 200 | result == 302) {
                 Toast.makeText(getApplicationContext(), "Image Uploaded", Toast.LENGTH_SHORT).show();
                 uploadImageIv.setImageDrawable(null);
                 imageViewTv.setText("Click to add image");
@@ -260,7 +265,12 @@ public class TakePhoto extends BaseActivity {
         }
 
         private okhttp3.Response DoActualRequest(File file) {
-            OkHttpClient client = new OkHttpClient();
+//            OkHttpClient client = new OkHttpClient();
+
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                                                    .followRedirects(false)
+                                                    .followSslRedirects(false)
+                                                    .build();
 
             SharedPreferences sharedPreferences = mActivity.get().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
             String urlBase = sharedPreferences.getString("urlText", "");
@@ -282,23 +292,33 @@ public class TakePhoto extends BaseActivity {
             if (description != null) {
                 builder.addFormDataPart("description", description);
             }
+
             MultipartBody body = builder.build();
 
             ImageFileRequestBody imageFileRequestBody = new ImageFileRequestBody(body);
 
+            sharedPreferences = TakePhoto.this.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
+            String accessToken = sharedPreferences.getString("apiText", "");
+//            String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
+
             Request request = new Request.Builder()
+                    .header("Authorization", "Token " + accessToken)
                     .url(url)
                     .post(imageFileRequestBody)
                     .build();
 
             try {
                 response = client.newCall(request).execute();
+                System.out.println("Redirected? " + response.isRedirect());
+                System.out.println("Response 2: " + response);
+                System.out.println(response.body().string());
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return response;
         }
+
     }
 }
 
