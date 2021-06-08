@@ -95,7 +95,6 @@ public class RemoteApiDownload {
     }
 
     public void getDataFromURL() {
-
         InputStream inputStream;
         HttpURLConnection connection;
         SharedPreferences sharedPreferences = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
@@ -342,6 +341,7 @@ public class RemoteApiDownload {
                     exception = new Exception("No results found.\n\nIs the barcode correct? " + urlFirstParameter);
                 } else {
                     rawJson = sb.toString();
+
                 }
 
                 inputStream.close();

@@ -103,7 +103,6 @@ public class RemoteApiUIHandler extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
             LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
 

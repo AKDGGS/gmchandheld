@@ -3,8 +3,6 @@ package gov.alaska.gmchandheld;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -19,18 +17,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
-import android.view.ViewGroup;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
+
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -38,26 +33,14 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
-
-import okhttp3.Authenticator;
-import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.Route;
-import okhttp3.internal.http.HttpHeaders;
 
 public class TakePhoto extends BaseActivity {
 
@@ -321,4 +304,3 @@ public class TakePhoto extends BaseActivity {
 
     }
 }
-

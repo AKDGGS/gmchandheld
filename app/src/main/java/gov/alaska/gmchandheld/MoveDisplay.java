@@ -128,22 +128,19 @@ public class MoveDisplay extends BaseActivity {
 			}
 		});
 
-
 		addBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				String container = itemET.getText().toString();
-					if (!container.isEmpty()) {
-						if (!(container.equals(destinationET.getText().toString()) && (!containerList.contains(container)))) {
-							containerList.add(0, container);
-							adapter.insert(container, 0);
-							adapter.notifyDataSetChanged();
-							moveCountTV.setText(String.valueOf(containerList.size()));
-						}
-						itemET.setText("");
-					}
-					itemET.requestFocus();
+				if (!containerList.contains(container) && !container.isEmpty() && !container.equals(destinationET.getText().toString())) {
+					containerList.add(0, container);
+					adapter.insert(container, 0);
+					adapter.notifyDataSetChanged();
+					moveCountTV.setText(String.valueOf(containerList.size()));
 				}
+				itemET.setText("");
+				itemET.requestFocus();
+			}
 
 		});
 

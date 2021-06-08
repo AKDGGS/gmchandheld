@@ -82,6 +82,7 @@ public class LookupLogicForDisplay {
 
 	public void processRawJSON(String rawJSON) throws Exception {
 
+		System.out.println("***** " + rawJSON);
 		if (rawJSON.trim().charAt(0) == '[') {
 			JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
 
