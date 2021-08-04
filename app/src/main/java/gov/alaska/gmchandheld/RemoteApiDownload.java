@@ -303,7 +303,7 @@ public class RemoteApiDownload {
 
             sharedPreferences = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
             String accessToken = sharedPreferences.getString("apiText", "");
-//            String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
+            //String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
             connection.setRequestProperty("Authorization", "Token " + accessToken);
 
             connection.setReadTimeout(10 * 1000);
@@ -341,12 +341,13 @@ public class RemoteApiDownload {
                     exception = new Exception("No results found.\n\nIs the barcode correct? " + urlFirstParameter);
                 } else {
                     rawJson = sb.toString();
-
                 }
 
+                System.out.println(rawJson);
+                System.out.println(rawJson == null);
                 inputStream.close();
                 connection.disconnect();
-            } catch (IOException e) {
+            }catch (Exception e) {
                 exception = e;
                 inputStream.close();
                 connection.disconnect();
