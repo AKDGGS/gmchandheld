@@ -26,7 +26,7 @@ public class AddContainer extends BaseActivity {
 	EditText addContainerBarcodeET;
 
 	@Override
-	public void onRestart() {
+	protected void onRestart() {
 		super.onRestart();
 		this.recreate();
 	}

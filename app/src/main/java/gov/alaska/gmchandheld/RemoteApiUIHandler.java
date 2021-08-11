@@ -6,10 +6,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +35,12 @@ public class RemoteApiUIHandler extends AppCompatActivity {
     public RemoteApiUIHandler() {
 
     }
+
+    static EditText userET;
+    static SharedPreferences sp;
+    final String SHARED_PREFS = "sharedPrefs";
+    static SharedPreferences.Editor editor;
+    static String apiKey;
 
     public static final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
     private static final LinkedList<String> summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
@@ -87,7 +96,6 @@ public class RemoteApiUIHandler extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translucent);
-
     }
 
     public static class ProcessDataForDisplay extends AsyncTask<String, String, RemoteApiDownload> {
@@ -99,6 +107,7 @@ public class RemoteApiUIHandler extends AppCompatActivity {
         }
 
         AlertDialog alert;
+        private volatile boolean running = true;
 
         @Override
         protected void onPreExecute() {
@@ -153,8 +162,14 @@ public class RemoteApiUIHandler extends AppCompatActivity {
             downloading = false;
         }
 
+        @Override
+        protected void onCancelled() {
+            running = false;
+        }
+
         protected RemoteApiDownload doInBackground(String... strings) {
-            if (!isCancelled()) {
+            //if (!isCancelled()) {
+            if(running){
                 RemoteApiDownload remoteAPIDownload;
                 remoteAPIDownload = new RemoteApiDownload(mActivity.get());
                 switch (mActivity.get().getClass().getSimpleName()) {
@@ -225,33 +240,49 @@ public class RemoteApiUIHandler extends AppCompatActivity {
             }
 
             if (obj.isErrored()) {
-
-                LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
-                View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.lookup_error_root));
-
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
-
                 int responseCode = obj.getResponseCode();
-                ConnectivityManager cm = (ConnectivityManager) mActivity.get().getSystemService(Context.CONNECTIVITY_SERVICE);
-
                 if (responseCode == 403) {
-                    alertDialog.setTitle(obj.getException().getMessage());
-                    alertDialog.setMessage("In the configuration screen, check the API key.");
-                } else if (responseCode == 404) {
-                    alertDialog.setTitle("URL Error");
-                    alertDialog.setMessage("In the configuration screen, check the URL.");
-                } else if (responseCode >= 500) {
-                    alertDialog.setTitle("Internal Server Error");
-                    alertDialog.setMessage(obj.getException().getMessage());
-                } else if ((Settings.System.getInt(mActivity.get().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0)) {
-                    alertDialog.setMessage("Is the device connected to the internet/network?  " +
-                                           "Check if Air Plane mode is on.");
-                } else if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
-                    alertDialog.setMessage("Is the device connected to the internet/network?  " +
-                                           "Check if the connection has been lost.");
+                    sp = mActivity.get().getApplicationContext().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
+                    userET = new EditText(mActivity.get());
+                    userET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    userET.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    AlertDialog dialog = new AlertDialog.Builder(mActivity.get())
+                            .setTitle("Please enter your personal access token: ")
+                            .setView(userET)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    apiKey = userET.getText().toString();
+                                    editor = sp.edit();
+                                    editor.putString("apiText", apiKey).apply();
+                                    new RemoteApiUIHandler.ProcessDataForDisplay(mActivity.get()).execute();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .create();
+                    dialog.show();
                 } else {
-                    alertDialog.setMessage(obj.getException().getMessage());
-                }
+                    LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
+                    View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.lookup_error_root));
+
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
+                    ConnectivityManager cm = (ConnectivityManager) mActivity.get().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                    if (responseCode == 404) {
+                        alertDialog.setTitle("URL Error");
+                        alertDialog.setMessage("In the configuration screen, check the URL.");
+                    } else if (responseCode >= 500) {
+                        alertDialog.setTitle("Internal Server Error");
+                        alertDialog.setMessage(obj.getException().getMessage());
+                    } else if ((Settings.System.getInt(mActivity.get().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0)) {
+                        alertDialog.setMessage("Is the device connected to the internet/network?  " +
+                                               "Check if Air Plane mode is on.");
+                    } else if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected())) {
+                        alertDialog.setMessage("Is the device connected to the internet/network?  " +
+                                               "Check if the connection has been lost.");
+                    } else {
+                        alertDialog.setMessage(obj.getException().getMessage());
+                    }
 
                 alertDialog.setView(layout);
                 alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -305,6 +336,7 @@ public class RemoteApiUIHandler extends AppCompatActivity {
                 AlertDialog alert = alertDialog.create();
                 alert.setCanceledOnTouchOutside(false);
                 alert.show();
+                }
             } else {
                 switch (mActivity.get().getClass().getSimpleName()) {
                     case "LookupDisplay":

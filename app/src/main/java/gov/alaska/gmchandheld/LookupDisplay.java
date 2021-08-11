@@ -2,6 +2,7 @@ package gov.alaska.gmchandheld;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -24,6 +25,11 @@ import androidx.core.content.ContextCompat;
 
 public class LookupDisplay extends BaseActivity {
     private ExpandableListView expandableListView;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

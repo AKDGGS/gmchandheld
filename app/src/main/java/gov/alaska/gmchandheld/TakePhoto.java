@@ -36,6 +36,11 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import gov.alaska.gmchandheld.BaseActivity;
+import gov.alaska.gmchandheld.CameraToScanner;
+import gov.alaska.gmchandheld.Configuration;
+import gov.alaska.gmchandheld.ImageFileRequestBody;
+import gov.alaska.gmchandheld.R;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -62,7 +67,7 @@ public class TakePhoto extends BaseActivity {
     @Override
     public void onRestart() {
         super.onRestart();
-        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+       // SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
         View v = findViewById(R.id.cameraBtn);
         if(!cameraOn) {
@@ -70,9 +75,8 @@ public class TakePhoto extends BaseActivity {
         }else{
             v.setVisibility(View.VISIBLE);
         }
+
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +88,7 @@ public class TakePhoto extends BaseActivity {
         toolbar.setTitle("Photo");
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
-        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+        //SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
         Button cameraBtn = findViewById(R.id.cameraBtn);

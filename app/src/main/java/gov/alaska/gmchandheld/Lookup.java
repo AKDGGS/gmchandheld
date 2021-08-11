@@ -1,5 +1,6 @@
 package gov.alaska.gmchandheld;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,6 +29,10 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
@@ -35,19 +40,15 @@ import java.util.LinkedList;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
-
 public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
 	private EditText barcodeET;
 	private IntentIntegrator qrScan;
-
-	private SharedPreferences sp;
-	public static final String SHARED_PREFS = "sharedPrefs";
-	public static SharedPreferences.Editor editor;
+	private int responseCode;
 
 	@Override
-	public void onRestart() {
+	protected void onRestart() {
 		this.recreate();
 		EditText barcodeInput = findViewById(R.id.barcodeET);
 		barcodeInput.selectAll();
@@ -58,7 +59,6 @@ public class Lookup extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lookup_main);
-
 		try {
 			// enables TSL-1.2 if Google Play is updated on old devices.
 			// doesn't work with emulators
@@ -69,7 +69,6 @@ public class Lookup extends BaseActivity {
 		} catch (GooglePlayServicesNotAvailableException e) {
 			e.printStackTrace();
 		}
-
 		SSLContext sslContext = null;
 		try {
 			sslContext = SSLContext.getInstance("TLSv1.2");
@@ -80,15 +79,13 @@ public class Lookup extends BaseActivity {
 		} catch (KeyManagementException e) {
 			e.printStackTrace();
 		}
-
 		checkUrlUsesHttps();
 		deleteApkFile();
-		loadLookup();;
+		loadLookup();
 	}
 
 	public void loadLookup() {
 		LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
-
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		toolbar.setTitle("Lookup");
@@ -100,7 +97,6 @@ public class Lookup extends BaseActivity {
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		if (!cameraOn) {
 			cameraBtn.setVisibility(View.GONE);
-
 		} else {
 			qrScan = new IntentIntegrator(this);
 			qrScan.setOrientationLocked(false);
@@ -118,18 +114,15 @@ public class Lookup extends BaseActivity {
 				}
 			}
 		});
-
 		barcodeET = findViewById(R.id.barcodeET);
 		final Button submitBtn = findViewById(R.id.submitBtn);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-
 		// populates the history list
 		listView = findViewById(R.id.listViewBarcodeHistory);
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		adapter.addAll(lookupHistory);
 		adapter.notifyDataSetChanged();
 		listView.setAdapter(adapter);
-
 		// Submit barcode query
 		if (remoteApiUIHandler.isDownloading()) {
 			// onClickListener listens if the submit button is clicked
@@ -138,7 +131,6 @@ public class Lookup extends BaseActivity {
 				public void onClick(View v) {
 					sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 					String url = sp.getString("urlText", "");
-
 					CheckConfiguration checkConfiguration = new CheckConfiguration();
 					if (checkConfiguration.checkConfiguration(Lookup.this)) {
 						if (!barcodeET.getText().toString().isEmpty()) {
@@ -149,7 +141,6 @@ public class Lookup extends BaseActivity {
 					}
 				}
 			});
-
 			// KeyListener listens if enter is pressed
 			barcodeET.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -161,7 +152,6 @@ public class Lookup extends BaseActivity {
 					return false;
 				}
 			});
-
 			// Clicking barcode in history list.
 			listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				@Override
@@ -197,11 +187,9 @@ public class Lookup extends BaseActivity {
 			}
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 			case KeyEvent.KEYCODE_VOLUME_DOWN: {
-
 				if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
 					listView.smoothScrollToPosition(listView.getCount());
 				}
-
 				if (KeyEvent.ACTION_UP == action) {
 					listView.smoothScrollByOffset(3);
 				}
@@ -216,7 +204,6 @@ public class Lookup extends BaseActivity {
 		File file = new File(dir, "current.apk");
 		file.delete();
 	}
-
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -237,15 +224,36 @@ public class Lookup extends BaseActivity {
 		}
 	}
 
-	public void checkUrlUsesHttps(){
+	public void checkUrlUsesHttps() {
 		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 		String url = sp.getString("urlText", "");
-		if(!url.startsWith("https")) {
+		if (!url.startsWith("https")) {
 			Intent intent = new Intent(Lookup.this, Configuration.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			Lookup.this.startActivity(intent);
 			Toast.makeText(Lookup.this, "The URL must be https.", Toast.LENGTH_LONG).show();
 		}
+	}
+
+	public int confirmConnection (){
+		try {
+			URL myURL = new URL("https://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=PAL-100");
+			HttpURLConnection connection = (HttpURLConnection) myURL.openConnection();
+			connection.setRequestMethod("GET");
+			sp = getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
+			String accessToken = sp.getString("apiText", "");
+			//String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
+			connection.setRequestProperty("Authorization", "Token " + accessToken);
+			connection.setReadTimeout(10 * 1000);
+			connection.setConnectTimeout(5 * 1000);
+			connection.connect();
+			responseCode = connection.getResponseCode();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return responseCode;
 	}
 }
 

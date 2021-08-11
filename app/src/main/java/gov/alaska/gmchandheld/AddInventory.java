@@ -49,7 +49,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     }
 
     @Override
-    public void onRestart() {
+    protected void onRestart() {
         super.onRestart();
         this.recreate();
     }

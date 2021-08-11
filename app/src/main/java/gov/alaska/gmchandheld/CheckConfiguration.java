@@ -9,20 +9,18 @@ import android.content.SharedPreferences;
 import static android.content.Context.MODE_PRIVATE;
 
 public class CheckConfiguration {
-//	public static final String SHARED_PREFS = "sharedPrefs";
 	public static final String URL_TEXT = "urlText";
-	public static final String API_TEXT = "apiText";
+//	public static final String API_TEXT = "apiText";
 
 	public boolean checkConfiguration(final Context mContext) {
 		SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		String url = sharedPreferences.getString(URL_TEXT, "");
-		String apiKey = sharedPreferences.getString(API_TEXT, "");
 
-		if ((url.isEmpty()) || (apiKey.isEmpty())) {
+		if (url.isEmpty()) {
 			// setup the alert builder
 			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-			builder.setTitle("Problem with the URL or API Key");
-			builder.setMessage("Go to configuration page to correct the URL or the API.");        // add a button
+			builder.setTitle("Problem with the URL");
+			builder.setMessage("Go to configuration page to correct the URL.");        // add a button
 			builder.setPositiveButton("Go to Configuration", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {

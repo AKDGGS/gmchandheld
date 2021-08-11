@@ -21,7 +21,6 @@ import com.google.zxing.integration.android.IntentResult;
 
 public class Recode extends BaseActivity {
 
-//	public static final String SHARED_PREFS = "sharedPrefs";
 	private IntentIntegrator oldBarcodeQrScan;
 	private IntentIntegrator newBarcodeQrScan;
 	private EditText oldBarcodeET, newBarcodeET;

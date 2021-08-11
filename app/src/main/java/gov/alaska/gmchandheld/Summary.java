@@ -28,11 +28,9 @@ import java.util.LinkedList;
 public class Summary extends BaseActivity {
 
     private ListView listView;
-//    private final LinkedList<String> summaryHistory = SummaryHistoryHolder.getInstance().getSummaryHistory();
     private final LinkedList<String> summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
     private EditText barcodeET;
     private IntentIntegrator qrScan;
-
 
     @Override
     public void onRestart() {

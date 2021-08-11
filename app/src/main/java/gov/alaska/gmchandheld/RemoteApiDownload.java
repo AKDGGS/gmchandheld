@@ -2,8 +2,13 @@ package gov.alaska.gmchandheld;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
+import android.widget.EditText;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -97,8 +102,8 @@ public class RemoteApiDownload {
     public void getDataFromURL() {
         InputStream inputStream;
         HttpURLConnection connection;
-        SharedPreferences sharedPreferences = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
-        String url = sharedPreferences.getString("urlText", "");
+        SharedPreferences sp = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
+        String url = sp.getString("urlText", "");
 
         try {
             Date date = new Date();
@@ -301,8 +306,8 @@ public class RemoteApiDownload {
             connection = (HttpURLConnection) myURL.openConnection();
             connection.setRequestMethod("GET");
 
-            sharedPreferences = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
-            String accessToken = sharedPreferences.getString("apiText", "");
+            sp = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
+            String accessToken = sp.getString("apiText", "");
             //String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
             connection.setRequestProperty("Authorization", "Token " + accessToken);
 
@@ -313,7 +318,6 @@ public class RemoteApiDownload {
 
             responseCode = connection.getResponseCode();
             responseMsg = connection.getResponseMessage();
-
 
             try {
                 inputStream = connection.getInputStream();
@@ -342,9 +346,6 @@ public class RemoteApiDownload {
                 } else {
                     rawJson = sb.toString();
                 }
-
-                System.out.println(rawJson);
-                System.out.println(rawJson == null);
                 inputStream.close();
                 connection.disconnect();
             }catch (Exception e) {
@@ -360,7 +361,6 @@ public class RemoteApiDownload {
         } catch (IOException e) {
             exception = e;
         }
-
     }
 
     public SimpleDateFormat getDateFormat() {

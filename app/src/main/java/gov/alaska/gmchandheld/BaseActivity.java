@@ -17,6 +17,19 @@ import java.lang.reflect.Field;
 
 public class BaseActivity extends AppCompatActivity {
 
+	public SharedPreferences sp;
+	public final String SHARED_PREFS = "sharedPrefs";
+	public static SharedPreferences.Editor editor;
+
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+		editor = sp.edit();
+		editor.putString("apiText", "").apply();
+		this.recreate();
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
