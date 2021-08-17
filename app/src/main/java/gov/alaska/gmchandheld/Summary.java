@@ -66,7 +66,7 @@ public class Summary extends BaseActivity {
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
 
-        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+        //SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
         Button cameraBtn = findViewById(R.id.cameraBtn);

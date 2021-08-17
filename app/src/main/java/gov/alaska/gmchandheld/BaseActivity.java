@@ -1,48 +1,73 @@
 package gov.alaska.gmchandheld;
 
+import android.app.KeyguardManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.common.util.SharedPreferencesUtils;
 
 import java.lang.reflect.Field;
 
 public class BaseActivity extends AppCompatActivity {
 
-	public SharedPreferences sp;
-	public final String SHARED_PREFS = "sharedPrefs";
-	public static SharedPreferences.Editor editor;
+	protected SharedPreferences sp;
+	protected final String SHARED_PREFS = "sharedPrefs";
+	protected static SharedPreferences.Editor editor;
+
+//	@Override
+//	protected void onRestart() {
+//		super.onRestart();
+//		// works for api 24, but doesn't work in api 16 or 20
+//		// works with swipe
+//		KeyguardManager myKM = (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
+//		System.out.println("Base act: " + myKM.isKeyguardLocked());
+//		if (!myKM.isKeyguardLocked()) {
+//			System.out.println("SCREEN was TURNED OFF 2");
+//			SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+//			Configuration.editor = sp.edit();
+//			Configuration.editor.putString("apiText", "Screen was turned off 2").apply();
+//		}
+//	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+		PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+		if (!pm.isScreenOn()){
+			Configuration.editor = sp.edit();
+			Configuration.editor.putString("apiText", "").apply();
+		}
+	}
 
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		editor = sp.edit();
-		editor.putString("apiText", "").apply();
-		this.recreate();
+		SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+		String apiTextValue = sp.getString("apiText", "");
+		if (apiTextValue.equals("")){
+			Intent intentGetBarcode = new Intent(this.getApplicationContext(), GetToken.class);
+			intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			this.getApplicationContext().startActivity(intentGetBarcode);
+		}
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
-
-		try {
-			ViewConfiguration config = ViewConfiguration.get(this);
-			Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-			menuKeyField.setAccessible(true);
-			menuKeyField.setBoolean(config, false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override

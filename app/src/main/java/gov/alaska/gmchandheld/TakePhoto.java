@@ -49,48 +49,44 @@ import okhttp3.RequestBody;
 
 public class TakePhoto extends BaseActivity {
 
-    TextView imageViewTv;
-    ImageView uploadImageIv;
-    Button submitBtn;
+    private TextView imageViewTv;
+    private ImageView uploadImageIv;
+    private Button submitBtn;
     private EditText barcodeEt, descriptionEt;
     private String filename, barcode;
     private String description = null;
-
     private static final int CAM_REQUEST = 1;
     // 49374 return code is hardcoded into the Zxing file.
     // I need it here to capture the requestCode when IntentIntegrator is used for API <= 24
     private static final int SCAN_BARCODE_REQUEST = 49374;
     private static final int PERMISSION_CODE = 1000;
-    Uri image_uri;
+    private Uri image_uri;
     private IntentIntegrator qrScan;
 
     @Override
     public void onRestart() {
         super.onRestart();
-       // SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+
+        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
         View v = findViewById(R.id.cameraBtn);
-        if(!cameraOn) {
+        if (!cameraOn) {
             v.setVisibility(View.GONE);
         }else{
             v.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_photo);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Photo");
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-
-        //SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
-
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
             cameraBtn.setVisibility(View.GONE);
@@ -99,7 +95,6 @@ public class TakePhoto extends BaseActivity {
             qrScan.setOrientationLocked(false);
             qrScan.setBeepEnabled(true);
         }
-
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,12 +106,10 @@ public class TakePhoto extends BaseActivity {
                 }
             }
         });
-
         barcodeEt = findViewById(R.id.barcodeET);
         descriptionEt = findViewById(R.id.descriptionET);
         uploadImageIv = findViewById(R.id.imageToUploadIv);
         imageViewTv = findViewById(R.id.imageViewTv);
-
         uploadImageIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,10 +137,8 @@ public class TakePhoto extends BaseActivity {
                 }
             }
         });
-
         submitBtn = findViewById(R.id.submitBtn);
         submitBtn.setEnabled(false);
-
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,11 +177,9 @@ public class TakePhoto extends BaseActivity {
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         switch (requestCode) {
             case CAM_REQUEST:
                 if (resultCode == RESULT_OK) {
@@ -218,17 +207,14 @@ public class TakePhoto extends BaseActivity {
                 }
                 break;
         }
-
     }
 
     private class UploadImage extends AsyncTask<Void, Void, Integer> {
-
         private WeakReference<Context> mActivity;
 
         public UploadImage(Context context) {
             mActivity = new WeakReference<>(context);
         }
-
         @Override
         protected Integer doInBackground(Void... voids) {
             File file = new File("/sdcard/DCIM/Camera/" + filename);
@@ -243,7 +229,6 @@ public class TakePhoto extends BaseActivity {
                 Toast.makeText(getApplicationContext(), "Image Uploaded", Toast.LENGTH_SHORT).show();
                 uploadImageIv.setImageDrawable(null);
                 imageViewTv.setText("Click to add image");
-
             } else {
                 Toast.makeText(getApplicationContext(), "Image wasn't uploaded.  Please take it again.", Toast.LENGTH_LONG).show();
                 uploadImageIv.setImageDrawable(null);
@@ -252,26 +237,20 @@ public class TakePhoto extends BaseActivity {
         }
 
         private okhttp3.Response DoActualRequest(File file) {
-//            OkHttpClient client = new OkHttpClient();
-
             OkHttpClient client = new OkHttpClient().newBuilder()
                                                     .followRedirects(false)
                                                     .followSslRedirects(false)
                                                     .build();
-
             SharedPreferences sharedPreferences = mActivity.get().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
             String urlBase = sharedPreferences.getString("urlText", "");
             String url = urlBase + "/upload.json";
             if (barcodeEt.getText().toString().trim().length() != 0) {
                 barcode = barcodeEt.getText().toString().trim();
             }
-
             if (descriptionEt.getText().toString().trim().length() != 0) {
                 description = descriptionEt.getText().toString().trim();
             }
-
             okhttp3.Response response = null;
-
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             builder.addFormDataPart("barcode", barcode);
             builder.addFormDataPart("content", file.getName(),
@@ -279,32 +258,22 @@ public class TakePhoto extends BaseActivity {
             if (description != null) {
                 builder.addFormDataPart("description", description);
             }
-
             MultipartBody body = builder.build();
-
             ImageFileRequestBody imageFileRequestBody = new ImageFileRequestBody(body);
-
             sharedPreferences = TakePhoto.this.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
             String accessToken = sharedPreferences.getString("apiText", "");
 //            String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
-
             Request request = new Request.Builder()
                     .header("Authorization", "Token " + accessToken)
                     .url(url)
                     .post(imageFileRequestBody)
                     .build();
-
             try {
                 response = client.newCall(request).execute();
-                System.out.println("Redirected? " + response.isRedirect());
-                System.out.println("Response 2: " + response);
-                System.out.println(response.body().string());
-
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return response;
         }
-
     }
 }

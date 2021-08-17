@@ -42,6 +42,7 @@
             android:stateNotNeeded="true"
             tools:replace="android:screenOrientation" />
         <activity android:name=".CameraToScanner" />
+        <activity android:name=".GetToken" />
         <activity
             android:name=".AddContainer"
             android:label="Add Container"

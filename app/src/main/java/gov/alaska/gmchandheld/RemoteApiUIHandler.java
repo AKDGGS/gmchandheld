@@ -30,10 +30,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 
-public class RemoteApiUIHandler extends AppCompatActivity {
+public class RemoteApiUIHandler extends BaseActivity {
 
     public RemoteApiUIHandler() {
-
     }
 
     static EditText userET;
@@ -187,7 +186,6 @@ public class RemoteApiUIHandler extends AppCompatActivity {
                     }
 
                     case "MoveContents": {
-
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
                         remoteAPIDownload.setDestinationBarcode(destinationBarcode);
                         break;
@@ -212,7 +210,6 @@ public class RemoteApiUIHandler extends AppCompatActivity {
 
                         break;
                     }
-
                     case "AuditDisplay": {
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
                         remoteAPIDownload.setContainerList(containerList);
@@ -242,25 +239,29 @@ public class RemoteApiUIHandler extends AppCompatActivity {
             if (obj.isErrored()) {
                 int responseCode = obj.getResponseCode();
                 if (responseCode == 403) {
-                    sp = mActivity.get().getApplicationContext().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
-                    userET = new EditText(mActivity.get());
-                    userET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    userET.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    AlertDialog dialog = new AlertDialog.Builder(mActivity.get())
-                            .setTitle("Please enter your personal access token: ")
-                            .setView(userET)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    apiKey = userET.getText().toString();
-                                    editor = sp.edit();
-                                    editor.putString("apiText", apiKey).apply();
-                                    new RemoteApiUIHandler.ProcessDataForDisplay(mActivity.get()).execute();
-                                }
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .create();
-                    dialog.show();
+                    Intent intentGetBarcode = new Intent(mActivity.get().getApplicationContext(), GetToken.class);
+                    intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mActivity.get().getApplicationContext().startActivity(intentGetBarcode);
+
+//                    sp = mActivity.get().getApplicationContext().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
+//                    userET = new EditText(mActivity.get());
+//                    userET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+//                    userET.setTransformationMethod(PasswordTransformationMethod.getInstance());
+//                    AlertDialog dialog = new AlertDialog.Builder(mActivity.get())
+//                            .setTitle("Please enter your personal access token: ")
+//                            .setView(userET)
+//                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//                                    apiKey = userET.getText().toString();
+//                                    editor = sp.edit();
+//                                    editor.putString("apiText", apiKey).apply();
+//                                    new RemoteApiUIHandler.ProcessDataForDisplay(mActivity.get()).execute();
+//                                }
+//                            })
+//                            .setNegativeButton("Cancel", null)
+//                            .create();
+//                    dialog.show();
                 } else {
                     LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
                     View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.lookup_error_root));

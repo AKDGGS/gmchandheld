@@ -30,6 +30,7 @@ import com.google.zxing.integration.android.IntentResult;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 public class Configuration extends BaseActivity {
 
@@ -58,6 +59,9 @@ public class Configuration extends BaseActivity {
     @Override
     public void onRestart() {
         super.onRestart();
+        updateViews();
+        loadData();
+        saveData();
         this.recreate();
     }
 
@@ -140,8 +144,6 @@ public class Configuration extends BaseActivity {
             }
         });
 
-        apiKey = sp.getString("apiText", "");
-
         updateViews();
         hourInputChangeWatcher();
         minuteInputChangeWatcher();
@@ -151,7 +153,6 @@ public class Configuration extends BaseActivity {
         cameraToScannerChangeWatcher();
         updateViews();
         loadData();
-
         saveData();
     }
 
@@ -283,7 +284,7 @@ public class Configuration extends BaseActivity {
     public void saveData() {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("urlText", getUrl());
-        editor.putString("apiText", getApiKey());
+//        editor.putString("apiText", getApiKey());
         editor.putString("updateHour", hourInput.getText().toString());
         editor.putString("updateMinute", minuteInput.getText().toString());
         editor.putBoolean("cameraOn", cameraToScannerbtn.isChecked());

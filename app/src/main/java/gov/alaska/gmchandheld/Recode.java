@@ -28,7 +28,7 @@ public class Recode extends BaseActivity {
 	@Override
 	public void onRestart() {
 		super.onRestart();
-		this.recreate();
+		//this.recreate();
 	}
 
 	@Override

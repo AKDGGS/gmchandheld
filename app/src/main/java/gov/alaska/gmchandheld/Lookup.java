@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,6 +37,7 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -45,7 +47,6 @@ public class Lookup extends BaseActivity {
 	private final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
 	private EditText barcodeET;
 	private IntentIntegrator qrScan;
-	private int responseCode;
 
 	@Override
 	protected void onRestart() {
@@ -92,7 +93,7 @@ public class Lookup extends BaseActivity {
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 
 		sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		boolean cameraOn = (sp.getBoolean("cameraOn", false));
+		boolean cameraOn = sp.getBoolean("cameraOn", false);
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		if (!cameraOn) {
@@ -235,26 +236,7 @@ public class Lookup extends BaseActivity {
 		}
 	}
 
-	public int confirmConnection (){
-		try {
-			URL myURL = new URL("https://maps.dggs.alaska.gov/gmcdev/inventory.json?barcode=PAL-100");
-			HttpURLConnection connection = (HttpURLConnection) myURL.openConnection();
-			connection.setRequestMethod("GET");
-			sp = getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
-			String accessToken = sp.getString("apiText", "");
-			//String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
-			connection.setRequestProperty("Authorization", "Token " + accessToken);
-			connection.setReadTimeout(10 * 1000);
-			connection.setConnectTimeout(5 * 1000);
-			connection.connect();
-			responseCode = connection.getResponseCode();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return responseCode;
-	}
+
 }
 
 
