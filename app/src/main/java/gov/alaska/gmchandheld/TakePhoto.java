@@ -230,7 +230,7 @@ public class TakePhoto extends BaseActivity {
                 uploadImageIv.setImageDrawable(null);
                 imageViewTv.setText("Click to add image");
             } else {
-                Toast.makeText(getApplicationContext(), "Image wasn't uploaded.  Please take it again.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Image wasn't uploaded.  Please take it again. Errror code: " + result + ".", Toast.LENGTH_LONG).show();
                 uploadImageIv.setImageDrawable(null);
                 imageViewTv.setText("Click to add image");
             }
@@ -260,11 +260,8 @@ public class TakePhoto extends BaseActivity {
             }
             MultipartBody body = builder.build();
             ImageFileRequestBody imageFileRequestBody = new ImageFileRequestBody(body);
-            sharedPreferences = TakePhoto.this.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
-            String accessToken = sharedPreferences.getString("apiText", "");
-//            String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
             Request request = new Request.Builder()
-                    .header("Authorization", "Token " + accessToken)
+                    .header("Authorization", "Token " + BaseActivity.apiKeyBase)
                     .url(url)
                     .post(imageFileRequestBody)
                     .build();

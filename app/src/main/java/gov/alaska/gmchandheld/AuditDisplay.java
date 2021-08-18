@@ -36,7 +36,6 @@ public class AuditDisplay extends BaseActivity {
     private IntentIntegrator itemQrScan;
     private EditText auditRemarkET, auditItemET;
     private Button clearAllBtn;
-
     AuditDisplayObjInstance auditDisplayObjInstance;
     int clicks;  //used to count double clicks for deletion
 
@@ -54,11 +53,9 @@ public class AuditDisplay extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.audit_display);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
-
         auditItemET = findViewById(R.id.itemET);
         auditRemarkET = findViewById(R.id.remarkET);
         final TextView auditCountTV = findViewById(R.id.auditCountTV);
@@ -66,24 +63,18 @@ public class AuditDisplay extends BaseActivity {
         final Button addBtn = findViewById(R.id.addContainerBtn);
         clearAllBtn = findViewById(R.id.clearAllBtn);
         ListView auditContainerListLV = findViewById(R.id.listViewGetContainersToAudit);
-
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         auditContainerListLV.setAdapter(adapter);
-
         containerList = AuditDisplayObjInstance.getInstance().getAuditList();
         adapter.addAll(containerList);
-
         auditCountTV.setText(String.valueOf(containerList.size()));
-
         final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
-
         Button remarkCameraBtn = findViewById(R.id.cameraBtn);
         Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
         if (!cameraOn) {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.weight = 6.25f;
-
             auditRemarkET.setLayoutParams(params);
             auditItemET.setLayoutParams(params);
             remarkCameraBtn.setVisibility(View.GONE);
@@ -94,7 +85,6 @@ public class AuditDisplay extends BaseActivity {
             itemQrScan = new IntentIntegrator(this);
             itemQrScan.setBeepEnabled(true);
         }
-
         remarkCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,8 +97,6 @@ public class AuditDisplay extends BaseActivity {
                 }
             }
         });
-
-
         itemCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,7 +109,6 @@ public class AuditDisplay extends BaseActivity {
                 }
             }
         });
-
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,10 +122,7 @@ public class AuditDisplay extends BaseActivity {
                 auditItemET.setText("");
                 auditItemET.requestFocus();
             }
-
         });
-
-
         clearAllBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,21 +132,16 @@ public class AuditDisplay extends BaseActivity {
                 adapter.clear();
                 adapter.notifyDataSetChanged();
                 auditCountTV.setText(String.valueOf(containerList.size()));
-
             }
         });
-
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-
         if (remoteApiUIHandler.isDownloading()) {
             //double click to remove elements
             auditContainerListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 final long startTime = System.currentTimeMillis();
-
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
                     clicks++;
-
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -178,7 +157,6 @@ public class AuditDisplay extends BaseActivity {
                     }, 500);
                 }
             });
-
             // KeyListener listens if enter is pressed
             auditItemET.setOnKeyListener(new View.OnKeyListener() {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -191,7 +169,6 @@ public class AuditDisplay extends BaseActivity {
                     return false;
                 }
             });
-
             // KeyListener listens if enter is pressed
             auditRemarkET.setOnKeyListener(new View.OnKeyListener() {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -205,7 +182,6 @@ public class AuditDisplay extends BaseActivity {
                     return false;
                 }
             });
-
             // onClickListener listens if the submit button is clicked
             submitBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -229,7 +205,6 @@ public class AuditDisplay extends BaseActivity {
         RemoteApiUIHandler.setUrlFirstParameter(remarkInput);
         RemoteApiUIHandler.setContainerList(containerList);
         remoteApiUIHandler.setDownloading(true);
-
         new RemoteApiUIHandler.ProcessDataForDisplay(AuditDisplay.this).execute();
     }
 
@@ -280,7 +255,6 @@ public class AuditDisplay extends BaseActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-
         if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             if(clearAllBtn.hasFocus()) {
                 return true;
@@ -288,5 +262,4 @@ public class AuditDisplay extends BaseActivity {
         }
         return super.dispatchKeyEvent(event);
     }
-
 }

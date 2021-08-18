@@ -35,22 +35,17 @@ import java.util.Map;
 public class Configuration extends BaseActivity {
 
     private SharedPreferences sp;
-
     public static final String SHARED_PREFS = "sharedPrefs";
     public static SharedPreferences.Editor editor;
-
     private ToggleButton autoUpdatebtn;
     private boolean alarmUp;
     private ToggleButton cameraToScannerbtn;
-
     private IntentIntegrator urlQrScan;
     private IntentIntegrator apiQrScan;
-
     private EditText hourInput;
     private EditText minuteInput;
     private String hour = "24";
     private String minute = "0";
-
     private EditText urlET;
     private EditText apiET;
     private String url;
@@ -67,37 +62,30 @@ public class Configuration extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             builder.detectFileUriExposure();
         }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.configuration);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
-
         urlET = findViewById(R.id.urlET);
         urlET.requestFocus();
         apiET = findViewById(R.id.apiET);
         autoUpdatebtn = findViewById(R.id.autoUpdateBtn);
         hourInput = findViewById(R.id.hourET);
         minuteInput = findViewById(R.id.minuteET);
-
         cameraToScannerbtn = findViewById(R.id.cameraToScannerBtn);
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
-
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
         Button apiCameraBtn = findViewById(R.id.apiCameraBtn);
-
         if (!cameraOn) {
             urlCameraBtn.setVisibility(View.GONE);
             apiCameraBtn.setVisibility(View.GONE);
@@ -107,7 +95,6 @@ public class Configuration extends BaseActivity {
             apiQrScan = new IntentIntegrator(this);
             apiQrScan.setBeepEnabled(true);
         }
-
         urlCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,7 +107,6 @@ public class Configuration extends BaseActivity {
                 }
             }
         });
-
         apiCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,7 +119,6 @@ public class Configuration extends BaseActivity {
                 }
             }
         });
-
         final Button updateButton = findViewById(R.id.updateBtn);
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +126,6 @@ public class Configuration extends BaseActivity {
                     updateAPK();
             }
         });
-
         updateViews();
         hourInputChangeWatcher();
         minuteInputChangeWatcher();
@@ -183,12 +167,10 @@ public class Configuration extends BaseActivity {
                         if (isChecked) {
                             PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
                             AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
-
                             if (am != null) {
                                 SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences("sharedPrefs", MODE_PRIVATE);
                                 String hour = sharedPreferences.getString("updateHour", "24");
                                 String minute = sharedPreferences.getString("updateMinute", "0");
-
                                 Calendar alarmOffTime = Calendar.getInstance();
                                 if (!hour.isEmpty()) {
                                     alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
@@ -197,7 +179,6 @@ public class Configuration extends BaseActivity {
                                     hourInput = findViewById(R.id.hourET);
                                     hourInput.setText("24");
                                 }
-
                                 if (!minute.isEmpty()) {
                                     alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
                                 } else {
@@ -206,12 +187,10 @@ public class Configuration extends BaseActivity {
                                     minuteInput.setText("0");
                                 }
                                 alarmOffTime.set(Calendar.SECOND, 0);
-
                                 if (alarmOffTime.before(Calendar.getInstance())) {
                                     alarmOffTime.add(Calendar.DATE, 1);
                                 }
                                 editor.putBoolean("alarmOn", true);
-
                                 am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
                             }
                         } else {
@@ -230,12 +209,15 @@ public class Configuration extends BaseActivity {
     private void urlInputChangeWatcher() {
         urlET.addTextChangedListener(new TextWatcher() {
             SharedPreferences.Editor editor = sp.edit();
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 editor.putString("urlText", getUrl()).apply();
             }
+
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
             @Override
             public void afterTextChanged(Editable s) { }
         });
@@ -249,18 +231,20 @@ public class Configuration extends BaseActivity {
     private void apiInputChangeWatcher() {
         apiET.addTextChangedListener(new TextWatcher() {
 //            SharedPreferences.Editor editor = sp.edit();
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 //                editor.putString("apiText", getApiKey()).apply();
                 BaseActivity.apiKeyBase = getApiKey();
             }
+
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
             @Override
             public void afterTextChanged(Editable s) { }
         });
     }
-
 
     public String getUrl() {
         urlET = findViewById(R.id.urlET);
@@ -274,7 +258,6 @@ public class Configuration extends BaseActivity {
     public void saveData() {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("urlText", getUrl());
-//        editor.putString("apiText", getApiKey());
         editor.putString("updateHour", hourInput.getText().toString());
         editor.putString("updateMinute", minuteInput.getText().toString());
         editor.putBoolean("cameraOn", cameraToScannerbtn.isChecked());
@@ -284,7 +267,6 @@ public class Configuration extends BaseActivity {
 
     public void loadData() {
         url = sp.getString("urlText", "");
-//        apiKey = sp.getString("apiText", "");
         apiKey = BaseActivity.apiKeyBase;
         hour = sp.getString("updateHour", "24");
         minute = sp.getString("updateMinute", "0");
@@ -294,7 +276,6 @@ public class Configuration extends BaseActivity {
 
     public void updateViews() {
         urlET.setText(sp.getString("urlText", ""));
-//        apiET.setText(sp.getString("apiText", ""));
         apiET.setText(BaseActivity.apiKeyBase);
         hourInput.setText(hour);
         minuteInput.setText(minute);
@@ -303,7 +284,6 @@ public class Configuration extends BaseActivity {
     }
 
     private void hourInputChangeWatcher() {
-
         hourInput.addTextChangedListener(new TextWatcher() {
             SharedPreferences.Editor editor = sp.edit();
             String strBefore;

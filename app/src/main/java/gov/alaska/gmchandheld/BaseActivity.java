@@ -25,7 +25,7 @@ public class BaseActivity extends AppCompatActivity {
 	protected SharedPreferences sp;
 	protected final String SHARED_PREFS = "sharedPrefs";
 	protected static SharedPreferences.Editor editor;
-	public static String apiKeyBase;
+	public static String apiKeyBase = null;
 
 //	@Override
 //	protected void onRestart() {
@@ -54,7 +54,7 @@ public class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		if (apiKeyBase.equals("")){
+		if (BaseActivity.apiKeyBase.equals("")){
 			Intent intentGetBarcode = new Intent(this.getApplicationContext(), GetToken.class);
 			intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			this.getApplicationContext().startActivity(intentGetBarcode);

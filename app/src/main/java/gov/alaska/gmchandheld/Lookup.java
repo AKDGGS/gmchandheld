@@ -50,10 +50,10 @@ public class Lookup extends BaseActivity {
 
 	@Override
 	protected void onRestart() {
-		this.recreate();
+		super.onRestart();
 		EditText barcodeInput = findViewById(R.id.barcodeET);
 		barcodeInput.selectAll();
-		super.onRestart();
+		this.recreate();
 	}
 
 	@Override
@@ -80,6 +80,13 @@ public class Lookup extends BaseActivity {
 		} catch (KeyManagementException e) {
 			e.printStackTrace();
 		}
+
+		if (null == BaseActivity.apiKeyBase){
+			Intent intentGetBarcode = new Intent(this.getApplicationContext(), GetToken.class);
+			intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			this.getApplicationContext().startActivity(intentGetBarcode);
+		}
+
 		checkUrlUsesHttps();
 		deleteApkFile();
 		loadLookup();

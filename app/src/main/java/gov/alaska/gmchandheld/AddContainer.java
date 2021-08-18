@@ -21,7 +21,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 public class AddContainer extends BaseActivity {
-
 	private IntentIntegrator qrScan;
 	EditText addContainerBarcodeET;
 
@@ -35,26 +34,20 @@ public class AddContainer extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_container);
-
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
 		setSupportActionBar(toolbar);
-
 		addContainerBarcodeET = findViewById(R.id.barcodeET);
 		final EditText addContainerNameET = findViewById(R.id.nameET);
 		final EditText addContainerRemarkET = findViewById(R.id.remarkET);
 		final Button submit_button = findViewById(R.id.submitBtn);
-
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-
 		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		boolean cameraOn = (sp.getBoolean("cameraOn", false));
-
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		if(!cameraOn){
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 7.75f;
-
 			addContainerBarcodeET.setLayoutParams(params);
 			addContainerNameET.setLayoutParams(params);
 			addContainerRemarkET.setLayoutParams(params);
@@ -63,7 +56,6 @@ public class AddContainer extends BaseActivity {
 			qrScan = new IntentIntegrator(this);
 			qrScan.setBeepEnabled(true);
 		}
-
 		cameraBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -75,7 +67,6 @@ public class AddContainer extends BaseActivity {
 				}
 			}
 		});
-
 		// KeyListener listens if enter is pressed
 		addContainerBarcodeET.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -87,7 +78,6 @@ public class AddContainer extends BaseActivity {
 				return false;
 			}
 		});
-
 		// KeyListener listens if enter is pressed
 		addContainerNameET.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -99,9 +89,6 @@ public class AddContainer extends BaseActivity {
 				return false;
 			}
 		});
-
-
-
 		if (remoteApiUIHandler.isDownloading()) {
 			// onClickListener listens if the submit button is clicked
 			submit_button.setOnClickListener(new View.OnClickListener() {
@@ -110,14 +97,12 @@ public class AddContainer extends BaseActivity {
 					CheckConfiguration checkConfiguration = new CheckConfiguration();
 					if (checkConfiguration.checkConfiguration(AddContainer.this)) {
 						if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
-
 							String container = addContainerBarcodeET.getText().toString();
 							if (!container.isEmpty()) {
 								RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 								RemoteApiUIHandler.setUrlFirstParameter(addContainerBarcodeET.getText().toString());
 								RemoteApiUIHandler.setAddContainerName(addContainerNameET.getText().toString());
 								RemoteApiUIHandler.setAddContainerRemark(addContainerRemarkET.getText().toString());
-
 								remoteApiUIHandler.setDownloading(true);
 								new RemoteApiUIHandler.ProcessDataForDisplay(AddContainer.this).execute();
 							}

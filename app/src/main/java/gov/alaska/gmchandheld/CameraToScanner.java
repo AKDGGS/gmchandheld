@@ -41,16 +41,13 @@ public class CameraToScanner extends AppCompatActivity {
 		BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this)
 				.setBarcodeFormats(Barcode.ALL_FORMATS)
 				.build();
-
 		final CameraSource cameraSource = new CameraSource.Builder(this, barcodeDetector)
 				.setRequestedPreviewSize(1920, 1080)
 				.setAutoFocusEnabled(true)
 				.build();
-
 		cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
 			@Override
 			public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
 				try {
 					if (ActivityCompat.checkSelfPermission(CameraToScanner.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 						cameraSource.start(cameraPreview.getHolder());
@@ -64,21 +61,16 @@ public class CameraToScanner extends AppCompatActivity {
 			}
 
 			@Override
-			public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
-			}
+			public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) { }
 
 			@Override
 			public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
 				cameraSource.stop();
 			}
 		});
-
 		barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
 			@Override
-			public void release() {
-
-			}
+			public void release() {	}
 
 			@Override
 			public void receiveDetections(@NonNull Detector.Detections<Barcode> detections) {

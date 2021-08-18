@@ -25,7 +25,6 @@ public class IssuesFragment extends DialogFragment {
 
         void onNegativebuttonClicked();
     }
-
     onMultiChoiceListener mListener;
 
     @Override
@@ -56,7 +55,6 @@ public class IssuesFragment extends DialogFragment {
                 checkedItems = Quality.checkedItems;
                 break;
         }
-
         builder.setTitle("Select")
                .setMultiChoiceItems(list, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
                    @Override
@@ -147,5 +145,4 @@ public class IssuesFragment extends DialogFragment {
                });
         return builder.create();
     }
-
 }

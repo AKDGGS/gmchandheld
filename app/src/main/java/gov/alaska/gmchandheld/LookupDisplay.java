@@ -24,7 +24,6 @@ import android.widget.ExpandableListView;
 import androidx.core.content.ContextCompat;
 
 public class LookupDisplay extends BaseActivity {
-
     private ExpandableListView expandableListView;
     private EditText invisibleEditText;
 
@@ -49,12 +48,9 @@ public class LookupDisplay extends BaseActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         invisibleEditText = findViewById(R.id.invisibleEditText);
-
         invisibleEditText.setInputType(InputType.TYPE_NULL);
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-
         invisibleEditText.setFocusable(true);
-
         invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_DEL) {
@@ -65,7 +61,6 @@ public class LookupDisplay extends BaseActivity {
                         remoteApiUIHandler.setDownloading(true);
                         RemoteApiUIHandler.setUrlFirstParameter(invisibleEditText.getText().toString());
                         new RemoteApiUIHandler.ProcessDataForDisplay(LookupDisplay.this).execute();
-
                         return true;
                     }
                 } else {
@@ -73,20 +68,14 @@ public class LookupDisplay extends BaseActivity {
                 }
                 return false;
             }
-
         });
-
         LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
-
         SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
         SpannableString subtitle = new SpannableString(lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
-
         if (getSupportActionBar() != null) {
             if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 LookupDisplay.this.getSupportActionBar().setTitle(title);
-
                 if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
                     subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
@@ -97,30 +86,23 @@ public class LookupDisplay extends BaseActivity {
                 }
             }
         }
-
         if (lookupLogicForDisplayObj != null) {
             Intent intent = getIntent();
             String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
-
             if (barcode != null) {
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 LookupDisplay.this.getSupportActionBar().setTitle(title);
-
                 if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
                     LookupDisplay.this.getSupportActionBar()
                                       .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
                 }
-
                 if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
                     subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
                 }
             }
-
-
             ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
             expandableListView.setAdapter(listAdapter);
-
             if (listAdapter.getGroupCount() >= 1) {
                 for (int i = 0; i < listAdapter.getGroupCount(); i++) {
                     expandableListView.expandGroup(i);
@@ -151,7 +133,6 @@ public class LookupDisplay extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         LookupLogicForDisplay lookupLogicForDisplayObj;
         lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
-
         if (lookupLogicForDisplayObj.getDisplayDict().toString().contains("radiation_risk")) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.radiation_menu, menu);
@@ -166,12 +147,9 @@ public class LookupDisplay extends BaseActivity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         int action, keycode;
-
         action = event.getAction();
         keycode = event.getKeyCode();
-
         AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-
         switch (keycode) {
             case KeyEvent.KEYCODE_DPAD_UP:
             case KeyEvent.KEYCODE_VOLUME_UP: {
@@ -190,7 +168,6 @@ public class LookupDisplay extends BaseActivity {
                 if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
                     expandableListView.smoothScrollToPosition(expandableListView.getCount());
                 }
-
                 if (KeyEvent.ACTION_UP == action) {
                     expandableListView.smoothScrollByOffset(3);
                 }

@@ -7,12 +7,11 @@ import okhttp3.RequestBody;
 import okio.BufferedSink;
 
 public class ImageFileRequestBody extends RequestBody {
-
     protected RequestBody delegate;
-
     public ImageFileRequestBody(RequestBody delegate) {
         this.delegate = delegate;
     }
+
     @Override
     public MediaType contentType() {
         return delegate.contentType();

@@ -16,24 +16,19 @@ import java.util.Map;
 import java.util.Set;
 
 public class LookupExpListAdapter extends BaseExpandableListAdapter {
-
 	final Context context;
 	final List<String> inventoryLabels;
 	final Map<String, List<SpannableStringBuilder>> inventoryDetailsDict;
 	private String inventoryObjType = null;
-
 	static class ParentViewHolder {
 		TextView parentText;
 	}
-
 	public String getInventoryObjType() {
 		return inventoryObjType;
 	}
-
 	public void setInventoryObjType(String inventoryObjType) {
 		this.inventoryObjType = inventoryObjType;
 	}
-
 	public LookupExpListAdapter(Context context, List<String> inventoryLabels, Map<String, List<SpannableStringBuilder>> inventoryDetailsDict) {
 		this.context = context;
 		this.inventoryLabels = inventoryLabels;
@@ -77,20 +72,16 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-
 		String expListParentLabel = (String) getGroup(groupPosition);
 		ParentViewHolder parentHolder = new ParentViewHolder();
-
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.exp_list_parent, null);
 			parentHolder.parentText = convertView.findViewById(R.id.txtParent);
 			convertView.setTag(parentHolder);
 		}
-
 		parentHolder = (ParentViewHolder) convertView.getTag();
 		Set<String> inventoryObjTypeSet = null;
-
 		switch(context.getClass().getSimpleName()){
 			case "LookupDisplay":{
 				LookupLogicForDisplay obj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
@@ -103,7 +94,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 				break;
 			}
 		}
-
 		assert inventoryObjTypeSet != null;
 		if (inventoryObjTypeSet.size() == 1) {
 			setInventoryObjType((String) inventoryObjTypeSet.toArray()[0]);
@@ -113,7 +103,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 			setInventoryObjType("No Type");
 		}
-
 		switch (getInventoryObjType()) {
 			case "Well":
 				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ff92cbff"));  //blue
@@ -130,23 +119,18 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 			default:
 				parentHolder.parentText.setBackgroundColor(Color.parseColor("#ffd9dddf")); //light gray
 		}
-
 		parentHolder.parentText.setText(expListParentLabel);
 		return convertView;
 	}
 
 	@Override
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-
 		SpannableStringBuilder expListChildContents = (SpannableStringBuilder) getChild(groupPosition, childPosition);
-
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.exp_list_child, null);
 		}
-
 		TextView txtChild = convertView.findViewById(R.id.txtChild);
-
 		switch (getInventoryObjType()) {
 			case "Borehole":
 			case "Prospect":
@@ -197,7 +181,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 
 	public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
 		//https://www.programmersought.com/article/45371641877/
-
 		text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
 		return text;
 	}

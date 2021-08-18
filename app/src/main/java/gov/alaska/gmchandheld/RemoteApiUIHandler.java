@@ -85,7 +85,6 @@ public class RemoteApiUIHandler extends BaseActivity {
             mActivity = new WeakReference<>(context);
         }
         private AlertDialog alert;
-        private volatile boolean running = true;
 
         @Override
         protected void onPreExecute() {
@@ -135,14 +134,8 @@ public class RemoteApiUIHandler extends BaseActivity {
             downloading = false;
         }
 
-        @Override
-        protected void onCancelled() {
-            running = false;
-        }
-
         protected RemoteApiDownload doInBackground(String... strings) {
-            //if (!isCancelled()) {
-            if(running){
+            while (!isCancelled()){
                 RemoteApiDownload remoteAPIDownload;
                 remoteAPIDownload = new RemoteApiDownload(mActivity.get());
                 switch (mActivity.get().getClass().getSimpleName()) {
@@ -210,7 +203,7 @@ public class RemoteApiUIHandler extends BaseActivity {
                     intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     if(apiKeyAttempts == 0){
                         mActivity.get().getApplicationContext().startActivity(intentGetBarcode);
-                        new RemoteApiUIHandler.ProcessDataForDisplay(mActivity.get()).execute();
+//                        new RemoteApiUIHandler.ProcessDataForDisplay(mActivity.get()).execute();
                         apiKeyAttempts = apiKeyAttempts + 1;
                     } else {
                         apiKeyAttempts = 0;

@@ -106,11 +106,7 @@ public class RemoteApiDownload {
         String url = sp.getString("urlText", "");
 
         try {
-            Date date = new Date();
-            String HDATE = getDateFormat().format(date);
-
             String QUERYPARAM = null;
-
             switch (context.getClass().getSimpleName()) {
                 case "Lookup":
                 case "LookupDisplay": {
@@ -121,7 +117,7 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     QUERYPARAM = "barcode=" + barcode;
-                    url = url + "inventory.json?barcode=" + urlFirstParameter;
+                    url = url + "inventory.json?" + QUERYPARAM;
                     break;
                 }
                 case "Summary":
@@ -133,20 +129,18 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     QUERYPARAM = "barcode=" + barcode;
-                    url = url + "summary.json?barcode=" + urlFirstParameter;
+                    url = url + "summary.json?" + QUERYPARAM;
                     break;
                 }
                 case "MoveContents": {
                     String source = null;
                     String destination = null;
-
                     try {
                         source = URLEncoder.encode(urlFirstParameter, "utf-8");
                         destination = URLEncoder.encode(destinationBarcode, "utf-8");
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-
                     StringBuilder sb = new StringBuilder();
                     if (source != null) {
                         sb.append("src=").append(source);
@@ -154,8 +148,6 @@ public class RemoteApiDownload {
                     if (destination != null) {
                         sb.append("&dest=").append(destination);
                     }
-
-                    QUERYPARAM = sb.toString();
                     url = url + "movecontents.json?" + sb.toString();
                     break;
                 }
@@ -168,12 +160,9 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     query = "d=" + destination + containersToUrlList(containerList, "c");
-
-                    QUERYPARAM = query;
                     url = url + "move.json?" + query;
                     break;
                 }
-
                 case "AddContainer": {
                     String barcode = null;
                     String name = null;
@@ -185,7 +174,6 @@ public class RemoteApiDownload {
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-
                     StringBuilder sb = new StringBuilder();
                     if (barcode != null) {
                         sb.append("barcode=").append(barcode);
@@ -196,12 +184,9 @@ public class RemoteApiDownload {
                     if (remark != null) {
                         sb.append("&remark=").append(remark);
                     }
-
-                    QUERYPARAM = sb.toString();
                     url = url + "addcontainer.json?" + sb.toString();
                     break;
                 }
-
                 case "AddInventory": {
                     String barcode = null;
                     String remark = null;
@@ -213,25 +198,19 @@ public class RemoteApiDownload {
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-
                     StringBuilder sb = new StringBuilder();
                     if (barcode != null) {
                         sb.append("barcode=").append(barcode);
                     }
-
                     if (remark != null) {
                         sb.append("&remark=").append(remark);
                     }
-
                     if (containerList != null) {
                         sb.append(containersToUrlList(containerList, "i"));
                     }
-
-                    QUERYPARAM = sb.toString();
                     url = url + "addinventory.json?" + sb.toString();
                     break;
                 }
-
                 case "Quality": {
                     String query;
                     String barcode = null;
@@ -244,7 +223,6 @@ public class RemoteApiDownload {
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-
                     StringBuilder sb = new StringBuilder();
                     if (barcode != null) {
                         sb.append("barcode=").append(barcode);
@@ -256,11 +234,9 @@ public class RemoteApiDownload {
                         sb.append(containersToUrlList(containerList, "i"));
                     }
                     query = sb.toString();
-                    QUERYPARAM = query;
                     url = url + "addinventoryquality.json?" + query;
                     break;
                 }
-
                 case "AuditDisplay": {
                     String query;
                     String remark = null;
@@ -270,23 +246,18 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     query = "remark=" + remark + containersToUrlList(containerList, "c");
-
-                    QUERYPARAM = query;
                     url = url + "audit.json?" + query;
                     break;
                 }
-
                 case "Recode": {
                     String barcode = null;
                     String mNewBarcode = null;
-
                     try {
                         barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
                         mNewBarcode = URLEncoder.encode(newBarcode, "utf-8");
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-
                     StringBuilder sb = new StringBuilder();
                     if (barcode != null) {
                         sb.append("old=").append(barcode);
@@ -294,51 +265,38 @@ public class RemoteApiDownload {
                     if (mNewBarcode != null) {
                         sb.append("&new=").append(mNewBarcode);
                     }
-
-                    QUERYPARAM = sb.toString();
                     url = url + "recode.json?" + sb.toString();
                     break;
                 }
             }
-
             URL myURL = new URL(url);
-
             connection = (HttpURLConnection) myURL.openConnection();
             connection.setRequestMethod("GET");
-
             //String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
             connection.setRequestProperty("Authorization", "Token " + BaseActivity.apiKeyBase);
-
             connection.setReadTimeout(10 * 1000);
             connection.setConnectTimeout(5 * 1000);
-
             connection.connect();
-
             responseCode = connection.getResponseCode();
             responseMsg = connection.getResponseMessage();
-
             try {
                 inputStream = connection.getInputStream();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 inputStream = connection.getErrorStream();
             }
-
             try {
                 StringBuilder sb = new StringBuilder();
                 byte[] buffer = new byte[4096];
                 int buffer_read = 0;
-
                 while (buffer_read != -1) {
                     buffer_read = inputStream.read(buffer);
                     if (buffer_read > 0) {
                         sb.append(new String(buffer, 0, buffer_read));
                     }
                 }
-
                 if (connection.getErrorStream() != null) {
                     exception = new Exception(String.valueOf(sb));
                 }
-
                 if (sb.length() <= 2) {
                     exception = new Exception("No results found.\n\nIs the barcode correct? " + urlFirstParameter);
                 } else {
@@ -366,25 +324,8 @@ public class RemoteApiDownload {
         return sdf;
     }
 
-    private String getDGST(String APIKEY, String message) {
-        Mac mac;
-        byte[] hmac256 = null;
-        try {
-            mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec sks = new SecretKeySpec(APIKEY.getBytes(), "HmacSHA256");
-            mac.init(sks);
-            hmac256 = mac.doFinal(message.getBytes());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        }
-        return android.util.Base64.encodeToString(hmac256, android.util.Base64.DEFAULT);
-    }
-
     public String containersToUrlList(ArrayList<String> list, String paramKeyword) {
         String delim = "&" + paramKeyword + "=";
-
         StringBuilder sb = new StringBuilder();
         if (list != null && list.size() > 0) {
             sb.append(delim);
