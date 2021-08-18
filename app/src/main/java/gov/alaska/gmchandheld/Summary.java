@@ -34,10 +34,10 @@ public class Summary extends BaseActivity {
 
     @Override
     public void onRestart() {
-        this.recreate();
         super.onRestart();
         EditText barcodeInput = findViewById(R.id.barcodeET);
         barcodeInput.selectAll();
+        this.recreate();
     }
 
     @Override
@@ -45,30 +45,23 @@ public class Summary extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.summary_get_barcode);
         SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = null;
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-
         barcodeET = findViewById(R.id.barcodeET);
         final Button submitButton = findViewById(R.id.submitBtn);
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-
         // populates the history list
         listView = findViewById(R.id.listViewSummaryHistory);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         adapter.addAll(summaryHistory);
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
-
-        //SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
-
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
             cameraBtn.setVisibility(View.GONE);
@@ -76,7 +69,6 @@ public class Summary extends BaseActivity {
             qrScan = new IntentIntegrator(this);
             qrScan.setBeepEnabled(true);
         }
-
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

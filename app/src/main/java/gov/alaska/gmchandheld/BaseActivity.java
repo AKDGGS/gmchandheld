@@ -25,6 +25,7 @@ public class BaseActivity extends AppCompatActivity {
 	protected SharedPreferences sp;
 	protected final String SHARED_PREFS = "sharedPrefs";
 	protected static SharedPreferences.Editor editor;
+	public static String apiKeyBase;
 
 //	@Override
 //	protected void onRestart() {
@@ -44,20 +45,16 @@ public class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 		PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
 		if (!pm.isScreenOn()){
-			Configuration.editor = sp.edit();
-			Configuration.editor.putString("apiText", "").apply();
+			apiKeyBase = "";
 		}
 	}
 
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-		String apiTextValue = sp.getString("apiText", "");
-		if (apiTextValue.equals("")){
+		if (apiKeyBase.equals("")){
 			Intent intentGetBarcode = new Intent(this.getApplicationContext(), GetToken.class);
 			intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			this.getApplicationContext().startActivity(intentGetBarcode);
@@ -79,11 +76,9 @@ public class BaseActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
 		if (item.getItemId() == (R.id.summary)) {
 			SummaryLogicForDisplay summaryLogicForDisplayObj;
 			summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj;
-
 			if (summaryLogicForDisplayObj == null) {
 				Intent intentGetBarcode = new Intent(this, Summary.class);
 				intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -97,7 +92,6 @@ public class BaseActivity extends AppCompatActivity {
 		} else if (item.getItemId() == (R.id.lookup)) {
 			LookupLogicForDisplay lookupLogicForDisplayObj;
 			lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
-
 			if (lookupLogicForDisplayObj == null) {
 				Intent intentGetBarcode = new Intent(this, Lookup.class);
 				intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -153,9 +147,7 @@ public class BaseActivity extends AppCompatActivity {
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			this.startActivity(intentAddContainer);
 			return true;
-		}
-
-		else{
+		}else{
 			return super.onOptionsItemSelected(item);
 		}
 	}

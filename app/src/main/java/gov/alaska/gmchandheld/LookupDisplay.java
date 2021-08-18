@@ -24,7 +24,16 @@ import android.widget.ExpandableListView;
 import androidx.core.content.ContextCompat;
 
 public class LookupDisplay extends BaseActivity {
+
     private ExpandableListView expandableListView;
+    private EditText invisibleEditText;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        invisibleEditText = findViewById(R.id.invisibleEditText);
+        invisibleEditText.setText("");
+    }
 
     @Override
     protected void onRestart() {
@@ -39,7 +48,7 @@ public class LookupDisplay extends BaseActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
+        invisibleEditText = findViewById(R.id.invisibleEditText);
 
         invisibleEditText.setInputType(InputType.TYPE_NULL);
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();

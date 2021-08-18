@@ -1,6 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,8 +10,6 @@ import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,64 +19,50 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 
 public class RemoteApiUIHandler extends BaseActivity {
+    private static EditText userET;
+    private static SharedPreferences sp;
+    private final String SHARED_PREFS ;
+    private static SharedPreferences.Editor editor;
+    private static int apiKeyAttempts;
+    public static LinkedList<String> lookupHistory;
+    private static LinkedList<String> summaryHistory;
+    private static boolean downloading;
+    private static ArrayList<String> containerList;
+    private static String urlFirstParameter;
+    private static String destinationBarcode;
+    private static String addContainerName;
+    private static String getNewBarcode;
 
     public RemoteApiUIHandler() {
+        apiKeyAttempts = 0;
+        SHARED_PREFS = "sharedPrefs";
+        lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
+        summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
+        downloading = false;
     }
-
-    static EditText userET;
-    static SharedPreferences sp;
-    final String SHARED_PREFS = "sharedPrefs";
-    static SharedPreferences.Editor editor;
-    static String apiKey;
-
-    public static final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
-    private static final LinkedList<String> summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
-
-    private static boolean downloading = false;
 
     public boolean isDownloading() {
         return !downloading;
     }
-
     public void setDownloading(boolean downloading) {
         this.downloading = downloading;
     }
-
-    private static ArrayList<String> containerList;
-
     public static void setContainerList(ArrayList<String> moveList) {containerList = moveList;}
-
-    private static String urlFirstParameter;
-
     public static void setUrlFirstParameter(String query) {RemoteApiUIHandler.urlFirstParameter = query;}
-
-    private static String destinationBarcode;
-
     public static void setDestinationBarcode(String destinationBarcode) {RemoteApiUIHandler.destinationBarcode = destinationBarcode;}
-
-    private static String addContainerName;
-
     public static void setAddContainerName(String addContainerName) {
         RemoteApiUIHandler.addContainerName = addContainerName;
     }
-
     private static String addContainerRemark;
-
     public static void setAddContainerRemark(String addContainerRemark) {
         RemoteApiUIHandler.addContainerRemark = addContainerRemark;
     }
-
-    private static String getNewBarcode;
-
     public static void setGetNewBarcode(String getNewBarcode) {
         RemoteApiUIHandler.getNewBarcode = getNewBarcode;
     }
@@ -90,7 +73,6 @@ public class RemoteApiUIHandler extends BaseActivity {
         RemoteApiUIHandler.this.finish();
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,14 +80,11 @@ public class RemoteApiUIHandler extends BaseActivity {
     }
 
     public static class ProcessDataForDisplay extends AsyncTask<String, String, RemoteApiDownload> {
-
         private WeakReference<Context> mActivity;
-
         public ProcessDataForDisplay(Context context) {
             mActivity = new WeakReference<>(context);
         }
-
-        AlertDialog alert;
+        private AlertDialog alert;
         private volatile boolean running = true;
 
         @Override
@@ -113,10 +92,8 @@ public class RemoteApiUIHandler extends BaseActivity {
             super.onPreExecute();
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
             LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
-
             View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.downloading_alert_root));
             alertDialog.setView(layout);
-
             TextView title = new TextView(mActivity.get());
             String processingTitle = "Processing " + urlFirstParameter;
             title.setText(processingTitle);
@@ -124,18 +101,15 @@ public class RemoteApiUIHandler extends BaseActivity {
             title.setTextSize(16);
             alertDialog.setCustomTitle(title);
             alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     cancel(true);
                     downloading = false;
                 }
             });
-
             alert = alertDialog.create();
             alert.show();
             alert.setCanceledOnTouchOutside(false);
-
             if (!urlFirstParameter.isEmpty()) {
                 switch (mActivity.get().getClass().getSimpleName()) {
                     case "Lookup": {
@@ -184,20 +158,17 @@ public class RemoteApiUIHandler extends BaseActivity {
                         remoteAPIDownload.setContainerList(containerList);
                         break;
                     }
-
                     case "MoveContents": {
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
                         remoteAPIDownload.setDestinationBarcode(destinationBarcode);
                         break;
                     }
-
                     case "AddContainer": {
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
                         remoteAPIDownload.setAddedContainerName(addContainerName);
                         remoteAPIDownload.setAddedContainerRemark(addContainerRemark);
                         break;
                     }
-
                     case "AddInventory":
                     case "Quality": {
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
@@ -207,7 +178,6 @@ public class RemoteApiUIHandler extends BaseActivity {
                         if(containerList != null) {
                             remoteAPIDownload.setContainerList(containerList);
                         }
-
                         break;
                     }
                     case "AuditDisplay": {
@@ -215,7 +185,6 @@ public class RemoteApiUIHandler extends BaseActivity {
                         remoteAPIDownload.setContainerList(containerList);
                         break;
                     }
-
                     case "Recode": {
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
                         remoteAPIDownload.setNewBarcode(getNewBarcode);
@@ -223,7 +192,6 @@ public class RemoteApiUIHandler extends BaseActivity {
                     }
                 }
                 remoteAPIDownload.getDataFromURL();
-
                 return remoteAPIDownload;
             }
             return null;
@@ -235,40 +203,23 @@ public class RemoteApiUIHandler extends BaseActivity {
             if (alert != null) {
                 alert.dismiss();
             }
-
             if (obj.isErrored()) {
                 int responseCode = obj.getResponseCode();
                 if (responseCode == 403) {
                     Intent intentGetBarcode = new Intent(mActivity.get().getApplicationContext(), GetToken.class);
                     intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mActivity.get().getApplicationContext().startActivity(intentGetBarcode);
-
-//                    sp = mActivity.get().getApplicationContext().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
-//                    userET = new EditText(mActivity.get());
-//                    userET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-//                    userET.setTransformationMethod(PasswordTransformationMethod.getInstance());
-//                    AlertDialog dialog = new AlertDialog.Builder(mActivity.get())
-//                            .setTitle("Please enter your personal access token: ")
-//                            .setView(userET)
-//                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialogInterface, int i) {
-//                                    apiKey = userET.getText().toString();
-//                                    editor = sp.edit();
-//                                    editor.putString("apiText", apiKey).apply();
-//                                    new RemoteApiUIHandler.ProcessDataForDisplay(mActivity.get()).execute();
-//                                }
-//                            })
-//                            .setNegativeButton("Cancel", null)
-//                            .create();
-//                    dialog.show();
+                    if(apiKeyAttempts == 0){
+                        mActivity.get().getApplicationContext().startActivity(intentGetBarcode);
+                        new RemoteApiUIHandler.ProcessDataForDisplay(mActivity.get()).execute();
+                        apiKeyAttempts = apiKeyAttempts + 1;
+                    } else {
+                        apiKeyAttempts = 0;
+                    }
                 } else {
                     LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
                     View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.lookup_error_root));
-
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
                     ConnectivityManager cm = (ConnectivityManager) mActivity.get().getSystemService(Context.CONNECTIVITY_SERVICE);
-
                     if (responseCode == 404) {
                         alertDialog.setTitle("URL Error");
                         alertDialog.setMessage("In the configuration screen, check the URL.");
@@ -284,7 +235,6 @@ public class RemoteApiUIHandler extends BaseActivity {
                     } else {
                         alertDialog.setMessage(obj.getException().getMessage());
                     }
-
                 alertDialog.setView(layout);
                 alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
 
@@ -333,7 +283,6 @@ public class RemoteApiUIHandler extends BaseActivity {
                     }
 
                 });
-
                 AlertDialog alert = alertDialog.create();
                 alert.setCanceledOnTouchOutside(false);
                 alert.show();
@@ -345,20 +294,16 @@ public class RemoteApiUIHandler extends BaseActivity {
                         LookupLogicForDisplay lookupLogicForDisplayObj;
                         lookupLogicForDisplayObj = new LookupLogicForDisplay(mActivity.get());
                         LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = lookupLogicForDisplayObj;
-
                         lookupLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
-
                         try {
                             lookupLogicForDisplayObj.processRawJSON(obj.getRawJson());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                         Intent intent = new Intent(mActivity.get(), LookupDisplay.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.putExtra("barcode", urlFirstParameter);  //this barcode refers to the query barcode.
                         mActivity.get().startActivity(intent);
-
                         lastAddedToHistory(mActivity.get(), urlFirstParameter);
                         break;
                     }
@@ -368,13 +313,11 @@ public class RemoteApiUIHandler extends BaseActivity {
                         summaryLogicForDisplayObj = new SummaryLogicForDisplay();
                         SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = summaryLogicForDisplayObj;
                         summaryLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
-
                         try {
                             summaryLogicForDisplayObj.processRawJSON(obj.getRawJson());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                         Intent intent = new Intent(mActivity.get(), SummaryDisplay.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.putExtra("barcode", urlFirstParameter);  //this barcode refers to the query barcode.
@@ -391,7 +334,6 @@ public class RemoteApiUIHandler extends BaseActivity {
                         containerList.clear();
                         ListView containerListLV = ((Activity) mActivity.get()).findViewById(R.id.listViewContainersToMove);
                         ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
-
                         adapter.clear();
                         adapter.notifyDataSetChanged();
                         Toast.makeText(mActivity.get(), "The move was successful.",
@@ -405,19 +347,16 @@ public class RemoteApiUIHandler extends BaseActivity {
                                        Toast.LENGTH_SHORT).show();
                         break;
                     }
-
                     case "AddInventory": {
                         Toast.makeText(mActivity.get(), "The inventory was added.",
                                        Toast.LENGTH_SHORT).show();
                         break;
                     }
-
                     case "Quality": {
                         Toast.makeText(mActivity.get(), "The inventory quality was added.",
                                        Toast.LENGTH_SHORT).show();
                         break;
                     }
-
                     case "AuditDisplay": {
                         containerList.clear();
                         ListView containerListLV = ((Activity) mActivity.get()).findViewById(R.id.listViewGetContainersToAudit);
@@ -444,7 +383,6 @@ public class RemoteApiUIHandler extends BaseActivity {
 
 
     private static void lastAddedToHistory(Context context, String barcodeQuery) {
-
         String lastAdded = null;
         switch (context.getClass().getSimpleName()) {
             case "LookupDisplay":

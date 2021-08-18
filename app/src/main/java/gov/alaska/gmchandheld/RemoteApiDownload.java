@@ -306,10 +306,8 @@ public class RemoteApiDownload {
             connection = (HttpURLConnection) myURL.openConnection();
             connection.setRequestMethod("GET");
 
-            sp = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
-            String accessToken = sp.getString("apiText", "");
             //String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
-            connection.setRequestProperty("Authorization", "Token " + accessToken);
+            connection.setRequestProperty("Authorization", "Token " + BaseActivity.apiKeyBase);
 
             connection.setReadTimeout(10 * 1000);
             connection.setConnectTimeout(5 * 1000);

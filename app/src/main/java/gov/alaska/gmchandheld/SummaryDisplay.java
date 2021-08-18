@@ -21,10 +21,13 @@ import android.widget.ExpandableListView;
 public class SummaryDisplay extends BaseActivity {
 
     private ExpandableListView expandableListView;
+    private EditText invisibleEditText;
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onStart() {
+        super.onStart();
+        invisibleEditText = findViewById(R.id.invisibleEditText);
+        invisibleEditText.setText("");
     }
 
     @Override

@@ -80,9 +80,6 @@ public class Configuration extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);
-
-        sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
@@ -95,6 +92,7 @@ public class Configuration extends BaseActivity {
         minuteInput = findViewById(R.id.minuteET);
 
         cameraToScannerbtn = findViewById(R.id.cameraToScannerBtn);
+        sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
@@ -230,37 +228,34 @@ public class Configuration extends BaseActivity {
     }
 
     private void urlInputChangeWatcher() {
-
         urlET.addTextChangedListener(new TextWatcher() {
             SharedPreferences.Editor editor = sp.edit();
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 editor.putString("urlText", getUrl()).apply();
             }
-
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             @Override
             public void afterTextChanged(Editable s) { }
         });
     }
 
+    public String getApiKey() {
+        apiET = findViewById(R.id.apiET);
+        return apiET.getText().toString();
+    }
 
     private void apiInputChangeWatcher() {
-
         apiET.addTextChangedListener(new TextWatcher() {
-            SharedPreferences.Editor editor = sp.edit();
-
+//            SharedPreferences.Editor editor = sp.edit();
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("apiText", getApiKey()).apply();
+//                editor.putString("apiText", getApiKey()).apply();
+                BaseActivity.apiKeyBase = getApiKey();
             }
-
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             @Override
             public void afterTextChanged(Editable s) { }
         });
@@ -276,11 +271,6 @@ public class Configuration extends BaseActivity {
         return url;
     }
 
-    public String getApiKey() {
-        apiET = findViewById(R.id.apiET);
-        return apiET.getText().toString();
-    }
-
     public void saveData() {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("urlText", getUrl());
@@ -294,7 +284,8 @@ public class Configuration extends BaseActivity {
 
     public void loadData() {
         url = sp.getString("urlText", "");
-        apiKey = sp.getString("apiText", "");
+//        apiKey = sp.getString("apiText", "");
+        apiKey = BaseActivity.apiKeyBase;
         hour = sp.getString("updateHour", "24");
         minute = sp.getString("updateMinute", "0");
         autoUpdatebtn.setChecked(sp.getBoolean("alarmOn", true));
@@ -303,7 +294,8 @@ public class Configuration extends BaseActivity {
 
     public void updateViews() {
         urlET.setText(sp.getString("urlText", ""));
-        apiET.setText(sp.getString("apiText", ""));
+//        apiET.setText(sp.getString("apiText", ""));
+        apiET.setText(BaseActivity.apiKeyBase);
         hourInput.setText(hour);
         minuteInput.setText(minute);
         autoUpdatebtn.setChecked(sp.getBoolean("alarmOn", true));
