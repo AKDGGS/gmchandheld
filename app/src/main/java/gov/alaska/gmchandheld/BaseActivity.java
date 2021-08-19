@@ -6,26 +6,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewConfiguration;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.common.util.SharedPreferencesUtils;
 
 import java.lang.reflect.Field;
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
 	protected SharedPreferences sp;
 	protected final String SHARED_PREFS = "sharedPrefs";
 	protected static SharedPreferences.Editor editor;
 	public static String apiKeyBase = null;
+	protected Toolbar toolbar;
 
 //	@Override
 //	protected void onRestart() {
@@ -62,10 +67,42 @@ public class BaseActivity extends AppCompatActivity {
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.base);
+		setContentView(getLayoutResource());
+		configureToolbar();
 	}
+
+	protected abstract int getLayoutResource();
+
+	private void configureToolbar() {
+		toolbar = findViewById(R.id.toolbar);
+		if (toolbar != null) {
+			setSupportActionBar(toolbar);
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		}
+	}
+
+
+
+	//	@Override
+//	public void setContentView(int layoutResID) {
+//		super.setContentView(layoutResID);
+//		toolbar = findViewById(R.id.toolbar);
+//		setSupportActionBar(toolbar);
+//	}
+
+//	protected int getToolbarId(){
+//		toolbar = findViewById(R.id.toolbar);
+//		return toolbar.getId();
+//	}
+
+//	@Override
+//	protected void onCreate(@Nullable Bundle savedInstanceState) {
+//		super.onCreate(savedInstanceState);
+//		setContentView(getLayoutResource());
+//	}
+//	protected int getLayoutResource();
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

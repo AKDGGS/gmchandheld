@@ -139,7 +139,7 @@
                         android:selectAllOnFocus="true"
                         android:fontFamily="serif-monospace"
                         android:text=""
-
+                        android:inputType="textPassword"
                         android:textSize="14sp"
                         android:nextFocusDown="@+id/apiET"
                         android:nextFocusUp="@+id/apiET"

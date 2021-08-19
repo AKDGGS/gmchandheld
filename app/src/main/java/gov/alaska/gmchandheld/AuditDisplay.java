@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -44,6 +45,11 @@ public class AuditDisplay extends BaseActivity {
     }
 
     @Override
+    public int getLayoutResource() {
+        return R.layout.audit_display;
+    }
+
+    @Override
     public void onRestart() {
         super.onRestart();
         this.recreate();
@@ -52,10 +58,7 @@ public class AuditDisplay extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.audit_display);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-        setSupportActionBar(toolbar);
+
         auditItemET = findViewById(R.id.itemET);
         auditRemarkET = findViewById(R.id.remarkET);
         final TextView auditCountTV = findViewById(R.id.auditCountTV);

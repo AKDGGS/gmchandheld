@@ -30,9 +30,13 @@ public class GetToken extends BaseActivity{
     private Button submitBtn;
 
     @Override
+    public int getLayoutResource() {
+        return R.layout.activity_get_token;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_get_token);
         try {
             // enables TSL-1.2 if Google Play is updated on old devices.
             // doesn't work with emulators
@@ -53,18 +57,15 @@ public class GetToken extends BaseActivity{
         } catch (KeyManagementException e) {
             e.printStackTrace();
         }
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        apiTokenET = findViewById(R.id.apiTokenET);
+        apiTokenET.requestFocus();
         loadGetToken();
     }
 
     public void loadGetToken() {
         LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle("Get Personal Access Token");
-        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
+
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         apiTokenET = findViewById(R.id.apiTokenET);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));

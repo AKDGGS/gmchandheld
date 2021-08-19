@@ -11,10 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -25,6 +23,11 @@ public class AddContainer extends BaseActivity {
 	EditText addContainerBarcodeET;
 
 	@Override
+	public int getLayoutResource() {
+		return R.layout.add_container;
+	}
+
+	@Override
 	protected void onRestart() {
 		super.onRestart();
 		this.recreate();
@@ -33,10 +36,7 @@ public class AddContainer extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.add_container);
-		Toolbar toolbar = findViewById(R.id.toolbar);
-		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-		setSupportActionBar(toolbar);
+
 		addContainerBarcodeET = findViewById(R.id.barcodeET);
 		final EditText addContainerNameET = findViewById(R.id.nameET);
 		final EditText addContainerRemarkET = findViewById(R.id.remarkET);

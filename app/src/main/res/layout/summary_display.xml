@@ -6,6 +6,12 @@
     android:orientation="vertical"
     tools:context=".Summary">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <EditText
         android:id="@+id/invisibleEditText"
         android:layout_width="match_parent"

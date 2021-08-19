@@ -43,6 +43,11 @@ public class MoveDisplay extends BaseActivity {
 	}
 
 	@Override
+	public int getLayoutResource() {
+		return R.layout.move_display;
+	}
+
+	@Override
 	protected void onRestart() {
 		this.recreate();
 		super.onRestart();
@@ -51,7 +56,6 @@ public class MoveDisplay extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.move_display);
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));

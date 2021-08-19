@@ -64,6 +64,11 @@ public class TakePhoto extends BaseActivity {
     private IntentIntegrator qrScan;
 
     @Override
+    public int getLayoutResource() {
+        return R.layout.activity_take_photo;
+    }
+
+    @Override
     public void onRestart() {
         super.onRestart();
 
@@ -80,7 +85,6 @@ public class TakePhoto extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_take_photo);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Photo");

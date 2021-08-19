@@ -11,6 +11,8 @@
         <entry key="app/src/main/res/layout/lookup_display.xml" value="0.16822916666666668" />
         <entry key="app/src/main/res/layout/lookup_error_display.xml" value="0.196875" />
         <entry key="app/src/main/res/layout/lookup_main.xml" value="0.16822916666666668" />
+        <entry key="app/src/main/res/layout/summary_display.xml" value="0.1515625" />
+        <entry key="app/src/main/res/layout/toolbar.xml" value="0.15572916666666667" />
       </map>
     </option>
   </component>

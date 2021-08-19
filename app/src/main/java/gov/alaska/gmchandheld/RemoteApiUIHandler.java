@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 
-public class RemoteApiUIHandler extends BaseActivity {
+public class RemoteApiUIHandler {
     private static EditText userET;
     private static SharedPreferences sp;
     private final String SHARED_PREFS ;
@@ -67,17 +67,17 @@ public class RemoteApiUIHandler extends BaseActivity {
         RemoteApiUIHandler.getNewBarcode = getNewBarcode;
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        RemoteApiUIHandler.this.finish();
-    }
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//        RemoteApiUIHandler.this.finish();
+//    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_translucent);
-    }
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_translucent);
+//    }
 
     public static class ProcessDataForDisplay extends AsyncTask<String, String, RemoteApiDownload> {
         private WeakReference<Context> mActivity;

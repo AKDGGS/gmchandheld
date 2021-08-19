@@ -2,7 +2,6 @@ package gov.alaska.gmchandheld;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -21,11 +20,19 @@ import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 public class LookupDisplay extends BaseActivity {
     private ExpandableListView expandableListView;
     private EditText invisibleEditText;
+
+    @Override
+    public int getLayoutResource() {
+        return R.layout.lookup_display;
+    }
 
     @Override
     protected void onStart() {
@@ -42,11 +49,8 @@ public class LookupDisplay extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.lookup_display);
         expandableListView = findViewById(R.id.expandableListView);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
+
         invisibleEditText = findViewById(R.id.invisibleEditText);
         invisibleEditText.setInputType(InputType.TYPE_NULL);
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
@@ -91,15 +95,16 @@ public class LookupDisplay extends BaseActivity {
             String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
             if (barcode != null) {
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                LookupDisplay.this.getSupportActionBar().setTitle(title);
-                if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
-                    LookupDisplay.this.getSupportActionBar()
-                                      .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
-                }
-                if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
-                }
+
+//                LookupDisplay.this.getSupportActionBar().setTitle(title);
+//                if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
+//                    LookupDisplay.this.getSupportActionBar()
+//                                      .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
+//                }
+//                if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
+//                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
+//                }
             }
             ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
             expandableListView.setAdapter(listAdapter);

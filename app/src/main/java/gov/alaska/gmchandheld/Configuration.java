@@ -22,15 +22,23 @@ import android.widget.ToggleButton;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 public class Configuration extends BaseActivity {
 
@@ -52,6 +60,11 @@ public class Configuration extends BaseActivity {
     private String apiKey;
 
     @Override
+    public int getLayoutResource() {
+        return R.layout.configuration;
+    }
+
+    @Override
     public void onRestart() {
         super.onRestart();
         updateViews();
@@ -62,21 +75,43 @@ public class Configuration extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        urlET = findViewById(R.id.urlET);
+        urlET.requestFocus();
+        if (urlET.getText().toString().isEmpty()) {
+            try {
+                // enables TSL-1.2 if Google Play is updated on old devices.
+                // doesn't work with emulators
+                // https://stackoverflow.com/a/29946540
+                ProviderInstaller.installIfNeeded(this.getApplicationContext());
+            } catch (GooglePlayServicesRepairableException e) {
+                e.printStackTrace();
+            } catch (GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            }
+            SSLContext sslContext = null;
+            try {
+                sslContext = SSLContext.getInstance("TLSv1.2");
+                sslContext.init(null, null, null);
+                SSLEngine engine = sslContext.createSSLEngine();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (KeyManagementException e) {
+                e.printStackTrace();
+            }
+        }
+
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             builder.detectFileUriExposure();
         }
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.configuration);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-        setSupportActionBar(toolbar);
+
+
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
-        urlET = findViewById(R.id.urlET);
-        urlET.requestFocus();
+
         apiET = findViewById(R.id.apiET);
         autoUpdatebtn = findViewById(R.id.autoUpdateBtn);
         hourInput = findViewById(R.id.hourET);

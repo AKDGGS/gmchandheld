@@ -48,6 +48,10 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         selectedItemsDisplayList.add("Needs Inventory");
         checkedItems[0] = true;
     }
+    @Override
+    public int getLayoutResource() {
+        return R.layout.quality;
+    }
 
     @Override
     public void onRestart() {
@@ -58,7 +62,6 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.quality);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));

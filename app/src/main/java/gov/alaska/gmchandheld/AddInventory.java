@@ -43,6 +43,11 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     }
 
     @Override
+    public int getLayoutResource() {
+        return R.layout.add_inventory;
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
         this.recreate();
@@ -51,10 +56,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_inventory);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-        setSupportActionBar(toolbar);
+
         addinventoryBarcodeET = findViewById(R.id.barcodeET);
         final EditText addInveotryRemarkET = findViewById(R.id.remarkET);
         final Button submit_button = findViewById(R.id.submitBtn);

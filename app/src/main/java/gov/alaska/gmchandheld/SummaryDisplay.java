@@ -24,6 +24,11 @@ public class SummaryDisplay extends BaseActivity {
     private EditText invisibleEditText;
 
     @Override
+    public int getLayoutResource() {
+        return R.layout.summary_display;
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         invisibleEditText = findViewById(R.id.invisibleEditText);
@@ -33,7 +38,6 @@ public class SummaryDisplay extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.summary_display);
         expandableListView = findViewById(R.id.expandableListView);
 
         if (getSupportActionBar() != null) {
@@ -91,11 +95,11 @@ public class SummaryDisplay extends BaseActivity {
             if (barcode != null) {
 
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                SummaryDisplay.this.getSupportActionBar().setTitle(title);
+//                SummaryDisplay.this.getSupportActionBar().setTitle(title);
 
                 if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
                     subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    SummaryDisplay.this.getSupportActionBar().setSubtitle(subtitle);
+//                    SummaryDisplay.this.getSupportActionBar().setSubtitle(subtitle);
                 }
             }
 

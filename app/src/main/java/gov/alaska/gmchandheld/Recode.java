@@ -26,15 +26,19 @@ public class Recode extends BaseActivity {
 	private EditText oldBarcodeET, newBarcodeET;
 
 	@Override
+	public int getLayoutResource() {
+		return R.layout.recode;
+	}
+
+	@Override
 	public void onRestart() {
 		super.onRestart();
-		//this.recreate();
+		this.recreate();
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.recode);
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));

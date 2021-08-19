@@ -3,12 +3,9 @@ package gov.alaska.gmchandheld;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,10 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -28,17 +22,10 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
 import java.io.File;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
-import java.util.Map;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -47,6 +34,11 @@ public class Lookup extends BaseActivity {
 	private final LinkedList<String> lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
 	private EditText barcodeET;
 	private IntentIntegrator qrScan;
+
+	@Override
+	public int getLayoutResource() {
+		return R.layout.lookup_main;
+	}
 
 	@Override
 	protected void onRestart() {
@@ -59,34 +51,14 @@ public class Lookup extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.lookup_main);
-		try {
-			// enables TSL-1.2 if Google Play is updated on old devices.
-			// doesn't work with emulators
-			// https://stackoverflow.com/a/29946540
-			ProviderInstaller.installIfNeeded(this.getApplicationContext());
-		} catch (GooglePlayServicesRepairableException e) {
-			e.printStackTrace();
-		} catch (GooglePlayServicesNotAvailableException e) {
-			e.printStackTrace();
-		}
-		SSLContext sslContext = null;
-		try {
-			sslContext = SSLContext.getInstance("TLSv1.2");
-			sslContext.init(null, null, null);
-			SSLEngine engine = sslContext.createSSLEngine();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			e.printStackTrace();
-		}
-
 		if (null == BaseActivity.apiKeyBase){
 			Intent intentGetBarcode = new Intent(this.getApplicationContext(), GetToken.class);
 			intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			this.getApplicationContext().startActivity(intentGetBarcode);
 		}
-
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		barcodeET = findViewById(R.id.barcodeET);
+		barcodeET.requestFocus();
 		checkUrlUsesHttps();
 		deleteApkFile();
 		loadLookup();
@@ -94,11 +66,6 @@ public class Lookup extends BaseActivity {
 
 	public void loadLookup() {
 		LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
-		Toolbar toolbar = findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-		toolbar.setTitle("Lookup");
-		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-
 		sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		boolean cameraOn = sp.getBoolean("cameraOn", false);
 

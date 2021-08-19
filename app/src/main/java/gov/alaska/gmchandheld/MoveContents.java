@@ -26,6 +26,11 @@ public class MoveContents extends BaseActivity {
 	private EditText moveContentsFromET, moveContentsToET;
 
 	@Override
+	public int getLayoutResource() {
+		return R.layout.move_contents;
+	}
+
+	@Override
 	public void onRestart() {
 		super.onRestart();
 		this.recreate();
@@ -34,7 +39,6 @@ public class MoveContents extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.move_contents);
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));

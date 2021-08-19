@@ -33,6 +33,11 @@ public class Summary extends BaseActivity {
     private IntentIntegrator qrScan;
 
     @Override
+    public int getLayoutResource() {
+        return R.layout.summary_get_barcode;
+    }
+
+    @Override
     public void onRestart() {
         super.onRestart();
         EditText barcodeInput = findViewById(R.id.barcodeET);
@@ -43,14 +48,13 @@ public class Summary extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.summary_get_barcode);
         SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = null;
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        if (getSupportActionBar() != null) {
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        }
+//        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         barcodeET = findViewById(R.id.barcodeET);
         final Button submitButton = findViewById(R.id.submitBtn);
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
