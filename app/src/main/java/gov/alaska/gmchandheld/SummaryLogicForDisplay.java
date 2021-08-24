@@ -3,10 +3,8 @@ package gov.alaska.gmchandheld;
 import android.text.SpannableStringBuilder;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +13,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import gov.alaska.gmchandheld.comparators.SortInventoryObjectList;
 
 import static android.graphics.Typeface.BOLD;
@@ -27,7 +24,6 @@ public class SummaryLogicForDisplay {
     private int numberOfBoxes;
     private int ID;
     private String barcodeQuery;
-    private String typeFlag;
     private final ArrayList<String> typeFlagList = new ArrayList<>();
 
     public SummaryLogicForDisplay() {
@@ -64,19 +60,15 @@ public class SummaryLogicForDisplay {
     //*********************************************************************************************
 
     public void processRawJSON(String rawJSON) throws Exception {
-
         if (rawJSON.trim().charAt(0) == '[') {
             JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
             InventoryObject root = parseTree(null, null, inputJson);
-
             if (root != null) {
                 getStringForDisplay(root, 0, null, null, getDisplayDict());
             }
-
         } else if (rawJSON.trim().charAt(0) == '{') {
             JSONObject inputJson = new JSONObject((rawJSON));  // check for jsonobject
             InventoryObject root = parseTree(null, barcodeQuery, inputJson);
-
             if (root != null) {
                 getStringForDisplay(root, 1, null, null, getDisplayDict());
             }
@@ -85,20 +77,18 @@ public class SummaryLogicForDisplay {
 
 //*********************************************************************************************
 
-    private void getStringForDisplay(InventoryObject o, int depth, String currKey, LinkedList<SpannableStringBuilder> displayList, Map<String, List<SpannableStringBuilder>> dict) {
-
+    private void getStringForDisplay(InventoryObject o, int depth, String currKey,
+                                     LinkedList<SpannableStringBuilder> displayList,
+                                     Map<String, List<SpannableStringBuilder>> dict) {
         if (depth - 1 == 0) {
             currKey = o.getName();
             getKeyList().add(currKey);
             displayList = new LinkedList<>();
         }
-
         Collections.sort(o.getChildren(), new SortInventoryObjectList());
-
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         if (o.getName() != null && !o.getName().equals(currKey) && !(o.getName().contains("Object"))) {
-
-            //Barcode is not added to the displayList because it is in the Label
+           //Barcode is not added to the displayList because it is in the Label
             if (!"Barcode".equals(o.getName())) {
                 for (int i = 0; i < depth - 1; i++) {
                     //Font spacing and size varies depending on the font chosen.
@@ -109,31 +99,31 @@ public class SummaryLogicForDisplay {
                     ssb.append("   ");
                 }
                 int lengthOfSsb;
-
                 lengthOfSsb = ssb.length();
                 ssb.append(o.getName());
                 ssb.append(" ");
                 if (o.getValue() != null) {
                     ssb.append(o.getValue().toString());
                 }
-                ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb, lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-
+                ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb, lengthOfSsb + o.getName().length(),
+                        SPAN_EXCLUSIVE_EXCLUSIVE);
                 int indentationIncrement = 42; //Arbitrary value
                 if (!Character.isWhitespace(ssb.charAt(3))) {
                     ssb = createIndentedText(ssb, 3, indentationIncrement);
                 } else if (!Character.isWhitespace(ssb.charAt(6))) {
-                    ssb = createIndentedText(ssb, 6, indentationIncrement * 2);
+                    ssb = createIndentedText(ssb, 6,
+                            indentationIncrement * 2);
                 } else if (!Character.isWhitespace(ssb.charAt(9))) {
-                    ssb = createIndentedText(ssb, 9, indentationIncrement * 3);
+                    ssb = createIndentedText(ssb, 9,
+                            indentationIncrement * 3);
                 } else {
-                    ssb = createIndentedText(ssb, 0, indentationIncrement * 4);
+                    ssb = createIndentedText(ssb, 0,
+                            indentationIncrement * 4);
                 }
-
                 displayList.add(ssb);
                 dict.put(currKey, displayList);
             }
         }
-
         for (InventoryObject child : o.getChildren()) {
             if (child.getName() != null) {
                 getStringForDisplay(child, depth + 1, currKey, displayList, dict);
@@ -144,20 +134,16 @@ public class SummaryLogicForDisplay {
 //*********************************************************************************************
 
     public InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
-
         switch (o.getClass().getName()) {
             case "org.json.JSONObject":
                 return handleObject(parent, name, (JSONObject) o);
-
             case "org.json.JSONArray":
                 return handleArray(parent, name, (JSONArray) o);
-
             case "java.lang.String":
             case "java.lang.Boolean":
             case "java.lang.Integer":
             case "java.lang.Double":
                 return handleSimple(parent, name, o);
-
             default:
                 System.out.println("Unhandled class: " + o.getClass().getName());
                 return null;
@@ -166,7 +152,7 @@ public class SummaryLogicForDisplay {
 
     //*********************************************************************************************
 
-    private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
+    private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception{
         InventoryObject io;
         if (name == null) {
             if (!"".equals(o.optString("ID"))) {
@@ -186,7 +172,6 @@ public class SummaryLogicForDisplay {
                 case "measuredDepthUnit":
                 case "unit":
                     return null;
-
                 //Create these nodes
                 case "boreholes": {
                     String newName = "Object Borehole";
@@ -196,12 +181,14 @@ public class SummaryLogicForDisplay {
                 }
                 case "containers":
                     if (o.has("container")) {
-                        return new InventoryObject("Container", o.get("container"), 500);
+                        return new InventoryObject("Container", o.get("container"),
+                                500);
                     }
                     return null;
                 case "collections":
                     if (o.has("collection")) {
-                        return new InventoryObject("Collection", o.get("collection"), 500);
+                        return new InventoryObject("Collection", o.get("collection"),
+                                500);
                     }
                     return null;
                 case "outcrops": {
@@ -253,12 +240,10 @@ public class SummaryLogicForDisplay {
                     io = new InventoryObject(name);
             }
         }
-
         for (Iterator<String> it = o.keys(); it.hasNext(); ) {
             String key = it.next();
             io.addChild(parseTree(o, key, o.get(key)));
         }
-
         if (typeFlagList.isEmpty()) {
             typeFlagList.add("No type");
         }
@@ -273,7 +258,6 @@ public class SummaryLogicForDisplay {
             io = new InventoryObject(name);
         } else {
             switch (name) {
-
                 //Create these nodes
                 case "barcodes":
                     io = new InventoryObject("Barcodes", null, 0);
@@ -303,7 +287,6 @@ public class SummaryLogicForDisplay {
                     io = new InventoryObject(name);
             }
         }
-
         for (int i = 0; i < a.length(); i++) {
             io.addChild(parseTree(a, name, a.get(i)));
         }
@@ -313,13 +296,9 @@ public class SummaryLogicForDisplay {
 //*********************************************************************************************
 
     private InventoryObject handleSimple(Object parent, String name, Object o) {
-
-        // Simple values should always have a name
         if (name == null) {
             return null;
         }
-
-
         switch (name) {
             // Higher the displayWeight, the higher a priority an key has.
             // Items are sorted internally first, and the externally in processForDisplay()
@@ -343,9 +322,12 @@ public class SummaryLogicForDisplay {
         }
     }
 
-    public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
+    public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text,
+                                                            int marginFirstLine,
+                                                            int marginNextLines) {
         //https://www.programmersought.com/article/45371641877/
-        text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
+        text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0,
+                text.length(), 0);
         return text;
     }
 }

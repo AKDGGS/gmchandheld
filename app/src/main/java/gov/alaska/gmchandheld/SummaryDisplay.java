@@ -2,7 +2,6 @@ package gov.alaska.gmchandheld;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
@@ -19,9 +18,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 public class SummaryDisplay extends BaseActivity {
-
     private ExpandableListView expandableListView;
-    private EditText invisibleEditText;
 
     @Override
     public int getLayoutResource() {
@@ -31,7 +28,7 @@ public class SummaryDisplay extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        invisibleEditText = findViewById(R.id.invisibleEditText);
+        EditText invisibleEditText = findViewById(R.id.invisibleEditText);
         invisibleEditText.setText("");
     }
 
@@ -44,86 +41,74 @@ public class SummaryDisplay extends BaseActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
-
         invisibleEditText.setInputType(InputType.TYPE_NULL);
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-
         invisibleEditText.setFocusable(true);
-
-        invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_DEL) {
-                    invisibleEditText.setText("");
-                }
-
-                if (invisibleEditText.getText().toString().trim().length() != 0) {
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        remoteApiUIHandler.setDownloading(true);
-                        RemoteApiUIHandler.setUrlFirstParameter(invisibleEditText.getText().toString());
-                        new RemoteApiUIHandler.ProcessDataForDisplay(SummaryDisplay.this).execute();
-                        return true;
-                    }
-                } else {
-                    invisibleEditText.setText("");
-                }
-                return false;
+        invisibleEditText.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_DEL) {
+                invisibleEditText.setText("");
             }
+            if (invisibleEditText.getText().toString().trim().length() != 0) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode ==
+                        KeyEvent.KEYCODE_ENTER)) {
+                    remoteApiUIHandler.setDownloading(true);
+                    RemoteApiUIHandler.setUrlFirstParameter(invisibleEditText.getText().toString());
+                    new RemoteApiUIHandler.ProcessDataForDisplay(SummaryDisplay.this).execute();
+                    return true;
+                }
+            } else {
+                invisibleEditText.setText("");
+            }
+            return false;
         });
-
         SummaryLogicForDisplay summaryLogicForDisplayObj;
         summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj;
-
         SpannableString title = new SpannableString(summaryLogicForDisplayObj.getBarcodeQuery());
-        SpannableString subtitle = new SpannableString(summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");
+        SpannableString subtitle = new SpannableString(
+                summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");
 
         if (getSupportActionBar() != null) {
             if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 SummaryDisplay.this.getSupportActionBar().setTitle(title);
 
                 if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
-                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     SummaryDisplay.this.getSupportActionBar().setSubtitle(subtitle);
                 }
             }
         }
-
         if (summaryLogicForDisplayObj != null) {
             Intent intent = getIntent();
-            String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
-
+            //this barcode refers to the query barcode.
+            String barcode = intent.getStringExtra("barcode");
             if (barcode != null) {
-
-                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                SummaryDisplay.this.getSupportActionBar().setTitle(title);
-
+                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
-                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    SummaryDisplay.this.getSupportActionBar().setSubtitle(subtitle);
+                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
-
-            ExpandableListAdapter listAdapter = new LookupExpListAdapter(SummaryDisplay.this, summaryLogicForDisplayObj.getKeyList(), summaryLogicForDisplayObj.getDisplayDict());
+            ExpandableListAdapter listAdapter = new LookupExpListAdapter(SummaryDisplay.this,
+                    summaryLogicForDisplayObj.getKeyList(),
+                    summaryLogicForDisplayObj.getDisplayDict());
             expandableListView.setAdapter(listAdapter);
-
             if (listAdapter.getGroupCount() >= 1) {
                 for (int i = 0; i < listAdapter.getGroupCount(); i++) {
                     expandableListView.expandGroup(i);
                 }
             }
-
-            expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-                @Override
-                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                    return true; // This way the expander cannot be collapsed
-                }
+            expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+                return true; // This way the expander cannot be collapsed
             });
         }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
         final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
         String characterInput = String.valueOf(event.getUnicodeChar());
         invisibleEditText.setText(characterInput);
@@ -138,9 +123,7 @@ public class SummaryDisplay extends BaseActivity {
         int action, keycode;
         action = event.getAction();
         keycode = event.getKeyCode();
-
         AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-
         switch (keycode) {
             case KeyEvent.KEYCODE_DPAD_UP:
             case KeyEvent.KEYCODE_VOLUME_UP: {
@@ -159,7 +142,6 @@ public class SummaryDisplay extends BaseActivity {
                 if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
                     expandableListView.smoothScrollToPosition(expandableListView.getCount());
                 }
-
                 if (KeyEvent.ACTION_UP == action) {
                     expandableListView.smoothScrollByOffset(3);
                 }
