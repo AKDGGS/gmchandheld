@@ -25,17 +25,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Configuration extends BaseActivity {
-    private ToggleButton autoUpdateBtn;
-    private ToggleButton cameraToScannerBtn;
-    private IntentIntegrator urlQrScan;
-    private IntentIntegrator apiQrScan;
-    private EditText hourInput;
-    private EditText minuteInput;
-    private String hour;
-    private String minute;
-    private EditText urlET;
-    private EditText apiET;
-    private String url;
+    private ToggleButton autoUpdateBtn, cameraToScannerBtn;
+    private IntentIntegrator urlQrScan, apiQrScan;
+    private EditText hourInput, minuteInput, urlET, apiET;
+    private String hour, minute, url;
 
     @Override
     public int getLayoutResource() {
@@ -122,7 +115,6 @@ public class Configuration extends BaseActivity {
         apiInputChangeWatcher();
         autoUpdateChangeWatcher();
         cameraToScannerChangeWatcher();
-        updateViews();
         loadData();
         saveData();
     }
@@ -143,8 +135,8 @@ public class Configuration extends BaseActivity {
     private void autoUpdateChangeWatcher() {
         final Intent intent = new Intent(Configuration.this,
                 UpdateBroadcastReceiver.class);
-        boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent,
-                0) != null);
+        boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2,
+                intent,0) != null);
         autoUpdateBtn.setChecked(alarmUp);
         autoUpdateBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -273,7 +265,22 @@ public class Configuration extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                BaseActivity.editor.putString("updateHour", hourInput.getText().toString()).apply();
+                if (s.length() != 0) {
+                    limit(hourInput, Integer.parseInt(hourInput.getText().toString()),0,
+                            24);
+                    if(hourInput.getText().toString().equals("24")){
+                        minuteInput.setText("0");
+                        BaseActivity.editor.putString("updateMinute", minuteInput.getText()
+                                .toString()).apply();
+                    }
+                    BaseActivity.editor.putString("updateHour", hourInput.getText()
+                            .toString()).apply();
+                } else {
+                    BaseActivity.editor.putString("updateHour", "24").apply();
+                    minuteInput.setText("0");
+                    BaseActivity.editor.putString("updateMinute", minuteInput.getText()
+                            .toString()).apply();
+                }
             }
 
             @Override
@@ -296,7 +303,13 @@ public class Configuration extends BaseActivity {
             String strBefore;
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                BaseActivity.editor.putString("updateMinute", minuteInput.getText().toString()).apply();
+                if (s.length() != 0 && !(hourInput.getText().toString().equals("24"))) {
+                    limit(minuteInput, Integer.parseInt(s.toString()), 0, 59);
+                    BaseActivity.editor.putString("updateMinute", s.toString()).apply();
+                } else {
+                    BaseActivity.editor.putString("updateMinute", "0").apply();
+                    limit(minuteInput, Integer.parseInt(s.toString()), 0, 0);
+                }
             }
 
             @Override
@@ -324,13 +337,15 @@ public class Configuration extends BaseActivity {
             switch (requestCode) {
                 case 1: {
                     urlET = findViewById(R.id.urlET);
-                    IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+                    IntentResult result = IntentIntegrator
+                            .parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
                     urlET.setText(result.getContents());
                 }
                 break;
                 case 2: {
                     apiET = findViewById(R.id.apiET);
-                    IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+                    IntentResult result = IntentIntegrator
+                            .parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
                     apiET.setText(result.getContents());
                 }
                 break;
@@ -359,6 +374,24 @@ public class Configuration extends BaseActivity {
                 }
                 default:
                     super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+    }
+
+    private void limit(EditText x,int z,int limin,int limax){
+//      https://stackoverflow.com/a/25366712
+        if ( x.getText().toString()==null || x.getText().toString().length()==0){
+            x.setText(Integer.toString(limin));
+        }
+        else {
+            z = Integer.parseInt(x.getText().toString());
+            if (z <limin || z>limax){
+                if (z < limin ){
+                    x.setText(Integer.toString(limin));
+                }
+                else if (z > limax){
+                    x.setText(Integer.toString(limax));
+                }
             }
         }
     }
