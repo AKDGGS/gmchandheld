@@ -1,8 +1,6 @@
 package gov.alaska.gmchandheld;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,7 +11,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -56,80 +53,74 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         addinventoryBarcodeET = findViewById(R.id.barcodeET);
-        final EditText addInveotryRemarkET = findViewById(R.id.remarkET);
-        final Button submit_button = findViewById(R.id.submitBtn);
+        EditText addInventoryRemarkET = findViewById(R.id.remarkET);
+        Button submit_button = findViewById(R.id.submitBtn);
         showIssuesTV = findViewById(R.id.showIssuesTV);
         if (!selectedItemsDisplayList.isEmpty()) {
             showIssuesTV.setText(listToString(selectedItemsDisplayList));
         }
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-//        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
             params.weight = 7.75f;
             params.rightMargin = 15;
             addinventoryBarcodeET.setLayoutParams(params);
-            addInveotryRemarkET.setLayoutParams(params);
+            addInventoryRemarkET.setLayoutParams(params);
             cameraBtn.setVisibility(View.GONE);
         } else {
             qrScan = new IntentIntegrator(this);
             qrScan.setBeepEnabled(true);
         }
-        cameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Build.VERSION.SDK_INT <= 24) {
-                    qrScan.initiateScan();
-                } else {
-                    Intent intent = new Intent(AddInventory.this, CameraToScanner.class);
-                    startActivityForResult(intent, 0);
-                }
+        cameraBtn.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT <= 24) {
+                qrScan.initiateScan();
+            } else {
+                Intent intent = new Intent(AddInventory.this, CameraToScanner.class);
+                startActivityForResult(intent, 0);
             }
         });
         // KeyListener listens if enter is pressed
-        addinventoryBarcodeET.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // if "enter" is pressed
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    addInveotryRemarkET.requestFocus();
-                    return true;
-                }
-                return false;
+        addinventoryBarcodeET.setOnKeyListener((v, keyCode, event) -> {
+            // if "enter" is pressed
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                addInventoryRemarkET.requestFocus();
+                return true;
             }
+            return false;
         });
         if (remoteApiUIHandler.isDownloading()) {
             // onClickListener listens if the submit button is clicked
-            submit_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    CheckConfiguration checkConfiguration = new CheckConfiguration();
-                    if (checkConfiguration.checkConfiguration(AddInventory.this)) {
-                        if (!(TextUtils.isEmpty(addinventoryBarcodeET.getText()))) {
-                            String container = addinventoryBarcodeET.getText().toString();
-                            if (!container.isEmpty()) {
-                                RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-                                RemoteApiUIHandler.setUrlFirstParameter(addinventoryBarcodeET.getText().toString());
-                                RemoteApiUIHandler.setAddContainerRemark(addInveotryRemarkET.getText().toString());
-                                RemoteApiUIHandler.setContainerList(selectedItems);
-                                remoteApiUIHandler.setDownloading(true);
-                                new RemoteApiUIHandler.ProcessDataForDisplay(AddInventory.this).execute();
-                            }
-                            addinventoryBarcodeET.setText("");
-                            addInveotryRemarkET.setText("");
-                            addinventoryBarcodeET.requestFocus();
-                            showIssuesTV.setText("");
-                            selectedItems.clear();
-                            selectedItemsDisplayList.clear();
-                            checkedItems = new boolean[numberOfIssues];
-                            checkedItems[0] = true;
-                            selectedItems.add("needs_inventory");
-                            selectedItemsDisplayList.add("Needs Inventory");
-                            showIssuesTV.setText(listToString(selectedItemsDisplayList));
+            submit_button.setOnClickListener(v -> {
+                CheckConfiguration checkConfiguration = new CheckConfiguration();
+                if (checkConfiguration.checkConfiguration(AddInventory.this)) {
+                    if (!(TextUtils.isEmpty(addinventoryBarcodeET.getText()))) {
+                        String container = addinventoryBarcodeET.getText().toString();
+                        if (!container.isEmpty()) {
+                            RemoteApiUIHandler remoteApiUIHandler1 = new RemoteApiUIHandler();
+                            RemoteApiUIHandler.setUrlFirstParameter(
+                                    addinventoryBarcodeET.getText().toString());
+                            RemoteApiUIHandler.setAddContainerRemark(
+                                    addInventoryRemarkET.getText().toString());
+                            RemoteApiUIHandler.setContainerList(selectedItems);
+                            remoteApiUIHandler1.setDownloading(true);
+                            new RemoteApiUIHandler.ProcessDataForDisplay(
+                                    AddInventory.this).execute();
                         }
+                        addinventoryBarcodeET.setText("");
+                        addInventoryRemarkET.setText("");
+                        addinventoryBarcodeET.requestFocus();
+                        showIssuesTV.setText("");
+                        selectedItems.clear();
+                        selectedItemsDisplayList.clear();
+                        checkedItems = new boolean[numberOfIssues];
+                        checkedItems[0] = true;
+                        selectedItems.add("needs_inventory");
+                        selectedItemsDisplayList.add("Needs Inventory");
+                        showIssuesTV.setText(listToString(selectedItemsDisplayList));
                     }
                 }
             });
