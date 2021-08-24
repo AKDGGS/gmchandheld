@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-	protected SharedPreferences sp;
+	protected static SharedPreferences sp;
 	protected final String SHARED_PREFS = "sharedPrefs";
 	protected static SharedPreferences.Editor editor;
 	public static String apiKeyBase = null;
@@ -71,6 +71,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(getLayoutResource());
 		configureToolbar();
+
+		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+		editor = sp.edit();
 	}
 
 	protected abstract int getLayoutResource();
@@ -82,27 +85,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 	}
-
-
-
-	//	@Override
-//	public void setContentView(int layoutResID) {
-//		super.setContentView(layoutResID);
-//		toolbar = findViewById(R.id.toolbar);
-//		setSupportActionBar(toolbar);
-//	}
-
-//	protected int getToolbarId(){
-//		toolbar = findViewById(R.id.toolbar);
-//		return toolbar.getId();
-//	}
-
-//	@Override
-//	protected void onCreate(@Nullable Bundle savedInstanceState) {
-//		super.onCreate(savedInstanceState);
-//		setContentView(getLayoutResource());
-//	}
-//	protected int getLayoutResource();
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

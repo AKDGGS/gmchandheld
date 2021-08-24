@@ -75,7 +75,7 @@ public class MoveContents extends BaseActivity {
 			}
 		});
 
-		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
 		Button fromCameraBtn = findViewById(R.id.fromCameraBtn);

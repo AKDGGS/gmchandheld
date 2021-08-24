@@ -41,10 +41,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 public class Configuration extends BaseActivity {
-
-    private SharedPreferences sp;
-    public static final String SHARED_PREFS = "sharedPrefs";
-    public static SharedPreferences.Editor editor;
     private ToggleButton autoUpdatebtn;
     private boolean alarmUp;
     private ToggleButton cameraToScannerbtn;
@@ -57,7 +53,6 @@ public class Configuration extends BaseActivity {
     private EditText urlET;
     private EditText apiET;
     private String url;
-    private String apiKey;
 
     @Override
     public int getLayoutResource() {
@@ -100,25 +95,20 @@ public class Configuration extends BaseActivity {
                 e.printStackTrace();
             }
         }
-
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             builder.detectFileUriExposure();
         }
-
-
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
-
         apiET = findViewById(R.id.apiET);
         autoUpdatebtn = findViewById(R.id.autoUpdateBtn);
         hourInput = findViewById(R.id.hourET);
         minuteInput = findViewById(R.id.minuteET);
         cameraToScannerbtn = findViewById(R.id.cameraToScannerBtn);
-        sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-        boolean cameraOn = (sp.getBoolean("cameraOn", false));
+        boolean cameraOn = (BaseActivity.sp.getBoolean("cameraOn", false));
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
         Button apiCameraBtn = findViewById(R.id.apiCameraBtn);
         if (!cameraOn) {
@@ -174,38 +164,36 @@ public class Configuration extends BaseActivity {
     }
 
     private void cameraToScannerChangeWatcher() {
-        cameraToScannerbtn.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
+        cameraToScannerbtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
-                    public void onCheckedChanged(CompoundButton compoundButton,
-                                                 boolean isChecked) {
-                        SharedPreferences.Editor editor = sp.edit();
+                    public void onCheckedChanged(CompoundButton compoundButton,boolean isChecked) {
                         if (isChecked) {
-                            editor.putBoolean("cameraOn", true).apply();
+                            BaseActivity.editor.putBoolean("cameraOn", true).apply();
                         } else {
-                            editor.putBoolean("cameraOn", false).commit();
+                            BaseActivity.editor.putBoolean("cameraOn", false).commit();
                         }
                     }
                 });
     }
 
     private void autoUpdateChangeWatcher() {
-        final Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
-        alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent, 0) != null);
+        final Intent intent = new Intent(Configuration.this,
+                UpdateBroadcastReceiver.class);
+        alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent,
+                0) != null);
         autoUpdatebtn.setChecked(alarmUp);
-        autoUpdatebtn.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
+        autoUpdatebtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton,
                                                  boolean isChecked) {
-                        SharedPreferences.Editor editor = sp.edit();
                         if (isChecked) {
-                            PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
-                            AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
+                            PendingIntent sender = PendingIntent.getBroadcast(
+                                    Configuration.this, 2, intent, 0);
+                            AlarmManager am = (AlarmManager) Configuration.this
+                                    .getSystemService(Context.ALARM_SERVICE);
                             if (am != null) {
-                                SharedPreferences sharedPreferences = Configuration.this.getSharedPreferences("sharedPrefs", MODE_PRIVATE);
-                                String hour = sharedPreferences.getString("updateHour", "24");
-                                String minute = sharedPreferences.getString("updateMinute", "0");
+                                hour = BaseActivity.sp.getString("updateHour", "24");
+                                minute = BaseActivity.sp.getString("updateMinute", "0");
                                 Calendar alarmOffTime = Calendar.getInstance();
                                 if (!hour.isEmpty()) {
                                     alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
@@ -225,8 +213,10 @@ public class Configuration extends BaseActivity {
                                 if (alarmOffTime.before(Calendar.getInstance())) {
                                     alarmOffTime.add(Calendar.DATE, 1);
                                 }
-                                editor.putBoolean("alarmOn", true);
-                                am.setRepeating(AlarmManager.RTC_WAKEUP, alarmOffTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
+                                BaseActivity.editor.putBoolean("alarmOn", true);
+                                am.setRepeating(AlarmManager.RTC_WAKEUP,
+                                        alarmOffTime.getTimeInMillis(),
+                                        AlarmManager.INTERVAL_DAY, sender);
                             }
                         } else {
                             Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
@@ -235,7 +225,7 @@ public class Configuration extends BaseActivity {
                             if (am != null) {
                                 am.cancel(sender);
                             }
-                            editor.putBoolean("alarmOn", true);
+                            BaseActivity.editor.putBoolean("alarmOn", true);
                         }
                     }
                 });
@@ -243,11 +233,9 @@ public class Configuration extends BaseActivity {
 
     private void urlInputChangeWatcher() {
         urlET.addTextChangedListener(new TextWatcher() {
-            SharedPreferences.Editor editor = sp.edit();
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("urlText", getUrl()).apply();
+                BaseActivity.editor.putString("urlText", getUrl()).apply();
             }
 
             @Override
@@ -265,11 +253,8 @@ public class Configuration extends BaseActivity {
 
     private void apiInputChangeWatcher() {
         apiET.addTextChangedListener(new TextWatcher() {
-//            SharedPreferences.Editor editor = sp.edit();
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                editor.putString("apiText", getApiKey()).apply();
                 BaseActivity.apiKeyBase = getApiKey();
             }
 
@@ -291,18 +276,16 @@ public class Configuration extends BaseActivity {
     }
 
     public void saveData() {
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("urlText", getUrl());
-        editor.putString("updateHour", hourInput.getText().toString());
-        editor.putString("updateMinute", minuteInput.getText().toString());
-        editor.putBoolean("cameraOn", cameraToScannerbtn.isChecked());
-        editor.putBoolean("alarmOn", autoUpdatebtn.isChecked());
-        editor.apply();
+        BaseActivity.editor.putString("urlText", getUrl());
+        BaseActivity.editor.putString("updateHour", hourInput.getText().toString());
+        BaseActivity.editor.putString("updateMinute", minuteInput.getText().toString());
+        BaseActivity.editor.putBoolean("cameraOn", cameraToScannerbtn.isChecked());
+        BaseActivity.editor.putBoolean("alarmOn", autoUpdatebtn.isChecked());
+        BaseActivity.editor.apply();
     }
 
     public void loadData() {
         url = sp.getString("urlText", "");
-        apiKey = BaseActivity.apiKeyBase;
         hour = sp.getString("updateHour", "24");
         minute = sp.getString("updateMinute", "0");
         autoUpdatebtn.setChecked(sp.getBoolean("alarmOn", true));
@@ -310,7 +293,7 @@ public class Configuration extends BaseActivity {
     }
 
     public void updateViews() {
-        urlET.setText(sp.getString("urlText", ""));
+        urlET.setText(BaseActivity.sp.getString("urlText", ""));
         apiET.setText(BaseActivity.apiKeyBase);
         hourInput.setText(hour);
         minuteInput.setText(minute);
@@ -320,12 +303,11 @@ public class Configuration extends BaseActivity {
 
     private void hourInputChangeWatcher() {
         hourInput.addTextChangedListener(new TextWatcher() {
-            SharedPreferences.Editor editor = sp.edit();
             String strBefore;
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("updateHour", hourInput.getText().toString()).apply();
+                BaseActivity.editor.putString("updateHour", hourInput.getText().toString()).apply();
             }
 
             @Override
@@ -345,11 +327,10 @@ public class Configuration extends BaseActivity {
 
     private void minuteInputChangeWatcher() {
         minuteInput.addTextChangedListener(new TextWatcher() {
-            SharedPreferences.Editor editor = sp.edit();
             String strBefore;
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("updateMinute", minuteInput.getText().toString()).apply();
+                BaseActivity.editor.putString("updateMinute", minuteInput.getText().toString()).apply();
             }
 
             @Override
@@ -370,7 +351,6 @@ public class Configuration extends BaseActivity {
     public void updateAPK() {
         new UpdateCheckLastModifiedDate(this).execute();
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

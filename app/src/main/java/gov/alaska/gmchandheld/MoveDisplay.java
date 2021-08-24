@@ -78,7 +78,7 @@ public class MoveDisplay extends BaseActivity {
 
 		moveCountTV.setText(String.valueOf(containerList.size()));
 
-		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//		final SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 
 		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 

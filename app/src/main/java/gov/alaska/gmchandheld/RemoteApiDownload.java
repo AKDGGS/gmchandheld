@@ -102,8 +102,8 @@ public class RemoteApiDownload {
     public void getDataFromURL() {
         InputStream inputStream;
         HttpURLConnection connection;
-        SharedPreferences sp = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
-        String url = sp.getString("urlText", "");
+//        SharedPreferences sp = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
+        String url = BaseActivity.sp.getString("urlText", "");
 
         try {
             String QUERYPARAM = null;

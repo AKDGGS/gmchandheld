@@ -72,7 +72,7 @@ public class TakePhoto extends BaseActivity {
     public void onRestart() {
         super.onRestart();
 
-        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
         View v = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
@@ -89,7 +89,7 @@ public class TakePhoto extends BaseActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("Photo");
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
@@ -245,8 +245,8 @@ public class TakePhoto extends BaseActivity {
                                                     .followRedirects(false)
                                                     .followSslRedirects(false)
                                                     .build();
-            SharedPreferences sharedPreferences = mActivity.get().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
-            String urlBase = sharedPreferences.getString("urlText", "");
+//            SharedPreferences sharedPreferences = mActivity.get().getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
+            String urlBase = BaseActivity.sp.getString("urlText", "");
             String url = urlBase + "/upload.json";
             if (barcodeEt.getText().toString().trim().length() != 0) {
                 barcode = barcodeEt.getText().toString().trim();

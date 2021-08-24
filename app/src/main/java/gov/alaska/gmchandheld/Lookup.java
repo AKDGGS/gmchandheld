@@ -66,7 +66,7 @@ public class Lookup extends BaseActivity {
 
 	public void loadLookup() {
 		LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
-		sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//		sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		boolean cameraOn = sp.getBoolean("cameraOn", false);
 
 		Button cameraBtn = findViewById(R.id.cameraBtn);

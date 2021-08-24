@@ -42,7 +42,7 @@ public class AddContainer extends BaseActivity {
 		final EditText addContainerRemarkET = findViewById(R.id.remarkET);
 		final Button submit_button = findViewById(R.id.submitBtn);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
 		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		if(!cameraOn){

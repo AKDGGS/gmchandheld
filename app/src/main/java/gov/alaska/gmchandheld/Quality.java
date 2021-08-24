@@ -78,7 +78,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
 
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
-        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
 
         Button cameraBtn = findViewById(R.id.cameraBtn);

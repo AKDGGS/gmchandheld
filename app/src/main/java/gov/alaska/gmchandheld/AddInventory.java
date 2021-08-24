@@ -65,7 +65,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             showIssuesTV.setText(listToString(selectedItemsDisplayList));
         }
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!cameraOn) {

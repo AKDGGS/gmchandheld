@@ -12,8 +12,8 @@ public class CheckConfiguration {
 	public static final String URL_TEXT = "urlText";
 
 	public boolean checkConfiguration(final Context mContext) {
-		SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		String url = sharedPreferences.getString(URL_TEXT, "");
+//		SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+		String url = BaseActivity.sp.getString(URL_TEXT, "");
 		if (url.isEmpty()) {
 			// setup the alert builder
 			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);

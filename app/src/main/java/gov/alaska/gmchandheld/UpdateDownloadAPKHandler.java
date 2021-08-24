@@ -81,8 +81,9 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         final String urlStr;
-                        SharedPreferences sharedPreferences = UpdateDownloadAPKHandler.this.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-                        urlStr = sharedPreferences.getString("urlText", "") + "app/current.apk";
+//                        SharedPreferences sharedPreferences = UpdateDownloadAPKHandler.this.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//                        urlStr = sharedPreferences.getString("urlText", "") + "app/current.apk";
+                        urlStr = BaseActivity.sp.getString("urlText", "") + "app/current.apk";
                         new DownloadFileFromURL(UpdateDownloadAPKHandler.this).execute(urlStr);
                     }
                 })

@@ -28,8 +28,9 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
     protected Long doInBackground(Void... voids) {
         String urlStr;
         Context mContext = mActivity.get();
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-        urlStr = sharedPreferences.getString("urlText", "") + "app/current.apk";
+//        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//        urlStr = sharedPreferences.getString("urlText", "") + "app/current.apk";
+        urlStr = BaseActivity.sp.getString("urlText", "") + "app/current.apk";
         HttpURLConnection httpCon;
         System.setProperty("http.keepAlive", "false");
         long lastModified = 0;
@@ -57,9 +58,10 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
         Context mContext = mActivity.get();
         //gets the last refused modified date from shared preferences. (The last refused modified date comes from
         //UpdateDownloadAPKHandler
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-        long lastRefusedUpdate = sharedPreferences.getLong("ignoreUpdateDateSP", 0);
+//        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
+//        long lastRefusedUpdate = sharedPreferences.getLong("ignoreUpdateDateSP", 0);
 
+        long lastRefusedUpdate = BaseActivity.sp.getLong("ignoreUpdateDateSP", 0);
         if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) & (buildDate.compareTo(updateBuildDate) < 0)) {
             // Update available
             final Intent intent = new Intent(mContext, UpdateDownloadAPKHandler.class);
