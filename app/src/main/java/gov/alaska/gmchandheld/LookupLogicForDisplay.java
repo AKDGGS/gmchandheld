@@ -4,10 +4,8 @@ import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,26 +14,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import gov.alaska.gmchandheld.comparators.SortInventoryObjectList;
 
 import static android.graphics.Typeface.BOLD;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class LookupLogicForDisplay {
-
 	private final List<String> keyList;
 	private final Map<String, List<SpannableStringBuilder>> displayDict;
 	private int ID;
 	private final NumberFormat nf = NumberFormat.getNumberInstance();
 	private boolean radiationWarningFlag;
-	private String typeFlag;
 	private final ArrayList<String> typeFlagList = new ArrayList<>();
 	private String barcodeQuery;
 	Context context;
-
-	public static final String SHARED_PREFS = "sharedPrefs";
-	public static final String SHOW_NAME_LABEL_SWITCH_TEXT = "showNameLabelSwitchText";
 
 	public LookupLogicForDisplay(Context context) {
 		this.context = context;
@@ -84,17 +76,14 @@ public class LookupLogicForDisplay {
 
 		if (rawJSON.trim().charAt(0) == '[') {
 			JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
-
 			InventoryObject root = parseTree(null, null, inputJson);
-
 			if (root != null) {
 				getStringForDisplay(root, 0, null, null, getDisplayDict());
 			}
 		} else if (rawJSON.trim().charAt(0) == '{') {
 			JSONObject inputJson = new JSONObject((rawJSON));  // check for jsonobject
-
-			InventoryObject root = parseTree(null, inputJson.opt("barcode").toString(), inputJson);
-
+			InventoryObject root = parseTree(null, inputJson.opt("barcode").toString(),
+					inputJson);
 			if (root != null) {
 				getStringForDisplay(root, 1, null, null, getDisplayDict());
 			}
@@ -103,19 +92,17 @@ public class LookupLogicForDisplay {
 
 //*********************************************************************************************
 
-	private void getStringForDisplay(InventoryObject o, int depth, String currKey, LinkedList<SpannableStringBuilder> displayList, Map<String, List<SpannableStringBuilder>> dict) {
-
+	private void getStringForDisplay(InventoryObject o, int depth, String currKey,
+									 LinkedList<SpannableStringBuilder> displayList,
+									 Map<String, List<SpannableStringBuilder>> dict) {
 		if (depth - 1 == 0) {
 			currKey = o.getName();
 			getKeyList().add(currKey);
 			displayList = new LinkedList<>();
 		}
-
 		Collections.sort(o.getChildren(), new SortInventoryObjectList());
-
 		SpannableStringBuilder ssb = new SpannableStringBuilder();
 		if (o.getName() != null && !o.getName().equals(currKey)) {
-
 			//Barcode is not added to the displayList because it is in the Label
 			if (!"Barcode".equals(o.getName())) {
 				for (int i = 0; i < depth - 1; i++) {
@@ -125,7 +112,6 @@ public class LookupLogicForDisplay {
 					ssb.append("   ");
 				}
 				int lengthOfSsb;
-
 				lengthOfSsb = ssb.length();
 				ssb.append(o.getName());
 				ssb.append(" ");
@@ -134,17 +120,18 @@ public class LookupLogicForDisplay {
 				}
 				ssb.setSpan(new StyleSpan(BOLD), lengthOfSsb,
 						lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-
 				int indentationIncrement = 42; //Arbitrary Value
-
 				if (!Character.isWhitespace(ssb.charAt(3))) {
 					ssb = createIndentedText(ssb, 3, indentationIncrement);
 				} else if (!Character.isWhitespace(ssb.charAt(6))) {
-					ssb = createIndentedText(ssb, 6, indentationIncrement * 2);
+					ssb = createIndentedText(ssb, 6,
+							indentationIncrement * 2);
 				} else if (!Character.isWhitespace(ssb.charAt(9))) {
-					ssb = createIndentedText(ssb, 9, indentationIncrement * 3);
+					ssb = createIndentedText(ssb, 9,
+							indentationIncrement * 3);
 				} else {
-					ssb = createIndentedText(ssb, 0, indentationIncrement * 4);
+					ssb = createIndentedText(ssb, 0,
+							indentationIncrement * 4);
 				}
 				displayList.add(ssb);
 				dict.put(currKey, displayList);
@@ -152,7 +139,6 @@ public class LookupLogicForDisplay {
 		}
 
 		for (InventoryObject child : o.getChildren()) {
-
 			if (child.getName() != null) {
 				getStringForDisplay(child, depth + 1, currKey, displayList, dict);
 			}
@@ -162,20 +148,16 @@ public class LookupLogicForDisplay {
 //*********************************************************************************************
 
 	public InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
-
 		switch (o.getClass().getName()) {
 			case "org.json.JSONObject":
 				return handleObject(parent, name, (JSONObject) o);
-
 			case "org.json.JSONArray":
 				return handleArray(parent, name, (JSONArray) o);
-
 			case "java.lang.String":
 			case "java.lang.Boolean":
 			case "java.lang.Integer":
 			case "java.lang.Double":
 				return handleSimple(parent, name, o);
-
 			default:
 				System.out.println("Unhandled class: " + o.getClass().getName());
 				return null;
@@ -184,10 +166,8 @@ public class LookupLogicForDisplay {
 
 	//*********************************************************************************************
 
-	private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
-
+	private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception{
 		InventoryObject io;
-
 		if (name == null) {
 			if (!"".equals(o.optString("ID"))) {
 				String newName = "ID " + o.optInt("ID");
@@ -208,7 +188,6 @@ public class LookupLogicForDisplay {
 				case "measuredDepthUnit":
 				case "unit":
 					return null;
-
 				//Create these nodes
 				case "boreholes": {
 					String id = o.optString("ID");
@@ -222,7 +201,7 @@ public class LookupLogicForDisplay {
 				}
 				case "collection":
 					if (o.has("name")) {
-						return new InventoryObject("Collection", o.get("name"), 500);
+						return new InventoryObject("Collection", o.get("name"),500);
 					}
 					return null;
 				case "operators": {
@@ -304,12 +283,10 @@ public class LookupLogicForDisplay {
 				}
 			}
 		}
-
 		for (Iterator<String> it = o.keys(); it.hasNext(); ) {
 			String key = it.next();
 			io.addChild(parseTree(o, key, o.get(key)));
 		}
-
 		if (typeFlagList.isEmpty()) {
 			typeFlagList.add("No type");
 		}
@@ -321,7 +298,6 @@ public class LookupLogicForDisplay {
 	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws
 			Exception {
 		InventoryObject io;
-
 		if (name == null) {
 			io = new InventoryObject(name);
 		} else {
@@ -338,7 +314,6 @@ public class LookupLogicForDisplay {
 					}
 					return new InventoryObject("Keywords", sb.toString(), 800);
 				}
-
 				//Create these nodes
 				case "boreholes":
 					io = new InventoryObject("Boreholes", null, 100);
@@ -365,7 +340,6 @@ public class LookupLogicForDisplay {
 					io = new InventoryObject(name);
 			}
 		}
-
 		for (int i = 0; i < a.length(); i++) {
 			io.addChild(parseTree(a, name, a.get(i)));
 		}
@@ -375,12 +349,10 @@ public class LookupLogicForDisplay {
 //*********************************************************************************************
 
 	private InventoryObject handleSimple(Object parent, String name, Object o) {
-
 		// Simple values should always have a name
 		if (name == null) {
 			return null;
 		}
-
 		switch (name) {
 			// Higher the displayWeight, the higher a priority an key has.
 			// Items are sorted internally first, and the externally in processForDisplay()
@@ -484,13 +456,11 @@ public class LookupLogicForDisplay {
 					if (o instanceof Double) {
 						String val = nf.format(o);
 						String abbr = "";
-
 						JSONObject iu = pjo.optJSONObject("intervalUnit");
 						if (iu != null) {
 							abbr = iu.optString("abbr");
 							val += " " + abbr;
 						}
-
 						Double ib = pjo.optDouble("intervalBottom");
 						if (!ib.isNaN()) {
 							String valBot = nf.format(ib);
@@ -514,11 +484,9 @@ public class LookupLogicForDisplay {
 			case "measuredDepth": {
 				if (parent instanceof JSONObject) {
 					JSONObject pjo = (JSONObject) parent;
-
 					if (o instanceof Double) {
 						String val = nf.format(o);
 						String abbr;
-
 						JSONObject u = pjo.optJSONObject("measuredDepthUnit");
 						if (u == null) {
 							u = pjo.optJSONObject("unit");
@@ -539,7 +507,6 @@ public class LookupLogicForDisplay {
 			case "onshore":
 				if (parent instanceof JSONObject) {
 					JSONObject pjo = (JSONObject) parent;
-
 					if (o instanceof Boolean) {
 						if ((boolean) o) {
 							name = "Onshore";
@@ -577,13 +544,10 @@ public class LookupLogicForDisplay {
 			case "verticalDepth": {
 				if (parent instanceof JSONObject) {
 					JSONObject pjo = (JSONObject) parent;
-
 					if (o instanceof Double) {
 						String val = nf.format(o);
 						String abbr;
-
 						JSONObject u = pjo.optJSONObject("unit");
-
 						if (u != null) {
 							abbr = u.optString("abbr");
 							val += " " + abbr;
