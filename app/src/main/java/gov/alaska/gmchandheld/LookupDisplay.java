@@ -19,10 +19,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 public class LookupDisplay extends BaseActivity {
@@ -42,11 +38,6 @@ public class LookupDisplay extends BaseActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -61,10 +52,13 @@ public class LookupDisplay extends BaseActivity {
                     invisibleEditText.setText("");
                 }
                 if (invisibleEditText.getText().toString().trim().length() != 0) {
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                            (keyCode == KeyEvent.KEYCODE_ENTER)) {
                         remoteApiUIHandler.setDownloading(true);
-                        RemoteApiUIHandler.setUrlFirstParameter(invisibleEditText.getText().toString());
-                        new RemoteApiUIHandler.ProcessDataForDisplay(LookupDisplay.this).execute();
+                        RemoteApiUIHandler
+                                .setUrlFirstParameter(invisibleEditText.getText().toString());
+                        new RemoteApiUIHandler
+                                .ProcessDataForDisplay(LookupDisplay.this).execute();
                         return true;
                     }
                 } else {
@@ -73,52 +67,46 @@ public class LookupDisplay extends BaseActivity {
                 return false;
             }
         });
-        LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
+        LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
+                .getInstance().lookupLogicForDisplayObj;
         SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
-        SpannableString subtitle = new SpannableString(lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
+        SpannableString subtitle = new SpannableString(
+                lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
         if (getSupportActionBar() != null) {
             if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 LookupDisplay.this.getSupportActionBar().setTitle(title);
                 if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0,
+                            subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
                 }
                 if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
                     LookupDisplay.this.getSupportActionBar()
-                                      .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
+                                      .setBackgroundDrawable(new ColorDrawable(ContextCompat
+                                              .getColor(this, R.color.colorRadiation)));
                 }
             }
         }
         if (lookupLogicForDisplayObj != null) {
             Intent intent = getIntent();
-            String barcode = intent.getStringExtra("barcode");  //this barcode refers to the query barcode.
+            //this barcode refers to the query barcode.
+            String barcode = intent.getStringExtra("barcode");
             if (barcode != null) {
-                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-//                LookupDisplay.this.getSupportActionBar().setTitle(title);
-//                if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
-//                    LookupDisplay.this.getSupportActionBar()
-//                                      .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRadiation)));
-//                }
-//                if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-//                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
-//                }
+                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this, lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
+            ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this,
+                    lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
             expandableListView.setAdapter(listAdapter);
             if (listAdapter.getGroupCount() >= 1) {
                 for (int i = 0; i < listAdapter.getGroupCount(); i++) {
                     expandableListView.expandGroup(i);
                 }
             }
-            expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-                @Override
-                public boolean onGroupClick(ExpandableListView parent, View v,
-                                            int groupPosition, long id) {
-                    return true; // This prevents the expander from being collapsed
-                }
+            expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+                return true; // This prevents the expander from being collapsed
             });
         }
     }
@@ -141,7 +129,6 @@ public class LookupDisplay extends BaseActivity {
         if (lookupLogicForDisplayObj.getDisplayDict().toString().contains("radiation_risk")) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.radiation_menu, menu);
-
         } else {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.main_menu, menu);
