@@ -26,11 +26,14 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.LinkedList;
 
 public class Summary extends BaseActivity {
-
     private ListView listView;
-    private final LinkedList<String> summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
+    private final LinkedList<String> summaryHistory;
     private EditText barcodeET;
     private IntentIntegrator qrScan;
+
+    public Summary() {
+        summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
+    }
 
     @Override
     public int getLayoutResource() {
@@ -49,14 +52,8 @@ public class Summary extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = null;
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        }
-//        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         barcodeET = findViewById(R.id.barcodeET);
-        final Button submitButton = findViewById(R.id.submitBtn);
+        Button submitButton = findViewById(R.id.submitBtn);
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
         // populates the history list
         listView = findViewById(R.id.listViewSummaryHistory);
@@ -64,7 +61,6 @@ public class Summary extends BaseActivity {
         adapter.addAll(summaryHistory);
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
-//        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
         boolean cameraOn = (sp.getBoolean("cameraOn", false));
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
@@ -84,43 +80,32 @@ public class Summary extends BaseActivity {
                 }
             }
         });
-
         // Submit barcode query
         if (remoteApiUIHandler.isDownloading()) {
             // onClickListener listens if the submit button is clicked
-            submitButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    CheckConfiguration checkConfiguration = new CheckConfiguration();
-                    if (checkConfiguration.checkConfiguration(Summary.this)) {
-                        if (!getBarcode().isEmpty()) {
-                            remoteApiUIHandler.setDownloading(true);
-                            RemoteApiUIHandler.setUrlFirstParameter(getBarcode());
-                            new RemoteApiUIHandler.ProcessDataForDisplay(Summary.this).execute();
-                        }
+            submitButton.setOnClickListener(v -> {
+                CheckConfiguration checkConfiguration = new CheckConfiguration();
+                if (checkConfiguration.checkConfiguration(Summary.this)) {
+                    if (!getBarcode().isEmpty()) {
+                        remoteApiUIHandler.setDownloading(true);
+                        RemoteApiUIHandler.setUrlFirstParameter(getBarcode());
+                        new RemoteApiUIHandler.ProcessDataForDisplay(Summary.this).execute();
                     }
                 }
             });
-
             // KeyListener listens if enter is pressed
-            barcodeET.setOnKeyListener(new View.OnKeyListener() {
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    // if "enter" is pressed
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        submitButton.performClick();
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-            // Clicking barcode in history list.
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    barcodeET.setText(listView.getItemAtPosition(position).toString());
+            barcodeET.setOnKeyListener((v, keyCode, event) -> {
+                // if "enter" is pressed
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     submitButton.performClick();
+                    return true;
                 }
+                return false;
+            });
+            // Clicking barcode in history list.
+            listView.setOnItemClickListener((parent, view, position, id) -> {
+                barcodeET.setText(listView.getItemAtPosition(position).toString());
+                submitButton.performClick();
             });
         }
     }
@@ -161,9 +146,7 @@ public class Summary extends BaseActivity {
         int action, keycode;
         action = event.getAction();
         keycode = event.getKeyCode();
-
         AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-
         switch (keycode) {
             case KeyEvent.KEYCODE_DPAD_UP:
             case KeyEvent.KEYCODE_VOLUME_UP: {
@@ -179,11 +162,9 @@ public class Summary extends BaseActivity {
             }
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_VOLUME_DOWN: {
-
                 if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
                     listView.smoothScrollToPosition(listView.getCount());
                 }
-
                 if (KeyEvent.ACTION_UP == action) {
                     listView.smoothScrollByOffset(3);
                 }
