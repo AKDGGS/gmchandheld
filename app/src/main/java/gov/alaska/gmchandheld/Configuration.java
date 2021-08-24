@@ -16,31 +16,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import androidx.annotation.Nullable;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 
 public class Configuration extends BaseActivity {
-    private ToggleButton autoUpdatebtn;
-    private boolean alarmUp;
-    private ToggleButton cameraToScannerbtn;
+    private ToggleButton autoUpdateBtn;
+    private ToggleButton cameraToScannerBtn;
     private IntentIntegrator urlQrScan;
     private IntentIntegrator apiQrScan;
     private EditText hourInput;
     private EditText minuteInput;
-    private String hour = "24";
-    private String minute = "0";
+    private String hour;
+    private String minute;
     private EditText urlET;
     private EditText apiET;
     private String url;
@@ -76,10 +68,10 @@ public class Configuration extends BaseActivity {
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
         apiET = findViewById(R.id.apiET);
-        autoUpdatebtn = findViewById(R.id.autoUpdateBtn);
+        autoUpdateBtn = findViewById(R.id.autoUpdateBtn);
         hourInput = findViewById(R.id.hourET);
         minuteInput = findViewById(R.id.minuteET);
-        cameraToScannerbtn = findViewById(R.id.cameraToScannerBtn);
+        cameraToScannerBtn = findViewById(R.id.cameraToScannerBtn);
         boolean cameraOn = (BaseActivity.sp.getBoolean("cameraOn", false));
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
         Button apiCameraBtn = findViewById(R.id.apiCameraBtn);
@@ -136,71 +128,73 @@ public class Configuration extends BaseActivity {
     }
 
     private void cameraToScannerChangeWatcher() {
-        cameraToScannerbtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton,boolean isChecked) {
-                        if (isChecked) {
-                            BaseActivity.editor.putBoolean("cameraOn", true).apply();
-                        } else {
-                            BaseActivity.editor.putBoolean("cameraOn", false).commit();
-                        }
-                    }
-                });
+        cameraToScannerBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton,boolean isChecked) {
+                if (isChecked) {
+                    BaseActivity.editor.putBoolean("cameraOn", true).apply();
+                } else {
+                    BaseActivity.editor.putBoolean("cameraOn", false).commit();
+                }
+            }
+        });
     }
 
     private void autoUpdateChangeWatcher() {
         final Intent intent = new Intent(Configuration.this,
                 UpdateBroadcastReceiver.class);
-        alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent,
+        boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2, intent,
                 0) != null);
-        autoUpdatebtn.setChecked(alarmUp);
-        autoUpdatebtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton,
-                                                 boolean isChecked) {
-                        if (isChecked) {
-                            PendingIntent sender = PendingIntent.getBroadcast(
-                                    Configuration.this, 2, intent, 0);
-                            AlarmManager am = (AlarmManager) Configuration.this
-                                    .getSystemService(Context.ALARM_SERVICE);
-                            if (am != null) {
-                                hour = BaseActivity.sp.getString("updateHour", "24");
-                                minute = BaseActivity.sp.getString("updateMinute", "0");
-                                Calendar alarmOffTime = Calendar.getInstance();
-                                if (!hour.isEmpty()) {
-                                    alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-                                } else {
-                                    alarmOffTime.set(Calendar.HOUR_OF_DAY, 24);
-                                    hourInput = findViewById(R.id.hourET);
-                                    hourInput.setText("24");
-                                }
-                                if (!minute.isEmpty()) {
-                                    alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
-                                } else {
-                                    alarmOffTime.set(Calendar.MINUTE, 0);
-                                    minuteInput = findViewById(R.id.minuteET);
-                                    minuteInput.setText("0");
-                                }
-                                alarmOffTime.set(Calendar.SECOND, 0);
-                                if (alarmOffTime.before(Calendar.getInstance())) {
-                                    alarmOffTime.add(Calendar.DATE, 1);
-                                }
-                                BaseActivity.editor.putBoolean("alarmOn", true);
-                                am.setRepeating(AlarmManager.RTC_WAKEUP,
-                                        alarmOffTime.getTimeInMillis(),
-                                        AlarmManager.INTERVAL_DAY, sender);
-                            }
+        autoUpdateBtn.setChecked(alarmUp);
+        autoUpdateBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    PendingIntent sender = PendingIntent.getBroadcast(
+                            Configuration.this, 2, intent, 0);
+                    AlarmManager am = (AlarmManager) Configuration.this
+                            .getSystemService(Context.ALARM_SERVICE);
+                    if (am != null) {
+                        hour = BaseActivity.sp.getString("updateHour", "24");
+                        minute = BaseActivity.sp.getString("updateMinute", "0");
+                        Calendar alarmOffTime = Calendar.getInstance();
+                        if (!hour.isEmpty()) {
+                            alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
                         } else {
-                            Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
-                            PendingIntent sender = PendingIntent.getBroadcast(Configuration.this, 2, intent, 0);
-                            AlarmManager am = (AlarmManager) Configuration.this.getSystemService(Context.ALARM_SERVICE);
-                            if (am != null) {
-                                am.cancel(sender);
-                            }
-                            BaseActivity.editor.putBoolean("alarmOn", true);
+                            alarmOffTime.set(Calendar.HOUR_OF_DAY, 24);
+                            hourInput = findViewById(R.id.hourET);
+                            hourInput.setText("24");
                         }
+                        if (!minute.isEmpty()) {
+                            alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
+                        } else {
+                            alarmOffTime.set(Calendar.MINUTE, 0);
+                            minuteInput = findViewById(R.id.minuteET);
+                            minuteInput.setText("0");
+                        }
+                        alarmOffTime.set(Calendar.SECOND, 0);
+                        if (alarmOffTime.before(Calendar.getInstance())) {
+                            alarmOffTime.add(Calendar.DATE, 1);
+                        }
+                        BaseActivity.editor.putBoolean("alarmOn", true);
+                        am.setRepeating(AlarmManager.RTC_WAKEUP,
+                                alarmOffTime.getTimeInMillis(),
+                                AlarmManager.INTERVAL_DAY, sender);
                     }
-                });
+                } else {
+                    Intent intent = new Intent(Configuration.this,
+                            UpdateBroadcastReceiver.class);
+                    PendingIntent sender = PendingIntent.getBroadcast(
+                            Configuration.this, 2, intent, 0);
+                    AlarmManager am = (AlarmManager) Configuration.this
+                            .getSystemService(Context.ALARM_SERVICE);
+                    if (am != null) {
+                        am.cancel(sender);
+                    }
+                    BaseActivity.editor.putBoolean("alarmOn", true);
+                }
+            }
+        });
     }
 
     private void urlInputChangeWatcher() {
@@ -251,8 +245,8 @@ public class Configuration extends BaseActivity {
         BaseActivity.editor.putString("urlText", getUrl());
         BaseActivity.editor.putString("updateHour", hourInput.getText().toString());
         BaseActivity.editor.putString("updateMinute", minuteInput.getText().toString());
-        BaseActivity.editor.putBoolean("cameraOn", cameraToScannerbtn.isChecked());
-        BaseActivity.editor.putBoolean("alarmOn", autoUpdatebtn.isChecked());
+        BaseActivity.editor.putBoolean("cameraOn", cameraToScannerBtn.isChecked());
+        BaseActivity.editor.putBoolean("alarmOn", autoUpdateBtn.isChecked());
         BaseActivity.editor.apply();
     }
 
@@ -260,17 +254,17 @@ public class Configuration extends BaseActivity {
         url = sp.getString("urlText", "");
         hour = sp.getString("updateHour", "24");
         minute = sp.getString("updateMinute", "0");
-        autoUpdatebtn.setChecked(sp.getBoolean("alarmOn", true));
-        cameraToScannerbtn.setChecked(sp.getBoolean("cameraOn", false));
+        autoUpdateBtn.setChecked(sp.getBoolean("alarmOn", true));
+        cameraToScannerBtn.setChecked(sp.getBoolean("cameraOn", false));
     }
 
     public void updateViews() {
         urlET.setText(BaseActivity.sp.getString("urlText", ""));
         apiET.setText(BaseActivity.apiKeyBase);
-        hourInput.setText(hour);
-        minuteInput.setText(minute);
-        autoUpdatebtn.setChecked(sp.getBoolean("alarmOn", true));
-        cameraToScannerbtn.setChecked(sp.getBoolean("cameraOn", false));
+        hourInput.setText(sp.getString("updateHour", "24"));
+        minuteInput.setText(sp.getString("updateMinute", "0"));
+        autoUpdateBtn.setChecked(sp.getBoolean("alarmOn", true));
+        cameraToScannerBtn.setChecked(sp.getBoolean("cameraOn", false));
     }
 
     private void hourInputChangeWatcher() {
@@ -290,8 +284,8 @@ public class Configuration extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if(!s.toString().equals(strBefore)){
-                    autoUpdatebtn.setChecked(false);
-                    autoUpdatebtn.setChecked(true);
+                    autoUpdateBtn.setChecked(false);
+                    autoUpdateBtn.setChecked(true);
                 }
             }
         });
@@ -313,8 +307,8 @@ public class Configuration extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if(!s.toString().equals(strBefore)){
-                    autoUpdatebtn.setChecked(false);
-                    autoUpdatebtn.setChecked(true);
+                    autoUpdateBtn.setChecked(false);
+                    autoUpdateBtn.setChecked(true);
                 }
             }
         });

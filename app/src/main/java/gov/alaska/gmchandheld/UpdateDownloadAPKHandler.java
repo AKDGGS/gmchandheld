@@ -67,7 +67,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Toast.makeText(UpdateDownloadAPKHandler.this, "Ignore This Update.", Toast.LENGTH_LONG).show();
-
                         //If a user refuses an update, the last modified date for that update is saved in shared preferences,
                         SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
                         Configuration.editor = sp.edit();
@@ -81,8 +80,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity implements Dialo
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         final String urlStr;
-//                        SharedPreferences sharedPreferences = UpdateDownloadAPKHandler.this.getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-//                        urlStr = sharedPreferences.getString("urlText", "") + "app/current.apk";
                         urlStr = BaseActivity.sp.getString("urlText", "") + "app/current.apk";
                         new DownloadFileFromURL(UpdateDownloadAPKHandler.this).execute(urlStr);
                     }
