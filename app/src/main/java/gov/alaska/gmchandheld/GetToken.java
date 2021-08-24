@@ -37,26 +37,7 @@ public class GetToken extends BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            // enables TSL-1.2 if Google Play is updated on old devices.
-            // doesn't work with emulators
-            // https://stackoverflow.com/a/29946540
-            ProviderInstaller.installIfNeeded(this.getApplicationContext());
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-        SSLContext sslContext = null;
-        try {
-            sslContext = SSLContext.getInstance("TLSv1.2");
-            sslContext.init(null, null, null);
-            SSLEngine engine = sslContext.createSSLEngine();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
+        enableTSL(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         apiTokenET = findViewById(R.id.apiTokenET);
         apiTokenET.requestFocus();

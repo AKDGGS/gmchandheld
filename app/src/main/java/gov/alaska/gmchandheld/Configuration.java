@@ -4,8 +4,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -16,12 +14,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import android.widget.ToggleButton;
-
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -29,14 +23,11 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -74,26 +65,7 @@ public class Configuration extends BaseActivity {
         urlET = findViewById(R.id.urlET);
         urlET.requestFocus();
         if (urlET.getText().toString().isEmpty()) {
-            try {
-                // enables TSL-1.2 if Google Play is updated on old devices.
-                // doesn't work with emulators
-                // https://stackoverflow.com/a/29946540
-                ProviderInstaller.installIfNeeded(this.getApplicationContext());
-            } catch (GooglePlayServicesRepairableException e) {
-                e.printStackTrace();
-            } catch (GooglePlayServicesNotAvailableException e) {
-                e.printStackTrace();
-            }
-            SSLContext sslContext = null;
-            try {
-                sslContext = SSLContext.getInstance("TLSv1.2");
-                sslContext.init(null, null, null);
-                SSLEngine engine = sslContext.createSSLEngine();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            }
+            enableTSL(this);
         }
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
