@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -52,6 +53,15 @@ public class Configuration extends BaseActivity {
         if (urlET.getText().toString().isEmpty()) {
             enableTSL(this);
         }
+        // KeyListener listens if enter is pressed
+        urlET.setOnKeyListener((v, keyCode, event) -> {
+            // if "enter" is pressed
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                apiET.requestFocus();
+                return true;
+            }
+            return false;
+        });
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -138,53 +148,50 @@ public class Configuration extends BaseActivity {
         boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2,
                 intent,0) != null);
         autoUpdateBtn.setChecked(alarmUp);
-        autoUpdateBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    PendingIntent sender = PendingIntent.getBroadcast(
-                            Configuration.this, 2, intent, 0);
-                    AlarmManager am = (AlarmManager) Configuration.this
-                            .getSystemService(Context.ALARM_SERVICE);
-                    if (am != null) {
-                        hour = BaseActivity.sp.getString("updateHour", "24");
-                        minute = BaseActivity.sp.getString("updateMinute", "0");
-                        Calendar alarmOffTime = Calendar.getInstance();
-                        if (!hour.isEmpty()) {
-                            alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-                        } else {
-                            alarmOffTime.set(Calendar.HOUR_OF_DAY, 24);
-                            hourInput = findViewById(R.id.hourET);
-                            hourInput.setText("24");
-                        }
-                        if (!minute.isEmpty()) {
-                            alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
-                        } else {
-                            alarmOffTime.set(Calendar.MINUTE, 0);
-                            minuteInput = findViewById(R.id.minuteET);
-                            minuteInput.setText("0");
-                        }
-                        alarmOffTime.set(Calendar.SECOND, 0);
-                        if (alarmOffTime.before(Calendar.getInstance())) {
-                            alarmOffTime.add(Calendar.DATE, 1);
-                        }
-                        BaseActivity.editor.putBoolean("alarmOn", true);
-                        am.setRepeating(AlarmManager.RTC_WAKEUP,
-                                alarmOffTime.getTimeInMillis(),
-                                AlarmManager.INTERVAL_DAY, sender);
+        autoUpdateBtn.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                PendingIntent sender = PendingIntent.getBroadcast(
+                        Configuration.this, 2, intent, 0);
+                AlarmManager am = (AlarmManager) Configuration.this
+                        .getSystemService(Context.ALARM_SERVICE);
+                if (am != null) {
+                    hour = BaseActivity.sp.getString("updateHour", "24");
+                    minute = BaseActivity.sp.getString("updateMinute", "0");
+                    Calendar alarmOffTime = Calendar.getInstance();
+                    if (!hour.isEmpty()) {
+                        alarmOffTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+                    } else {
+                        alarmOffTime.set(Calendar.HOUR_OF_DAY, 24);
+                        hourInput = findViewById(R.id.hourET);
+                        hourInput.setText("24");
                     }
-                } else {
-                    Intent intent = new Intent(Configuration.this,
-                            UpdateBroadcastReceiver.class);
-                    PendingIntent sender = PendingIntent.getBroadcast(
-                            Configuration.this, 2, intent, 0);
-                    AlarmManager am = (AlarmManager) Configuration.this
-                            .getSystemService(Context.ALARM_SERVICE);
-                    if (am != null) {
-                        am.cancel(sender);
+                    if (!minute.isEmpty()) {
+                        alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
+                    } else {
+                        alarmOffTime.set(Calendar.MINUTE, 0);
+                        minuteInput = findViewById(R.id.minuteET);
+                        minuteInput.setText("0");
+                    }
+                    alarmOffTime.set(Calendar.SECOND, 0);
+                    if (alarmOffTime.before(Calendar.getInstance())) {
+                        alarmOffTime.add(Calendar.DATE, 1);
                     }
                     BaseActivity.editor.putBoolean("alarmOn", true);
+                    am.setRepeating(AlarmManager.RTC_WAKEUP,
+                            alarmOffTime.getTimeInMillis(),
+                            AlarmManager.INTERVAL_DAY, sender);
                 }
+            } else {
+                Intent intent1 = new Intent(Configuration.this,
+                        UpdateBroadcastReceiver.class);
+                PendingIntent sender = PendingIntent.getBroadcast(
+                        Configuration.this, 2, intent1, 0);
+                AlarmManager am = (AlarmManager) Configuration.this
+                        .getSystemService(Context.ALARM_SERVICE);
+                if (am != null) {
+                    am.cancel(sender);
+                }
+                BaseActivity.editor.putBoolean("alarmOn", true);
             }
         });
     }

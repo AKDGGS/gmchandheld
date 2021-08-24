@@ -79,7 +79,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(getLayoutResource());
 		configureToolbar();
-
 		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 		editor = sp.edit();
 	}
@@ -90,7 +89,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		toolbar = findViewById(R.id.toolbar);
 		if (toolbar != null) {
 			setSupportActionBar(toolbar);
-			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+			getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		}
 	}
 

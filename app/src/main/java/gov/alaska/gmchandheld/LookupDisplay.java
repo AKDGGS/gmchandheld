@@ -49,8 +49,8 @@ public class LookupDisplay extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         expandableListView = findViewById(R.id.expandableListView);
-
         invisibleEditText = findViewById(R.id.invisibleEditText);
         invisibleEditText.setInputType(InputType.TYPE_NULL);
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
