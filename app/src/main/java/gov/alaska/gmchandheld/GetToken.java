@@ -1,8 +1,6 @@
 package gov.alaska.gmchandheld;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -10,46 +8,34 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 
-
-public class GetToken extends BaseActivity{
+public class GetToken extends AppCompatActivity {
     private EditText apiTokenET;
     private IntentIntegrator apiQrScan;
     private Button submitBtn;
 
     @Override
-    public int getLayoutResource() {
-        return R.layout.activity_get_token;
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableTSL(this);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        setContentView(R.layout.activity_get_token);
         apiTokenET = findViewById(R.id.apiTokenET);
         apiTokenET.requestFocus();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("GMC Handheld");
         loadGetToken();
     }
 
     public void loadGetToken() {
         LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
-
-        sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         apiTokenET = findViewById(R.id.apiTokenET);
-        boolean cameraOn = (sp.getBoolean("cameraOn", false));
+        boolean cameraOn = (BaseActivity.sp.getBoolean("cameraOn", false));
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
             cameraBtn.setVisibility(View.GONE);
@@ -57,36 +43,28 @@ public class GetToken extends BaseActivity{
             apiQrScan = new IntentIntegrator(this);
             apiQrScan.setBeepEnabled(true);
         }
-        cameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Build.VERSION.SDK_INT <= 24) {
-                    apiQrScan.initiateScan();
-                } else {
-                    Intent intent = new Intent(GetToken.this, CameraToScanner.class);
-                    startActivityForResult(intent, 0);
-                }
+        cameraBtn.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT <= 24) {
+                apiQrScan.initiateScan();
+            } else {
+                Intent intent = new Intent(GetToken.this, CameraToScanner.class);
+                startActivityForResult(intent, 0);
             }
         });
         submitBtn = findViewById(R.id.submitBtn);
-        submitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!apiTokenET.getText().toString().isEmpty()) {
-                    BaseActivity.apiKeyBase = apiTokenET.getText().toString();
-                    finish();
-                }
+        submitBtn.setOnClickListener(v -> {
+            if (!apiTokenET.getText().toString().isEmpty()) {
+                BaseActivity.apiKeyBase = apiTokenET.getText().toString();
+                finish();
             }
         });
-        apiTokenET.setOnKeyListener(new EditText.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // if "enter" is pressed
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    submitBtn.performClick();
-                    return true;
-                }
-                return false;
+        apiTokenET.setOnKeyListener((v, keyCode, event) -> {
+            // if "enter" is pressed
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                submitBtn.performClick();
+                return true;
             }
+            return false;
         });
     }
 
@@ -103,9 +81,9 @@ public class GetToken extends BaseActivity{
                 GetToken.this.startActivity(intent);
             }
         } else {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
+            if (resultCode == CommonStatusCodes.SUCCESS && null != data ) {
                 Barcode barcode = data.getParcelableExtra("barcode");
-                if (null != barcode.displayValue) {
+                if (null != barcode) {
                     apiTokenET.setText(barcode.displayValue);
                 }
             } else {

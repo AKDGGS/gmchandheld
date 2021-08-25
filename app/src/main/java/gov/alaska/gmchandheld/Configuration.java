@@ -48,6 +48,7 @@ public class Configuration extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkUrlUsesHttps(this);
         urlET = findViewById(R.id.urlET);
         urlET.requestFocus();
         if (urlET.getText().toString().isEmpty()) {

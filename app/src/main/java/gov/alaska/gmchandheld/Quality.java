@@ -62,7 +62,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        checkAPIkeyExists(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
         setSupportActionBar(toolbar);

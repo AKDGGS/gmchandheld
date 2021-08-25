@@ -35,6 +35,7 @@ public class MoveContents extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		checkAPIkeyExists(this);
 		moveContentsFromET = findViewById(R.id.fromET);
 		moveContentsToET = findViewById(R.id.toET);
 		Button submitBtn = findViewById(R.id.submitBtn);

@@ -21,9 +21,7 @@ import java.util.ArrayList;
 public class AddInventory extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
     private IntentIntegrator qrScan;
     private EditText addinventoryBarcodeET;
-    private Button issuesBtn;
     private TextView showIssuesTV;
-    private ArrayList<String> issuesList;
     private static int numberOfIssues;
     public static ArrayList<String> selectedItems;
     public static boolean[] checkedItems;
@@ -53,6 +51,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkAPIkeyExists(this);
         addinventoryBarcodeET = findViewById(R.id.barcodeET);
         EditText addInventoryRemarkET = findViewById(R.id.remarkET);
         Button submit_button = findViewById(R.id.submitBtn);
@@ -126,19 +125,16 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             });
         }
         showIssuesTV = findViewById(R.id.showIssuesTV);
-        issuesBtn = findViewById(R.id.issuesBtn);
-        issuesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != selectedItemsDisplayList) {
-                    showIssuesTV.setText(listToString(selectedItemsDisplayList));
-                } else if (selectedItemsDisplayList.isEmpty()) {
-                    showIssuesTV.setText("Needs Inventory");
-                }
-                DialogFragment issueDialog = new IssuesFragment();
-                issueDialog.setCancelable(false);
-                issueDialog.show(getSupportFragmentManager(), "Issues Dialog");
+        Button issuesBtn = findViewById(R.id.issuesBtn);
+        issuesBtn.setOnClickListener(view -> {
+            if (null != selectedItemsDisplayList) {
+                showIssuesTV.setText(listToString(selectedItemsDisplayList));
+            } else if (selectedItemsDisplayList.isEmpty()) {
+                showIssuesTV.setText("Needs Inventory");
             }
+            DialogFragment issueDialog = new IssuesFragment();
+            issueDialog.setCancelable(false);
+            issueDialog.show(getSupportFragmentManager(), "Issues Dialog");
         });
     }
 
@@ -150,10 +146,11 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             addinventoryBarcodeET.setText(result.getContents());
         } else {
             if (resultCode == CommonStatusCodes.SUCCESS) {
-                Barcode barcode = data.getParcelableExtra("barcode");
-                EditText edit_text = findViewById(R.id.barcodeET);
-                assert barcode != null;
-                edit_text.setText(barcode.displayValue);
+                if(null != data.getParcelableExtra("barcode")) {
+                    Barcode barcode = data.getParcelableExtra("barcode");
+                    EditText edit_text = findViewById(R.id.barcodeET);
+                    edit_text.setText(barcode.displayValue);
+                }
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }

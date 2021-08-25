@@ -33,6 +33,7 @@ public class AddContainer extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		checkAPIkeyExists(this);
 		addContainerBarcodeET = findViewById(R.id.barcodeET);
 		EditText addContainerNameET = findViewById(R.id.nameET);
 		EditText addContainerRemarkET = findViewById(R.id.remarkET);

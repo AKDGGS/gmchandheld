@@ -2,14 +2,7 @@ package gov.alaska.gmchandheld;
 
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
-import android.widget.EditText;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -18,21 +11,13 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.TimeZone;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 public class RemoteApiDownload {
     private Exception exception = null;
     private StringBuilder sb;
     private int responseCode;
-    private String responseMsg;
     private String rawJson;
     private String urlFirstParameter;
     private String addedContainerName;
@@ -43,9 +28,6 @@ public class RemoteApiDownload {
     private final Context context;
 
     SimpleDateFormat sdf;
-
-//	public static final String SHARED_PREFS = "sharedPrefs";
-
     @SuppressLint("SimpleDateFormat")
     public RemoteApiDownload(Context context) {
         this.context = context;
@@ -91,10 +73,6 @@ public class RemoteApiDownload {
         return responseCode;
     }
 
-    public String getResponseMsg() {
-        return responseMsg;
-    }
-
     public String getRawJson() {
         return rawJson;
     }
@@ -102,11 +80,11 @@ public class RemoteApiDownload {
     public void getDataFromURL() {
         InputStream inputStream;
         HttpURLConnection connection;
-//        SharedPreferences sp = context.getSharedPreferences(Configuration.SHARED_PREFS, Context.MODE_PRIVATE);
         String url = BaseActivity.sp.getString("urlText", "");
 
         try {
-            String QUERYPARAM = null;
+            String QUERYPARAM;
+            sb = new StringBuilder();
             switch (context.getClass().getSimpleName()) {
                 case "Lookup":
                 case "LookupDisplay": {
@@ -141,7 +119,6 @@ public class RemoteApiDownload {
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-                    StringBuilder sb = new StringBuilder();
                     if (source != null) {
                         sb.append("src=").append(source);
                     }
@@ -174,7 +151,6 @@ public class RemoteApiDownload {
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-                    StringBuilder sb = new StringBuilder();
                     if (barcode != null) {
                         sb.append("barcode=").append(barcode);
                     }
@@ -198,7 +174,6 @@ public class RemoteApiDownload {
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-                    StringBuilder sb = new StringBuilder();
                     if (barcode != null) {
                         sb.append("barcode=").append(barcode);
                     }
@@ -217,13 +192,12 @@ public class RemoteApiDownload {
                     String remark = null;
                     try {
                         barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-                        if (remark != null) {
+                        if(null != addedContainerRemark) {
                             remark = URLEncoder.encode(addedContainerRemark, "utf-8");
                         }
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-                    StringBuilder sb = new StringBuilder();
                     if (barcode != null) {
                         sb.append("barcode=").append(barcode);
                     }
@@ -258,7 +232,6 @@ public class RemoteApiDownload {
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-                    StringBuilder sb = new StringBuilder();
                     if (barcode != null) {
                         sb.append("old=").append(barcode);
                     }
@@ -272,13 +245,11 @@ public class RemoteApiDownload {
             URL myURL = new URL(url);
             connection = (HttpURLConnection) myURL.openConnection();
             connection.setRequestMethod("GET");
-            //String accessToken = "6Ve0DF0rRLH0RDDomchEdkCwU83prZbAEWqb27q9fs34o4zSisV6rgXSU3iLato9OlW6eXPBKyzj2x1OvMbv7WhANMKKjGgmJlNAkKQvR2s0SMmGN26m6hr3pbXp49NG";
             connection.setRequestProperty("Authorization", "Token " + BaseActivity.apiKeyBase);
             connection.setReadTimeout(10 * 1000);
             connection.setConnectTimeout(5 * 1000);
             connection.connect();
             responseCode = connection.getResponseCode();
-            responseMsg = connection.getResponseMessage();
             try {
                 inputStream = connection.getInputStream();
             } catch (Exception e) {
@@ -317,11 +288,6 @@ public class RemoteApiDownload {
         } catch (IOException e) {
             exception = e;
         }
-    }
-
-    public SimpleDateFormat getDateFormat() {
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return sdf;
     }
 
     public String containersToUrlList(ArrayList<String> list, String paramKeyword) {

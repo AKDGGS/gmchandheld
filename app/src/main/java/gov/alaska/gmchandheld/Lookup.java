@@ -47,16 +47,20 @@ public class Lookup extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (null == BaseActivity.apiKeyBase){
-			Intent intentGetBarcode = new Intent(this.getApplicationContext(), GetToken.class);
-			intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			this.getApplicationContext().startActivity(intentGetBarcode);
+		if (null == BaseActivity.apiKeyBase || BaseActivity.apiKeyBase.isEmpty()){
+			Intent intentGetToken = new Intent(this.getApplicationContext(), GetToken.class);
+			intentGetToken.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			this.getApplicationContext().startActivity(intentGetToken);
+			enableTSL(this);
 		}
-		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		if (null != getSupportActionBar()) {
+			getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		}
 		barcodeET = findViewById(R.id.barcodeET);
 		barcodeET.requestFocus();
-		checkUrlUsesHttps();
-		deleteApkFile();
+		checkUrlUsesHttps(this);
+		checkAPIkeyExists(this);
+//		deleteApkFile();
 		loadLookup();
 	}
 
@@ -94,7 +98,6 @@ public class Lookup extends BaseActivity {
 			// onClickListener listens if the submit button is clicked
 			submitBtn.setOnClickListener(v -> {
 				sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-				String url = sp.getString("urlText", "");
 				CheckConfiguration checkConfiguration = new CheckConfiguration();
 				if (checkConfiguration.checkConfiguration(Lookup.this)) {
 					if (!barcodeET.getText().toString().isEmpty()) {
@@ -171,10 +174,12 @@ public class Lookup extends BaseActivity {
 			barcodeET.setText(result.getContents());
 		} else {
 			if (resultCode == CommonStatusCodes.SUCCESS) {
-				Barcode barcode = data.getParcelableExtra("barcode");
-				EditText edit_text = findViewById(R.id.barcodeET);
-				if (null != barcode.displayValue) {
-					edit_text.setText(barcode.displayValue);
+				if (null != data) {
+					Barcode barcode = data.getParcelableExtra("barcode");
+					EditText edit_text = findViewById(R.id.barcodeET);
+					if (null != barcode) {
+						edit_text.setText(barcode.displayValue);
+					}
 				}
 			} else {
 				super.onActivityResult(requestCode, resultCode, data);
@@ -182,17 +187,7 @@ public class Lookup extends BaseActivity {
 		}
 	}
 
-	public void checkUrlUsesHttps() {
-		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-		String url = sp.getString("urlText", "");
-		if (!url.startsWith("https")) {
-			Intent intent = new Intent(Lookup.this, Configuration.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			Lookup.this.startActivity(intent);
-			Toast.makeText(Lookup.this, "The URL must be https.", Toast.LENGTH_LONG)
-					.show();
-		}
-	}
+
 }
 
 

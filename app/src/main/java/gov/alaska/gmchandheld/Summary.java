@@ -51,6 +51,7 @@ public class Summary extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkAPIkeyExists(this);
         SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = null;
         barcodeET = findViewById(R.id.barcodeET);
         Button submitButton = findViewById(R.id.submitBtn);

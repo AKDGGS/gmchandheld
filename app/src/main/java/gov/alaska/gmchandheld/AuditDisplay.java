@@ -58,7 +58,7 @@ public class AuditDisplay extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        checkAPIkeyExists(this);
         auditItemET = findViewById(R.id.itemET);
         auditRemarkET = findViewById(R.id.remarkET);
         final TextView auditCountTV = findViewById(R.id.auditCountTV);

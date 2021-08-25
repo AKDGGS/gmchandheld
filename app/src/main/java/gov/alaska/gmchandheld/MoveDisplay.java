@@ -50,6 +50,7 @@ public class MoveDisplay extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		checkAPIkeyExists(this);
 		toET = findViewById(R.id.toET);
 		itemET = findViewById(R.id.itemET);
 		destinationET = findViewById(R.id.toET);

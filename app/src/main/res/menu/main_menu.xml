@@ -27,9 +27,9 @@
         app:showAsAction="never" />
 
     <item
-    android:id="@+id/add_inventory"
-    android:title="@string/add_inventory"
-    app:showAsAction="never" />
+        android:id="@+id/add_inventory"
+        android:title="@string/add_inventory"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/quality"
@@ -60,31 +60,5 @@
 </menu>
 
 
-<!--<item-->
-<!--android:id="@+id/audit"-->
-<!--android:title="Audit"-->
-<!--app:showAsAction="never" />-->
 
-<!--<item-->
-<!--android:id="@+id/notes"-->
-<!--android:title="Notes"-->
-<!--app:showAsAction="never" />-->
-
-    <!--<item-->
-    <!--android:id="@+id/help"-->
-    <!--android:title="Help"-->
-    <!--app:showAsAction="never" />-->
-    <!--<item-->
-    <!--android:id="@+id/lookup"-->
-    <!--android:title="Lookup"-->
-    <!--app:showAsAction="never" />-->
-    <!--<item-->
-    <!--android:id="@+id/summary"-->
-    <!--android:title="Summary"-->
-    <!--app:showAsAction="never" />-->
-
-    <!--<item-->
-    <!--android:id="@+id/recode"-->
-    <!--android:title="Recode"-->
-    <!--app:showAsAction="never" />-->
 

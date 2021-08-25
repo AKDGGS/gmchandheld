@@ -1,59 +1,32 @@
 package gov.alaska.gmchandheld;
 
-import android.app.KeyguardManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewConfiguration;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.util.SharedPreferencesUtils;
 import com.google.android.gms.security.ProviderInstaller;
-
-import java.lang.reflect.Field;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
 	protected static SharedPreferences sp;
-	protected final String SHARED_PREFS = "sharedPrefs";
 	protected static SharedPreferences.Editor editor;
 	public static String apiKeyBase = null;
 	protected Toolbar toolbar;
-
-//	@Override
-//	protected void onRestart() {
-//		super.onRestart();
-//		// works for api 24, but doesn't work in api 16 or 20
-//		// works with swipe
-//		KeyguardManager myKM = (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
-//		System.out.println("Base act: " + myKM.isKeyguardLocked());
-//		if (!myKM.isKeyguardLocked()) {
-//			System.out.println("SCREEN was TURNED OFF 2");
-//			SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-//			Configuration.editor = sp.edit();
-//			Configuration.editor.putString("apiText", "Screen was turned off 2").apply();
-//		}
-//	}
 
 	@Override
 	protected void onStop() {
@@ -67,7 +40,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		if (BaseActivity.apiKeyBase.equals("")){
+		if (null == BaseActivity.apiKeyBase || BaseActivity.apiKeyBase.equals("")){
 			Intent intentGetBarcode = new Intent(this.getApplicationContext(), GetToken.class);
 			intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			this.getApplicationContext().startActivity(intentGetBarcode);
@@ -87,17 +60,22 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	private void configureToolbar() {
 		toolbar = findViewById(R.id.toolbar);
-		if (toolbar != null) {
+		if (null != toolbar) {
 			setSupportActionBar(toolbar);
-			getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+			if(null != getSupportActionBar()) {
+				getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+			}
 		}
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
-		return true;
+//		if (null != apiKeyBase) {
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.main_menu, menu);
+			return true;
+//		}
+//		return false;
 	}
 
 	@Override
@@ -189,15 +167,34 @@ public abstract class BaseActivity extends AppCompatActivity {
 		} catch (GooglePlayServicesNotAvailableException e) {
 			e.printStackTrace();
 		}
-		SSLContext sslContext = null;
+		SSLContext sslContext;
 		try {
 			sslContext = SSLContext.getInstance("TLSv1.2");
 			sslContext.init(null, null, null);
-			SSLEngine engine = sslContext.createSSLEngine();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (KeyManagementException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void checkUrlUsesHttps(Context mContext) {
+		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+		String url = sp.getString("urlText", "");
+		if (!url.startsWith("https")) {
+			Intent intent = new Intent(mContext, Configuration.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			mContext.startActivity(intent);
+			Toast.makeText(mContext, "The URL must be https.", Toast.LENGTH_LONG)
+					.show();
+		}
+	}
+
+	public void checkAPIkeyExists(Context mContext) {
+		if (null == apiKeyBase || apiKeyBase.isEmpty()) {
+			Intent intent = new Intent(mContext, GetToken.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			mContext.startActivity(intent);
 		}
 	}
 }

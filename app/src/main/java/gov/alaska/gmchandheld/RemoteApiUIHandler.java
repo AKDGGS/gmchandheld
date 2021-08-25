@@ -5,10 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,10 +23,6 @@ import java.util.LinkedList;
 
 
 public class RemoteApiUIHandler {
-    private static EditText userET;
-    private static SharedPreferences sp;
-    private final String SHARED_PREFS ;
-    private static SharedPreferences.Editor editor;
     private static int apiKeyAttempts;
     public static LinkedList<String> lookupHistory;
     private static LinkedList<String> summaryHistory;
@@ -41,7 +35,6 @@ public class RemoteApiUIHandler {
 
     public RemoteApiUIHandler() {
         apiKeyAttempts = 0;
-        SHARED_PREFS = "sharedPrefs";
         lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
         summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
         downloading = false;
@@ -66,18 +59,6 @@ public class RemoteApiUIHandler {
     public static void setGetNewBarcode(String getNewBarcode) {
         RemoteApiUIHandler.getNewBarcode = getNewBarcode;
     }
-
-//    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-//        RemoteApiUIHandler.this.finish();
-//    }
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_translucent);
-//    }
 
     public static class ProcessDataForDisplay extends AsyncTask<String, String, RemoteApiDownload> {
         private WeakReference<Context> mActivity;
@@ -203,7 +184,6 @@ public class RemoteApiUIHandler {
                     intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     if(apiKeyAttempts == 0){
                         mActivity.get().getApplicationContext().startActivity(intentGetBarcode);
-//                        new RemoteApiUIHandler.ProcessDataForDisplay(mActivity.get()).execute();
                         apiKeyAttempts = apiKeyAttempts + 1;
                     } else {
                         apiKeyAttempts = 0;

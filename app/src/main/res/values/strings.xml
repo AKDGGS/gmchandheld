@@ -43,6 +43,7 @@
     <string name="photo">Photo</string>
     <string name="description">Description:</string>
     <string name="token">Token</string>
+    <string name="click_to_add_image">Click to add image</string>
 
     <string-array name="choice_items">
         <item>Needs Inventory</item>

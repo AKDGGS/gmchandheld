@@ -35,6 +35,7 @@ public class SummaryDisplay extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkAPIkeyExists(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         expandableListView = findViewById(R.id.expandableListView);
         if (getSupportActionBar() != null) {
