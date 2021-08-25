@@ -25,7 +25,7 @@ public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory;
 	private EditText barcodeET;
-	private IntentIntegrator qrScan;
+//	private IntentIntegrator qrScan;
 
 	public Lookup() {
 		lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
@@ -47,12 +47,7 @@ public class Lookup extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (null == BaseActivity.apiKeyBase || BaseActivity.apiKeyBase.isEmpty()){
-			Intent intentGetToken = new Intent(this.getApplicationContext(), GetToken.class);
-			intentGetToken.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			this.getApplicationContext().startActivity(intentGetToken);
-			enableTSL(this);
-		}
+		enableTSL(this);
 		if (null != getSupportActionBar()) {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		}
@@ -60,7 +55,7 @@ public class Lookup extends BaseActivity {
 		barcodeET.requestFocus();
 		checkUrlUsesHttps(this);
 		checkAPIkeyExists(this);
-//		deleteApkFile();
+		deleteApkFile();
 		loadLookup();
 	}
 
@@ -71,15 +66,16 @@ public class Lookup extends BaseActivity {
 		if (!cameraOn) {
 			cameraBtn.setVisibility(View.GONE);
 		} else {
-			qrScan = new IntentIntegrator(this);
-			qrScan.setOrientationLocked(false);
-			qrScan.setBeepEnabled(true);
+			getCameraIntent(this);
+//			qrScan = new IntentIntegrator(this);
+//			qrScan.setOrientationLocked(false);
+//			qrScan.setBeepEnabled(true);
 		}
 		cameraBtn.setOnClickListener(view -> {
 			if (Build.VERSION.SDK_INT <= 24) {
-				qrScan.initiateScan();
+				BaseActivity.qrScan.initiateScan();
 			} else {
-				Intent intent = new Intent(Lookup.this, CameraToScanner.class);
+				BaseActivity.intent = new Intent(Lookup.this, CameraToScanner.class);
 				startActivityForResult(intent, 0);
 			}
 		});
@@ -109,7 +105,6 @@ public class Lookup extends BaseActivity {
 			});
 			// KeyListener listens if enter is pressed
 			barcodeET.setOnKeyListener((v, keyCode, event) -> {
-				// if "enter" is pressed
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
 						(keyCode == KeyEvent.KEYCODE_ENTER)) {
 					submitBtn.performClick();
@@ -186,8 +181,6 @@ public class Lookup extends BaseActivity {
 			}
 		}
 	}
-
-
 }
 
 

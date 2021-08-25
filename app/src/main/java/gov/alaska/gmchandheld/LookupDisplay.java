@@ -40,6 +40,7 @@ public class LookupDisplay extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkUrlUsesHttps(this);
         checkAPIkeyExists(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         expandableListView = findViewById(R.id.expandableListView);

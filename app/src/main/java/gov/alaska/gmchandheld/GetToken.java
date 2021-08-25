@@ -30,6 +30,7 @@ public class GetToken extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("GMC Handheld");
         loadGetToken();
+
     }
 
     public void loadGetToken() {

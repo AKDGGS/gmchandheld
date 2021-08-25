@@ -1,14 +1,12 @@
 package gov.alaska.gmchandheld;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -24,12 +21,9 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 
 public class MoveDisplay extends BaseActivity {
-
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
-	private EditText destinationET;
-	private EditText itemET, toET;
-	private IntentIntegrator destinationQrScan;
+	private EditText itemET, destinationET;
 	private int clicks;  //used to count double clicks for deletion
 
 	public MoveDisplay() {
@@ -51,9 +45,8 @@ public class MoveDisplay extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		checkAPIkeyExists(this);
-		toET = findViewById(R.id.toET);
-		itemET = findViewById(R.id.itemET);
 		destinationET = findViewById(R.id.toET);
+		itemET = findViewById(R.id.itemET);
 		final TextView moveCountTV = findViewById(R.id.moveCountTV);
 		final Button submitBtn = findViewById(R.id.submitBtn);
 		final Button addBtn = findViewById(R.id.addContainerBtn);
@@ -74,32 +67,19 @@ public class MoveDisplay extends BaseActivity {
 			LinearLayout.LayoutParams params2 =
 					new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
 			params2.weight = 3f;
-			toET.setLayoutParams(params);
+			destinationET.setLayoutParams(params);
 			itemET.setLayoutParams(params);
 			moveCountTV.setLayoutParams(params2);
 			cameraBtn.setVisibility(View.GONE);
 			itemCameraBtn.setVisibility(View.GONE);
 		}else{
-			destinationQrScan = new IntentIntegrator(this);
-			IntentIntegrator itemQrScan = new IntentIntegrator(this);
+			getCameraIntent(this);
 		}
 		cameraBtn.setOnClickListener(view -> {
-			if (Build.VERSION.SDK_INT <= 24) {
-				Intent intent = destinationQrScan.createScanIntent();
-				startActivityForResult(intent, 1);
-			} else {
-				Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
-				startActivityForResult(intent, 1);
-			}
+			startActivityForResult(intent, 1);
 		});
 		itemCameraBtn.setOnClickListener(view -> {
-			if (Build.VERSION.SDK_INT <= 24) {
-				Intent intent = destinationQrScan.createScanIntent();
-				startActivityForResult(intent, 2);
-			} else {
-				Intent intent = new Intent(MoveDisplay.this, CameraToScanner.class);
-				startActivityForResult(intent, 2);
-			}
+			startActivityForResult(intent, 2);
 		});
 		addBtn.setOnClickListener(v -> {
 			String container = itemET.getText().toString();
@@ -140,7 +120,6 @@ public class MoveDisplay extends BaseActivity {
 
 			// KeyListener listens if enter is pressed
 			itemET.setOnKeyListener((v, keyCode, event) -> {
-				// if "enter" is pressed
 				if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
 						KeyEvent.KEYCODE_ENTER)) {
 					addBtn.performClick();
@@ -152,7 +131,6 @@ public class MoveDisplay extends BaseActivity {
 			// KeyListener listens if enter is pressed
 			destinationET.setOnKeyListener((v, keyCode, event) -> {
 				if (!(TextUtils.isEmpty(destinationET.getText()))) {
-					// if "enter" is pressed
 					if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
 							KeyEvent.KEYCODE_ENTER)) {
 						itemET.requestFocus();
@@ -163,7 +141,6 @@ public class MoveDisplay extends BaseActivity {
 			});
 			// onClickListener listens if the submit button is clicked
 			submitBtn.setOnClickListener(v -> {
-				System.out.println("Submit button pressed");
 				CheckConfiguration checkConfiguration = new CheckConfiguration();
 				if (checkConfiguration.checkConfiguration(MoveDisplay.this)) {
 					if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
@@ -207,7 +184,7 @@ public class MoveDisplay extends BaseActivity {
 		}else {
 			switch (requestCode){
 				case 1: {
-					if (resultCode == CommonStatusCodes.SUCCESS) {
+					if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
 						Barcode barcode = data.getParcelableExtra("barcode");
 						EditText destinationEt = findViewById(R.id.toET);
 						if (barcode != null) {
@@ -217,7 +194,7 @@ public class MoveDisplay extends BaseActivity {
 					break;
 				}
 				case 2:{
-					if (resultCode == CommonStatusCodes.SUCCESS) {
+					if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
 						Barcode barcode = data.getParcelableExtra("barcode");
 						EditText itemEt = findViewById(R.id.itemET);
 						if(barcode != null) {
@@ -239,4 +216,6 @@ public class MoveDisplay extends BaseActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
+
+
 }

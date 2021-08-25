@@ -12,9 +12,9 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import androidx.annotation.Nullable;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -27,7 +27,7 @@ import java.util.Date;
 
 public class Configuration extends BaseActivity {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
-    private IntentIntegrator urlQrScan, apiQrScan;
+    private IntentIntegrator qrScan;
     private EditText hourInput, minuteInput, urlET, apiET;
     private String hour, minute, url;
 
@@ -48,7 +48,6 @@ public class Configuration extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkUrlUsesHttps(this);
         urlET = findViewById(R.id.urlET);
         urlET.requestFocus();
         if (urlET.getText().toString().isEmpty()) {
@@ -56,9 +55,15 @@ public class Configuration extends BaseActivity {
         }
         // KeyListener listens if enter is pressed
         urlET.setOnKeyListener((v, keyCode, event) -> {
-            // if "enter" is pressed
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                apiET.requestFocus();
+                if (!urlET.getText().toString().startsWith("https")) {
+                    Toast.makeText(Configuration.this, "The URL must be https.", Toast.LENGTH_SHORT)
+                            .show();
+                    urlET.requestFocus();
+                    urlET.selectAll();
+                } else {
+                    apiET.requestFocus();
+                }
                 return true;
             }
             return false;
@@ -83,42 +88,20 @@ public class Configuration extends BaseActivity {
             urlCameraBtn.setVisibility(View.GONE);
             apiCameraBtn.setVisibility(View.GONE);
         } else {
-            urlQrScan = new IntentIntegrator(this);
-            urlQrScan.setBeepEnabled(true);
-            apiQrScan = new IntentIntegrator(this);
-            apiQrScan.setBeepEnabled(true);
+            qrScan = new IntentIntegrator(this);
+            qrScan.setBeepEnabled(true);
         }
-        urlCameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Build.VERSION.SDK_INT <= 24) {
-                    Intent intent = urlQrScan.createScanIntent();
-                    startActivityForResult(intent, 1);
-                } else {
-                    Intent intent = new Intent(Configuration.this, CameraToScanner.class);
-                    startActivityForResult(intent, 1);
-                }
-            }
+
+        urlCameraBtn.setOnClickListener(view -> {
+            checkSDKLevel();
+            startActivityForResult(BaseActivity.intent, 1);
         });
-        apiCameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Build.VERSION.SDK_INT <= 24) {
-                    Intent intent = apiQrScan.createScanIntent();
-                    startActivityForResult(intent, 2);
-                } else {
-                    Intent intent = new Intent(Configuration.this, CameraToScanner.class);
-                    startActivityForResult(intent, 2);
-                }
-            }
+        apiCameraBtn.setOnClickListener(view -> {
+            checkSDKLevel();
+            startActivityForResult(BaseActivity.intent, 2);
         });
         final Button updateButton = findViewById(R.id.updateBtn);
-        updateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    updateAPK();
-            }
-        });
+        updateButton.setOnClickListener(v -> updateAPK());
         updateViews();
         hourInputChangeWatcher();
         minuteInputChangeWatcher();
@@ -131,14 +114,11 @@ public class Configuration extends BaseActivity {
     }
 
     private void cameraToScannerChangeWatcher() {
-        cameraToScannerBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton,boolean isChecked) {
-                if (isChecked) {
-                    BaseActivity.editor.putBoolean("cameraOn", true).apply();
-                } else {
-                    BaseActivity.editor.putBoolean("cameraOn", false).commit();
-                }
+        cameraToScannerBtn.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                BaseActivity.editor.putBoolean("cameraOn", true).apply();
+            } else {
+                BaseActivity.editor.putBoolean("cameraOn", false).apply();
             }
         });
     }
@@ -208,7 +188,14 @@ public class Configuration extends BaseActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
-            public void afterTextChanged(Editable s) { }
+            public void afterTextChanged(Editable s) {
+                if (urlET.getText().toString().length() == 5 && !urlET.getText().toString().startsWith("https")) {
+                    Toast.makeText(Configuration.this, "The URL must be https.", Toast.LENGTH_SHORT)
+                            .show();
+                    urlET.requestFocus();
+                    urlET.selectAll();
+                }
+            }
         });
     }
 
@@ -361,7 +348,7 @@ public class Configuration extends BaseActivity {
         } else {
             switch (requestCode) {
                 case 1: {
-                    if (resultCode == CommonStatusCodes.SUCCESS) {
+                    if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
                         Barcode barcode = data.getParcelableExtra("barcode");
                         EditText edit_text = findViewById(R.id.urlET);
                         if (barcode != null) {
@@ -371,7 +358,7 @@ public class Configuration extends BaseActivity {
                     break;
                 }
                 case 2: {
-                    if (resultCode == CommonStatusCodes.SUCCESS) {
+                    if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
                         Barcode barcode = data.getParcelableExtra("barcode");
                         EditText edit_text = findViewById(R.id.apiET);
                         if (barcode != null) {
@@ -401,6 +388,14 @@ public class Configuration extends BaseActivity {
                     x.setText(Integer.toString(limax));
                 }
             }
+        }
+    }
+
+    private void checkSDKLevel(){
+        if (Build.VERSION.SDK_INT <= 24) {
+            BaseActivity.intent = qrScan.createScanIntent();
+        } else {
+            BaseActivity.intent = new Intent(Configuration.this, CameraToScanner.class);
         }
     }
 }

@@ -1,15 +1,15 @@
 package gov.alaska.gmchandheld;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
+import com.google.zxing.integration.android.IntentIntegrator;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.SSLContext;
@@ -27,6 +28,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected static SharedPreferences.Editor editor;
 	public static String apiKeyBase = null;
 	protected Toolbar toolbar;
+	protected static IntentIntegrator qrScan;
+	protected static Intent intent;
 
 	@Override
 	protected void onStop() {
@@ -70,12 +73,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-//		if (null != apiKeyBase) {
 			MenuInflater inflater = getMenuInflater();
 			inflater.inflate(R.menu.main_menu, menu);
 			return true;
-//		}
-//		return false;
 	}
 
 	@Override
@@ -178,23 +178,32 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}
 	}
 
-	public void checkUrlUsesHttps(Context mContext) {
+	protected void checkUrlUsesHttps(Context mContext) {
 		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 		String url = sp.getString("urlText", "");
 		if (!url.startsWith("https")) {
 			Intent intent = new Intent(mContext, Configuration.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			mContext.startActivity(intent);
-			Toast.makeText(mContext, "The URL must be https.", Toast.LENGTH_LONG)
-					.show();
 		}
 	}
 
-	public void checkAPIkeyExists(Context mContext) {
+	protected void checkAPIkeyExists(Context mContext) {
 		if (null == apiKeyBase || apiKeyBase.isEmpty()) {
 			Intent intent = new Intent(mContext, GetToken.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			mContext.startActivity(intent);
+		}
+	}
+
+	protected void getCameraIntent(Context mContext){
+		if (Build.VERSION.SDK_INT <= 24) {
+			qrScan = new IntentIntegrator((Activity) mContext);
+			intent = qrScan.createScanIntent();
+			qrScan.setOrientationLocked(false);
+			qrScan.setBeepEnabled(true);
+		} else {
+			intent = new Intent(mContext, CameraToScanner.class);
 		}
 	}
 }

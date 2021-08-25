@@ -3,7 +3,6 @@ package gov.alaska.gmchandheld;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -11,7 +10,6 @@ import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -61,7 +59,7 @@ public class RemoteApiUIHandler {
     }
 
     public static class ProcessDataForDisplay extends AsyncTask<String, String, RemoteApiDownload> {
-        private WeakReference<Context> mActivity;
+        private final WeakReference<Context> mActivity;
         public ProcessDataForDisplay(Context context) {
             mActivity = new WeakReference<>(context);
         }
@@ -72,7 +70,7 @@ public class RemoteApiUIHandler {
             super.onPreExecute();
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
             LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
-            View layout = inflater.inflate(R.layout.downloading_progress_dialog, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.downloading_alert_root));
+            View layout = inflater.inflate(R.layout.downloading_progress_dialog, ((Activity) mActivity.get()).findViewById(R.id.downloading_alert_root));
             alertDialog.setView(layout);
             TextView title = new TextView(mActivity.get());
             String processingTitle = "Processing " + urlFirstParameter;
@@ -80,12 +78,9 @@ public class RemoteApiUIHandler {
             title.setGravity(Gravity.CENTER);
             title.setTextSize(16);
             alertDialog.setCustomTitle(title);
-            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    cancel(true);
-                    downloading = false;
-                }
+            alertDialog.setNegativeButton("Cancel", (dialogInterface, i) -> {
+                cancel(true);
+                downloading = false;
             });
             alert = alertDialog.create();
             alert.show();
@@ -190,7 +185,7 @@ public class RemoteApiUIHandler {
                     }
                 } else {
                     LayoutInflater inflater = ((Activity) mActivity.get()).getLayoutInflater();
-                    View layout = inflater.inflate(R.layout.lookup_error_display, (ViewGroup) ((Activity) mActivity.get()).findViewById(R.id.lookup_error_root));
+                    View layout = inflater.inflate(R.layout.lookup_error_display, ((Activity) mActivity.get()).findViewById(R.id.lookup_error_root));
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get());
                     ConnectivityManager cm = (ConnectivityManager) mActivity.get().getSystemService(Context.CONNECTIVITY_SERVICE);
                     if (responseCode == 404) {
@@ -209,52 +204,47 @@ public class RemoteApiUIHandler {
                         alertDialog.setMessage(obj.getException().getMessage());
                     }
                 alertDialog.setView(layout);
-                alertDialog.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        downloading = true;
-                        switch (mActivity.get().getClass().getSimpleName()) {
-                            case "Lookup":
-                            case "Summary": {
-                                EditText getBarcodeEditText = ((Activity) mActivity.get()).findViewById(R.id.barcodeET);
-                                getBarcodeEditText.setText("");
-                                getBarcodeEditText.requestFocus();
-                                break;
-                            }
-                            case "SummaryDisplay":
-                            case "LookupDisplay": {
+                alertDialog.setPositiveButton("Dismiss", (dialog, which) -> {
+                    downloading = true;
+                    switch (mActivity.get().getClass().getSimpleName()) {
+                        case "Lookup":
+                        case "Summary": {
+                            EditText getBarcodeEditText = ((Activity) mActivity.get()).findViewById(R.id.barcodeET);
+                            getBarcodeEditText.setText("");
+                            getBarcodeEditText.requestFocus();
+                            break;
+                        }
+                        case "SummaryDisplay":
+                        case "LookupDisplay": {
 //										lastAddedToHistory(context, queryOrDestination);
-                                EditText invisibleEditText = ((Activity) mActivity.get()).findViewById(R.id.invisibleEditText);
-                                invisibleEditText.setText("");
-                                invisibleEditText.requestFocus();
-                                break;
-                            }
-                            case "MoveContents": {
-                                EditText sourceET = ((Activity) mActivity.get()).findViewById(R.id.fromET);
-                                sourceET.setText(urlFirstParameter);
-                                EditText destinationET = ((Activity) mActivity.get()).findViewById(R.id.toET);
-                                destinationET.setText(destinationBarcode);
-                                destinationET.requestFocus();
-                                break;
-                            }
-                            case "MoveDisplay": {
-                                EditText destinationET = ((Activity) mActivity.get()).findViewById(R.id.toET);
-                                destinationET.setText(urlFirstParameter);
-                                EditText moveContainerET = ((Activity) mActivity.get()).findViewById(R.id.itemET);
-                                moveContainerET.requestFocus();
-                                break;
-                            }
-                            case "Recode": {
-                                EditText oldBarcodeET = ((Activity) mActivity.get()).findViewById(R.id.oldBarcodeET);
-                                oldBarcodeET.setText(urlFirstParameter);
-                                EditText newBarcodeET = ((Activity) mActivity.get()).findViewById(R.id.newBarcodeET);
-                                oldBarcodeET.requestFocus();
-                                break;
-                            }
+                            EditText invisibleEditText = ((Activity) mActivity.get()).findViewById(R.id.invisibleEditText);
+                            invisibleEditText.setText("");
+                            invisibleEditText.requestFocus();
+                            break;
+                        }
+                        case "MoveContents": {
+                            EditText sourceET = ((Activity) mActivity.get()).findViewById(R.id.fromET);
+                            sourceET.setText(urlFirstParameter);
+                            EditText destinationET = ((Activity) mActivity.get()).findViewById(R.id.toET);
+                            destinationET.setText(destinationBarcode);
+                            destinationET.requestFocus();
+                            break;
+                        }
+                        case "MoveDisplay": {
+                            EditText destinationET = ((Activity) mActivity.get()).findViewById(R.id.toET);
+                            destinationET.setText(urlFirstParameter);
+                            EditText moveContainerET = ((Activity) mActivity.get()).findViewById(R.id.itemET);
+                            moveContainerET.requestFocus();
+                            break;
+                        }
+                        case "Recode": {
+                            EditText oldBarcodeET = ((Activity) mActivity.get()).findViewById(R.id.oldBarcodeET);
+                            oldBarcodeET.setText(urlFirstParameter);
+                            EditText newBarcodeET = ((Activity) mActivity.get()).findViewById(R.id.newBarcodeET);
+                            oldBarcodeET.requestFocus();
+                            break;
                         }
                     }
-
                 });
                 AlertDialog alert = alertDialog.create();
                 alert.setCanceledOnTouchOutside(false);
@@ -305,7 +295,8 @@ public class RemoteApiUIHandler {
                     }
                     case "MoveDisplay": {
                         containerList.clear();
-                        ListView containerListLV = ((Activity) mActivity.get()).findViewById(R.id.listViewContainersToMove);
+                        ListView containerListLV = ((Activity) mActivity.get())
+                                .findViewById(R.id.listViewContainersToMove);
                         ArrayAdapter<String> adapter = (ArrayAdapter<String>) containerListLV.getAdapter();
                         adapter.clear();
                         adapter.notifyDataSetChanged();
