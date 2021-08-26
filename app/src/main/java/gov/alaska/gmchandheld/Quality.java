@@ -25,6 +25,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     public static ArrayList<String> selectedItems;
     public static boolean[] checkedItems;
     public static ArrayList<String> selectedItemsDisplayList;
+    private StringBuilder sb;
 
     public Quality() {
         numberOfIssues = 10;
@@ -34,6 +35,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         selectedItems.add("needs_inventory");
         selectedItemsDisplayList.add("Needs Inventory");
         checkedItems[0] = true;
+        sb = new StringBuilder();
     }
     @Override
     public int getLayoutResource() {

@@ -1,7 +1,5 @@
 package gov.alaska.gmchandheld;
 
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +9,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class RemoteApiDownload {
@@ -27,13 +24,8 @@ public class RemoteApiDownload {
     private String destinationBarcode;
     private final Context context;
 
-    SimpleDateFormat sdf;
-    @SuppressLint("SimpleDateFormat")
     public RemoteApiDownload(Context context) {
         this.context = context;
-        sdf = new SimpleDateFormat(
-                "EEE, dd MMM yyyy HH:mm:ss zzz"
-        );
     }
 
     public void setUrlFirstParameter(String firstQueryParameter) {
