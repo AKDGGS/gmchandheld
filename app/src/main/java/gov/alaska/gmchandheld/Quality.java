@@ -1,13 +1,8 @@
 package gov.alaska.gmchandheld;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,24 +12,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
 import java.util.ArrayList;
 
 public class Quality extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
-
-    private IntentIntegrator qrScan;
-    private EditText addinventoryBarcodeET;
-    private Button issuesBtn;
+    private EditText addInventoryBarcodeET;
     private TextView showIssuesTV;
-
-    private ArrayList<String> issuesList;
     private static int numberOfIssues;
-
     public static ArrayList<String> selectedItems;
     public static boolean[] checkedItems;
     public static ArrayList<String> selectedItemsDisplayList;
@@ -63,125 +50,96 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkAPIkeyExists(this);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#ff567b95"));
-        setSupportActionBar(toolbar);
-
-        addinventoryBarcodeET = findViewById(R.id.barcodeET);
-        final EditText addInveotryRemarkET = findViewById(R.id.remarkET);
+        addInventoryBarcodeET = findViewById(R.id.barcodeET);
+        final EditText addInventoryRemarkET = findViewById(R.id.remarkET);
         final Button submit_button = findViewById(R.id.submitBtn);
 
         showIssuesTV = findViewById(R.id.showIssuesTV);
         if(!selectedItemsDisplayList.isEmpty()){
             showIssuesTV.setText(listToString(selectedItemsDisplayList));
         }
-
-        final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!sp.getBoolean("cameraOn", false)){
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.weight = 7.75f;
-
-
-            addinventoryBarcodeET.setLayoutParams(params);
-            addInveotryRemarkET.setLayoutParams(params);
+            addInventoryBarcodeET.setLayoutParams(params);
+            addInventoryRemarkET.setLayoutParams(params);
             cameraBtn.setVisibility(View.GONE);
         }else{
             qrScan = new IntentIntegrator(this);
             qrScan.setBeepEnabled(true);
         }
 
-        cameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Build.VERSION.SDK_INT <= 24) {
-                    qrScan.initiateScan();
-                } else {
-                    Intent intent = new Intent(Quality.this, CameraToScanner.class);
-                    startActivityForResult(intent, 0);
-                }
+        cameraBtn.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT <= 24) {
+                qrScan.initiateScan();
+            } else {
+                Intent intent = new Intent(Quality.this, CameraToScanner.class);
+                startActivityForResult(intent, 0);
             }
         });
 
         // KeyListener listens if enter is pressed
-        addinventoryBarcodeET.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // if "enter" is pressed
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    addInveotryRemarkET.requestFocus();
-                    return true;
-                }
-                return false;
+        addInventoryBarcodeET.setOnKeyListener((v, keyCode, event) -> {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                addInventoryRemarkET.requestFocus();
+                return true;
             }
+            return false;
         });
-
-
+        final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
         if (remoteApiUIHandler.isDownloading()) {
             // onClickListener listens if the submit button is clicked
-            submit_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                    CheckConfiguration checkConfiguration = new CheckConfiguration();
-//                    if (checkConfiguration.checkConfiguration(Quality.this)) {
-                        if (!(TextUtils.isEmpty(addinventoryBarcodeET.getText()))) {
-
-                            String container = addinventoryBarcodeET.getText().toString();
-                            if (!container.isEmpty()) {
-                                RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-                                RemoteApiUIHandler.setUrlFirstParameter(addinventoryBarcodeET.getText().toString());
-                                RemoteApiUIHandler.setAddContainerRemark(addInveotryRemarkET.getText().toString());
-                                RemoteApiUIHandler.setContainerList(selectedItems);
-                                remoteApiUIHandler.setDownloading(true);
-                                new RemoteApiUIHandler.ProcessDataForDisplay(Quality.this).execute();
-                            }
-                            addinventoryBarcodeET.setText("");
-                            addInveotryRemarkET.setText("");
-                            addinventoryBarcodeET.requestFocus();
-                            showIssuesTV.setText("");
-                            selectedItems.clear();
-                            selectedItemsDisplayList.clear();
-                            checkedItems = new boolean[numberOfIssues];
-                            checkedItems[0] = true;
-                            selectedItems.add("needs_inventory");
-                            selectedItemsDisplayList.add("Needs Inventory");
-                            showIssuesTV.setText(listToString(selectedItemsDisplayList));
+            submit_button.setOnClickListener(v -> {
+                    if (!(TextUtils.isEmpty(addInventoryBarcodeET.getText()))) {
+                        if (!addInventoryBarcodeET.getText().toString().isEmpty()) {
+                            RemoteApiUIHandler.setUrlFirstParameter(addInventoryBarcodeET.getText().toString());
+                            RemoteApiUIHandler.setAddContainerRemark(addInventoryRemarkET.getText().toString());
+                            RemoteApiUIHandler.setContainerList(selectedItems);
+                            RemoteApiUIHandler.setDownloading(true);
+                            new RemoteApiUIHandler.ProcessDataForDisplay(Quality.this).execute();
                         }
+                        addInventoryBarcodeET.setText("");
+                        addInventoryRemarkET.setText("");
+                        addInventoryBarcodeET.requestFocus();
+                        showIssuesTV.setText("");
+                        selectedItems.clear();
+                        selectedItemsDisplayList.clear();
+                        checkedItems = new boolean[numberOfIssues];
+                        checkedItems[0] = true;
+                        selectedItems.add("needs_inventory");
+                        selectedItemsDisplayList.add("Needs Inventory");
+                        showIssuesTV.setText(listToString(selectedItemsDisplayList));
                     }
-//                }
-            });
+                });
         }
         showIssuesTV = findViewById(R.id.showIssuesTV);
-        issuesBtn = findViewById(R.id.issuesBtn);
-
-        issuesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != selectedItemsDisplayList) {
-                    showIssuesTV.setText(listToString(selectedItemsDisplayList));
-
-                }else if (selectedItemsDisplayList.isEmpty()){
-                    showIssuesTV.setText("Needs Inventory");
-                }
-                DialogFragment issueDialog = new IssuesFragment();
-                issueDialog.setCancelable(false);
-                issueDialog.show(getSupportFragmentManager(), "Issues Dialog");
+        Button issuesBtn = findViewById(R.id.issuesBtn);
+        issuesBtn.setOnClickListener(view -> {
+            if (null != selectedItemsDisplayList) {
+                showIssuesTV.setText(listToString(selectedItemsDisplayList));
+            }else if (selectedItemsDisplayList.isEmpty()){
+                showIssuesTV.setText(R.string.needs_inventory);
             }
+            DialogFragment issueDialog = new IssuesFragment();
+            issueDialog.setCancelable(false);
+            issueDialog.show(getSupportFragmentManager(), "Issues Dialog");
         });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (Build.VERSION.SDK_INT <= 24) {
-            addinventoryBarcodeET = findViewById(R.id.barcodeET);
+            addInventoryBarcodeET = findViewById(R.id.barcodeET);
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-            addinventoryBarcodeET.setText(result.getContents());
+            addInventoryBarcodeET.setText(result.getContents());
         }else {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
+            if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
                 Barcode barcode = data.getParcelableExtra("barcode");
-                EditText edit_text = findViewById(R.id.barcodeET);
-                assert barcode != null;
-                edit_text.setText(barcode.displayValue);
+                if(null != barcode) {
+                    EditText edit_text = findViewById(R.id.barcodeET);
+                    edit_text.setText(barcode.displayValue);
+                }
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }
@@ -190,10 +148,9 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
 
     @Override
     public void onPostitiveButtonClicked(String[] list, ArrayList<String> selectedItems) {
-        StringBuilder sb = new StringBuilder();
-
+        sb.setLength(0);
         for(String str:selectedItems){
-            sb.append(str + ", ");
+            sb.append(str).append(", ");
         }
         showIssuesTV.setText(listToString(selectedItemsDisplayList));
     }
@@ -202,9 +159,9 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     public void onNegativebuttonClicked() { }
 
     public String listToString(ArrayList<String> arrList){
-        StringBuilder sb = new StringBuilder();
+        sb.setLength(0);
         for (String s : arrList) {
-            sb.append(s + "\n");
+            sb.append(s).append("\n");
         }
         return sb.toString();
     }
