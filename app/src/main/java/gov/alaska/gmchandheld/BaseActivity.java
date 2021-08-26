@@ -8,8 +8,6 @@ import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.SSLContext;
 
 public abstract class BaseActivity extends AppCompatActivity {
-
 	protected static SharedPreferences sp;
 	protected static SharedPreferences.Editor editor;
 	public static String apiKeyBase = null;
@@ -53,7 +50,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 		configureToolbar();
 		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 		editor = sp.edit();
-
 	}
 
 	protected abstract int getLayoutResource();
@@ -68,17 +64,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}
 	}
 
-//	@Override
-//	public boolean onPrepareOptionsMenu(Menu menu) {
-//		if(sp.getString("urlText", "").isEmpty()){
-////			menu.setGroupEnabled(0, false);
-//			Intent intentConfiguration = new Intent(this, Configuration.class);
-//			intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//			startActivity(intentConfiguration);
-//		}
-//		return super.onPrepareOptionsMenu(menu);
-//	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 			MenuInflater inflater = getMenuInflater();
@@ -90,7 +75,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		if (item.getItemId() == (R.id.summary)) {
 			SummaryLogicForDisplay summaryLogicForDisplayObj;
-			summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj;
+			summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance()
+					.summaryLogicForDisplayObj;
 			if (summaryLogicForDisplayObj == null) {
 				Intent intentGetBarcode = new Intent(this, Summary.class);
 				intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -103,7 +89,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 			return true;
 		} else if (item.getItemId() == (R.id.lookup)) {
 			LookupLogicForDisplay lookupLogicForDisplayObj;
-			lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj;
+			lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance()
+					.lookupLogicForDisplayObj;
 			if (lookupLogicForDisplayObj == null) {
 				Intent intentGetBarcode = new Intent(this, Lookup.class);
 				intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

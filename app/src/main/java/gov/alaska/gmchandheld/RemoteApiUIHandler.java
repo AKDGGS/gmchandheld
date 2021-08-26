@@ -41,8 +41,8 @@ public class RemoteApiUIHandler {
     public boolean isDownloading() {
         return !downloading;
     }
-    public void setDownloading(boolean downloading) {
-        this.downloading = downloading;
+    public static void setDownloading(boolean mDownloading) {
+        downloading = mDownloading;
     }
     public static void setContainerList(ArrayList<String> moveList) {containerList = moveList;}
     public static void setUrlFirstParameter(String query) {RemoteApiUIHandler.urlFirstParameter = query;}

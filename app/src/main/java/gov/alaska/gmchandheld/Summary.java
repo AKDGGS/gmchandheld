@@ -62,9 +62,8 @@ public class Summary extends BaseActivity {
         adapter.addAll(summaryHistory);
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
-        boolean cameraOn = (sp.getBoolean("cameraOn", false));
         Button cameraBtn = findViewById(R.id.cameraBtn);
-        if (!cameraOn) {
+        if (!sp.getBoolean("cameraOn", false)) {
             cameraBtn.setVisibility(View.GONE);
         } else {
             qrScan = new IntentIntegrator(this);
@@ -85,14 +84,14 @@ public class Summary extends BaseActivity {
         if (remoteApiUIHandler.isDownloading()) {
             // onClickListener listens if the submit button is clicked
             submitButton.setOnClickListener(v -> {
-                CheckConfiguration checkConfiguration = new CheckConfiguration();
-                if (checkConfiguration.checkConfiguration(Summary.this)) {
+//                CheckConfiguration checkConfiguration = new CheckConfiguration();
+//                if (checkConfiguration.checkConfiguration(Summary.this)) {
                     if (!getBarcode().isEmpty()) {
                         remoteApiUIHandler.setDownloading(true);
                         RemoteApiUIHandler.setUrlFirstParameter(getBarcode());
                         new RemoteApiUIHandler.ProcessDataForDisplay(Summary.this).execute();
                     }
-                }
+//                }
             });
             // KeyListener listens if enter is pressed
             barcodeET.setOnKeyListener((v, keyCode, event) -> {

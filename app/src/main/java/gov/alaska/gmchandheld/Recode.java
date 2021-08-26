@@ -48,14 +48,10 @@ public class Recode extends BaseActivity {
 		newBarcodeET = findViewById(R.id.newBarcodeET);
 		final Button submit_button = findViewById(R.id.submitBtn);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-
-//		SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-		boolean cameraOn = (sp.getBoolean("cameraOn", false));
-
 		Button oldBarcodeCameraBtn = findViewById(R.id.oldBarcodeCameraBtn);
 		Button newBarcodeCameraBtn = findViewById(R.id.newBarcodeCameraBtn);
 
-		if(!cameraOn){
+		if (!sp.getBoolean("cameraOn", false)){
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 8.25f;
 
@@ -102,8 +98,8 @@ public class Recode extends BaseActivity {
 			submit_button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					CheckConfiguration checkConfiguration = new CheckConfiguration();
-					if (checkConfiguration.checkConfiguration(Recode.this)) {
+//					CheckConfiguration checkConfiguration = new CheckConfiguration();
+//					if (checkConfiguration.checkConfiguration(Recode.this)) {
 						if ((!oldBarcodeET.getText().toString().isEmpty()) &&(!newBarcodeET.getText().toString().isEmpty()) ) {
 							remoteApiUIHandler.setDownloading(true);
 							RemoteApiUIHandler.setUrlFirstParameter(oldBarcodeET.getText().toString());
@@ -114,7 +110,7 @@ public class Recode extends BaseActivity {
 							oldBarcodeET.requestFocus();
 						}
 					}
-				}
+//				}
 			});
 
 			// KeyListener listens if enter is pressed

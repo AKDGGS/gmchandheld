@@ -49,7 +49,8 @@ public class CameraToScanner extends AppCompatActivity {
 			@Override
 			public void surfaceCreated(SurfaceHolder surfaceHolder) {
 				try {
-					if (ActivityCompat.checkSelfPermission(CameraToScanner.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+					if (ActivityCompat.checkSelfPermission(CameraToScanner.this,
+							Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 						cameraSource.start(cameraPreview.getHolder());
 					} else {
 						ActivityCompat.requestPermissions(CameraToScanner.this, new

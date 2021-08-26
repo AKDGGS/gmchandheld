@@ -78,11 +78,8 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
 
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 
-//        SharedPreferences sp = getSharedPreferences(Configuration.SHARED_PREFS, MODE_PRIVATE);
-        boolean cameraOn = (sp.getBoolean("cameraOn", false));
-
         Button cameraBtn = findViewById(R.id.cameraBtn);
-        if(!cameraOn){
+        if (!sp.getBoolean("cameraOn", false)){
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.weight = 7.75f;
 
@@ -125,8 +122,8 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             submit_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CheckConfiguration checkConfiguration = new CheckConfiguration();
-                    if (checkConfiguration.checkConfiguration(Quality.this)) {
+//                    CheckConfiguration checkConfiguration = new CheckConfiguration();
+//                    if (checkConfiguration.checkConfiguration(Quality.this)) {
                         if (!(TextUtils.isEmpty(addinventoryBarcodeET.getText()))) {
 
                             String container = addinventoryBarcodeET.getText().toString();
@@ -151,7 +148,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                             showIssuesTV.setText(listToString(selectedItemsDisplayList));
                         }
                     }
-                }
+//                }
             });
         }
         showIssuesTV = findViewById(R.id.showIssuesTV);

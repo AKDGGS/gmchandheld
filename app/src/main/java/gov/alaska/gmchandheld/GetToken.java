@@ -36,9 +36,8 @@ public class GetToken extends AppCompatActivity {
     public void loadGetToken() {
         LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
         apiTokenET = findViewById(R.id.apiTokenET);
-        boolean cameraOn = (BaseActivity.sp.getBoolean("cameraOn", false));
         Button cameraBtn = findViewById(R.id.cameraBtn);
-        if (!cameraOn) {
+        if (!BaseActivity.sp.getBoolean("cameraOn", false)) {
             cameraBtn.setVisibility(View.GONE);
         } else {
             apiQrScan = new IntentIntegrator(this);
@@ -60,7 +59,6 @@ public class GetToken extends AppCompatActivity {
             }
         });
         apiTokenET.setOnKeyListener((v, keyCode, event) -> {
-            // if "enter" is pressed
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 submitBtn.performClick();
                 return true;

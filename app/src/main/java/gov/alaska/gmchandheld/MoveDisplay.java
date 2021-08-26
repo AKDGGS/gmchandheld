@@ -57,10 +57,9 @@ public class MoveDisplay extends BaseActivity {
 		containerList = MoveDisplayObjInstance.getInstance().getMoveList();
 		adapter.addAll(containerList);
 		moveCountTV.setText(String.valueOf(containerList.size()));
-		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
-		if (!cameraOn){
+		if (!sp.getBoolean("cameraOn", false)){
 			LinearLayout.LayoutParams params =
 					new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 6.75f;
@@ -74,13 +73,24 @@ public class MoveDisplay extends BaseActivity {
 			itemCameraBtn.setVisibility(View.GONE);
 		}else{
 			qrScan = new IntentIntegrator(this);
-			IntentIntegrator itemQrScan = new IntentIntegrator(this);
 		}
 		cameraBtn.setOnClickListener(view -> {
+			if (Build.VERSION.SDK_INT <= 24) {
+				intent = qrScan.createScanIntent();
+			} else {
+				intent = new Intent(MoveDisplay.this, CameraToScanner.class);
+			}
 			startActivityForResult(intent, 1);
 		});
+
 		itemCameraBtn.setOnClickListener(view -> {
+			if (Build.VERSION.SDK_INT <= 24) {
+				intent = qrScan.createScanIntent();
+			} else {
+				intent = new Intent(MoveDisplay.this, CameraToScanner.class);
+			}
 			startActivityForResult(intent, 2);
+
 		});
 		addBtn.setOnClickListener(v -> {
 			String container = itemET.getText().toString();
@@ -142,24 +152,23 @@ public class MoveDisplay extends BaseActivity {
 			});
 			// onClickListener listens if the submit button is clicked
 			submitBtn.setOnClickListener(v -> {
-				CheckConfiguration checkConfiguration = new CheckConfiguration();
-				if (checkConfiguration.checkConfiguration(MoveDisplay.this)) {
+//				CheckConfiguration checkConfiguration = new CheckConfiguration();
+//				if (checkConfiguration.checkConfiguration(MoveDisplay.this)) {
 					if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
 						moveContainer(destinationET.getText().toString());
 						itemET.setText("");
 						destinationET.setText("");
 						moveCountTV.setText("");
 					}
-				}
+//				}
 			});
 		}
 	}
 
 	public void moveContainer(String destinationInput) {
-		RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
 		RemoteApiUIHandler.setUrlFirstParameter(destinationInput);
 		RemoteApiUIHandler.setContainerList(containerList);
-		remoteApiUIHandler.setDownloading(true);
+		RemoteApiUIHandler.setDownloading(true);
 		new RemoteApiUIHandler.ProcessDataForDisplay(MoveDisplay.this).execute();
 	}
 

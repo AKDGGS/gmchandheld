@@ -122,15 +122,15 @@ public class LookupLogicForDisplay {
 						lengthOfSsb + o.getName().length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 				int indentationIncrement = 42; //Arbitrary Value
 				if (!Character.isWhitespace(ssb.charAt(3))) {
-					ssb = createIndentedText(ssb, 3, indentationIncrement);
+					createIndentedText(ssb, 3, indentationIncrement);
 				} else if (!Character.isWhitespace(ssb.charAt(6))) {
-					ssb = createIndentedText(ssb, 6,
+					createIndentedText(ssb, 6,
 							indentationIncrement * 2);
 				} else if (!Character.isWhitespace(ssb.charAt(9))) {
-					ssb = createIndentedText(ssb, 9,
+					createIndentedText(ssb, 9,
 							indentationIncrement * 3);
 				} else {
-					ssb = createIndentedText(ssb, 0,
+					createIndentedText(ssb, 0,
 							indentationIncrement * 4);
 				}
 				displayList.add(ssb);
@@ -208,10 +208,8 @@ public class LookupLogicForDisplay {
 					String newName = "Operator";
 					if (o.has("current")) {
 						newName += (o.optBoolean("current") ? " (Current)" : " (Previous)");
-						io = new InventoryObject(newName, null, 50);
-					} else {
-						io = new InventoryObject(newName, null, 50);
 					}
+					io = new InventoryObject(newName, null, 50);
 					break;
 				}
 				case "outcrops": {
@@ -566,9 +564,8 @@ public class LookupLogicForDisplay {
 		}
 	}
 
-	public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
+	public static void createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
 		//https://www.programmersought.com/article/45371641877/
 		text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
-		return text;
 	}
 }

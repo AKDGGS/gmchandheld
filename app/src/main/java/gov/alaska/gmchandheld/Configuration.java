@@ -11,7 +11,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,10 +25,10 @@ import com.google.zxing.integration.android.IntentResult;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class Configuration extends BaseActivity {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
-//    private IntentIntegrator qrScan;
     private EditText hourInput, minuteInput, urlET, apiET;
     private String hour, minute, url;
 
@@ -48,18 +47,6 @@ public class Configuration extends BaseActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        urlET = findViewById(R.id.urlET);
-        if (!urlET.getText().toString().startsWith("https")) {
-            Toast.makeText(Configuration.this, "The URL must be https.", Toast.LENGTH_SHORT)
-                    .show();
-            urlET.requestFocus();
-            urlET.selectAll();
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         urlET = findViewById(R.id.urlET);
@@ -69,10 +56,10 @@ public class Configuration extends BaseActivity {
         }
         // KeyListener listens if enter is pressed
         urlET.setOnKeyListener((v, keyCode, event) -> {
-            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
                 if (!urlET.getText().toString().startsWith("https")) {
-                    Toast.makeText(Configuration.this, "The URL must be https.", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(Configuration.this, "The URL must be https.",
+                            Toast.LENGTH_SHORT).show();
                     urlET.requestFocus();
                     urlET.selectAll();
                 } else {
@@ -96,10 +83,9 @@ public class Configuration extends BaseActivity {
         hourInput = findViewById(R.id.hourET);
         minuteInput = findViewById(R.id.minuteET);
         cameraToScannerBtn = findViewById(R.id.cameraToScannerBtn);
-        boolean cameraOn = (BaseActivity.sp.getBoolean("cameraOn", false));
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
         Button apiCameraBtn = findViewById(R.id.apiCameraBtn);
-        if (!cameraOn) {
+        if (!sp.getBoolean("cameraOn", false)) {
             urlCameraBtn.setVisibility(View.GONE);
             apiCameraBtn.setVisibility(View.GONE);
         } else {
@@ -159,14 +145,14 @@ public class Configuration extends BaseActivity {
                     } else {
                         alarmOffTime.set(Calendar.HOUR_OF_DAY, 24);
                         hourInput = findViewById(R.id.hourET);
-                        hourInput.setText("24");
+                        hourInput.setText(R.string._24);
                     }
                     if (!minute.isEmpty()) {
                         alarmOffTime.set(Calendar.MINUTE, Integer.parseInt(minute));
                     } else {
                         alarmOffTime.set(Calendar.MINUTE, 0);
                         minuteInput = findViewById(R.id.minuteET);
-                        minuteInput.setText("0");
+                        minuteInput.setText(R.string._0);
                     }
                     alarmOffTime.set(Calendar.SECOND, 0);
                     if (alarmOffTime.before(Calendar.getInstance())) {
@@ -269,9 +255,8 @@ public class Configuration extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() != 0) {
-                    limit(hourInput, Integer.parseInt(hourInput.getText().toString()),0,
-                            24);
-                    if(hourInput.getText().toString().equals("24")){
+                    limit(hourInput, 24);
+                    if (hourInput.getText().toString().equals("24")){
                         minuteInput.setText("0");
                         BaseActivity.editor.putString("updateMinute", minuteInput.getText()
                                 .toString()).apply();
@@ -293,7 +278,7 @@ public class Configuration extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(!s.toString().equals(strBefore)){
+                if (!s.toString().equals(strBefore)){
                     autoUpdateBtn.setChecked(false);
                     autoUpdateBtn.setChecked(true);
                 }
@@ -307,11 +292,11 @@ public class Configuration extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() != 0 && !(hourInput.getText().toString().equals("24"))) {
-                    limit(minuteInput, Integer.parseInt(s.toString()), 0, 59);
+                    limit(minuteInput, 59);
                     BaseActivity.editor.putString("updateMinute", s.toString()).apply();
                 } else {
                     BaseActivity.editor.putString("updateMinute", "0").apply();
-                    limit(minuteInput, Integer.parseInt(s.toString()), 0, 0);
+                    limit(minuteInput, 0);
                 }
             }
 
@@ -381,19 +366,18 @@ public class Configuration extends BaseActivity {
         }
     }
 
-    private void limit(EditText x,int z,int limin,int limax){
+    private void limit(EditText x, int limax){
 //      https://stackoverflow.com/a/25366712
         if ( x.getText().toString()==null || x.getText().toString().length()==0){
-            x.setText(Integer.toString(limin));
+            x.setText(String.format(Locale.getDefault(), "%d", 0));
         }
         else {
-            z = Integer.parseInt(x.getText().toString());
-            if (z <limin || z>limax){
-                if (z < limin ){
-                    x.setText(Integer.toString(limin));
-                }
-                else if (z > limax){
-                    x.setText(Integer.toString(limax));
+            int z = Integer.parseInt(x.getText().toString());
+            if (z < 0 || z >limax){
+                if (z < 0 ) {
+                    x.setText(String.format(Locale.getDefault(), "%d", 0));
+                } else {
+                    x.setText(String.format(Locale.getDefault(), "%d", limax));
                 }
             }
         }
@@ -410,12 +394,7 @@ public class Configuration extends BaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (!urlET.getText().toString().startsWith("https")) {
-
-//            menu.setGroupEnabled(0, false);
             menu.clear();
-        } else {
-            invalidateOptionsMenu();
-//            menu.setGroupEnabled(1, true);
         }
         return super.onPrepareOptionsMenu(menu);
     }

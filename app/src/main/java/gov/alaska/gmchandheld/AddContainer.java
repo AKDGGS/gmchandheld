@@ -39,9 +39,8 @@ public class AddContainer extends BaseActivity {
 		EditText addContainerRemarkET = findViewById(R.id.remarkET);
 		Button submit_button = findViewById(R.id.submitBtn);
 		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 		Button cameraBtn = findViewById(R.id.cameraBtn);
-		if(!cameraOn){
+		if (!sp.getBoolean("cameraOn", false)){
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
 					LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 7.75f;
@@ -49,7 +48,7 @@ public class AddContainer extends BaseActivity {
 			addContainerNameET.setLayoutParams(params);
 			addContainerRemarkET.setLayoutParams(params);
 			cameraBtn.setVisibility(View.GONE);
-		}else{
+		} else {
 			qrScan = new IntentIntegrator(this);
 			qrScan.setBeepEnabled(true);
 		}
@@ -70,44 +69,36 @@ public class AddContainer extends BaseActivity {
 			return false;
 		});
 		// KeyListener listens if enter is pressed
-		addContainerNameET.setOnKeyListener(new View.OnKeyListener() {
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-						(keyCode == KeyEvent.KEYCODE_ENTER)){
-					addContainerRemarkET.requestFocus();
-					return true;
-				}
-				return false;
+		addContainerNameET.setOnKeyListener((v, keyCode, event) -> {
+			if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+					(keyCode == KeyEvent.KEYCODE_ENTER)){
+				addContainerRemarkET.requestFocus();
+				return true;
 			}
+			return false;
 		});
 		if (remoteApiUIHandler.isDownloading()) {
 			// onClickListener listens if the submit button is clicked
-			submit_button.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					CheckConfiguration checkConfiguration = new CheckConfiguration();
-					if (checkConfiguration.checkConfiguration(AddContainer.this)) {
-						if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
-							String container = addContainerBarcodeET.getText().toString();
-							if (!container.isEmpty()) {
-								RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-								RemoteApiUIHandler.setUrlFirstParameter(
-										addContainerBarcodeET.getText().toString());
-								RemoteApiUIHandler.setAddContainerName(
-										addContainerNameET.getText().toString());
-								RemoteApiUIHandler.setAddContainerRemark(
-										addContainerRemarkET.getText().toString());
-								remoteApiUIHandler.setDownloading(true);
-								new RemoteApiUIHandler.ProcessDataForDisplay(
-										AddContainer.this).execute();
-							}
-							addContainerBarcodeET.setText("");
-							addContainerNameET.setText("");
-							addContainerRemarkET.setText("");
-							addContainerBarcodeET.requestFocus();
+			submit_button.setOnClickListener(v -> {
+					if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
+						String container = addContainerBarcodeET.getText().toString();
+						if (!container.isEmpty()) {
+							RemoteApiUIHandler remoteApiUIHandler1 = new RemoteApiUIHandler();
+							RemoteApiUIHandler.setUrlFirstParameter(
+									addContainerBarcodeET.getText().toString());
+							RemoteApiUIHandler.setAddContainerName(
+									addContainerNameET.getText().toString());
+							RemoteApiUIHandler.setAddContainerRemark(
+									addContainerRemarkET.getText().toString());
+							remoteApiUIHandler1.setDownloading(true);
+							new RemoteApiUIHandler.ProcessDataForDisplay(
+									AddContainer.this).execute();
 						}
+						addContainerBarcodeET.setText("");
+						addContainerNameET.setText("");
+						addContainerRemarkET.setText("");
+						addContainerBarcodeET.requestFocus();
 					}
-				}
 			});
 		}
 	}
@@ -119,7 +110,7 @@ public class AddContainer extends BaseActivity {
 			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 			addContainerBarcodeET.setText(result.getContents());
 		}else {
-			if (resultCode == CommonStatusCodes.SUCCESS) {
+			if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
 				Barcode barcode = data.getParcelableExtra("barcode");
 				EditText edit_text = findViewById(R.id.barcodeET);
 				assert barcode != null;

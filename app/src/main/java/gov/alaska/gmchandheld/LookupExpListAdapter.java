@@ -77,7 +77,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater)
 					context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflater.inflate(R.layout.exp_list_parent, null);
+			convertView = inflater.inflate(R.layout.exp_list_parent, parent, false);
 			parentHolder.parentText = convertView.findViewById(R.id.txtParent);
 			convertView.setTag(parentHolder);
 		}
@@ -140,7 +140,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		if (convertView == null) {
 			LayoutInflater inflater =
 					(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflater.inflate(R.layout.exp_list_child, null);
+			convertView = inflater.inflate(R.layout.exp_list_child, parent, false);
 		}
 		TextView txtChild = convertView.findViewById(R.id.txtChild);
 		switch (getInventoryObjType()) {

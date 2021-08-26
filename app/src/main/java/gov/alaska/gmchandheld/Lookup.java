@@ -1,7 +1,5 @@
 package gov.alaska.gmchandheld;
 
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -13,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -61,9 +58,8 @@ public class Lookup extends BaseActivity {
 
 	public void loadLookup() {
 		LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
-		boolean cameraOn = sp.getBoolean("cameraOn", false);
 		Button cameraBtn = findViewById(R.id.cameraBtn);
-		if (!cameraOn) {
+		if (!sp.getBoolean("cameraOn", false)) {
 			cameraBtn.setVisibility(View.GONE);
 		} else {
 			qrScan = new IntentIntegrator(this);
@@ -94,14 +90,11 @@ public class Lookup extends BaseActivity {
 			// onClickListener listens if the submit button is clicked
 			submitBtn.setOnClickListener(v -> {
 				sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-				CheckConfiguration checkConfiguration = new CheckConfiguration();
-				if (checkConfiguration.checkConfiguration(Lookup.this)) {
 					if (!barcodeET.getText().toString().isEmpty()) {
 						remoteApiUIHandler.setDownloading(true);
 						RemoteApiUIHandler.setUrlFirstParameter(barcodeET.getText().toString());
 						new RemoteApiUIHandler.ProcessDataForDisplay(Lookup.this).execute();
 					}
-				}
 			});
 			// KeyListener listens if enter is pressed
 			barcodeET.setOnKeyListener((v, keyCode, event) -> {

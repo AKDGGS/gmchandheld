@@ -60,9 +60,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             showIssuesTV.setText(listToString(selectedItemsDisplayList));
         }
         final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-        boolean cameraOn = (sp.getBoolean("cameraOn", false));
         Button cameraBtn = findViewById(R.id.cameraBtn);
-        if (!cameraOn) {
+        if (!sp.getBoolean("cameraOn", false)) {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             params.weight = 7.75f;
@@ -94,8 +93,6 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         if (remoteApiUIHandler.isDownloading()) {
             // onClickListener listens if the submit button is clicked
             submit_button.setOnClickListener(v -> {
-                CheckConfiguration checkConfiguration = new CheckConfiguration();
-                if (checkConfiguration.checkConfiguration(AddInventory.this)) {
                     if (!(TextUtils.isEmpty(addinventoryBarcodeET.getText()))) {
                         String container = addinventoryBarcodeET.getText().toString();
                         if (!container.isEmpty()) {
@@ -121,7 +118,6 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                         selectedItemsDisplayList.add("Needs Inventory");
                         showIssuesTV.setText(listToString(selectedItemsDisplayList));
                     }
-                }
             });
         }
         showIssuesTV = findViewById(R.id.showIssuesTV);
@@ -130,7 +126,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             if (null != selectedItemsDisplayList) {
                 showIssuesTV.setText(listToString(selectedItemsDisplayList));
             } else if (selectedItemsDisplayList.isEmpty()) {
-                showIssuesTV.setText("Needs Inventory");
+                showIssuesTV.setText(R.string.needs_inventory);
             }
             DialogFragment issueDialog = new IssuesFragment();
             issueDialog.setCancelable(false);
@@ -145,11 +141,11 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             addinventoryBarcodeET.setText(result.getContents());
         } else {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
+            if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
                 if(null != data.getParcelableExtra("barcode")) {
                     Barcode barcode = data.getParcelableExtra("barcode");
                     EditText edit_text = findViewById(R.id.barcodeET);
-                    edit_text.setText(barcode.displayValue);
+                    edit_text.setText(barcode != null ? barcode.displayValue : null);
                 }
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
@@ -161,7 +157,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     public void onPostitiveButtonClicked(String[] list, ArrayList<String> selectedItems) {
         StringBuilder sb = new StringBuilder();
         for (String str : selectedItems) {
-            sb.append(str + ", ");
+            sb.append(str).append(", ");
         }
         showIssuesTV.setText(listToString(selectedItemsDisplayList));
     }
@@ -173,7 +169,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     public String listToString(ArrayList<String> arrList) {
         StringBuilder sb = new StringBuilder();
         for (String s : arrList) {
-            sb.append(s + "\n");
+            sb.append(s).append("\n");
         }
         return sb.toString();
     }

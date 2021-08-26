@@ -1,7 +1,6 @@
 package gov.alaska.gmchandheld;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -40,34 +39,32 @@ public class LookupDisplay extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkUrlUsesHttps(this);
-        checkAPIkeyExists(this);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        checkUrlUsesHttps(this);
+//        checkAPIkeyExists(this);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         expandableListView = findViewById(R.id.expandableListView);
         invisibleEditText = findViewById(R.id.invisibleEditText);
         invisibleEditText.setInputType(InputType.TYPE_NULL);
-        final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
         invisibleEditText.setFocusable(true);
-        invisibleEditText.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_DEL) {
-                    invisibleEditText.setText("");
-                }
-                if (invisibleEditText.getText().toString().trim().length() != 0) {
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                            (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        remoteApiUIHandler.setDownloading(true);
-                        RemoteApiUIHandler
-                                .setUrlFirstParameter(invisibleEditText.getText().toString());
-                        new RemoteApiUIHandler
-                                .ProcessDataForDisplay(LookupDisplay.this).execute();
-                        return true;
-                    }
-                } else {
-                    invisibleEditText.setText("");
-                }
-                return false;
+        invisibleEditText.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_DEL) {
+                invisibleEditText.setText("");
             }
+            if (invisibleEditText.getText().toString().trim().length() != 0) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    RemoteApiUIHandler.setDownloading(true);
+                    RemoteApiUIHandler.setUrlFirstParameter(invisibleEditText.getText().toString());
+                    new RemoteApiUIHandler
+                            .ProcessDataForDisplay(LookupDisplay.this).execute();
+                    return true;
+                }
+            } else {
+                invisibleEditText.setText("");
+            }
+            return false;
         });
         LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
                 .getInstance().lookupLogicForDisplayObj;
@@ -91,26 +88,22 @@ public class LookupDisplay extends BaseActivity {
                 }
             }
         }
-        if (lookupLogicForDisplayObj != null) {
-            Intent intent = getIntent();
-            //this barcode refers to the query barcode.
-            String barcode = intent.getStringExtra("barcode");
-            if (barcode != null) {
-                title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this,
-                    lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
-            expandableListView.setAdapter(listAdapter);
-            if (listAdapter.getGroupCount() >= 1) {
-                for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-                    expandableListView.expandGroup(i);
-                }
-            }
-            expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
-                return true; // This prevents the expander from being collapsed
-            });
+
+        if (getIntent().getStringExtra("barcode") != null) {
+            title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+        ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this,
+                lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
+        expandableListView.setAdapter(listAdapter);
+        if (listAdapter.getGroupCount() >= 1) {
+            for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+                expandableListView.expandGroup(i);
+            }
+        }
+        expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+            return true; // This prevents the expander from being collapsed
+        });
     }
 
     @Override
