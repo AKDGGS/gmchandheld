@@ -63,7 +63,6 @@ public class AddContainer extends BaseActivity {
 		});
 		// KeyListener listens if enter is pressed
 		addContainerBarcodeET.setOnKeyListener((v, keyCode, event) -> {
-			// if "enter" is pressed
 			if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
 				addContainerNameET.requestFocus();
 				return true;
@@ -73,7 +72,6 @@ public class AddContainer extends BaseActivity {
 		// KeyListener listens if enter is pressed
 		addContainerNameET.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				// if "enter" is pressed
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
 						(keyCode == KeyEvent.KEYCODE_ENTER)){
 					addContainerRemarkET.requestFocus();

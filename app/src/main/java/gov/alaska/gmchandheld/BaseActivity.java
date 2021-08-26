@@ -1,15 +1,15 @@
 package gov.alaska.gmchandheld;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected static SharedPreferences.Editor editor;
 	public static String apiKeyBase = null;
 	protected Toolbar toolbar;
-	protected static IntentIntegrator qrScan;
+	protected IntentIntegrator qrScan;
 	protected static Intent intent;
 
 	@Override
@@ -43,11 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		if (null == BaseActivity.apiKeyBase || BaseActivity.apiKeyBase.equals("")){
-			Intent intentGetBarcode = new Intent(this.getApplicationContext(), GetToken.class);
-			intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			this.getApplicationContext().startActivity(intentGetBarcode);
-		}
+		checkAPIkeyExists(this);
 	}
 
 	@Override
@@ -57,6 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		configureToolbar();
 		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 		editor = sp.edit();
+
 	}
 
 	protected abstract int getLayoutResource();
@@ -70,6 +67,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 			}
 		}
 	}
+
+//	@Override
+//	public boolean onPrepareOptionsMenu(Menu menu) {
+//		if(sp.getString("urlText", "").isEmpty()){
+////			menu.setGroupEnabled(0, false);
+//			Intent intentConfiguration = new Intent(this, Configuration.class);
+//			intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//			startActivity(intentConfiguration);
+//		}
+//		return super.onPrepareOptionsMenu(menu);
+//	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -193,17 +201,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 			Intent intent = new Intent(mContext, GetToken.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			mContext.startActivity(intent);
-		}
-	}
-
-	protected void getCameraIntent(Context mContext){
-		if (Build.VERSION.SDK_INT <= 24) {
-			qrScan = new IntentIntegrator((Activity) mContext);
-			intent = qrScan.createScanIntent();
-			qrScan.setOrientationLocked(false);
-			qrScan.setBeepEnabled(true);
-		} else {
-			intent = new Intent(mContext, CameraToScanner.class);
 		}
 	}
 }

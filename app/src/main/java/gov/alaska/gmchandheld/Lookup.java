@@ -1,6 +1,7 @@
 package gov.alaska.gmchandheld;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -25,7 +26,6 @@ public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory;
 	private EditText barcodeET;
-//	private IntentIntegrator qrScan;
 
 	public Lookup() {
 		lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
@@ -48,13 +48,13 @@ public class Lookup extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		enableTSL(this);
+		checkAPIkeyExists(this);
+		checkUrlUsesHttps(this);
 		if (null != getSupportActionBar()) {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		}
 		barcodeET = findViewById(R.id.barcodeET);
 		barcodeET.requestFocus();
-		checkUrlUsesHttps(this);
-		checkAPIkeyExists(this);
 		deleteApkFile();
 		loadLookup();
 	}
@@ -66,16 +66,16 @@ public class Lookup extends BaseActivity {
 		if (!cameraOn) {
 			cameraBtn.setVisibility(View.GONE);
 		} else {
-			getCameraIntent(this);
-//			qrScan = new IntentIntegrator(this);
-//			qrScan.setOrientationLocked(false);
-//			qrScan.setBeepEnabled(true);
+			qrScan = new IntentIntegrator(this);
+			qrScan.setOrientationLocked(false);
+			qrScan.setBeepEnabled(true);
 		}
+
 		cameraBtn.setOnClickListener(view -> {
 			if (Build.VERSION.SDK_INT <= 24) {
-				BaseActivity.qrScan.initiateScan();
+				qrScan.initiateScan();
 			} else {
-				BaseActivity.intent = new Intent(Lookup.this, CameraToScanner.class);
+				Intent intent = new Intent(Lookup.this, CameraToScanner.class);
 				startActivityForResult(intent, 0);
 			}
 		});

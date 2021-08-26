@@ -60,7 +60,7 @@ public class MoveDisplay extends BaseActivity {
 		boolean cameraOn = (sp.getBoolean("cameraOn", false));
 		Button cameraBtn = findViewById(R.id.cameraBtn);
 		Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
-		if(!cameraOn){
+		if (!cameraOn){
 			LinearLayout.LayoutParams params =
 					new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 6.75f;
@@ -73,7 +73,8 @@ public class MoveDisplay extends BaseActivity {
 			cameraBtn.setVisibility(View.GONE);
 			itemCameraBtn.setVisibility(View.GONE);
 		}else{
-			getCameraIntent(this);
+			qrScan = new IntentIntegrator(this);
+			IntentIntegrator itemQrScan = new IntentIntegrator(this);
 		}
 		cameraBtn.setOnClickListener(view -> {
 			startActivityForResult(intent, 1);

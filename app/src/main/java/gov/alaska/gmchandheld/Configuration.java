@@ -10,6 +10,8 @@ import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +29,7 @@ import java.util.Date;
 
 public class Configuration extends BaseActivity {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
-    private IntentIntegrator qrScan;
+//    private IntentIntegrator qrScan;
     private EditText hourInput, minuteInput, urlET, apiET;
     private String hour, minute, url;
 
@@ -43,6 +45,18 @@ public class Configuration extends BaseActivity {
         loadData();
         saveData();
         this.recreate();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        urlET = findViewById(R.id.urlET);
+        if (!urlET.getText().toString().startsWith("https")) {
+            Toast.makeText(Configuration.this, "The URL must be https.", Toast.LENGTH_SHORT)
+                    .show();
+            urlET.requestFocus();
+            urlET.selectAll();
+        }
     }
 
     @Override
@@ -62,6 +76,7 @@ public class Configuration extends BaseActivity {
                     urlET.requestFocus();
                     urlET.selectAll();
                 } else {
+                    invalidateOptionsMenu();  //creates the menu
                     apiET.requestFocus();
                 }
                 return true;
@@ -188,14 +203,7 @@ public class Configuration extends BaseActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
-            public void afterTextChanged(Editable s) {
-                if (urlET.getText().toString().length() == 5 && !urlET.getText().toString().startsWith("https")) {
-                    Toast.makeText(Configuration.this, "The URL must be https.", Toast.LENGTH_SHORT)
-                            .show();
-                    urlET.requestFocus();
-                    urlET.selectAll();
-                }
-            }
+            public void afterTextChanged(Editable s) { }
         });
     }
 
@@ -397,5 +405,18 @@ public class Configuration extends BaseActivity {
         } else {
             BaseActivity.intent = new Intent(Configuration.this, CameraToScanner.class);
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!urlET.getText().toString().startsWith("https")) {
+
+//            menu.setGroupEnabled(0, false);
+            menu.clear();
+        } else {
+            invalidateOptionsMenu();
+//            menu.setGroupEnabled(1, true);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 }
