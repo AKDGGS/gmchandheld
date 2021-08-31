@@ -37,7 +37,7 @@ public class RemoteApiUIHandler {
         downloading = false;
     }
 
-    public boolean isDownloading() {
+    public static boolean isDownloading() {
         return !downloading;
     }
     public static void setDownloading(boolean mDownloading) {
