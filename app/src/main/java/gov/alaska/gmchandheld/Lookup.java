@@ -116,15 +116,13 @@ public class Lookup extends BaseActivity {
 	//makes the volume keys scroll up/down
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
-		int action, keycode;
-		action = event.getAction();
-		keycode = event.getKeyCode();
+		int action = event.getAction();
 		AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-		switch (keycode) {
+		manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
+		manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
+		switch (event.getKeyCode()) {
 			case KeyEvent.KEYCODE_DPAD_UP:
 			case KeyEvent.KEYCODE_VOLUME_UP: {
-				manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
-				manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
 				if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
 					listView.smoothScrollToPosition(0, 0);
 				}

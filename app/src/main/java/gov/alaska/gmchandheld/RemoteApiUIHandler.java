@@ -21,14 +21,10 @@ import java.util.LinkedList;
 
 public class RemoteApiUIHandler {
     private static int apiKeyAttempts;
-    public static LinkedList<String> lookupHistory;
-    private static LinkedList<String> summaryHistory;
+    public static LinkedList<String> lookupHistory, summaryHistory;
     private static boolean downloading;
     private static ArrayList<String> containerList;
-    private static String urlFirstParameter;
-    private static String destinationBarcode;
-    private static String addContainerName;
-    private static String getNewBarcode;
+    private static String urlFirstParameter, destinationBarcode, addContainerName, getNewBarcode;
 
     public RemoteApiUIHandler() {
         apiKeyAttempts = 0;
@@ -82,8 +78,6 @@ public class RemoteApiUIHandler {
                 downloading = false;
             });
             alert = alertDialog.create();
-            System.out.println(mActivity.getClass().getSimpleName());
-            System.out.println("Null? " + (null == mActivity));
             alert.show();
             alert.setCanceledOnTouchOutside(false);
             if (!urlFirstParameter.isEmpty()) {
@@ -142,10 +136,10 @@ public class RemoteApiUIHandler {
                     case "AddInventory":
                     case "Quality": {
                         remoteAPIDownload.setUrlFirstParameter(urlFirstParameter);
-                        if(addContainerRemark.trim().length() > 0) {
+                        if (addContainerRemark.trim().length() > 0) {
                             remoteAPIDownload.setAddedContainerRemark(addContainerRemark);
                         }
-                        if(containerList != null) {
+                        if (containerList != null) {
                             remoteAPIDownload.setContainerList(containerList);
                         }
                         break;
@@ -178,7 +172,7 @@ public class RemoteApiUIHandler {
                 if (responseCode == 403) {
                     Intent intentGetBarcode = new Intent(mActivity.get().getApplicationContext(), GetToken.class);
                     intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    if(apiKeyAttempts == 0){
+                    if (apiKeyAttempts == 0){
                         mActivity.get().getApplicationContext().startActivity(intentGetBarcode);
                         apiKeyAttempts = apiKeyAttempts + 1;
                     } else {
@@ -217,7 +211,6 @@ public class RemoteApiUIHandler {
                         }
                         case "SummaryDisplay":
                         case "LookupDisplay": {
-//										lastAddedToHistory(context, queryOrDestination);
                             EditText invisibleEditText = ((Activity) mActivity.get()).findViewById(R.id.invisibleEditText);
                             invisibleEditText.setText("");
                             invisibleEditText.requestFocus();
@@ -241,7 +234,6 @@ public class RemoteApiUIHandler {
                         case "Recode": {
                             EditText oldBarcodeET = ((Activity) mActivity.get()).findViewById(R.id.oldBarcodeET);
                             oldBarcodeET.setText(urlFirstParameter);
-                            EditText newBarcodeET = ((Activity) mActivity.get()).findViewById(R.id.newBarcodeET);
                             oldBarcodeET.requestFocus();
                             break;
                         }

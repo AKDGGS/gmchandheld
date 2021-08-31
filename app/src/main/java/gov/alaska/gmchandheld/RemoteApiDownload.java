@@ -44,7 +44,6 @@ public class RemoteApiDownload {
         this.destinationBarcode = destinationBarcode;
     }
 
-
     public void setNewBarcode(String newBarcode) {
         this.newBarcode = newBarcode;
     }
