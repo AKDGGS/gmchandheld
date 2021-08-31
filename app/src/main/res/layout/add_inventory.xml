@@ -58,6 +58,7 @@
                         android:inputType="text"
                         android:text=""
                         android:maxLength="25"
+                        android:maxLines="1"
                         android:selectAllOnFocus="true"
                         android:nextFocusDown="@+id/barcodeET"
                         android:nextFocusUp="@+id/barcodeET"

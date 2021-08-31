@@ -20,13 +20,12 @@ import java.util.ArrayList;
 
 public class AddInventory extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
     private IntentIntegrator qrScan;
-    private EditText addInventoryBarcodeET;
+    private EditText barcodeET;
     private TextView showIssuesTV;
     private static int numberOfIssues;
     public static ArrayList<String> selectedItems;
     public static boolean[] checkedItems;
     public static ArrayList<String> selectedItemsDisplayList;
-    private final StringBuilder sb;
 
     public AddInventory() {
         numberOfIssues = 10;
@@ -36,7 +35,6 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         selectedItems.add("needs_inventory");
         selectedItemsDisplayList.add("Needs Inventory");
         checkedItems[0] = true;
-        sb = new StringBuilder();
     }
 
     @Override
@@ -54,8 +52,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkAPIkeyExists(this);
-        addInventoryBarcodeET = findViewById(R.id.barcodeET);
-        EditText addInventoryRemarkET = findViewById(R.id.remarkET);
+        barcodeET = findViewById(R.id.barcodeET);
+        EditText remarkET = findViewById(R.id.remarkET);
         Button submit_button = findViewById(R.id.submitBtn);
         showIssuesTV = findViewById(R.id.showIssuesTV);
         if (!selectedItemsDisplayList.isEmpty()) {
@@ -68,8 +66,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             params.weight = 7.75f;
             params.rightMargin = 15;
-            addInventoryBarcodeET.setLayoutParams(params);
-            addInventoryRemarkET.setLayoutParams(params);
+            barcodeET.setLayoutParams(params);
+            remarkET.setLayoutParams(params);
             cameraBtn.setVisibility(View.GONE);
         } else {
             qrScan = new IntentIntegrator(this);
@@ -79,15 +77,14 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             if (Build.VERSION.SDK_INT <= 24) {
                 qrScan.initiateScan();
             } else {
-                Intent intent = new Intent(AddInventory.this, CameraToScanner.class);
+                Intent intent = new Intent(this, CameraToScanner.class);
                 startActivityForResult(intent, 0);
             }
         });
         // KeyListener listens if enter is pressed
-        addInventoryBarcodeET.setOnKeyListener((v, keyCode, event) -> {
-            // if "enter" is pressed
+        barcodeET.setOnKeyListener((v, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
-                addInventoryRemarkET.requestFocus();
+                remarkET.requestFocus();
                 return true;
             }
             return false;
@@ -95,21 +92,18 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         if (remoteApiUIHandler.isDownloading()) {
             // onClickListener listens if the submit button is clicked
             submit_button.setOnClickListener(v -> {
-                    if (!(TextUtils.isEmpty(addInventoryBarcodeET.getText()))) {
-                        String container = addInventoryBarcodeET.getText().toString();
+                    if (!(TextUtils.isEmpty(barcodeET.getText()))) {
+                        String container = barcodeET.getText().toString();
                         if (!container.isEmpty()) {
-                            RemoteApiUIHandler.setUrlFirstParameter(
-                                    addInventoryBarcodeET.getText().toString());
-                            RemoteApiUIHandler.setAddContainerRemark(
-                                    addInventoryRemarkET.getText().toString());
+                            RemoteApiUIHandler.setUrlFirstParameter(barcodeET.getText().toString());
+                            RemoteApiUIHandler.setAddContainerRemark(remarkET.getText().toString());
                             RemoteApiUIHandler.setContainerList(selectedItems);
                             RemoteApiUIHandler.setDownloading(true);
-                            new RemoteApiUIHandler.ProcessDataForDisplay(
-                                    AddInventory.this).execute();
+                            new RemoteApiUIHandler.ProcessDataForDisplay(this).execute();
                         }
-                        addInventoryBarcodeET.setText("");
-                        addInventoryRemarkET.setText("");
-                        addInventoryBarcodeET.requestFocus();
+                        barcodeET.setText("");
+                        remarkET.setText("");
+                        barcodeET.requestFocus();
                         showIssuesTV.setText("");
                         selectedItems.clear();
                         selectedItemsDisplayList.clear();
@@ -138,15 +132,13 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (Build.VERSION.SDK_INT <= 24) {
-            addInventoryBarcodeET = findViewById(R.id.barcodeET);
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-            addInventoryBarcodeET.setText(result.getContents());
+            barcodeET.setText(result.getContents());
         } else {
             if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
                 if(null != data.getParcelableExtra("barcode")) {
                     Barcode barcode = data.getParcelableExtra("barcode");
-                    EditText edit_text = findViewById(R.id.barcodeET);
-                    edit_text.setText(barcode != null ? barcode.displayValue : null);
+                    barcodeET.setText(barcode != null ? barcode.displayValue : null);
                 }
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
@@ -156,10 +148,6 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
 
     @Override
     public void onPostitiveButtonClicked(String[] list, ArrayList<String> selectedItems) {
-        sb.setLength(0);
-        for (String str : selectedItems) {
-            sb.append(str).append(", ");
-        }
         showIssuesTV.setText(listToString(selectedItemsDisplayList));
     }
 
@@ -167,11 +155,12 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     public void onNegativebuttonClicked() {
     }
 
-    public String listToString(ArrayList<String> arrList) {
-        sb.setLength(0);
+    public String listToString(ArrayList<String> arrList){
+        //used to display the list in the app
+        BaseActivity.sb.setLength(0); //clears the display list so unchecked items are removed
         for (String s : arrList) {
-            sb.append(s).append("\n");
+            BaseActivity.sb.append(s).append("\n");
         }
-        return sb.toString();
+        return BaseActivity.sb.toString();
     }
 }

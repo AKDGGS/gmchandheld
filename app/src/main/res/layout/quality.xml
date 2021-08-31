@@ -56,6 +56,7 @@
                         android:layout_weight="6.75"
                         android:inputType="text"
                         android:maxLength="25"
+                        android:maxLines="1"
                         android:nextFocusLeft="@+id/barcodeET"
                         android:nextFocusRight="@+id/barcodeET"
                         android:nextFocusUp="@+id/barcodeET"
