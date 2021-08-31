@@ -21,18 +21,16 @@ import java.util.ArrayList;
 public class Quality extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
     private EditText barcodeET;
     private TextView showIssuesTV;
-    private static int numberOfIssues;
     public static ArrayList<String> selectedItems;
     public static boolean[] checkedItems;
     public static ArrayList<String> selectedItemsDisplayList;
 
     public Quality() {
-        numberOfIssues = 10;
         selectedItems = new ArrayList<>();
         selectedItems.add("needs_inventory");
         selectedItemsDisplayList = new ArrayList<>();
         selectedItemsDisplayList.add("Needs Inventory");
-        checkedItems = new boolean[numberOfIssues];
+        checkedItems = new boolean[10];
         checkedItems[0] = true;
     }
     @Override
@@ -103,7 +101,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                         showIssuesTV.setText("");
                         selectedItems.clear();
                         selectedItemsDisplayList.clear();
-                        checkedItems = new boolean[numberOfIssues];
+                        checkedItems = new boolean[10];
                         checkedItems[0] = true;
                         selectedItems.add("needs_inventory");
                         selectedItemsDisplayList.add("Needs Inventory");
@@ -114,7 +112,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         showIssuesTV = findViewById(R.id.showIssuesTV);
         Button issuesBtn = findViewById(R.id.issuesBtn);
         issuesBtn.setOnClickListener(view -> {
-            if (null != selectedItemsDisplayList) {
+            if (selectedItemsDisplayList != null) {
                 showIssuesTV.setText(listToString(selectedItemsDisplayList));
             } else if (selectedItemsDisplayList.isEmpty()){
                 showIssuesTV.setText(R.string.needs_inventory);
@@ -131,9 +129,9 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             barcodeET.setText(result.getContents());
         } else {
-            if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
+            if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
                 Barcode barcode = data.getParcelableExtra("barcode");
-                if (null != barcode) {
+                if (barcode != null) {
                     barcodeET.setText(barcode.displayValue);
                 }
             } else {
