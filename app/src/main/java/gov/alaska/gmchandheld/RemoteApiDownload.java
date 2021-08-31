@@ -13,15 +13,10 @@ import java.util.ArrayList;
 
 public class RemoteApiDownload {
     private Exception exception = null;
-    private StringBuilder sb;
     private int responseCode;
-    private String rawJson;
-    private String urlFirstParameter;
-    private String addedContainerName;
-    private String addedContainerRemark;
+    private String rawJson, urlFirstParameter, addedContainerName, addedContainerRemark,newBarcode,
+            destinationBarcode;
     private ArrayList<String> containerList;
-    private String newBarcode;
-    private String destinationBarcode;
     private final Context context;
 
     public RemoteApiDownload(Context context) {
@@ -75,8 +70,7 @@ public class RemoteApiDownload {
         String url = BaseActivity.sp.getString("urlText", "");
 
         try {
-            String QUERYPARAM;
-            sb = new StringBuilder();
+            BaseActivity.sb = new StringBuilder();
             switch (context.getClass().getSimpleName()) {
                 case "Lookup":
                 case "LookupDisplay": {
@@ -86,8 +80,7 @@ public class RemoteApiDownload {
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-                    QUERYPARAM = "barcode=" + barcode;
-                    url = url + "inventory.json?" + QUERYPARAM;
+                    url = url + "inventory.json?barcode=" + barcode;
                     break;
                 }
                 case "Summary":
@@ -98,8 +91,7 @@ public class RemoteApiDownload {
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-                    QUERYPARAM = "barcode=" + barcode;
-                    url = url + "summary.json?" + QUERYPARAM;
+                    url = url + "summary.json?barcode=" + barcode;
                     break;
                 }
                 case "MoveContents": {
@@ -112,24 +104,22 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (source != null) {
-                        sb.append("src=").append(source);
+                        BaseActivity.sb.append("src=").append(source);
                     }
                     if (destination != null) {
-                        sb.append("&dest=").append(destination);
+                        BaseActivity.sb.append("&dest=").append(destination);
                     }
-                    url = url + "movecontents.json?" + sb.toString();
+                    url = url + "movecontents.json?" + BaseActivity.sb.toString();
                     break;
                 }
                 case "MoveDisplay": {
-                    String query;
                     String destination = null;
                     try {
                         destination = URLEncoder.encode(urlFirstParameter, "utf-8");
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-                    query = "d=" + destination + containersToUrlList(containerList, "c");
-                    url = url + "move.json?" + query;
+                    url = url + "move.json?d=" + destination + containersToUrlList(containerList, "c");
                     break;
                 }
                 case "AddContainer": {
@@ -144,15 +134,15 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        sb.append("barcode=").append(barcode);
+                        BaseActivity.sb.append("barcode=").append(barcode);
                     }
                     if (name != null) {
-                        sb.append("&name=").append(name);
+                        BaseActivity.sb.append("&name=").append(name);
                     }
                     if (remark != null) {
-                        sb.append("&remark=").append(remark);
+                        BaseActivity.sb.append("&remark=").append(remark);
                     }
-                    url = url + "addcontainer.json?" + sb.toString();
+                    url = url + "addcontainer.json?" + BaseActivity.sb.toString();
                     break;
                 }
                 case "AddInventory": {
@@ -167,19 +157,18 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        sb.append("barcode=").append(barcode);
+                        BaseActivity.sb.append("barcode=").append(barcode);
                     }
                     if (remark != null) {
-                        sb.append("&remark=").append(remark);
+                        BaseActivity.sb.append("&remark=").append(remark);
                     }
                     if (containerList != null) {
-                        sb.append(containersToUrlList(containerList, "i"));
+                        BaseActivity.sb.append(containersToUrlList(containerList, "i"));
                     }
-                    url = url + "addinventory.json?" + sb.toString();
+                    url = url + "addinventory.json?" + BaseActivity.sb.toString();
                     break;
                 }
                 case "Quality": {
-                    String query;
                     String barcode = null;
                     String remark = null;
                     try {
@@ -191,28 +180,25 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        sb.append("barcode=").append(barcode);
+                        BaseActivity.sb.append("barcode=").append(barcode);
                     }
                     if (remark != null) {
-                        sb.append("&remark=").append(remark);
+                        BaseActivity.sb.append("&remark=").append(remark);
                     }
                     if (containerList != null) {
-                        sb.append(containersToUrlList(containerList, "i"));
+                        BaseActivity.sb.append(containersToUrlList(containerList, "i"));
                     }
-                    query = sb.toString();
-                    url = url + "addinventoryquality.json?" + query;
+                    url = url + "addinventoryquality.json?" + BaseActivity.sb.toString();
                     break;
                 }
                 case "AuditDisplay": {
-                    String query;
                     String remark = null;
                     try {
                         remark = URLEncoder.encode(urlFirstParameter, "utf-8");
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
-                    query = "remark=" + remark + containersToUrlList(containerList, "c");
-                    url = url + "audit.json?" + query;
+                    url = url + "audit.json?remark=" + remark + containersToUrlList(containerList, "c");
                     break;
                 }
                 case "Recode": {
@@ -225,12 +211,12 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        sb.append("old=").append(barcode);
+                        BaseActivity.sb.append("old=").append(barcode);
                     }
                     if (mNewBarcode != null) {
-                        sb.append("&new=").append(mNewBarcode);
+                        BaseActivity.sb.append("&new=").append(mNewBarcode);
                     }
-                    url = url + "recode.json?" + sb.toString();
+                    url = url + "recode.json?" + BaseActivity.sb.toString();
                     break;
                 }
             }
@@ -276,7 +262,7 @@ public class RemoteApiDownload {
             exception = e;
         } catch (MalformedURLException e) {
             exception = e;
-            exception = new Exception(String.valueOf(sb));
+            exception = new Exception(String.valueOf(BaseActivity.sb));
         } catch (IOException e) {
             exception = e;
         }
