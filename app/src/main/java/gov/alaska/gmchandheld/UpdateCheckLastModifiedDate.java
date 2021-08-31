@@ -3,18 +3,14 @@ package gov.alaska.gmchandheld;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.widget.Toast;
-
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
 
@@ -28,6 +24,7 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
     protected Long doInBackground(Void... voids) {
         String urlStr;
         Context mContext = mActivity.get();
+        System.out.println(BaseActivity.sp.getString("urlText", ""));
         urlStr = BaseActivity.sp.getString("urlText", "") + "app/current.apk";
         HttpURLConnection httpCon;
         System.setProperty("http.keepAlive", "false");

@@ -19,7 +19,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
 public class RemoteApiUIHandler {
     private static int apiKeyAttempts;
     public static LinkedList<String> lookupHistory;
@@ -83,6 +82,8 @@ public class RemoteApiUIHandler {
                 downloading = false;
             });
             alert = alertDialog.create();
+            System.out.println(mActivity.getClass().getSimpleName());
+            System.out.println("Null? " + (null == mActivity));
             alert.show();
             alert.setCanceledOnTouchOutside(false);
             if (!urlFirstParameter.isEmpty()) {
