@@ -29,10 +29,10 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     public Quality() {
         numberOfIssues = 10;
         selectedItems = new ArrayList<>();
-        selectedItemsDisplayList = new ArrayList<>();
-        checkedItems = new boolean[numberOfIssues];
         selectedItems.add("needs_inventory");
+        selectedItemsDisplayList = new ArrayList<>();
         selectedItemsDisplayList.add("Needs Inventory");
+        checkedItems = new boolean[numberOfIssues];
         checkedItems[0] = true;
     }
     @Override
@@ -59,7 +59,8 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         }
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!sp.getBoolean("cameraOn", false)){
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
             params.weight = 7.75f;
             barcodeET.setLayoutParams(params);
             remarkET.setLayoutParams(params);
@@ -72,7 +73,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             if (Build.VERSION.SDK_INT <= 24) {
                 qrScan.initiateScan();
             } else {
-                Intent intent = new Intent(Quality.this, CameraToScanner.class);
+                Intent intent = new Intent(this, CameraToScanner.class);
                 startActivityForResult(intent, 0);
             }
         });
@@ -94,7 +95,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                             RemoteApiUIHandler.setAddContainerRemark(remarkET.getText().toString());
                             RemoteApiUIHandler.setContainerList(selectedItems);
                             RemoteApiUIHandler.setDownloading(true);
-                            new RemoteApiUIHandler.ProcessDataForDisplay(Quality.this).execute();
+                            new RemoteApiUIHandler.ProcessDataForDisplay(this).execute();
                         }
                         barcodeET.setText("");
                         remarkET.setText("");

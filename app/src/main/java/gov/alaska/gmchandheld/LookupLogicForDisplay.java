@@ -301,16 +301,15 @@ public class LookupLogicForDisplay {
 		} else {
 			switch (name) {
 				case "keywords": {
-					StringBuilder sb = new StringBuilder();
 					for (int i = 0; i < a.length(); i++) {
 						if (a.get(i) instanceof String) {
-							if (sb.length() > 0) {
-								sb.append(", ");
+							if (BaseActivity.sb.length() > 0) {
+								BaseActivity.sb.append(", ");
 							}
-							sb.append(a.get(i));
+							BaseActivity.sb.append(a.get(i));
 						}
 					}
-					return new InventoryObject("Keywords", sb.toString(), 800);
+					return new InventoryObject("Keywords", BaseActivity.sb.toString(), 800);
 				}
 				//Create these nodes
 				case "boreholes":
