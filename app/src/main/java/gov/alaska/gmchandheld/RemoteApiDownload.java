@@ -18,6 +18,7 @@ public class RemoteApiDownload {
             destinationBarcode;
     private ArrayList<String> containerList;
     private final Context context;
+    private StringBuilder sb;
 
     public RemoteApiDownload(Context context) {
         this.context = context;
@@ -68,9 +69,8 @@ public class RemoteApiDownload {
         InputStream inputStream;
         HttpURLConnection connection;
         String url = BaseActivity.sp.getString("urlText", "");
-
+        sb = new StringBuilder();
         try {
-            BaseActivity.sb = new StringBuilder();
             switch (context.getClass().getSimpleName()) {
                 case "Lookup":
                 case "LookupDisplay": {
@@ -104,12 +104,12 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (source != null) {
-                        BaseActivity.sb.append("src=").append(source);
+                        sb.append("src=").append(source);
                     }
                     if (destination != null) {
-                        BaseActivity.sb.append("&dest=").append(destination);
+                        sb.append("&dest=").append(destination);
                     }
-                    url = url + "movecontents.json?" + BaseActivity.sb.toString();
+                    url = url + "movecontents.json?" + sb.toString();
                     break;
                 }
                 case "MoveDisplay": {
@@ -134,15 +134,15 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        BaseActivity.sb.append("barcode=").append(barcode);
+                        sb.append("barcode=").append(barcode);
                     }
                     if (name != null) {
-                        BaseActivity.sb.append("&name=").append(name);
+                        sb.append("&name=").append(name);
                     }
                     if (remark != null) {
-                        BaseActivity.sb.append("&remark=").append(remark);
+                        sb.append("&remark=").append(remark);
                     }
-                    url = url + "addcontainer.json?" + BaseActivity.sb.toString();
+                    url = url + "addcontainer.json?" + sb.toString();
                     break;
                 }
                 case "AddInventory": {
@@ -157,15 +157,15 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        BaseActivity.sb.append("barcode=").append(barcode);
+                        sb.append("barcode=").append(barcode);
                     }
                     if (remark != null) {
-                        BaseActivity.sb.append("&remark=").append(remark);
+                        sb.append("&remark=").append(remark);
                     }
                     if (containerList != null) {
-                        BaseActivity.sb.append(containersToUrlList(containerList, "i"));
+                        sb.append(containersToUrlList(containerList, "i"));
                     }
-                    url = url + "addinventory.json?" + BaseActivity.sb.toString();
+                    url = url + "addinventory.json?" + sb.toString();
                     break;
                 }
                 case "Quality": {
@@ -173,22 +173,22 @@ public class RemoteApiDownload {
                     String remark = null;
                     try {
                         barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-                        if(null != addedContainerRemark) {
+                        if (null != addedContainerRemark) {
                             remark = URLEncoder.encode(addedContainerRemark, "utf-8");
                         }
                     } catch (UnsupportedEncodingException e) {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        BaseActivity.sb.append("barcode=").append(barcode);
+                        sb.append("barcode=").append(barcode);
                     }
                     if (remark != null) {
-                        BaseActivity.sb.append("&remark=").append(remark);
+                        sb.append("&remark=").append(remark);
                     }
                     if (containerList != null) {
-                        BaseActivity.sb.append(containersToUrlList(containerList, "i"));
+                        sb.append(containersToUrlList(containerList, "i"));
                     }
-                    url = url + "addinventoryquality.json?" + BaseActivity.sb.toString();
+                    url = url + "addinventoryquality.json?" + sb.toString();
                     break;
                 }
                 case "AuditDisplay": {
@@ -211,12 +211,12 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        BaseActivity.sb.append("old=").append(barcode);
+                        sb.append("old=").append(barcode);
                     }
                     if (mNewBarcode != null) {
-                        BaseActivity.sb.append("&new=").append(mNewBarcode);
+                        sb.append("&new=").append(mNewBarcode);
                     }
-                    url = url + "recode.json?" + BaseActivity.sb.toString();
+                    url = url + "recode.json?" + sb.toString();
                     break;
                 }
             }
@@ -262,7 +262,7 @@ public class RemoteApiDownload {
             exception = e;
         } catch (MalformedURLException e) {
             exception = e;
-            exception = new Exception(String.valueOf(BaseActivity.sb));
+            exception = new Exception(String.valueOf(sb));
         } catch (IOException e) {
             exception = e;
         }

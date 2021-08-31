@@ -28,6 +28,7 @@ public class LookupLogicForDisplay {
 	private final ArrayList<String> typeFlagList = new ArrayList<>();
 	private String barcodeQuery;
 	Context context;
+	private StringBuilder sb;
 
 	public LookupLogicForDisplay(Context context) {
 		this.context = context;
@@ -296,6 +297,7 @@ public class LookupLogicForDisplay {
 	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws
 			Exception {
 		InventoryObject io;
+		sb = new StringBuilder();
 		if (name == null) {
 			io = new InventoryObject(name);
 		} else {
@@ -303,13 +305,13 @@ public class LookupLogicForDisplay {
 				case "keywords": {
 					for (int i = 0; i < a.length(); i++) {
 						if (a.get(i) instanceof String) {
-							if (BaseActivity.sb.length() > 0) {
-								BaseActivity.sb.append(", ");
+							if (sb.length() > 0) {
+								sb.append(", ");
 							}
-							BaseActivity.sb.append(a.get(i));
+							sb.append(a.get(i));
 						}
 					}
-					return new InventoryObject("Keywords", BaseActivity.sb.toString(), 800);
+					return new InventoryObject("Keywords", sb.toString(), 800);
 				}
 				//Create these nodes
 				case "boreholes":

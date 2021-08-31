@@ -28,7 +28,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected Toolbar toolbar;
 	protected IntentIntegrator qrScan;
 	protected static Intent intent;
-	protected static StringBuilder sb;
 
 	@Override
 	protected void onStop() {
@@ -52,7 +51,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 		configureToolbar();
 		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 		editor = sp.edit();
-		sb = new StringBuilder();
 	}
 
 	protected abstract int getLayoutResource();
@@ -61,7 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		toolbar = findViewById(R.id.toolbar);
 		if (null != toolbar) {
 			setSupportActionBar(toolbar);
-			if(null != getSupportActionBar()) {
+			if (null != getSupportActionBar()) {
 				getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 			}
 		}

@@ -136,7 +136,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             barcodeET.setText(result.getContents());
         } else {
             if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
-                if(null != data.getParcelableExtra("barcode")) {
+                if (null != data.getParcelableExtra("barcode")) {
                     Barcode barcode = data.getParcelableExtra("barcode");
                     barcodeET.setText(barcode != null ? barcode.displayValue : null);
                 }
@@ -156,11 +156,12 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     }
 
     public String listToString(ArrayList<String> arrList){
+        StringBuilder sb = new StringBuilder();
         //used to display the list in the app
-        BaseActivity.sb.setLength(0); //clears the display list so unchecked items are removed
+        sb.setLength(0); //clears the display list so unchecked items are removed
         for (String s : arrList) {
-            BaseActivity.sb.append(s).append("\n");
+            sb.append(s).append("\n");
         }
-        return BaseActivity.sb.toString();
+        return sb.toString();
     }
 }

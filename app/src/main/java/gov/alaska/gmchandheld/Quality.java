@@ -151,11 +151,12 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     public void onNegativebuttonClicked() { }
 
     public String listToString(ArrayList<String> arrList){
+        StringBuilder sb = new StringBuilder();
         //used to display the list in the app
-        BaseActivity.sb.setLength(0); //clears the display list so unchecked items are removed
+        sb.setLength(0); //clears the display list so unchecked items are removed
         for (String s : arrList) {
-            BaseActivity.sb.append(s).append("\n");
+            sb.append(s).append("\n");
         }
-        return BaseActivity.sb.toString();
+        return sb.toString();
     }
 }
