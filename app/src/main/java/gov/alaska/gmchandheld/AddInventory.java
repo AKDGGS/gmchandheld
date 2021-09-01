@@ -22,19 +22,29 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     private IntentIntegrator qrScan;
     private EditText barcodeET;
     private TextView showIssuesTV;
-    private static int numberOfIssues;
-    public static ArrayList<String> selectedItems;
-    public static boolean[] checkedItems;
-    public static ArrayList<String> selectedItemsDisplayList;
+    private static ArrayList<String> selectedItems;
+    private static boolean[] checkedItems;
+    private static ArrayList<String> selectedItemsDisplayList;
 
     public AddInventory() {
-        numberOfIssues = 10;
         selectedItems = new ArrayList<>();
         selectedItemsDisplayList = new ArrayList<>();
-        checkedItems = new boolean[numberOfIssues];
+        checkedItems = new boolean[10];
         selectedItems.add("needs_inventory");
         selectedItemsDisplayList.add("Needs Inventory");
         checkedItems[0] = true;
+    }
+
+    public static ArrayList<String> getSelectedItems() {
+        return selectedItems;
+    }
+
+    public static boolean[] getCheckedItems() {
+        return checkedItems;
+    }
+
+    public static ArrayList<String> getSelectedItemsDisplayList() {
+        return selectedItemsDisplayList;
     }
 
     @Override
@@ -59,7 +69,6 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         if (!selectedItemsDisplayList.isEmpty()) {
             showIssuesTV.setText(listToString(selectedItemsDisplayList));
         }
-        final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!sp.getBoolean("cameraOn", false)) {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
@@ -89,17 +98,14 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             }
             return false;
         });
-        if (remoteApiUIHandler.isDownloading()) {
+        if (!RemoteApiUIHandler.isDownloading()) {
             // onClickListener listens if the submit button is clicked
             submit_button.setOnClickListener(v -> {
                     if (!(TextUtils.isEmpty(barcodeET.getText()))) {
                         String container = barcodeET.getText().toString();
                         if (!container.isEmpty()) {
-                            RemoteApiUIHandler.setUrlFirstParameter(barcodeET.getText().toString());
-                            RemoteApiUIHandler.setAddContainerRemark(remarkET.getText().toString());
-                            RemoteApiUIHandler.setContainerList(selectedItems);
-                            RemoteApiUIHandler.setDownloading(true);
-                            new RemoteApiUIHandler.ProcessDataForDisplay(this).execute();
+                            new RemoteApiUIHandler(this, barcodeET.getText().toString(),
+                                    remarkET.getText().toString(), selectedItems).execute();
                         }
                         barcodeET.setText("");
                         remarkET.setText("");
@@ -107,7 +113,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                         showIssuesTV.setText("");
                         selectedItems.clear();
                         selectedItemsDisplayList.clear();
-                        checkedItems = new boolean[numberOfIssues];
+                        checkedItems = new boolean[10];
                         checkedItems[0] = true;
                         selectedItems.add("needs_inventory");
                         selectedItemsDisplayList.add("Needs Inventory");
@@ -118,9 +124,9 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         showIssuesTV = findViewById(R.id.showIssuesTV);
         Button issuesBtn = findViewById(R.id.issuesBtn);
         issuesBtn.setOnClickListener(view -> {
-            if (null != selectedItemsDisplayList) {
+            if (selectedItemsDisplayList != null) {
                 showIssuesTV.setText(listToString(selectedItemsDisplayList));
-            } else if (selectedItemsDisplayList.isEmpty()) {
+            } else {
                 showIssuesTV.setText(R.string.needs_inventory);
             }
             DialogFragment issueDialog = new IssuesFragment();
