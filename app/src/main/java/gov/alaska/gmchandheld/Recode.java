@@ -36,7 +36,8 @@ public class Recode extends BaseActivity {
 		Button oldBarcodeCameraBtn = findViewById(R.id.oldBarcodeCameraBtn);
 		Button newBarcodeCameraBtn = findViewById(R.id.newBarcodeCameraBtn);
 		if (!sp.getBoolean("cameraOn", false)){
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 8.25f;
 			oldBarcodeET.setLayoutParams(params);
 			newBarcodeET.setLayoutParams(params);
@@ -46,7 +47,6 @@ public class Recode extends BaseActivity {
 			qrScan = new IntentIntegrator(this);
 			qrScan.setBeepEnabled(true);
 		}
-
 		oldBarcodeCameraBtn.setOnClickListener(view -> {
 			if (Build.VERSION.SDK_INT <= 24) {
 				intent = qrScan.createScanIntent();
@@ -55,7 +55,6 @@ public class Recode extends BaseActivity {
 			}
 			startActivityForResult(intent, 1);
 		});
-
 		newBarcodeCameraBtn.setOnClickListener(view -> {
 			if (Build.VERSION.SDK_INT <= 24) {
 				intent = qrScan.createScanIntent();
@@ -64,22 +63,22 @@ public class Recode extends BaseActivity {
 			}
 			startActivityForResult(intent, 2);
 		});
-		if (RemoteApiUIHandler.isDownloading()) {
+		if (!RemoteApiUIHandler.isDownloading()) {
 			// onClickListener listens if the submit button is clicked
 			findViewById(R.id.submitBtn).setOnClickListener(v -> {
-				if ((!oldBarcodeET.getText().toString().isEmpty()) &&(!newBarcodeET.getText().toString().isEmpty()) ) {
-					RemoteApiUIHandler.setDownloading(true);
-					RemoteApiUIHandler.setUrlFirstParameter(oldBarcodeET.getText().toString());
-					RemoteApiUIHandler.setGetNewBarcode(newBarcodeET.getText().toString());
-					new RemoteApiUIHandler.ProcessDataForDisplay(Recode.this).execute();
-					newBarcodeET.setText("");
-					oldBarcodeET.setText("");
-					oldBarcodeET.requestFocus();
-				}
+				if ((!oldBarcodeET.getText().toString().isEmpty()) &&
+						(!newBarcodeET.getText().toString().isEmpty())) {
+						new RemoteApiUIHandler(this, oldBarcodeET.getText().toString(),
+								newBarcodeET.getText().toString()).execute();
+						newBarcodeET.setText("");
+						oldBarcodeET.setText("");
+						oldBarcodeET.requestFocus();
+					}
 			});
 			// KeyListener listens if enter is pressed
 			oldBarcodeET.setOnKeyListener((v, keyCode, event) -> {
-				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+						(keyCode == KeyEvent.KEYCODE_ENTER)) {
 					newBarcodeET.requestFocus();
 					return true;
 				}
@@ -93,12 +92,14 @@ public class Recode extends BaseActivity {
 		if (Build.VERSION.SDK_INT <= 24) {
 			switch (requestCode){
 				case 1: {
-					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					IntentResult result = IntentIntegrator.parseActivityResult(
+							IntentIntegrator.REQUEST_CODE, resultCode, data);
 					oldBarcodeET.setText(result.getContents());
 				}
 				break;
 				case 2:{
-					IntentResult result = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+					IntentResult result = IntentIntegrator.parseActivityResult(
+							IntentIntegrator.REQUEST_CODE, resultCode, data);
 					newBarcodeET.setText(result.getContents());
 				}
 				break;
@@ -127,7 +128,6 @@ public class Recode extends BaseActivity {
 						super.onActivityResult(requestCode, resultCode, data);
 				}
 			}
-
 		}
 	}
 }
