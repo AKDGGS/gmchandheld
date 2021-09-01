@@ -21,9 +21,9 @@ import java.util.ArrayList;
 public class Quality extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
     private EditText barcodeET;
     private TextView showIssuesTV;
-    public static ArrayList<String> selectedItems;
-    public static boolean[] checkedItems;
-    public static ArrayList<String> selectedItemsDisplayList;
+    private static ArrayList<String> selectedItems;
+    private static boolean[] checkedItems;
+    private static ArrayList<String> selectedItemsDisplayList;
 
     public Quality() {
         selectedItems = new ArrayList<>();
@@ -33,6 +33,19 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         checkedItems = new boolean[10];
         checkedItems[0] = true;
     }
+
+    public static ArrayList<String> getSelectedItems() {
+        return selectedItems;
+    }
+
+    public static boolean[] getCheckedItems() {
+        return checkedItems;
+    }
+
+    public static ArrayList<String> getSelectedItemsDisplayList() {
+        return selectedItemsDisplayList;
+    }
+
     @Override
     public int getLayoutResource() {
         return R.layout.quality;
@@ -50,7 +63,6 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         checkAPIkeyExists(this);
         barcodeET = findViewById(R.id.barcodeET);
         final EditText remarkET = findViewById(R.id.remarkET);
-        final Button submit_button = findViewById(R.id.submitBtn);
         showIssuesTV = findViewById(R.id.showIssuesTV);
         if (!selectedItemsDisplayList.isEmpty()){
             showIssuesTV.setText(listToString(selectedItemsDisplayList));
@@ -83,38 +95,34 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             }
             return false;
         });
-        final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-        if (remoteApiUIHandler.isDownloading()) {
+        if (!RemoteApiUIHandler.isDownloading()) {
             // onClickListener listens if the submit button is clicked
-            submit_button.setOnClickListener(v -> {
-                    if (!(TextUtils.isEmpty(barcodeET.getText()))) {
-                        if (!barcodeET.getText().toString().isEmpty()) {
-                            RemoteApiUIHandler.setUrlFirstParameter(barcodeET.getText().toString());
-                            RemoteApiUIHandler.setAddContainerRemark(remarkET.getText().toString());
-                            RemoteApiUIHandler.setContainerList(selectedItems);
-                            RemoteApiUIHandler.setDownloading(true);
-                            new RemoteApiUIHandler.ProcessDataForDisplay(this).execute();
-                        }
-                        barcodeET.setText("");
-                        remarkET.setText("");
-                        barcodeET.requestFocus();
-                        showIssuesTV.setText("");
-                        selectedItems.clear();
-                        selectedItemsDisplayList.clear();
-                        checkedItems = new boolean[10];
-                        checkedItems[0] = true;
-                        selectedItems.add("needs_inventory");
-                        selectedItemsDisplayList.add("Needs Inventory");
-                        showIssuesTV.setText(listToString(selectedItemsDisplayList));
+            findViewById(R.id.submitBtn).setOnClickListener(v -> {
+                if (!(TextUtils.isEmpty(barcodeET.getText()))) {
+                    if (!barcodeET.getText().toString().isEmpty()) {
+                        new RemoteApiUIHandler(this, barcodeET.getText().toString(),
+                                remarkET.getText().toString(), selectedItems).execute();
                     }
-                });
+                    barcodeET.setText("");
+                    remarkET.setText("");
+                    barcodeET.requestFocus();
+                    showIssuesTV.setText("");
+                    selectedItems.clear();
+                    selectedItemsDisplayList.clear();
+                    checkedItems = new boolean[10];
+                    checkedItems[0] = true;
+                    selectedItems.add("needs_inventory");
+                    selectedItemsDisplayList.add("Needs Inventory");
+                    showIssuesTV.setText(listToString(selectedItemsDisplayList));
+                }
+            });
         }
         showIssuesTV = findViewById(R.id.showIssuesTV);
         Button issuesBtn = findViewById(R.id.issuesBtn);
         issuesBtn.setOnClickListener(view -> {
             if (selectedItemsDisplayList != null) {
                 showIssuesTV.setText(listToString(selectedItemsDisplayList));
-            } else if (selectedItemsDisplayList.isEmpty()){
+            } else {
                 showIssuesTV.setText(R.string.needs_inventory);
             }
             DialogFragment issueDialog = new IssuesFragment();
