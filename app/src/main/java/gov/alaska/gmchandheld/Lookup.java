@@ -36,6 +36,7 @@ public class Lookup extends BaseActivity {
 	@Override
 	protected void onRestart() {
 		super.onRestart();
+		checkUrlUsesHttps(this);
 		EditText barcodeET = findViewById(R.id.barcodeET);
 		barcodeET.selectAll();
 		this.recreate();
