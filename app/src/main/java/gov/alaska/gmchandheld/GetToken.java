@@ -30,7 +30,6 @@ public class GetToken extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("GMC Handheld");
         loadGetToken();
-
     }
 
     public void loadGetToken() {
@@ -59,7 +58,7 @@ public class GetToken extends AppCompatActivity {
             }
         });
         apiTokenET.setOnKeyListener((v, keyCode, event) -> {
-            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
                 submitBtn.performClick();
                 return true;
             }
