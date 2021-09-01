@@ -35,17 +35,16 @@ public class IssuesFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final String[] list = getActivity().getResources().getStringArray(R.array.choice_items);
-
         switch (getContext().getClass().getSimpleName()) {
             case "AddInventory":
-                selectedItems = AddInventory.selectedItems;
-                selectedItemsDisplayList = AddInventory.selectedItemsDisplayList;
-                checkedItems = AddInventory.checkedItems;
+                selectedItems = AddInventory.getSelectedItems();
+                selectedItemsDisplayList = AddInventory.getSelectedItemsDisplayList();
+                checkedItems = AddInventory.getCheckedItems();
                 break;
             case "Quality":
-                selectedItems = Quality.selectedItems;
-                selectedItemsDisplayList = Quality.selectedItemsDisplayList;
-                checkedItems = Quality.checkedItems;
+                selectedItems = Quality.getSelectedItems();
+                selectedItemsDisplayList = Quality.getSelectedItemsDisplayList();;
+                checkedItems = Quality.getCheckedItems();
                 break;
         }
         builder.setTitle("Select")

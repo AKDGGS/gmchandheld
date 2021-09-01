@@ -35,17 +35,20 @@ public class MoveContents extends BaseActivity {
 		checkAPIkeyExists(this);
 		moveContentsFromET = findViewById(R.id.fromET);
 		moveContentsToET = findViewById(R.id.toET);
-		Button submitBtn = findViewById(R.id.submitBtn);
 		// onClickListener listens if the submit button is clicked
-		submitBtn.setOnClickListener(v -> {
+		if (!RemoteApiUIHandler.isDownloading()) {
+			findViewById(R.id.submitBtn).setOnClickListener(v -> {
 				if (!(TextUtils.isEmpty(moveContentsFromET.getText())) &
 						!(TextUtils.isEmpty(moveContentsToET.getText()))) {
-					moveContents(moveContentsFromET.getText().toString(),
-							moveContentsToET.getText().toString());
+
+					new RemoteApiUIHandler(this, moveContentsFromET.getText().toString(),
+							moveContentsToET.getText().toString()).execute();
 					moveContentsFromET.setText("");
 					moveContentsToET.setText("");
+					moveContentsFromET.requestFocus();
 				}
-		});
+			});
+		}
 		// KeyListener listens if enter is pressed
 		moveContentsFromET.setOnKeyListener((v, keyCode, event) -> {
 			if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
@@ -84,13 +87,6 @@ public class MoveContents extends BaseActivity {
 			}
 			startActivityForResult(intent, 2);
 		});
-	}
-
-	public void moveContents(String sourceInput, String destinationInput) {
-		RemoteApiUIHandler.setUrlFirstParameter(sourceInput);
-		RemoteApiUIHandler.setDestinationBarcode(destinationInput);
-		RemoteApiUIHandler.setDownloading(true);
-		new RemoteApiUIHandler.ProcessDataForDisplay(MoveContents.this).execute();
 	}
 
 	@Override
