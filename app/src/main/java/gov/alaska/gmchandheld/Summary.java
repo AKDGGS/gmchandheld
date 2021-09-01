@@ -36,15 +36,14 @@ public class Summary extends BaseActivity {
     @Override
     public void onRestart() {
         super.onRestart();
-        EditText barcodeInput = findViewById(R.id.barcodeET);
-        barcodeInput.selectAll();
+        EditText barcodeET = findViewById(R.id.barcodeET);
+        barcodeET.selectAll();
         this.recreate();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkAPIkeyExists(this);
         SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = null;
         // populates the history list
         listView = findViewById(R.id.listViewSummaryHistory);
@@ -68,22 +67,22 @@ public class Summary extends BaseActivity {
                 startActivityForResult(intent, 0);
             }
         });
-        Button submitButton = findViewById(R.id.submitBtn);
+        Button submitBtn = findViewById(R.id.submitBtn);
         barcodeET = findViewById(R.id.barcodeET);
+
         // Submit barcode query
-        if (RemoteApiUIHandler.isDownloading()) {
-            submitButton.setOnClickListener(v -> {
-                if (!getBarcode().isEmpty()) {
-                    RemoteApiUIHandler.setDownloading(true);
-                    RemoteApiUIHandler.setUrlFirstParameter(getBarcode());
-                    new RemoteApiUIHandler.ProcessDataForDisplay(Summary.this).execute();
+        if (!RemoteApiUIHandler.isDownloading()) {
+            submitBtn.setOnClickListener(v -> {
+                if (!barcodeET.getText().toString().isEmpty()) {
+                    new RemoteApiUIHandler(this, barcodeET.getText().toString()).execute();
+                    barcodeET.setText("");
                 }
             });
             // KeyListener listens if enter is pressed
             barcodeET.setOnKeyListener((v, keyCode, event) -> {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    submitButton.performClick();
+                    submitBtn.performClick();
                     return true;
                 }
                 return false;
@@ -91,14 +90,9 @@ public class Summary extends BaseActivity {
             // Clicking barcode in history list.
             listView.setOnItemClickListener((parent, view, position, id) -> {
                 barcodeET.setText(listView.getItemAtPosition(position).toString());
-                submitButton.performClick();
+                submitBtn.performClick();
             });
         }
-    }
-
-    public String getBarcode() {
-        EditText barcodeInput = findViewById(R.id.barcodeET);
-        return barcodeInput.getText().toString();
     }
 
     @Override

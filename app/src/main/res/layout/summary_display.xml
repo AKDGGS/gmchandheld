@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"/>
 
     <EditText
-        android:id="@+id/invisibleEditText"
+        android:id="@+id/invisibleET"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:ems="0"
