@@ -18,11 +18,8 @@ public class RemoteApiDownload {
             destinationBarcode;
     private ArrayList<String> containerList;
     private final Context context;
-    private StringBuilder sb;
 
-    public RemoteApiDownload(Context context) {
-        this.context = context;
-    }
+    public RemoteApiDownload(Context context) { this.context = context; }
 
     public void setUrlFirstParameter(String firstQueryParameter) {
         this.urlFirstParameter = firstQueryParameter;
@@ -68,7 +65,7 @@ public class RemoteApiDownload {
         InputStream inputStream;
         HttpURLConnection connection;
         String url = BaseActivity.sp.getString("urlText", "");
-        sb = new StringBuilder();
+        StringBuilder sb1 = new StringBuilder();
         try {
             switch (context.getClass().getSimpleName()) {
                 case "Lookup":
@@ -103,12 +100,12 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (source != null) {
-                        sb.append("src=").append(source);
+                        sb1.append("src=").append(source);
                     }
                     if (destination != null) {
-                        sb.append("&dest=").append(destination);
+                        sb1.append("&dest=").append(destination);
                     }
-                    url = url + "movecontents.json?" + sb.toString();
+                    url = url + "movecontents.json?" + sb1.toString();
                     break;
                 }
                 case "MoveDisplay": {
@@ -133,15 +130,15 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        sb.append("barcode=").append(barcode);
+                        sb1.append("barcode=").append(barcode);
                     }
                     if (name != null) {
-                        sb.append("&name=").append(name);
+                        sb1.append("&name=").append(name);
                     }
                     if (remark != null) {
-                        sb.append("&remark=").append(remark);
+                        sb1.append("&remark=").append(remark);
                     }
-                    url = url + "addcontainer.json?" + sb.toString();
+                    url = url + "addcontainer.json?" + sb1.toString();
                     break;
                 }
                 case "AddInventory": {
@@ -156,15 +153,15 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        sb.append("barcode=").append(barcode);
+                        sb1.append("barcode=").append(barcode);
                     }
                     if (remark != null) {
-                        sb.append("&remark=").append(remark);
+                        sb1.append("&remark=").append(remark);
                     }
                     if (containerList != null) {
-                        sb.append(containersToUrlList(containerList, "i"));
+                        sb1.append(containersToUrlList(containerList, "i"));
                     }
-                    url = url + "addinventory.json?" + sb.toString();
+                    url = url + "addinventory.json?" + sb1.toString();
                     break;
                 }
                 case "Quality": {
@@ -179,15 +176,15 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        sb.append("barcode=").append(barcode);
+                        sb1.append("barcode=").append(barcode);
                     }
                     if (remark != null) {
-                        sb.append("&remark=").append(remark);
+                        sb1.append("&remark=").append(remark);
                     }
                     if (containerList != null) {
-                        sb.append(containersToUrlList(containerList, "i"));
+                        sb1.append(containersToUrlList(containerList, "i"));
                     }
-                    url = url + "addinventoryquality.json?" + sb.toString();
+                    url = url + "addinventoryquality.json?" + sb1.toString();
                     break;
                 }
                 case "AuditDisplay": {
@@ -210,12 +207,12 @@ public class RemoteApiDownload {
                         exception = new Exception(e.getMessage());
                     }
                     if (barcode != null) {
-                        sb.append("old=").append(barcode);
+                        sb1.append("old=").append(barcode);
                     }
                     if (mNewBarcode != null) {
-                        sb.append("&new=").append(mNewBarcode);
+                        sb1.append("&new=").append(mNewBarcode);
                     }
-                    url = url + "recode.json?" + sb.toString();
+                    url = url + "recode.json?" + sb1.toString();
                     break;
                 }
             }
@@ -261,7 +258,7 @@ public class RemoteApiDownload {
             exception = e;
         } catch (MalformedURLException e) {
             exception = e;
-            exception = new Exception(String.valueOf(sb));
+            exception = new Exception(String.valueOf(sb1));
         } catch (IOException e) {
             exception = e;
         }
