@@ -48,9 +48,7 @@ public class MoveDisplay extends BaseActivity {
 		destinationET = findViewById(R.id.toET);
 		itemET = findViewById(R.id.itemET);
 		final TextView moveCountTV = findViewById(R.id.moveCountTV);
-		final Button submitBtn = findViewById(R.id.submitBtn);
 		final Button addBtn = findViewById(R.id.addContainerBtn);
-		final Button clearAllBtn = findViewById(R.id.clearAllBtn);
 		ListView containerListLV = findViewById(R.id.listViewContainersToMove);
 		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 		containerListLV.setAdapter(adapter);
@@ -104,7 +102,7 @@ public class MoveDisplay extends BaseActivity {
 			itemET.setText("");
 			itemET.requestFocus();
 		});
-		clearAllBtn.setOnClickListener(v -> {
+		findViewById(R.id.clearAllBtn).setOnClickListener(v -> {
 			itemET.setText("");
 			itemET.requestFocus();
 			containerList.clear();
@@ -112,8 +110,7 @@ public class MoveDisplay extends BaseActivity {
 			adapter.notifyDataSetChanged();
 			moveCountTV.setText(String.valueOf(containerList.size()));
 		});
-		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-		if (remoteApiUIHandler.isDownloading()) {
+		if (!RemoteApiUIHandler.isDownloading()) {
 			//double click to remove elements
 			containerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
 				clicks++;
@@ -151,25 +148,15 @@ public class MoveDisplay extends BaseActivity {
 				return false;
 			});
 			// onClickListener listens if the submit button is clicked
-			submitBtn.setOnClickListener(v -> {
-//				CheckConfiguration checkConfiguration = new CheckConfiguration();
-//				if (checkConfiguration.checkConfiguration(MoveDisplay.this)) {
+			findViewById(R.id.submitBtn).setOnClickListener(v -> {
 					if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
-						moveContainer(destinationET.getText().toString());
+						new RemoteApiUIHandler(this, destinationET.getText().toString(), containerList).execute();
 						itemET.setText("");
 						destinationET.setText("");
 						moveCountTV.setText("");
 					}
-//				}
 			});
 		}
-	}
-
-	public void moveContainer(String destinationInput) {
-		RemoteApiUIHandler.setUrlFirstParameter(destinationInput);
-		RemoteApiUIHandler.setContainerList(containerList);
-		RemoteApiUIHandler.setDownloading(true);
-		new RemoteApiUIHandler.ProcessDataForDisplay(MoveDisplay.this).execute();
 	}
 
 	@Override
