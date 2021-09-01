@@ -36,8 +36,8 @@ public class Lookup extends BaseActivity {
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		EditText barcodeInput = findViewById(R.id.barcodeET);
-		barcodeInput.selectAll();
+		EditText barcodeET = findViewById(R.id.barcodeET);
+		barcodeET.selectAll();
 		this.recreate();
 	}
 
@@ -45,11 +45,6 @@ public class Lookup extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		enableTSL(this);
-		checkAPIkeyExists(this);
-		checkUrlUsesHttps(this);
-		if (null != getSupportActionBar()) {
-			getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-		}
 		barcodeET = findViewById(R.id.barcodeET);
 		barcodeET.requestFocus();
 		deleteApkFile();
@@ -66,18 +61,17 @@ public class Lookup extends BaseActivity {
 			qrScan.setOrientationLocked(false);
 			qrScan.setBeepEnabled(true);
 		}
-
 		cameraBtn.setOnClickListener(view -> {
 			if (Build.VERSION.SDK_INT <= 24) {
 				qrScan.initiateScan();
 			} else {
-				Intent intent = new Intent(Lookup.this, CameraToScanner.class);
+				intent = new Intent(Lookup.this, CameraToScanner.class);
 				startActivityForResult(intent, 0);
 			}
 		});
 		barcodeET = findViewById(R.id.barcodeET);
 		Button submitBtn = findViewById(R.id.submitBtn);
-		final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
+
 		// populates the history list
 		listView = findViewById(R.id.listViewBarcodeHistory);
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
@@ -85,16 +79,14 @@ public class Lookup extends BaseActivity {
 		adapter.addAll(lookupHistory);
 		adapter.notifyDataSetChanged();
 		listView.setAdapter(adapter);
+
 		// Submit barcode query
-		if (remoteApiUIHandler.isDownloading()) {
-			// onClickListener listens if the submit button is clicked
+		if (!RemoteApiUIHandler.isDownloading()) {
 			submitBtn.setOnClickListener(v -> {
-				sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-					if (!barcodeET.getText().toString().isEmpty()) {
-						remoteApiUIHandler.setDownloading(true);
-						RemoteApiUIHandler.setUrlFirstParameter(barcodeET.getText().toString());
-						new RemoteApiUIHandler.ProcessDataForDisplay(Lookup.this).execute();
-					}
+				if (!barcodeET.getText().toString().isEmpty()) {
+					new RemoteApiUIHandler(this, barcodeET.getText().toString()).execute();
+					barcodeET.setText("");
+				}
 			});
 			// KeyListener listens if enter is pressed
 			barcodeET.setOnKeyListener((v, keyCode, event) -> {

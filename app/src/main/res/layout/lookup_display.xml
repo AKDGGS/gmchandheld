@@ -12,16 +12,16 @@
         android:layout_height="wrap_content"/>
 
         <EditText
-            android:id="@+id/invisibleEditText"
+            android:id="@+id/invisibleET"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:ems="0"
             android:background="@android:color/transparent"
             android:inputType="text"
-            android:nextFocusDown="@+id/invisibleEditText"
-            android:nextFocusUp="@+id/invisibleEditText"
-            android:nextFocusLeft="@+id/invisibleEditText"
-            android:nextFocusRight="@+id/invisibleEditText">
+            android:nextFocusDown="@+id/invisibleET"
+            android:nextFocusUp="@+id/invisibleET"
+            android:nextFocusLeft="@+id/invisibleET"
+            android:nextFocusRight="@+id/invisibleET">
             <requestFocus />
         </EditText>
 

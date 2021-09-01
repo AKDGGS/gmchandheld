@@ -22,7 +22,7 @@ import androidx.core.content.ContextCompat;
 
 public class LookupDisplay extends BaseActivity {
     private ExpandableListView expandableListView;
-    private EditText invisibleEditText;
+    private EditText invisibleET;
 
     @Override
     public int getLayoutResource() {
@@ -30,90 +30,95 @@ public class LookupDisplay extends BaseActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        invisibleET = findViewById(R.id.invisibleET);
+        invisibleET.setText("");
+        this.recreate();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-        invisibleEditText = findViewById(R.id.invisibleEditText);
-        invisibleEditText.setText("");
+        invisibleET = findViewById(R.id.invisibleET);
+        invisibleET.setText("");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        checkUrlUsesHttps(this);
-//        checkAPIkeyExists(this);
+        checkAPIkeyExists(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         expandableListView = findViewById(R.id.expandableListView);
-        invisibleEditText = findViewById(R.id.invisibleEditText);
-        invisibleEditText.setInputType(InputType.TYPE_NULL);
-        invisibleEditText.setFocusable(true);
-        invisibleEditText.setOnKeyListener((v, keyCode, event) -> {
-            if (keyCode == KeyEvent.KEYCODE_DEL) {
-                invisibleEditText.setText("");
-            }
-            if (invisibleEditText.getText().toString().trim().length() != 0) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    RemoteApiUIHandler.setDownloading(true);
-                    RemoteApiUIHandler.setUrlFirstParameter(invisibleEditText.getText().toString());
-                    new RemoteApiUIHandler
-                            .ProcessDataForDisplay(LookupDisplay.this).execute();
-                    return true;
+        invisibleET = findViewById(R.id.invisibleET);
+        invisibleET.setInputType(InputType.TYPE_NULL);
+        if (!RemoteApiUIHandler.isDownloading()) {
+            invisibleET.setFocusable(true);
+            invisibleET.setOnKeyListener((v, keyCode, event) -> {
+                if (keyCode == KeyEvent.KEYCODE_DEL) {
+                    invisibleET.setText("");
                 }
-            } else {
-                invisibleEditText.setText("");
+                if (invisibleET.getText().toString().trim().length() != 0) {
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                            (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        new RemoteApiUIHandler(this, invisibleET.getText().toString()).execute();
+                        invisibleET.setText("");
+                        return true;
+                    }
+                }
+                return false;
+            });
+            LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
+                    .getInstance().lookupLogicForDisplayObj;
+            SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
+            SpannableString subtitle = new SpannableString(
+                    lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
+            if (getSupportActionBar() != null) {
+                if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
+                    title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    LookupDisplay.this.getSupportActionBar().setTitle(title);
+                    if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
+                        subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0,
+                                subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
+                    }
+                    if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
+                        LookupDisplay.this.getSupportActionBar()
+                                .setBackgroundDrawable(new ColorDrawable(ContextCompat
+                                        .getColor(this, R.color.colorRadiation)));
+                    }
+                }
             }
-            return false;
-        });
-        LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
-                .getInstance().lookupLogicForDisplayObj;
-        SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
-        SpannableString subtitle = new SpannableString(
-                lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
-        if (getSupportActionBar() != null) {
-            if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
+            if (getIntent().getStringExtra("barcode") != null) {
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                LookupDisplay.this.getSupportActionBar().setTitle(title);
-                if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0,
-                            subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
-                }
-                if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
-                    LookupDisplay.this.getSupportActionBar()
-                                      .setBackgroundDrawable(new ColorDrawable(ContextCompat
-                                              .getColor(this, R.color.colorRadiation)));
+            }
+            ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this,
+                    lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
+            expandableListView.setAdapter(listAdapter);
+            if (listAdapter.getGroupCount() >= 1) {
+                for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+                    expandableListView.expandGroup(i);
                 }
             }
-        }
+            expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+                return true; // This prevents the expander from being collapsed
+            });
 
-        if (getIntent().getStringExtra("barcode") != null) {
-            title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this,
-                lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
-        expandableListView.setAdapter(listAdapter);
-        if (listAdapter.getGroupCount() >= 1) {
-            for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-                expandableListView.expandGroup(i);
-            }
-        }
-        expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
-            return true; // This prevents the expander from being collapsed
-        });
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        final EditText invisibleEditText = findViewById(R.id.invisibleEditText);
+        final EditText invisibleET = findViewById(R.id.invisibleET);
         String characterInput = String.valueOf(event.getUnicodeChar());
-        invisibleEditText.setText(characterInput);
-        invisibleEditText.setSelection(invisibleEditText.getText().length());
-        invisibleEditText.requestFocus();
-        invisibleEditText.setVisibility(View.VISIBLE);
+        invisibleET.setText(characterInput);
+        invisibleET.setSelection(invisibleET.getText().length());
+        invisibleET.requestFocus();
+        invisibleET.setVisibility(View.VISIBLE);
         return super.onKeyDown(keyCode, event);
     }
 
@@ -131,17 +136,16 @@ public class LookupDisplay extends BaseActivity {
         return true;
     }
 
+    //makes the volume keys scroll up/down
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        int action, keycode;
-        action = event.getAction();
-        keycode = event.getKeyCode();
+        int action = event.getAction();
         AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        switch (keycode) {
+        manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
+        manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
+        switch (event.getKeyCode()) {
             case KeyEvent.KEYCODE_DPAD_UP:
             case KeyEvent.KEYCODE_VOLUME_UP: {
-                manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
-                manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
                 if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
                     expandableListView.smoothScrollToPosition(0, 0);
                 }
@@ -153,7 +157,7 @@ public class LookupDisplay extends BaseActivity {
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_VOLUME_DOWN: {
                 if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                    expandableListView.smoothScrollToPosition(expandableListView.getCount());
+                    expandableListView.smoothScrollToPosition( expandableListView.getCount());
                 }
                 if (KeyEvent.ACTION_UP == action) {
                     expandableListView.smoothScrollByOffset(3);
