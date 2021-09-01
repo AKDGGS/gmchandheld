@@ -34,20 +34,19 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class TakePhoto extends BaseActivity {
-
     private TextView imageViewTv;
     private ImageView uploadImageIv;
     private Button submitBtn;
     private EditText barcodeEt, descriptionEt;
-    private String filename, barcode, description = null;
+    private String filename, barcode, description;
     private static final int CAM_REQUEST = 1;
-    private final String photoPath = "/sdcard/DCIM/Camera/";
+    private static final String PHOTO_PATH = "/sdcard/DCIM/Camera/";
     // 49374 return code is hardcoded into the Zxing file.
     // I need it here to capture the requestCode when IntentIntegrator is used for API <= 24
     private static final int SCAN_BARCODE_REQUEST = 49374;
     private Uri image_uri;
-    private IntentIntegrator qrScan;
     boolean cameraOn;
+
 
     @Override
     public int getLayoutResource() {
@@ -62,7 +61,7 @@ public class TakePhoto extends BaseActivity {
         View v = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
             v.setVisibility(View.GONE);
-        }else{
+        } else {
             v.setVisibility(View.VISIBLE);
         }
     }
@@ -83,7 +82,7 @@ public class TakePhoto extends BaseActivity {
             if (Build.VERSION.SDK_INT <= 24) {
                 qrScan.initiateScan();
             } else {
-                Intent intent = new Intent(TakePhoto.this, CameraToScanner.class);
+                intent = new Intent(TakePhoto.this, CameraToScanner.class);
                 startActivityForResult(intent, SCAN_BARCODE_REQUEST);
             }
         });
@@ -120,7 +119,7 @@ public class TakePhoto extends BaseActivity {
         submitBtn = findViewById(R.id.submitBtn);
         submitBtn.setEnabled(false);
         submitBtn.setOnClickListener(view -> {
-            File file = new File(photoPath + filename);
+            File file = new File(PHOTO_PATH + filename);
             if (file.exists()) {
                 new UploadImage(this.getApplicationContext()).execute();
             } else {
@@ -135,7 +134,7 @@ public class TakePhoto extends BaseActivity {
     private void openCamera() {
         filename = "img_" + new SimpleDateFormat("yyyyMMddHHmm'.jpeg'", Locale.US)
                 .format(new Date());
-        File file = new File(photoPath + filename);
+        File file = new File(PHOTO_PATH + filename);
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
         image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -148,7 +147,7 @@ public class TakePhoto extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if(requestCode == 1000){
+        if (requestCode == 1000){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
@@ -177,10 +176,10 @@ public class TakePhoto extends BaseActivity {
                     barcodeEt.setText(result.getContents());
                 } else {
                     if (resultCode == CommonStatusCodes.SUCCESS) {
-                        if (null != data) {
+                        if (data != null) {
                             Barcode barcode = data.getParcelableExtra("barcode");
                             EditText edit_text = findViewById(R.id.barcodeET);
-                            if (null != barcode) {
+                            if (barcode != null) {
                                 edit_text.setText(barcode.displayValue);
                             }
                         }
@@ -194,13 +193,12 @@ public class TakePhoto extends BaseActivity {
 
     private class UploadImage extends AsyncTask<Void, Void, Integer> {
         private final WeakReference<Context> mActivity;
-
         public UploadImage(Context context) {
             mActivity = new WeakReference<>(context);
         }
         @Override
         protected Integer doInBackground(Void... voids) {
-            File file = new File(photoPath + filename);
+            File file = new File(PHOTO_PATH + filename);
             okhttp3.Response response = DoActualRequest(file);
             return response.code();
         }
