@@ -26,7 +26,7 @@ public class AuditDisplay extends BaseActivity {
     private ArrayAdapter<String> adapter;
     private EditText auditRemarkET, auditItemET;
     private Button clearAllBtn;
-    int clicks;  //used to count double clicks for deletion
+    private int clicks;  //used to count double clicks for deletion
 
     public AuditDisplay() {
         clicks = 0;
@@ -50,8 +50,6 @@ public class AuditDisplay extends BaseActivity {
         auditItemET = findViewById(R.id.itemET);
         auditRemarkET = findViewById(R.id.remarkET);
         final TextView auditCountTV = findViewById(R.id.auditCountTV);
-        final Button submitBtn = findViewById(R.id.submitBtn);
-        final Button addBtn = findViewById(R.id.addContainerBtn);
         clearAllBtn = findViewById(R.id.clearAllBtn);
         ListView auditContainerListLV = findViewById(R.id.listViewGetContainersToAudit);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
@@ -93,6 +91,7 @@ public class AuditDisplay extends BaseActivity {
             }
             startActivityForResult(intent, 2);
         });
+        final Button addBtn = findViewById(R.id.addContainerBtn);
         addBtn.setOnClickListener(v -> {
             String container = auditItemET.getText().toString();
             if (!containerList.contains(container) && !container.isEmpty() ) {
@@ -112,22 +111,21 @@ public class AuditDisplay extends BaseActivity {
             adapter.notifyDataSetChanged();
             auditCountTV.setText(String.valueOf(containerList.size()));
         });
-        final RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-        if (remoteApiUIHandler.isDownloading()) {
+        if (!RemoteApiUIHandler.isDownloading()) {
             //double click to remove elements
             auditContainerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
-                                clicks++;
-                                Handler handler = new Handler();
-                                handler.postDelayed(() -> {
-                                    if (clicks == 2) {
-                                        adapter.remove(containerList.get(position));
-                                        containerList.remove(position);
-                                        adapter.notifyDataSetChanged();
-                                        auditCountTV.setText(String.valueOf(containerList.size()));
-                                    }
-                                    clicks = 0;
-                                }, 500);
-                            });
+                clicks++;
+                Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    if (clicks == 2) {
+                        adapter.remove(containerList.get(position));
+                        containerList.remove(position);
+                        adapter.notifyDataSetChanged();
+                        auditCountTV.setText(String.valueOf(containerList.size()));
+                    }
+                    clicks = 0;
+                }, 500);
+            });
             // KeyListener listens if enter is pressed
             auditItemET.setOnKeyListener((v, keyCode, event) -> {
                 if ((event.getAction() == KeyEvent.ACTION_UP) &&
@@ -150,21 +148,14 @@ public class AuditDisplay extends BaseActivity {
                 return false;
             });
             // onClickListener listens if the submit button is clicked
-            submitBtn.setOnClickListener(v -> {
-                        auditContainerFn(auditRemarkET.getText().toString());
-                        auditItemET.setText("");
-                        auditRemarkET.setText("");
-                        auditCountTV.setText("");
+            findViewById(R.id.submitBtn).setOnClickListener(v -> {
+                new RemoteApiUIHandler(this, auditRemarkET.getText().toString(),
+                        containerList).execute();
+                auditItemET.setText("");
+                auditRemarkET.setText("");
+                auditCountTV.setText("");
             });
         }
-    }
-
-    public void auditContainerFn(String remarkInput) {
-        RemoteApiUIHandler remoteApiUIHandler = new RemoteApiUIHandler();
-        RemoteApiUIHandler.setUrlFirstParameter(remarkInput);
-        RemoteApiUIHandler.setContainerList(containerList);
-        remoteApiUIHandler.setDownloading(true);
-        new RemoteApiUIHandler.ProcessDataForDisplay(AuditDisplay.this).execute();
     }
 
     @Override
