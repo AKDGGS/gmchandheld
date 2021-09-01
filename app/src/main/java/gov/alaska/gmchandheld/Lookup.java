@@ -153,10 +153,10 @@ public class Lookup extends BaseActivity {
 			barcodeET.setText(result.getContents());
 		} else {
 			if (resultCode == CommonStatusCodes.SUCCESS) {
-				if (null != data) {
+				if (data != null) {
 					Barcode barcode = data.getParcelableExtra("barcode");
 					EditText edit_text = findViewById(R.id.barcodeET);
-					if (null != barcode) {
+					if (barcode != null) {
 						edit_text.setText(barcode.displayValue);
 					}
 				}

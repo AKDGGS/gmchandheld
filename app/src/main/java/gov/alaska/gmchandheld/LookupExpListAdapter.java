@@ -103,7 +103,7 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
 		} else if (inventoryObjTypeSet.size() == 2 && (inventoryObjTypeSet.contains("Borehole")
 				&& inventoryObjTypeSet.contains("Prospect"))) {
 			setInventoryObjType("Borehole");
-		}else{
+		} else {
 
 			setInventoryObjType("No Type");
 		}

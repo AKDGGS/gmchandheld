@@ -67,7 +67,7 @@ public class MoveContents extends BaseActivity {
 			moveContentsToET.setLayoutParams(params);
 			fromCameraBtn.setVisibility(View.GONE);
 			toCameraBtn.setVisibility(View.GONE);
-		}else{
+		} else {
 			qrScan = new IntentIntegrator(this);
 			qrScan.setBeepEnabled(true);
 		}
@@ -106,10 +106,10 @@ public class MoveContents extends BaseActivity {
 				}
 				break;
 			}
-		}else {
-			if (null != data) {
+		} else {
+			if (data != null) {
 				Barcode barcode = data.getParcelableExtra("barcode");
-				if (null != barcode) {
+				if (barcode != null) {
 					switch (requestCode) {
 						case 1: {
 							if (resultCode == CommonStatusCodes.SUCCESS) {

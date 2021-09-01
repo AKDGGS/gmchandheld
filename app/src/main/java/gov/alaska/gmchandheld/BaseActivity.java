@@ -57,9 +57,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	private void configureToolbar() {
 		toolbar = findViewById(R.id.toolbar);
-		if (null != toolbar) {
+		if (toolbar != null) {
 			setSupportActionBar(toolbar);
-			if (null != getSupportActionBar()) {
+			if (getSupportActionBar() != null) {
 				getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 			}
 		}
@@ -142,12 +142,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			this.startActivity(intentAddContainer);
 			return true;
-		}else if (item.getItemId() == (R.id.photo)) {
+		} else if (item.getItemId() == (R.id.photo)) {
 			Intent intentAddContainer = new Intent(this, TakePhoto.class);
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			this.startActivity(intentAddContainer);
 			return true;
-		}else{
+		} else {
 			return super.onOptionsItemSelected(item);
 		}
 	}

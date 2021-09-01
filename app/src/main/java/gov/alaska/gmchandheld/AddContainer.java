@@ -101,8 +101,8 @@ public class AddContainer extends BaseActivity {
 			addContainerBarcodeET = findViewById(R.id.barcodeET);
 			IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 			addContainerBarcodeET.setText(result.getContents());
-		}else {
-			if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
+		} else {
+			if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
 				Barcode barcode = data.getParcelableExtra("barcode");
 				EditText edit_text = findViewById(R.id.barcodeET);
 				assert barcode != null;

@@ -180,7 +180,7 @@ public class AuditDisplay extends BaseActivity {
         } else {
             switch (requestCode) {
                 case 1: {
-                    if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
+                    if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
                         Barcode barcode = data.getParcelableExtra("barcode");
                         EditText edit_text = findViewById(R.id.remarkET);
                         if (barcode != null) {
@@ -190,7 +190,7 @@ public class AuditDisplay extends BaseActivity {
                     break;
                 }
                 case 2: {
-                    if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
+                    if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
                         Barcode barcode = data.getParcelableExtra("barcode");
                         EditText edit_text = findViewById(R.id.itemET);
                         if (barcode != null) {

@@ -43,7 +43,7 @@ public class Recode extends BaseActivity {
 			newBarcodeET.setLayoutParams(params);
 			newBarcodeCameraBtn.setVisibility(View.GONE);
 			oldBarcodeCameraBtn.setVisibility(View.GONE);
-		}else{
+		} else {
 			qrScan = new IntentIntegrator(this);
 			qrScan.setBeepEnabled(true);
 		}
@@ -105,7 +105,7 @@ public class Recode extends BaseActivity {
 				break;
 			}
 		} else {
-			if (null != data) {
+			if (data != null) {
 				Barcode barcode = data.getParcelableExtra("barcode");
 				switch (requestCode) {
 					case 1: {

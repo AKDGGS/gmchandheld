@@ -169,7 +169,7 @@ public class RemoteApiDownload {
                     String remark = null;
                     try {
                         barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-                        if (null != addedContainerRemark) {
+                        if (addedContainerRemark != null) {
                             remark = URLEncoder.encode(addedContainerRemark, "utf-8");
                         }
                     } catch (UnsupportedEncodingException e) {

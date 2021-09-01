@@ -128,7 +128,7 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
                     output.close();
                     input.close();
                 } catch (IOException e) {
-                    if (null != e.getMessage()) {
+                    if (e.getMessage() != null) {
                         Log.e("Error: ", e.getMessage());
                     }
                 }

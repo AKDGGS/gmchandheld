@@ -69,7 +69,7 @@ public class MoveDisplay extends BaseActivity {
 			moveCountTV.setLayoutParams(params2);
 			cameraBtn.setVisibility(View.GONE);
 			itemCameraBtn.setVisibility(View.GONE);
-		}else{
+		} else {
 			qrScan = new IntentIntegrator(this);
 		}
 		cameraBtn.setOnClickListener(view -> {
@@ -178,10 +178,10 @@ public class MoveDisplay extends BaseActivity {
 				}
 				break;
 			}
-		}else {
+		} else {
 			switch (requestCode){
 				case 1: {
-					if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
+					if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
 						Barcode barcode = data.getParcelableExtra("barcode");
 						EditText destinationEt = findViewById(R.id.toET);
 						if (barcode != null) {
@@ -191,7 +191,7 @@ public class MoveDisplay extends BaseActivity {
 					break;
 				}
 				case 2:{
-					if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
+					if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
 						Barcode barcode = data.getParcelableExtra("barcode");
 						EditText itemEt = findViewById(R.id.itemET);
 						if(barcode != null) {

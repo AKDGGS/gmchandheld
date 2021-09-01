@@ -141,8 +141,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             barcodeET.setText(result.getContents());
         } else {
-            if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
-                if (null != data.getParcelableExtra("barcode")) {
+            if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
+                if (data.getParcelableExtra("barcode") != null) {
                     Barcode barcode = data.getParcelableExtra("barcode");
                     barcodeET.setText(barcode != null ? barcode.displayValue : null);
                 }

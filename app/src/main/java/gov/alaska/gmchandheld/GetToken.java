@@ -79,9 +79,9 @@ public class GetToken extends AppCompatActivity {
                 GetToken.this.startActivity(intent);
             }
         } else {
-            if (resultCode == CommonStatusCodes.SUCCESS && null != data ) {
+            if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
                 Barcode barcode = data.getParcelableExtra("barcode");
-                if (null != barcode) {
+                if (barcode != null) {
                     apiTokenET.setText(barcode.displayValue);
                 }
             } else {

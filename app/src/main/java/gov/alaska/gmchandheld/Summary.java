@@ -108,7 +108,7 @@ public class Summary extends BaseActivity {
             barcodeET.setText(result.getContents());
         } else {
             if (requestCode == 0) {
-                if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
+                if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
                     Barcode barcode = data.getParcelableExtra("barcode");
                     if (barcode != null) {
                         barcodeET.setText(barcode.displayValue);

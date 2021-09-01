@@ -341,7 +341,7 @@ public class Configuration extends BaseActivity {
         } else {
             switch (requestCode) {
                 case 1: {
-                    if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
+                    if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
                         Barcode barcode = data.getParcelableExtra("barcode");
                         EditText edit_text = findViewById(R.id.urlET);
                         if (barcode != null) {
@@ -351,7 +351,7 @@ public class Configuration extends BaseActivity {
                     break;
                 }
                 case 2: {
-                    if (resultCode == CommonStatusCodes.SUCCESS && null != data) {
+                    if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
                         Barcode barcode = data.getParcelableExtra("barcode");
                         EditText edit_text = findViewById(R.id.apiET);
                         if (barcode != null) {
