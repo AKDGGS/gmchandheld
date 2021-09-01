@@ -21,8 +21,7 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 public class SummaryLogicForDisplay {
     private final List<String> keyList;
     private final Map<String, List<SpannableStringBuilder>> displayDict;
-    private int numberOfBoxes;
-    private int ID;
+    private int numberOfBoxes, ID;
     private String barcodeQuery;
     private final ArrayList<String> typeFlagList = new ArrayList<>();
 
@@ -45,9 +44,7 @@ public class SummaryLogicForDisplay {
         return displayDict;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
-    }
+    public void setID(int ID) { this.ID = ID; }
 
     public void setBarcodeQuery(String barcodeQuery) {this.barcodeQuery = barcodeQuery;}
 
@@ -109,16 +106,13 @@ public class SummaryLogicForDisplay {
                         SPAN_EXCLUSIVE_EXCLUSIVE);
                 int indentationIncrement = 42; //Arbitrary value
                 if (!Character.isWhitespace(ssb.charAt(3))) {
-                    ssb = createIndentedText(ssb, 3, indentationIncrement);
+                    createIndentedText(ssb, 3, indentationIncrement);
                 } else if (!Character.isWhitespace(ssb.charAt(6))) {
-                    ssb = createIndentedText(ssb, 6,
-                            indentationIncrement * 2);
+                    createIndentedText(ssb, 6,indentationIncrement * 2);
                 } else if (!Character.isWhitespace(ssb.charAt(9))) {
-                    ssb = createIndentedText(ssb, 9,
-                            indentationIncrement * 3);
+                    createIndentedText(ssb, 9, indentationIncrement * 3);
                 } else {
-                    ssb = createIndentedText(ssb, 0,
-                            indentationIncrement * 4);
+                    createIndentedText(ssb, 0,indentationIncrement * 4);
                 }
                 displayList.add(ssb);
                 dict.put(currKey, displayList);
@@ -322,12 +316,11 @@ public class SummaryLogicForDisplay {
         }
     }
 
-    public static SpannableStringBuilder createIndentedText(SpannableStringBuilder text,
+    public static void createIndentedText(SpannableStringBuilder text,
                                                             int marginFirstLine,
                                                             int marginNextLines) {
         //https://www.programmersought.com/article/45371641877/
         text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0,
                 text.length(), 0);
-        return text;
     }
 }
