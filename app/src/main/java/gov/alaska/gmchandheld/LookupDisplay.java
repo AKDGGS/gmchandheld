@@ -14,7 +14,6 @@ import android.text.style.StyleSpan;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -54,6 +53,7 @@ public class LookupDisplay extends BaseActivity {
         expandableListView = findViewById(R.id.expandableListView);
         invisibleET = findViewById(R.id.invisibleET);
         invisibleET.setInputType(InputType.TYPE_NULL);
+        System.out.println(invisibleET.getText().toString());
         if (!RemoteApiUIHandler.isDownloading()) {
             invisibleET.setFocusable(true);
             invisibleET.setOnKeyListener((v, keyCode, event) -> {
@@ -109,17 +109,6 @@ public class LookupDisplay extends BaseActivity {
             });
 
         }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        final EditText invisibleET = findViewById(R.id.invisibleET);
-        String characterInput = String.valueOf(event.getUnicodeChar());
-        invisibleET.setText(characterInput);
-        invisibleET.setSelection(invisibleET.getText().length());
-        invisibleET.requestFocus();
-        invisibleET.setVisibility(View.VISIBLE);
-        return super.onKeyDown(keyCode, event);
     }
 
     @Override

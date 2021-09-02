@@ -61,7 +61,7 @@ public class RemoteApiDownload {
         return rawJson;
     }
 
-    public void getDataFromURL() {
+    public String getDataFromURL() {
         InputStream inputStream;
         HttpURLConnection connection;
         String url = BaseActivity.sp.getString("urlText", "");
@@ -70,6 +70,7 @@ public class RemoteApiDownload {
             switch (context.getClass().getSimpleName()) {
                 case "Lookup":
                 case "LookupDisplay": {
+                    System.out.println("Remote API Download: " + urlFirstParameter);
                     String barcode = null;
                     try {
                         barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
@@ -249,6 +250,7 @@ public class RemoteApiDownload {
                 }
                 inputStream.close();
                 connection.disconnect();
+                return rawJson;
             }catch (Exception e) {
                 exception = e;
                 inputStream.close();
@@ -262,6 +264,7 @@ public class RemoteApiDownload {
         } catch (IOException e) {
             exception = e;
         }
+        return null;
     }
 
     public String containersToUrlList(ArrayList<String> list, String paramKeyword) {

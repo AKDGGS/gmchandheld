@@ -19,6 +19,7 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.File;
 import java.util.LinkedList;
 
+
 public class Lookup extends BaseActivity {
 	private ListView listView;
 	private final LinkedList<String> lookupHistory;
@@ -85,7 +86,18 @@ public class Lookup extends BaseActivity {
 		if (!RemoteApiUIHandler.isDownloading()) {
 			submitBtn.setOnClickListener(v -> {
 				if (!barcodeET.getText().toString().isEmpty()) {
-					new RemoteApiUIHandler(this, barcodeET.getText().toString()).execute();
+//					new RemoteApiUIHandler(this, barcodeET.getText().toString()).execute();
+					LookupThread lookupThread = new LookupThread(this, barcodeET.getText().toString());
+					Thread thread = new Thread(lookupThread);
+					thread.start();
+					try {
+						thread.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					DisplayData displayData = new DisplayData();
+					displayData.displayData(this, barcodeET.getText().toString(), lookupThread.getJsonData());
+
 					barcodeET.setText("");
 				}
 			});
@@ -163,6 +175,28 @@ public class Lookup extends BaseActivity {
 			} else {
 				super.onActivityResult(requestCode, resultCode, data);
 			}
+		}
+	}
+
+
+	private static class LookupThread implements Runnable{
+		Context mContext;
+		String barcode, jsonData;
+
+		public LookupThread(Context mContext, String barcode) {
+			this.mContext = mContext;
+			this.barcode = barcode;
+		}
+
+		@Override
+		public void run() {
+			RemoteApiDownload remoteApiDownload = new RemoteApiDownload(mContext);
+			remoteApiDownload.setUrlFirstParameter(barcode);
+			jsonData = remoteApiDownload.getDataFromURL();
+		}
+
+		public String getJsonData(){
+			return jsonData;
 		}
 	}
 }

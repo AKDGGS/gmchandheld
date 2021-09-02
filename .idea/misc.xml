@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/activity_get_token.xml" value="0.2604166666666667" />
+        <entry key="app/src/main/res/layout/activity_take_photo.xml" value="0.20677083333333332" />
+        <entry key="app/src/main/res/layout/activity_take_photo_test.xml" value="0.1828125" />
         <entry key="app/src/main/res/layout/activity_translucent.xml" value="0.21927083333333333" />
         <entry key="app/src/main/res/layout/activity_update_app.xml" value="0.21614583333333334" />
         <entry key="app/src/main/res/layout/add_inventory.xml" value="0.19375" />

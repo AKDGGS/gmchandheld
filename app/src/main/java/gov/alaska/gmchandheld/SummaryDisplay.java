@@ -11,7 +11,6 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -105,16 +104,6 @@ public class SummaryDisplay extends BaseActivity {
         expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             return true; // Expander cannot be collapsed
         });
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        String characterInput = String.valueOf(event.getUnicodeChar());
-        invisibleET.setText(characterInput);
-        invisibleET.setSelection(invisibleET.getText().length());
-        invisibleET.requestFocus();
-        invisibleET.setVisibility(View.VISIBLE);
-        return super.onKeyDown(keyCode, event);
     }
 
     //makes the volume keys scroll up/down
