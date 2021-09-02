@@ -70,7 +70,6 @@ public class RemoteApiDownload {
             switch (context.getClass().getSimpleName()) {
                 case "Lookup":
                 case "LookupDisplay": {
-                    System.out.println("Remote API Download: " + urlFirstParameter);
                     String barcode = null;
                     try {
                         barcode = URLEncoder.encode(urlFirstParameter, "utf-8");

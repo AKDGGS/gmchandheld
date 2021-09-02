@@ -1,6 +1,9 @@
 package gov.alaska.gmchandheld;
 
+import static gov.alaska.gmchandheld.Lookup.lastAdded;
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -17,7 +20,12 @@ import android.view.MenuInflater;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
+
 import androidx.core.content.ContextCompat;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class LookupDisplay extends BaseActivity {
     private ExpandableListView expandableListView;
@@ -63,7 +71,56 @@ public class LookupDisplay extends BaseActivity {
                 if (invisibleET.getText().toString().trim().length() != 0) {
                     if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                             (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        new RemoteApiUIHandler(this, invisibleET.getText().toString()).execute();
+
+                        String barcode = invisibleET.getText().toString();
+                        String url = baseURL;
+                        if (!barcode.isEmpty()) {
+                            try {
+                                String barcodeEncoded = URLEncoder.encode(barcode, "utf-8");
+                                url = url + "inventory.json?barcode=" + barcodeEncoded;
+                            } catch (UnsupportedEncodingException e) {
+//                                exception = new Exception(e.getMessage());
+                            }
+
+                            GenericThread lookupThread = new GenericThread(url);
+                            Thread thread = new Thread(lookupThread);
+                            thread.start();
+                            try {
+                                thread.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            String data = lookupThread.getJsonData();
+
+                            if (data.length() <= 2){
+                                Toast.makeText(this,
+                                        "There was an error in the " +
+                                                barcode + ".", Toast.LENGTH_LONG).show();
+                            } else {
+                                LookupLogicForDisplay lookupLogicForDisplayObj;
+                                lookupLogicForDisplayObj = new LookupLogicForDisplay(this);
+                                LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
+                                        = lookupLogicForDisplayObj;
+                                lookupLogicForDisplayObj.setBarcodeQuery(barcode);
+                                try {
+                                    lookupLogicForDisplayObj.processRawJSON(data);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                Intent intent = new Intent(this, LookupDisplay.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.putExtra("barcode", barcode);
+                                this.startActivity(intent);
+
+                                if (!Lookup.lookupHistory.isEmpty()) {
+                                    Lookup.lastAdded = Lookup.lookupHistory.get(0);
+                                }
+                                if (!barcode.equals(Lookup.lastAdded) & !barcode.isEmpty()) {
+                                    Lookup.lookupHistory.add(0, barcode);
+                                }
+                            }
+                        }
                         invisibleET.setText("");
                         return true;
                     }

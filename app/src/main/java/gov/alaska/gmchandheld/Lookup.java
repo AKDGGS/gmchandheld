@@ -11,19 +11,25 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 
 
 public class Lookup extends BaseActivity {
 	private ListView listView;
-	private final LinkedList<String> lookupHistory;
+	public static LinkedList<String> lookupHistory;
 	private EditText barcodeET;
+	public static String lastAdded;
+	private Exception exception;
 
 	public Lookup() {
 		lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
@@ -85,9 +91,17 @@ public class Lookup extends BaseActivity {
 		// Submit barcode query
 		if (!RemoteApiUIHandler.isDownloading()) {
 			submitBtn.setOnClickListener(v -> {
-				if (!barcodeET.getText().toString().isEmpty()) {
-//					new RemoteApiUIHandler(this, barcodeET.getText().toString()).execute();
-					LookupThread lookupThread = new LookupThread(this, barcodeET.getText().toString());
+				String barcode = barcodeET.getText().toString();
+				String url = baseURL;
+				if (!barcode.isEmpty()) {
+					try {
+						String barcodeEncoded = URLEncoder.encode(barcode, "utf-8");
+						url = url + "inventory.json?barcode=" + barcodeEncoded;
+					} catch (UnsupportedEncodingException e) {
+						exception = new Exception(e.getMessage());
+					}
+
+					GenericThread lookupThread = new GenericThread(url);
 					Thread thread = new Thread(lookupThread);
 					thread.start();
 					try {
@@ -95,9 +109,36 @@ public class Lookup extends BaseActivity {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					DisplayData displayData = new DisplayData();
-					displayData.displayData(this, barcodeET.getText().toString(), lookupThread.getJsonData());
 
+					String data = lookupThread.getJsonData();
+
+					if (data.length() <= 2){
+						Toast.makeText(this,
+								"There was an error in the " +
+										barcode + ".", Toast.LENGTH_LONG).show();
+					} else {
+						LookupLogicForDisplay lookupLogicForDisplayObj;
+						lookupLogicForDisplayObj = new LookupLogicForDisplay(this);
+						LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
+								= lookupLogicForDisplayObj;
+						lookupLogicForDisplayObj.setBarcodeQuery(barcode);
+						try {
+							lookupLogicForDisplayObj.processRawJSON(data);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						Intent intent = new Intent(this, LookupDisplay.class);
+						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+						intent.putExtra("barcode", barcode);
+						this.startActivity(intent);
+
+						if (!lookupHistory.isEmpty()) {
+							lastAdded = lookupHistory.get(0);
+						}
+						if (!barcode.equals(lastAdded) & !barcode.isEmpty()) {
+							lookupHistory.add(0, barcode);
+						}
+					}
 					barcodeET.setText("");
 				}
 			});
@@ -175,28 +216,6 @@ public class Lookup extends BaseActivity {
 			} else {
 				super.onActivityResult(requestCode, resultCode, data);
 			}
-		}
-	}
-
-
-	private static class LookupThread implements Runnable{
-		Context mContext;
-		String barcode, jsonData;
-
-		public LookupThread(Context mContext, String barcode) {
-			this.mContext = mContext;
-			this.barcode = barcode;
-		}
-
-		@Override
-		public void run() {
-			RemoteApiDownload remoteApiDownload = new RemoteApiDownload(mContext);
-			remoteApiDownload.setUrlFirstParameter(barcode);
-			jsonData = remoteApiDownload.getDataFromURL();
-		}
-
-		public String getJsonData(){
-			return jsonData;
 		}
 	}
 }

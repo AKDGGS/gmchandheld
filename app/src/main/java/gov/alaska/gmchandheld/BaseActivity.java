@@ -27,6 +27,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected Toolbar toolbar;
 	protected IntentIntegrator qrScan;
 	protected static Intent intent;
+	protected static String baseURL;
+
+
 
 	@Override
 	protected void onStop() {
@@ -51,6 +54,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 		editor = sp.edit();
 		checkAPIkeyExists(this);
+		baseURL = BaseActivity.sp.getString("urlText", "");
 	}
 
 	protected abstract int getLayoutResource();
