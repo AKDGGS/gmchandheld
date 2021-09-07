@@ -19,7 +19,10 @@
         android:ems="0"
         android:background="@android:color/transparent"
         android:inputType="text"
-        android:selectAllOnFocus="true" >
+        android:nextFocusDown="@+id/invisibleET"
+        android:nextFocusUp="@+id/invisibleET"
+        android:nextFocusLeft="@+id/invisibleET"
+        android:nextFocusRight="@+id/invisibleET">
         <requestFocus />
     </EditText>
 

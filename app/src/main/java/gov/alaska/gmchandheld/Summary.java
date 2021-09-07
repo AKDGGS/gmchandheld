@@ -11,21 +11,44 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Summary extends BaseActivity {
     private ListView listView;
-    private final LinkedList<String> summaryHistory;
+    private static LinkedList<String> summaryHistory;
     private EditText barcodeET;
+    private static String lastAdded;
+    private String data;
 
     public Summary() {
         summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
+    }
+    public static LinkedList<String> getSummaryHistory() {
+        return summaryHistory;
+    }
+
+    public static String getLastAdded() {
+        return Summary.lastAdded;
+    }
+
+    public static void setLastAdded(String lastAdded) {
+        Summary.lastAdded = lastAdded;
+    }
+
+    public static void setSummaryHistory(LinkedList<String> summaryHistory) {
+        Summary.summaryHistory = summaryHistory;
     }
 
     @Override
@@ -69,13 +92,62 @@ public class Summary extends BaseActivity {
         });
         Button submitBtn = findViewById(R.id.submitBtn);
         barcodeET = findViewById(R.id.barcodeET);
-
         // Submit barcode query
         if (!RemoteApiUIHandler.isDownloading()) {
             submitBtn.setOnClickListener(v -> {
                 if (!barcodeET.getText().toString().isEmpty()) {
-                    new RemoteApiUIHandler(this, barcodeET.getText().toString()).execute();
-                    barcodeET.setText("");
+                    String barcode = barcodeET.getText().toString();
+                    if (!barcode.isEmpty()) {
+                        try {
+                            barcode = URLEncoder.encode(barcode, "utf-8");
+                        } catch (UnsupportedEncodingException e) {
+//                            exception = new Exception(e.getMessage());
+                        }
+                        final ExecutorService service;
+                        final Future<String> task;
+
+                        service = Executors.newFixedThreadPool(1);
+                        task = service.submit(new NewRemoteAPIDownload(baseURL
+                                + "summary.json?barcode=" + barcode));
+                        try {
+                            data = task.get(); // this raises ExecutionException if thread dies
+                        } catch (final InterruptedException ex) {
+                            ex.printStackTrace();
+                        } catch (final ExecutionException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        service.shutdownNow();
+                        if (data == null){
+                            Toast.makeText(this,
+                                    "There was an error looking up " +
+                                            barcode + ".", Toast.LENGTH_LONG).show();
+                        } else {
+                            SummaryLogicForDisplay summaryLogicForDisplayObj;
+                            summaryLogicForDisplayObj = new SummaryLogicForDisplay();
+                            SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj
+                                    = summaryLogicForDisplayObj;
+                            summaryLogicForDisplayObj.setBarcodeQuery(barcode);
+                            try {
+                                summaryLogicForDisplayObj.processRawJSON(data);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            intent = new Intent(Summary.this, SummaryDisplay.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.putExtra("barcode", barcode);
+                            startActivity(intent);
+
+                            if (!summaryHistory.isEmpty()) {
+                                lastAdded = summaryHistory.get(0);
+                            }
+                            if (!barcode.equals(lastAdded)) {
+                                summaryHistory.add(0, barcode);
+                            }
+                        }
+                        barcodeET.setText("");
+                    }
                 }
             });
             // KeyListener listens if enter is pressed

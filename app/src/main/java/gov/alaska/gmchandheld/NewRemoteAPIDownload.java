@@ -6,17 +6,23 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.concurrent.Callable;
 
 
-public class NewRemoteAPIDownload {
+public class NewRemoteAPIDownload implements Callable<String> {
     private Exception exception = null;
-    private String rawJson;
+    private String url;
 
-    public String getDataFromURL(String url) {
+    public NewRemoteAPIDownload(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public String call() throws Exception {
         InputStream inputStream;
         HttpURLConnection connection;
         int responseCode;
-        System.out.println("Get Data from url: " + url);
+
         try {
             URL myURL = new URL(url);
             connection = (HttpURLConnection) myURL.openConnection();
@@ -44,8 +50,7 @@ public class NewRemoteAPIDownload {
                 if (connection.getErrorStream() != null) {
                     exception = new Exception(String.valueOf(sb));
                 } else {
-                    rawJson = sb.toString();
-                    return rawJson;
+                    return sb.toString();
                 }
                 inputStream.close();
                 connection.disconnect();

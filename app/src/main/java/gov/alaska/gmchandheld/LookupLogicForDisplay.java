@@ -27,11 +27,9 @@ public class LookupLogicForDisplay {
 	private boolean radiationWarningFlag;
 	private final ArrayList<String> typeFlagList = new ArrayList<>();
 	private String barcodeQuery;
-	Context context;
 	private StringBuilder sb;
 
-	public LookupLogicForDisplay(Context context) {
-		this.context = context;
+	public LookupLogicForDisplay() {
 		keyList = new ArrayList<>();
 		displayDict = new HashMap<>();
 		radiationWarningFlag = false;

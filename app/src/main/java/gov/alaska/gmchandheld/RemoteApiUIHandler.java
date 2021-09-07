@@ -35,7 +35,6 @@ public final class RemoteApiUIHandler  extends AsyncTask<String, String, RemoteA
         apiKeyAttempts = 0;
         lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
         summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
-//        downloading = true;
     }
     //MoveContents, Recode
     public RemoteApiUIHandler(Context mContext, String urlFirstParameter, String secondParameter) {
@@ -187,7 +186,6 @@ public final class RemoteApiUIHandler  extends AsyncTask<String, String, RemoteA
         }
         if (remoteApiDownload.isErrored()) {
             int responseCode = remoteApiDownload.getResponseCode();
-            System.out.println("Remote Api Download response code: " + responseCode);
             if (responseCode == 403) {
                 Intent intentGetBarcode = new Intent(mContext.get().getApplicationContext(),
                         GetToken.class);
@@ -276,44 +274,44 @@ public final class RemoteApiUIHandler  extends AsyncTask<String, String, RemoteA
             }
         } else {
             switch (mContext.get().getClass().getSimpleName()) {
-                case "LookupDisplay":
-                case "Lookup": {
-                    LookupLogicForDisplay lookupLogicForDisplayObj;
-                    lookupLogicForDisplayObj = new LookupLogicForDisplay(mContext.get());
-                    LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
-                            = lookupLogicForDisplayObj;
-                    lookupLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
-                    try {
-                        lookupLogicForDisplayObj.processRawJSON(remoteApiDownload.getRawJson());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    Intent intent = new Intent(mContext.get(), LookupDisplay.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.putExtra("barcode", urlFirstParameter);
-                    mContext.get().startActivity(intent);
-                    lastAddedToHistory(mContext.get(), urlFirstParameter);
-                    break;
-                }
-                case "Summary":
-                case "SummaryDisplay": {
-                    SummaryLogicForDisplay summaryLogicForDisplayObj;
-                    summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-                    SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj
-                            = summaryLogicForDisplayObj;
-                    summaryLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
-                    try {
-                        summaryLogicForDisplayObj.processRawJSON(remoteApiDownload.getRawJson());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    Intent intent = new Intent(mContext.get(), SummaryDisplay.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.putExtra("barcode", urlFirstParameter);
-                    mContext.get().startActivity(intent);
-                    lastAddedToHistory(mContext.get(), urlFirstParameter);
-                    break;
-                }
+//                case "LookupDisplay":
+//                case "Lookup": {
+//                    LookupLogicForDisplay lookupLogicForDisplayObj;
+//                    lookupLogicForDisplayObj = new LookupLogicForDisplay();
+//                    LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
+//                            = lookupLogicForDisplayObj;
+//                    lookupLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
+//                    try {
+//                        lookupLogicForDisplayObj.processRawJSON(remoteApiDownload.getRawJson());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    Intent intent = new Intent(mContext.get(), LookupDisplay.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    intent.putExtra("barcode", urlFirstParameter);
+//                    mContext.get().startActivity(intent);
+//                    lastAddedToHistory(mContext.get(), urlFirstParameter);
+//                    break;
+//                }
+//                case "Summary":
+//                case "SummaryDisplay": {
+//                    SummaryLogicForDisplay summaryLogicForDisplayObj;
+//                    summaryLogicForDisplayObj = new SummaryLogicForDisplay(mContext.get());
+//                    SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj
+//                            = summaryLogicForDisplayObj;
+//                    summaryLogicForDisplayObj.setBarcodeQuery(urlFirstParameter);
+//                    try {
+//                        summaryLogicForDisplayObj.processRawJSON(remoteApiDownload.getRawJson());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    Intent intent = new Intent(mContext.get(), SummaryDisplay.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    intent.putExtra("barcode", urlFirstParameter);
+//                    mContext.get().startActivity(intent);
+//                    lastAddedToHistory(mContext.get(), urlFirstParameter);
+//                    break;
+//                }
                 case "MoveContents": {
                     Toast.makeText(mContext.get(), "The contents were moved.",
                             Toast.LENGTH_LONG).show();

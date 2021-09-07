@@ -1,7 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import static gov.alaska.gmchandheld.Lookup.lastAdded;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,6 +12,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,15 +20,18 @@ import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
-
 import androidx.core.content.ContextCompat;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class LookupDisplay extends BaseActivity {
     private ExpandableListView expandableListView;
     private EditText invisibleET;
+    private String data;
 
     @Override
     public int getLayoutResource() {
@@ -45,13 +47,6 @@ public class LookupDisplay extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        invisibleET = findViewById(R.id.invisibleET);
-        invisibleET.setText("");
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkAPIkeyExists(this);
@@ -61,7 +56,6 @@ public class LookupDisplay extends BaseActivity {
         expandableListView = findViewById(R.id.expandableListView);
         invisibleET = findViewById(R.id.invisibleET);
         invisibleET.setInputType(InputType.TYPE_NULL);
-        System.out.println(invisibleET.getText().toString());
         if (!RemoteApiUIHandler.isDownloading()) {
             invisibleET.setFocusable(true);
             invisibleET.setOnKeyListener((v, keyCode, event) -> {
@@ -71,35 +65,36 @@ public class LookupDisplay extends BaseActivity {
                 if (invisibleET.getText().toString().trim().length() != 0) {
                     if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                             (keyCode == KeyEvent.KEYCODE_ENTER)) {
-
                         String barcode = invisibleET.getText().toString();
-                        String url = baseURL;
                         if (!barcode.isEmpty()) {
                             try {
-                                String barcodeEncoded = URLEncoder.encode(barcode, "utf-8");
-                                url = url + "inventory.json?barcode=" + barcodeEncoded;
+                                barcode = URLEncoder.encode(barcode, "utf-8");
                             } catch (UnsupportedEncodingException e) {
 //                                exception = new Exception(e.getMessage());
                             }
 
-                            GenericThread lookupThread = new GenericThread(url);
-                            Thread thread = new Thread(lookupThread);
-                            thread.start();
+                            final ExecutorService service;
+                            final Future<String> task;
+
+                            service = Executors.newFixedThreadPool(1);
+                            task    = service.submit(new NewRemoteAPIDownload(baseURL
+                                    + "inventory.json?barcode=" + barcode));
+
                             try {
-                                thread.join();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                data = task.get(); // this raises ExecutionException if thread dies
+                            } catch(final InterruptedException ex) {
+                                ex.printStackTrace();
+                            } catch(final ExecutionException ex) {
+                                ex.printStackTrace();
                             }
-
-                            String data = lookupThread.getJsonData();
-
+                            service.shutdownNow();
                             if (data.length() <= 2){
                                 Toast.makeText(this,
-                                        "There was an error in the " +
+                                        "There was an error looking up " +
                                                 barcode + ".", Toast.LENGTH_LONG).show();
                             } else {
-                                LookupLogicForDisplay lookupLogicForDisplayObj;
-                                lookupLogicForDisplayObj = new LookupLogicForDisplay(this);
+                                LookupLogicForDisplay lookupLogicForDisplayObj =
+                                        new LookupLogicForDisplay();
                                 LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
                                         = lookupLogicForDisplayObj;
                                 lookupLogicForDisplayObj.setBarcodeQuery(barcode);
@@ -108,16 +103,17 @@ public class LookupDisplay extends BaseActivity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                Intent intent = new Intent(this, LookupDisplay.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent = new Intent(this, LookupDisplay.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 intent.putExtra("barcode", barcode);
-                                this.startActivity(intent);
+                                startActivity(intent);
 
-                                if (!Lookup.lookupHistory.isEmpty()) {
-                                    Lookup.lastAdded = Lookup.lookupHistory.get(0);
+                                if (!Lookup.getLookupHistory().isEmpty()) {
+                                    Lookup.setLastAdded(Lookup.getLookupHistory().get(0));
                                 }
-                                if (!barcode.equals(Lookup.lastAdded) & !barcode.isEmpty()) {
-                                    Lookup.lookupHistory.add(0, barcode);
+                                if (!barcode.equals(Lookup.getLastAdded()) & !barcode.isEmpty()) {
+                                    Lookup.getLookupHistory().add(0, barcode);
                                 }
                             }
                         }

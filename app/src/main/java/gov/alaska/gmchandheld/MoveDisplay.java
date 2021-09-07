@@ -37,8 +37,8 @@ public class MoveDisplay extends BaseActivity {
 
 	@Override
 	protected void onRestart() {
-		this.recreate();
 		super.onRestart();
+		this.recreate();
 	}
 
 	@Override

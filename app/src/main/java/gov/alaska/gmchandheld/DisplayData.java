@@ -19,44 +19,44 @@ public class DisplayData {
 
     public void displayData(Context mContext, String barcode, String data){
         switch (mContext.getClass().getSimpleName()) {
-            case "LookupDisplay":
-            case "Lookup": {
-                LookupLogicForDisplay lookupLogicForDisplayObj;
-                lookupLogicForDisplayObj = new LookupLogicForDisplay(mContext);
-                LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
-                        = lookupLogicForDisplayObj;
-                lookupLogicForDisplayObj.setBarcodeQuery(barcode);
-                try {
-                    lookupLogicForDisplayObj.processRawJSON(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent(mContext, LookupDisplay.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("barcode", barcode);
-                mContext.startActivity(intent);
-                lastAddedToHistory(mContext, barcode);
-                break;
-            }
-            case "Summary":
-            case "SummaryDisplay": {
-                SummaryLogicForDisplay summaryLogicForDisplayObj;
-                summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-                SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj
-                        = summaryLogicForDisplayObj;
-                summaryLogicForDisplayObj.setBarcodeQuery(barcode);
-                try {
-                    summaryLogicForDisplayObj.processRawJSON(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent(mContext, SummaryDisplay.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("barcode", barcode);
-                mContext.startActivity(intent);
-                lastAddedToHistory(mContext, barcode);
-                break;
-            }
+//            case "LookupDisplay":
+//            case "Lookup": {
+//                LookupLogicForDisplay lookupLogicForDisplayObj;
+//                lookupLogicForDisplayObj = new LookupLogicForDisplay(mContext);
+//                LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
+//                        = lookupLogicForDisplayObj;
+//                lookupLogicForDisplayObj.setBarcodeQuery(barcode);
+//                try {
+//                    lookupLogicForDisplayObj.processRawJSON(data);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                Intent intent = new Intent(mContext, LookupDisplay.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                intent.putExtra("barcode", barcode);
+//                mContext.startActivity(intent);
+//                lastAddedToHistory(mContext, barcode);
+//                break;
+//            }
+//            case "Summary":
+//            case "SummaryDisplay": {
+//                SummaryLogicForDisplay summaryLogicForDisplayObj;
+//                summaryLogicForDisplayObj = new SummaryLogicForDisplay(mContext);
+//                SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj
+//                        = summaryLogicForDisplayObj;
+//                summaryLogicForDisplayObj.setBarcodeQuery(barcode);
+//                try {
+//                    summaryLogicForDisplayObj.processRawJSON(data);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                Intent intent = new Intent(mContext, SummaryDisplay.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                intent.putExtra("barcode", barcode);
+//                mContext.startActivity(intent);
+//                lastAddedToHistory(mContext, barcode);
+//                break;
+//            }
             case "MoveContents": {
                 Toast.makeText(mContext, "The contents were moved.",
                         Toast.LENGTH_LONG).show();

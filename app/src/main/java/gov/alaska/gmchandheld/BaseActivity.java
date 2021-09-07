@@ -1,13 +1,21 @@
 package gov.alaska.gmchandheld;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,8 +36,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected IntentIntegrator qrScan;
 	protected static Intent intent;
 	protected static String baseURL;
-
-
 
 	@Override
 	protected void onStop() {
@@ -199,5 +205,30 @@ public abstract class BaseActivity extends AppCompatActivity {
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			mContext.startActivity(intent);
 		}
+	}
+
+	protected void processingAlert(Context mContext, String barcode){
+		AlertDialog alert;
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+		LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+		View layout = inflater.inflate(R.layout.downloading_progress_dialog,
+				((Activity) mContext).findViewById(R.id.downloading_alert_root));
+		alertDialog.setView(layout);
+		TextView title = new TextView(mContext);
+		String processingTitle = "Processing " + barcode;
+		title.setText(processingTitle);
+		title.setGravity(Gravity.CENTER);
+		title.setTextSize(16);
+		alertDialog.setCustomTitle(title);
+		alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialogInterface, int i) {
+				dialogInterface.cancel();
+				RemoteApiUIHandler.setDownloading(false);
+			}
+		});
+		alert = alertDialog.create();
+		alert.show();
+		alert.setCanceledOnTouchOutside(false);
 	}
 }
