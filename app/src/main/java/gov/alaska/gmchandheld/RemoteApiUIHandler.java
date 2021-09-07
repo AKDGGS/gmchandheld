@@ -35,7 +35,7 @@ public final class RemoteApiUIHandler  extends AsyncTask<String, String, RemoteA
         apiKeyAttempts = 0;
         lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
         summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
-        downloading = true;
+//        downloading = true;
     }
     //MoveContents, Recode
     public RemoteApiUIHandler(Context mContext, String urlFirstParameter, String secondParameter) {
@@ -88,7 +88,7 @@ public final class RemoteApiUIHandler  extends AsyncTask<String, String, RemoteA
         title.setTextSize(16);
         alertDialog.setCustomTitle(title);
         alertDialog.setNegativeButton("Cancel", (dialogInterface, i) -> {
-            RemoteApiUIHandler.setDownloading(false);
+            downloading = false;
             cancel(true);
         });
         alert = alertDialog.create();
@@ -120,7 +120,6 @@ public final class RemoteApiUIHandler  extends AsyncTask<String, String, RemoteA
                 }
             }
         }
-        downloading = false;
     }
 
     @Override
@@ -188,6 +187,7 @@ public final class RemoteApiUIHandler  extends AsyncTask<String, String, RemoteA
         }
         if (remoteApiDownload.isErrored()) {
             int responseCode = remoteApiDownload.getResponseCode();
+            System.out.println("Remote Api Download response code: " + responseCode);
             if (responseCode == 403) {
                 Intent intentGetBarcode = new Intent(mContext.get().getApplicationContext(),
                         GetToken.class);
@@ -224,7 +224,7 @@ public final class RemoteApiUIHandler  extends AsyncTask<String, String, RemoteA
                 }
                 alertDialog.setView(layout);
                 alertDialog.setPositiveButton("Dismiss", (dialog, which) -> {
-                    downloading = true;
+                    downloading = false;
                     switch (mContext.get().getClass().getSimpleName()) {
                         case "Lookup":
                         case "Summary": {
@@ -320,7 +320,7 @@ public final class RemoteApiUIHandler  extends AsyncTask<String, String, RemoteA
                     break;
                 }
                 case "MoveDisplay": {
-//                    containerList.clear();
+                    containerList.clear();
                     ListView containerListLV = ((Activity) mContext.get())
                             .findViewById(R.id.listViewContainersToMove);
                     ArrayAdapter<String> adapter =
