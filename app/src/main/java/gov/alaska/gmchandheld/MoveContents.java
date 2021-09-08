@@ -2,6 +2,7 @@ package gov.alaska.gmchandheld;
 
 import androidx.annotation.Nullable;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,13 +11,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class MoveContents extends BaseActivity {
 	private EditText moveContentsFromET, moveContentsToET;
+	private String data;
 
 	@Override
 	public int getLayoutResource() {
@@ -36,18 +49,77 @@ public class MoveContents extends BaseActivity {
 		moveContentsFromET = findViewById(R.id.fromET);
 		moveContentsToET = findViewById(R.id.toET);
 		// onClickListener listens if the submit button is clicked
-		if (!RemoteApiUIHandler.isDownloading()) {
+		if (!downloading) {
+			downloading = true;
 			findViewById(R.id.submitBtn).setOnClickListener(v -> {
 				if (!(TextUtils.isEmpty(moveContentsFromET.getText())) &
 						!(TextUtils.isEmpty(moveContentsToET.getText()))) {
+					String source = null;
+					String destination = null;
+					try {
+						source = URLEncoder.encode(moveContentsFromET.getText().toString(),
+								"utf-8");
+						destination = URLEncoder.encode(moveContentsToET.getText().toString(),
+								"utf-8");
+					} catch (UnsupportedEncodingException e) {
+//						exception = new Exception(e.getMessage());
+					}
 
-					new RemoteApiUIHandler(this, moveContentsFromET.getText().toString(),
-							moveContentsToET.getText().toString()).execute();
+					StringBuilder sb = new StringBuilder();
+					if (source != null) {
+						sb.append("src=").append(source);
+					}
+					if (destination != null) {
+						sb.append("&dest=").append(destination);
+					}
+
+					String finalURL = baseURL + "movecontents.json?" + sb.toString();
+					Runnable runnable = new Runnable() {
+						@Override
+						public void run() {
+							if (thread.isInterrupted()) {
+								return;
+							}
+							final ExecutorService service = Executors.newFixedThreadPool(1);
+							final Future<String> task = service
+									.submit(new NewRemoteAPIDownload(finalURL));
+							try {
+								data = task.get();
+								System.out.println("Data " + data);
+							} catch (ExecutionException e) {
+								e.printStackTrace();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+								return;
+							}
+
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									if (null == data) {
+										Toast.makeText(MoveContents.this,
+												"There was a problem. Nothing was moved.",
+												Toast.LENGTH_LONG).show();
+										moveContentsFromET.requestFocus();
+									} else if (data.contains("success")) {
+										Toast.makeText(MoveContents.this,
+												"The contents were moved.",
+												Toast.LENGTH_LONG).show();
+										moveContentsFromET.requestFocus();
+									}
+								}
+							});
+						}
+					};
+					downloading = false;
+					thread = new Thread(runnable);
+					thread.start();
 					moveContentsFromET.setText("");
 					moveContentsToET.setText("");
 					moveContentsFromET.requestFocus();
 				}
 			});
+
 		}
 		// KeyListener listens if enter is pressed
 		moveContentsFromET.setOnKeyListener((v, keyCode, event) -> {
