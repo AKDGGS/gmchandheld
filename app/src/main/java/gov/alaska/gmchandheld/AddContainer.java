@@ -9,15 +9,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class AddContainer extends BaseActivity {
 	private IntentIntegrator qrScan;
 	private EditText addContainerBarcodeET;
+	private String data;
 
 	@Override
 	public int getLayoutResource() {
@@ -76,22 +84,85 @@ public class AddContainer extends BaseActivity {
 			}
 			return false;
 		});
-		if (!RemoteApiUIHandler.isDownloading()) {
+		if (!downloading) {
+			downloading = true;
 			// onClickListener listens if the submit button is clicked
 			submit_button.setOnClickListener(v -> {
-					if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
-						if (!addContainerBarcodeET.getText().toString().isEmpty()) {
-							new RemoteApiUIHandler(this,
-									addContainerBarcodeET.getText().toString(),
-									addContainerNameET.getText().toString(),
-									addContainerRemarkET.getText().toString()).execute();
+				if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
+					if (!addContainerBarcodeET.getText().toString().isEmpty()) {
+						String barcode = null;
+						String name = null;
+						String remark = null;
+						try {
+							barcode = URLEncoder
+									.encode(addContainerBarcodeET.getText().toString(),
+											"utf-8");
+							name = URLEncoder.encode(addContainerNameET.getText().toString(),
+											"utf-8");
+							remark = URLEncoder.encode(addContainerRemarkET.getText().toString(),
+											"utf-8");
+						} catch (UnsupportedEncodingException e) {
+//								exception = new Exception(e.getMessage());
 						}
-						addContainerBarcodeET.setText("");
-						addContainerNameET.setText("");
-						addContainerRemarkET.setText("");
-						addContainerBarcodeET.requestFocus();
+						StringBuilder sb = new StringBuilder();
+						if (barcode != null) {
+							sb.append("barcode=").append(barcode);
+						}
+						if (name != null) {
+							sb.append("&name=").append(name);
+						}
+						if (remark != null) {
+							sb.append("&remark=").append(remark);
+						}
+						String url = baseURL + "addcontainer.json?" + sb.toString();
+						Runnable runnable = new Runnable() {
+							@Override
+							public void run() {
+								if (thread.isInterrupted()) {
+									return;
+								}
+								final ExecutorService service =
+										Executors.newFixedThreadPool(1);
+								final Future<String> task =
+										service.submit(new NewRemoteAPIDownload(url));
+								try {
+									data = task.get();
+								} catch (ExecutionException e) {
+									e.printStackTrace();
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+									return;
+								}
+
+								runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										if (null == data){
+											Toast.makeText(AddContainer.this,
+													"There was a problem.  " +
+															"The container was not added.",
+													Toast.LENGTH_SHORT).show();
+											addContainerBarcodeET.requestFocus();
+										} else if (data.contains("success")){
+											Toast.makeText(AddContainer.this,
+													"The container was added.",
+													Toast.LENGTH_SHORT).show();
+											addContainerBarcodeET.requestFocus();
+										}
+									}
+								});
+							}
+						};
+						thread = new Thread(runnable);
+						thread.start();
 					}
+					addContainerBarcodeET.setText("");
+					addContainerNameET.setText("");
+					addContainerRemarkET.setText("");
+					addContainerBarcodeET.requestFocus();
+				}
 			});
+			downloading = false;
 		}
 	}
 
