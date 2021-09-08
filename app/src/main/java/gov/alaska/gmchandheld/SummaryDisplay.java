@@ -103,7 +103,7 @@ public class SummaryDisplay extends BaseActivity {
 
                                     service = Executors.newFixedThreadPool(1);
                                     task = service.submit(new NewRemoteAPIDownload(finalBase
-                                            + "inventory.json?barcode=" + finalBarcode));
+                                            + "summary.json?barcode=" + finalBarcode));
 
                                     try {
                                         data = task.get();

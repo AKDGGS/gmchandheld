@@ -106,7 +106,7 @@ public class Summary extends BaseActivity {
                         } catch (UnsupportedEncodingException e) {
 //                            exception = new Exception(e.getMessage());
                         }
-                        String url = baseURL+ "inventory.json?barcode=" + barcode;
+                        String url = baseURL + "summary.json?barcode=" + barcode;
                         String finalBarcode = barcode;
 
                         Runnable runnable = new Runnable(){
