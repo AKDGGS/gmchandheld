@@ -13,18 +13,28 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class MoveDisplay extends BaseActivity {
 	private ArrayList<String> containerList;
 	private ArrayAdapter<String> adapter;
 	private EditText itemET, destinationET;
 	private int clicks;  //used to count double clicks for deletion
+	private String data;
 
 	public MoveDisplay() {
 		clicks = 0;
@@ -110,7 +120,8 @@ public class MoveDisplay extends BaseActivity {
 			adapter.notifyDataSetChanged();
 			moveCountTV.setText(String.valueOf(containerList.size()));
 		});
-		if (!RemoteApiUIHandler.isDownloading()) {
+		if (!downloading) {
+			downloading = true;
 			//double click to remove elements
 			containerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
 				clicks++;
@@ -150,9 +161,58 @@ public class MoveDisplay extends BaseActivity {
 			// onClickListener listens if the submit button is clicked
 			findViewById(R.id.submitBtn).setOnClickListener(v -> {
 					if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
-						new RemoteApiUIHandler(this, destinationET.getText().toString(), containerList).execute();
+						String destination = null;
+						try {
+							destination = URLEncoder.encode(destinationET.getText().toString(),
+									"utf-8");
+						} catch (UnsupportedEncodingException e) {
+//							exception = new Exception(e.getMessage());
+						}
+						String url = baseURL + "move.json?d=" + destination
+								+ containersToUrlList(containerList, "c");
+
+						Runnable runnable = new Runnable() {
+							@Override
+							public void run() {
+								if (thread.isInterrupted()) {
+									return;
+								}
+								final ExecutorService service = Executors.newFixedThreadPool(1);
+								final Future<String> task = service.submit(new NewRemoteAPIDownload(url));
+								try {
+									data = task.get();
+								} catch (ExecutionException e) {
+									e.printStackTrace();
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+									return;
+								}
+
+								runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										if (null == data){
+											Toast.makeText(MoveDisplay.this, "There was a problem. Nothing was moved.",
+													Toast.LENGTH_LONG).show();
+											destinationET.requestFocus();
+										} else if (data.contains("success")){
+											Toast.makeText(MoveDisplay.this, "The contents were moved.",
+													Toast.LENGTH_LONG).show();
+											destinationET.requestFocus();
+										}
+									}
+								});
+							}
+						};
+
+						downloading = false;
+						thread = new Thread(runnable);
+						thread.start();
 						itemET.setText("");
 						destinationET.setText("");
+						containerList.clear();
+						adapter.clear();
+						adapter.notifyDataSetChanged();
 						moveCountTV.setText("");
 					}
 			});
@@ -214,5 +274,23 @@ public class MoveDisplay extends BaseActivity {
 		return super.dispatchKeyEvent(event);
 	}
 
-
+	public String containersToUrlList(ArrayList<String> list, String paramKeyword) {
+		String delim = "&" + paramKeyword + "=";
+		StringBuilder sb = new StringBuilder();
+		if (list != null && list.size() > 0) {
+			sb.append(delim);
+			int i = 0;
+			while (i < list.size() - 1) {
+				try {
+					sb.append(URLEncoder.encode(list.get(i), "utf-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				sb.append(delim);
+				i++;
+			}
+			sb.append(list.get(i));
+		}
+		return sb.toString();
+	}
 }
