@@ -12,7 +12,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +30,7 @@ import java.util.concurrent.Future;
 public class LookupDisplay extends BaseActivity {
     private ExpandableListView expandableListView;
     private EditText invisibleET;
-    private String data;
+    private volatile String data;
 
     @Override
     public int getLayoutResource() {
@@ -47,6 +46,24 @@ public class LookupDisplay extends BaseActivity {
     }
 
     @Override
+	protected void onStop() {
+        super.onStop();
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
+    }
+
+    @Override
+	protected void onDestroy() {
+        super.onDestroy();
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkAPIkeyExists(this);
@@ -56,7 +73,9 @@ public class LookupDisplay extends BaseActivity {
         expandableListView = findViewById(R.id.expandableListView);
         invisibleET = findViewById(R.id.invisibleET);
         invisibleET.setInputType(InputType.TYPE_NULL);
-        if (!RemoteApiUIHandler.isDownloading()) {
+
+        if (!downloading) {
+            downloading = true;
             invisibleET.setFocusable(true);
             invisibleET.setOnKeyListener((v, keyCode, event) -> {
                 if (keyCode == KeyEvent.KEYCODE_DEL) {
@@ -65,64 +84,93 @@ public class LookupDisplay extends BaseActivity {
                 if (invisibleET.getText().toString().trim().length() != 0) {
                     if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                             (keyCode == KeyEvent.KEYCODE_ENTER)) {
+
                         String barcode = invisibleET.getText().toString();
+                        processingAlert(LookupDisplay.this, barcode);
                         if (!barcode.isEmpty()) {
                             try {
                                 barcode = URLEncoder.encode(barcode, "utf-8");
                             } catch (UnsupportedEncodingException e) {
 //                                exception = new Exception(e.getMessage());
                             }
+                            final String finalBarcode = barcode;
+                            final String finalBase = baseURL;
 
-                            final ExecutorService service;
-                            final Future<String> task;
+                            Runnable runnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (thread.isInterrupted()) {
+                                        return;
+                                    }
+                                    final ExecutorService service;
+                                    final Future<String> task;
 
-                            service = Executors.newFixedThreadPool(1);
-                            task    = service.submit(new NewRemoteAPIDownload(baseURL
-                                    + "inventory.json?barcode=" + barcode));
+                                    service = Executors.newFixedThreadPool(1);
+                                    task = service.submit(new NewRemoteAPIDownload(finalBase
+                                            + "inventory.json?barcode=" + finalBarcode));
 
-                            try {
-                                data = task.get(); // this raises ExecutionException if thread dies
-                            } catch(final InterruptedException ex) {
-                                ex.printStackTrace();
-                            } catch(final ExecutionException ex) {
-                                ex.printStackTrace();
-                            }
-                            service.shutdownNow();
-                            if (data.length() <= 2){
-                                Toast.makeText(this,
-                                        "There was an error looking up " +
-                                                barcode + ".", Toast.LENGTH_LONG).show();
-                            } else {
-                                LookupLogicForDisplay lookupLogicForDisplayObj =
-                                        new LookupLogicForDisplay();
-                                LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
-                                        = lookupLogicForDisplayObj;
-                                lookupLogicForDisplayObj.setBarcodeQuery(barcode);
-                                try {
-                                    lookupLogicForDisplayObj.processRawJSON(data);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                    try {
+                                        data = task.get();
+                                    } catch (final InterruptedException ex) {
+                                        ex.printStackTrace();
+                                    } catch (final ExecutionException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                    service.shutdownNow();
+                                    if (data == null || data.length() <= 2) {
+                                        if (alert != null){
+                                            alert.dismiss();
+                                            alert = null;
+                                        }
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(LookupDisplay.this,
+                                                        "There was an error looking up " + finalBarcode + ".", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+
+                                    } else {
+                                        LookupLogicForDisplay lookupLogicForDisplayObj =
+                                                new LookupLogicForDisplay();
+                                        LookupDisplayObjInstance.getInstance()
+                                                .lookupLogicForDisplayObj
+                                                = lookupLogicForDisplayObj;
+                                        lookupLogicForDisplayObj.setBarcodeQuery(finalBarcode);
+                                        try {
+                                            lookupLogicForDisplayObj.processRawJSON(data);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        intent = new Intent(LookupDisplay.this,
+                                                LookupDisplay.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        intent.putExtra("barcode", finalBarcode);
+
+                                        startActivity(intent);
+
+                                        if (!Lookup.getLookupHistory().isEmpty()) {
+                                            Lookup.setLastAdded(Lookup.getLookupHistory().get(0));
+                                        }
+                                        if (!finalBarcode.equals(Lookup.getLastAdded()) & !finalBarcode.isEmpty()) {
+                                            Lookup.getLookupHistory().add(0, finalBarcode);
+                                        }
+                                    }
+                                    downloading = false;
                                 }
-                                intent = new Intent(this, LookupDisplay.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.putExtra("barcode", barcode);
-                                startActivity(intent);
+                            };
+                            invisibleET.setText("");
 
-                                if (!Lookup.getLookupHistory().isEmpty()) {
-                                    Lookup.setLastAdded(Lookup.getLookupHistory().get(0));
-                                }
-                                if (!barcode.equals(Lookup.getLastAdded()) & !barcode.isEmpty()) {
-                                    Lookup.getLookupHistory().add(0, barcode);
-                                }
-                            }
+                            thread = new Thread(runnable);
+                            thread.start();
+                            return true;
                         }
-                        invisibleET.setText("");
-                        return true;
                     }
                 }
                 return false;
             });
+
             LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
                     .getInstance().lookupLogicForDisplayObj;
             SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
@@ -199,7 +247,7 @@ public class LookupDisplay extends BaseActivity {
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_VOLUME_DOWN: {
                 if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                    expandableListView.smoothScrollToPosition( expandableListView.getCount());
+                    expandableListView.smoothScrollToPosition(expandableListView.getCount());
                 }
                 if (KeyEvent.ACTION_UP == action) {
                     expandableListView.smoothScrollByOffset(3);

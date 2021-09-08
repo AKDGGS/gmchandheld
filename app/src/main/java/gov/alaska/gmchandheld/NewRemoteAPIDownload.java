@@ -31,7 +31,6 @@ public class NewRemoteAPIDownload implements Callable<String> {
             connection.setReadTimeout(10 * 1000);
             connection.setConnectTimeout(5 * 1000);
             connection.connect();
-            responseCode = connection.getResponseCode();
             try {
                 inputStream = connection.getInputStream();
             } catch (Exception e) {

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.zxing.integration.android.IntentIntegrator;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutorService;
+
 import javax.net.ssl.SSLContext;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -36,6 +39,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected IntentIntegrator qrScan;
 	protected static Intent intent;
 	protected static String baseURL;
+	protected volatile Thread thread;
+	protected volatile AlertDialog alert;
+	protected volatile boolean downloading;
 
 	@Override
 	protected void onStop() {
@@ -44,6 +50,19 @@ public abstract class BaseActivity extends AppCompatActivity {
 		if (!pm.isScreenOn()){
 			apiKeyBase = "";
 		}
+		if (alert != null) {
+			alert.dismiss();
+			alert = null;
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (alert != null) {
+			alert.dismiss();
+			alert = null;
+		}
 	}
 
 	@Override
@@ -51,6 +70,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		super.onRestart();
 		checkAPIkeyExists(this);
 	}
+
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -208,7 +228,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 	}
 
 	protected void processingAlert(Context mContext, String barcode){
-		AlertDialog alert;
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 		LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
 		View layout = inflater.inflate(R.layout.downloading_progress_dialog,
@@ -225,6 +244,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 			public void onClick(DialogInterface dialogInterface, int i) {
 				dialogInterface.cancel();
 				RemoteApiUIHandler.setDownloading(false);
+				if(alert != null) {
+					alert.dismiss();
+					alert = null;
+				}
+				thread.interrupt();
+
 			}
 		});
 		alert = alertDialog.create();
