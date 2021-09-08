@@ -108,7 +108,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             }
             return false;
         });
-        if (!RemoteApiUIHandler.isDownloading()) {
+        if (!downloading) {
+            downloading = true;
             // onClickListener listens if the submit button is clicked
             submit_button.setOnClickListener(v -> {
                     if (!(TextUtils.isEmpty(barcodeET.getText()))) {
@@ -189,6 +190,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                         showIssuesTV.setText(listToString(selectedItemsDisplayList));
                     }
             });
+            downloading = false;
         }
         showIssuesTV = findViewById(R.id.showIssuesTV);
         Button issuesBtn = findViewById(R.id.issuesBtn);
