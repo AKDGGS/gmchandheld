@@ -8,14 +8,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Recode extends BaseActivity {
 	private EditText oldBarcodeET, newBarcodeET;
+	private String data;
 	@Override
 	public int getLayoutResource() {
 		return R.layout.recode;
@@ -30,12 +38,11 @@ public class Recode extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		checkAPIkeyExists(this);
 		oldBarcodeET = findViewById(R.id.oldBarcodeET);
 		newBarcodeET = findViewById(R.id.newBarcodeET);
 		Button oldBarcodeCameraBtn = findViewById(R.id.oldBarcodeCameraBtn);
 		Button newBarcodeCameraBtn = findViewById(R.id.newBarcodeCameraBtn);
-		if (!sp.getBoolean("cameraOn", false)){
+		if (!sp.getBoolean("cameraOn", false)) {
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
 					LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.weight = 8.25f;
@@ -63,17 +70,63 @@ public class Recode extends BaseActivity {
 			}
 			startActivityForResult(intent, 2);
 		});
-		if (!RemoteApiUIHandler.isDownloading()) {
+		if (!downloading) {
+			downloading = true;
 			// onClickListener listens if the submit button is clicked
 			findViewById(R.id.submitBtn).setOnClickListener(v -> {
 				if ((!oldBarcodeET.getText().toString().isEmpty()) &&
 						(!newBarcodeET.getText().toString().isEmpty())) {
-						new RemoteApiUIHandler(this, oldBarcodeET.getText().toString(),
-								newBarcodeET.getText().toString()).execute();
-						newBarcodeET.setText("");
-						oldBarcodeET.setText("");
-						oldBarcodeET.requestFocus();
+					String barcode = null;
+					String newBarcode = null;
+					try {
+						barcode = URLEncoder.encode(oldBarcodeET.getText().toString(), "utf-8");
+						newBarcode = URLEncoder.encode(newBarcodeET.getText().toString(), "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						//						exception = new Exception(e.getMessage());
 					}
+
+					StringBuilder sb = new StringBuilder();
+					if (barcode != null) {
+						sb.append("old=").append(barcode);
+					}
+					if (newBarcode != null) {
+						sb.append("&new=").append(newBarcode);
+					}
+					String url = baseURL + "recode.json?" + sb.toString();
+					Runnable runnable = () -> {
+						if (thread.isInterrupted()) {
+							return;
+						}
+						final ExecutorService service =
+								Executors.newFixedThreadPool(1);
+						final Future < String > task =
+								service.submit(new NewRemoteAPIDownload(url));
+						try {
+							data = task.get();
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							return;
+						}
+						runOnUiThread(() -> {
+							if (null == data) {
+								Toast.makeText(Recode.this,"There was a problem.  " +
+												"Nothing was changed.",	Toast.LENGTH_SHORT).show();
+								oldBarcodeET.requestFocus();
+							} else if (data.contains("success")) {
+								Toast.makeText(Recode.this,"The recode was successful.",
+										Toast.LENGTH_SHORT).show();
+								newBarcodeET.setText("");
+								oldBarcodeET.setText("");
+								oldBarcodeET.requestFocus();
+							}
+						});
+					};
+					thread = new Thread(runnable);
+					thread.start();
+
+				}
 			});
 			// KeyListener listens if enter is pressed
 			oldBarcodeET.setOnKeyListener((v, keyCode, event) -> {
@@ -84,20 +137,21 @@ public class Recode extends BaseActivity {
 				}
 				return false;
 			});
+			downloading = false;
 		}
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 		if (Build.VERSION.SDK_INT <= 24) {
-			switch (requestCode){
+			switch (requestCode) {
 				case 1: {
 					IntentResult result = IntentIntegrator.parseActivityResult(
 							IntentIntegrator.REQUEST_CODE, resultCode, data);
 					oldBarcodeET.setText(result.getContents());
 				}
 				break;
-				case 2:{
+				case 2: {
 					IntentResult result = IntentIntegrator.parseActivityResult(
 							IntentIntegrator.REQUEST_CODE, resultCode, data);
 					newBarcodeET.setText(result.getContents());
