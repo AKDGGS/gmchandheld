@@ -79,8 +79,10 @@ public class Recode extends BaseActivity {
 					String barcode = null;
 					String newBarcode = null;
 					try {
-						barcode = URLEncoder.encode(oldBarcodeET.getText().toString(), "utf-8");
-						newBarcode = URLEncoder.encode(newBarcodeET.getText().toString(), "utf-8");
+						barcode = URLEncoder.encode(oldBarcodeET.getText().toString(),
+								"utf-8");
+						newBarcode = URLEncoder.encode(newBarcodeET.getText().toString(),
+								"utf-8");
 					} catch (UnsupportedEncodingException e) {
 						//						exception = new Exception(e.getMessage());
 					}
@@ -125,7 +127,6 @@ public class Recode extends BaseActivity {
 					};
 					thread = new Thread(runnable);
 					thread.start();
-
 				}
 			});
 			// KeyListener listens if enter is pressed
