@@ -85,7 +85,6 @@ public class MoveContents extends BaseActivity {
 									.submit(new NewRemoteAPIDownload(finalURL));
 							try {
 								data = task.get();
-								System.out.println("Data " + data);
 							} catch (ExecutionException e) {
 								e.printStackTrace();
 							} catch (InterruptedException e) {

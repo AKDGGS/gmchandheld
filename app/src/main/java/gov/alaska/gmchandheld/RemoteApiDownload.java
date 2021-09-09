@@ -68,125 +68,125 @@ public class RemoteApiDownload {
         StringBuilder sb1 = new StringBuilder();
         try {
             switch (context.getClass().getSimpleName()) {
-                case "Lookup":
-                case "LookupDisplay": {
-                    String barcode = null;
-                    try {
-                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-                        exception = new Exception(e.getMessage());
-                    }
-                    url = url + "inventory.json?barcode=" + barcode;
-                    break;
-                }
-                case "Summary":
-                case "SummaryDisplay": {
-                    String barcode = null;
-                    try {
-                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-                        exception = new Exception(e.getMessage());
-                    }
-                    url = url + "summary.json?barcode=" + barcode;
-                    break;
-                }
-                case "MoveContents": {
-                    String source = null;
-                    String destination = null;
-                    try {
-                        source = URLEncoder.encode(urlFirstParameter, "utf-8");
-                        destination = URLEncoder.encode(destinationBarcode, "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-                        exception = new Exception(e.getMessage());
-                    }
-                    if (source != null) {
-                        sb1.append("src=").append(source);
-                    }
-                    if (destination != null) {
-                        sb1.append("&dest=").append(destination);
-                    }
-                    url = url + "movecontents.json?" + sb1.toString();
-                    break;
-                }
-                case "MoveDisplay": {
-                    String destination = null;
-                    try {
-                        destination = URLEncoder.encode(urlFirstParameter, "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-                        exception = new Exception(e.getMessage());
-                    }
-                    url = url + "move.json?d=" + destination + containersToUrlList(containerList, "c");
-                    break;
-                }
-                case "AddContainer": {
-                    String barcode = null;
-                    String name = null;
-                    String remark = null;
-                    try {
-                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-                        name = URLEncoder.encode(addedContainerName, "utf-8");
-                        remark = URLEncoder.encode(addedContainerRemark, "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-                        exception = new Exception(e.getMessage());
-                    }
-                    if (barcode != null) {
-                        sb1.append("barcode=").append(barcode);
-                    }
-                    if (name != null) {
-                        sb1.append("&name=").append(name);
-                    }
-                    if (remark != null) {
-                        sb1.append("&remark=").append(remark);
-                    }
-                    url = url + "addcontainer.json?" + sb1.toString();
-                    break;
-                }
-                case "AddInventory": {
-                    String barcode = null;
-                    String remark = null;
-                    try {
-                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-                        if (addedContainerRemark != null) {
-                            remark = URLEncoder.encode(addedContainerRemark, "utf-8");
-                        }
-                    } catch (UnsupportedEncodingException e) {
-                        exception = new Exception(e.getMessage());
-                    }
-                    if (barcode != null) {
-                        sb1.append("barcode=").append(barcode);
-                    }
-                    if (remark != null) {
-                        sb1.append("&remark=").append(remark);
-                    }
-                    if (containerList != null) {
-                        sb1.append(containersToUrlList(containerList, "i"));
-                    }
-                    url = url + "addinventory.json?" + sb1.toString();
-                    break;
-                }
-                case "Quality": {
-                    String barcode = null;
-                    String remark = null;
-                    try {
-                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
-                        if (addedContainerRemark != null) {
-                            remark = URLEncoder.encode(addedContainerRemark, "utf-8");
-                        }
-                    } catch (UnsupportedEncodingException e) {
-                        exception = new Exception(e.getMessage());
-                    }
-                    if (barcode != null) {
-                        sb1.append("barcode=").append(barcode);
-                    }
-                    if (remark != null) {
-                        sb1.append("&remark=").append(remark);
-                    }
-                    if (containerList != null) {
-                        sb1.append(containersToUrlList(containerList, "i"));
-                    }
-                    url = url + "addinventoryquality.json?" + sb1.toString();
-                    break;
-                }
+//                case "Lookup":
+//                case "LookupDisplay": {
+//                    String barcode = null;
+//                    try {
+//                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
+//                    } catch (UnsupportedEncodingException e) {
+//                        exception = new Exception(e.getMessage());
+//                    }
+//                    url = url + "inventory.json?barcode=" + barcode;
+//                    break;
+//                }
+//                case "Summary":
+//                case "SummaryDisplay": {
+//                    String barcode = null;
+//                    try {
+//                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
+//                    } catch (UnsupportedEncodingException e) {
+//                        exception = new Exception(e.getMessage());
+//                    }
+//                    url = url + "summary.json?barcode=" + barcode;
+//                    break;
+//                }
+//                case "MoveContents": {
+//                    String source = null;
+//                    String destination = null;
+//                    try {
+//                        source = URLEncoder.encode(urlFirstParameter, "utf-8");
+//                        destination = URLEncoder.encode(destinationBarcode, "utf-8");
+//                    } catch (UnsupportedEncodingException e) {
+//                        exception = new Exception(e.getMessage());
+//                    }
+//                    if (source != null) {
+//                        sb1.append("src=").append(source);
+//                    }
+//                    if (destination != null) {
+//                        sb1.append("&dest=").append(destination);
+//                    }
+//                    url = url + "movecontents.json?" + sb1.toString();
+//                    break;
+//                }
+//                case "MoveDisplay": {
+//                    String destination = null;
+//                    try {
+//                        destination = URLEncoder.encode(urlFirstParameter, "utf-8");
+//                    } catch (UnsupportedEncodingException e) {
+//                        exception = new Exception(e.getMessage());
+//                    }
+//                    url = url + "move.json?d=" + destination + containersToUrlList(containerList, "c");
+//                    break;
+//                }
+//                case "AddContainer": {
+//                    String barcode = null;
+//                    String name = null;
+//                    String remark = null;
+//                    try {
+//                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
+//                        name = URLEncoder.encode(addedContainerName, "utf-8");
+//                        remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+//                    } catch (UnsupportedEncodingException e) {
+//                        exception = new Exception(e.getMessage());
+//                    }
+//                    if (barcode != null) {
+//                        sb1.append("barcode=").append(barcode);
+//                    }
+//                    if (name != null) {
+//                        sb1.append("&name=").append(name);
+//                    }
+//                    if (remark != null) {
+//                        sb1.append("&remark=").append(remark);
+//                    }
+//                    url = url + "addcontainer.json?" + sb1.toString();
+//                    break;
+//                }
+//                case "AddInventory": {
+//                    String barcode = null;
+//                    String remark = null;
+//                    try {
+//                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
+//                        if (addedContainerRemark != null) {
+//                            remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+//                        }
+//                    } catch (UnsupportedEncodingException e) {
+//                        exception = new Exception(e.getMessage());
+//                    }
+//                    if (barcode != null) {
+//                        sb1.append("barcode=").append(barcode);
+//                    }
+//                    if (remark != null) {
+//                        sb1.append("&remark=").append(remark);
+//                    }
+//                    if (containerList != null) {
+//                        sb1.append(containersToUrlList(containerList, "i"));
+//                    }
+//                    url = url + "addinventory.json?" + sb1.toString();
+//                    break;
+//                }
+//                case "Quality": {
+//                    String barcode = null;
+//                    String remark = null;
+//                    try {
+//                        barcode = URLEncoder.encode(urlFirstParameter, "utf-8");
+//                        if (addedContainerRemark != null) {
+//                            remark = URLEncoder.encode(addedContainerRemark, "utf-8");
+//                        }
+//                    } catch (UnsupportedEncodingException e) {
+//                        exception = new Exception(e.getMessage());
+//                    }
+//                    if (barcode != null) {
+//                        sb1.append("barcode=").append(barcode);
+//                    }
+//                    if (remark != null) {
+//                        sb1.append("&remark=").append(remark);
+//                    }
+//                    if (containerList != null) {
+//                        sb1.append(containersToUrlList(containerList, "i"));
+//                    }
+//                    url = url + "addinventoryquality.json?" + sb1.toString();
+//                    break;
+//                }
                 case "AuditDisplay": {
                     String remark = null;
                     try {
