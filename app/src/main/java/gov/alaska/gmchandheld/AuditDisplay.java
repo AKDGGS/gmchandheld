@@ -13,20 +13,27 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class AuditDisplay extends BaseActivity {
-    private ArrayList<String> containerList;
-    private ArrayAdapter<String> adapter;
+    private ArrayList < String > containerList;
+    private ArrayAdapter < String > adapter;
     private EditText auditRemarkET, auditItemET;
     private Button clearAllBtn;
-    private int clicks;  //used to count double clicks for deletion
+    private int clicks; //used to count double clicks for deletion
+    private String data;
 
     public AuditDisplay() {
         clicks = 0;
@@ -52,7 +59,7 @@ public class AuditDisplay extends BaseActivity {
         final TextView auditCountTV = findViewById(R.id.auditCountTV);
         clearAllBtn = findViewById(R.id.clearAllBtn);
         ListView auditContainerListLV = findViewById(R.id.listViewGetContainersToAudit);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        adapter = new ArrayAdapter < > (this, android.R.layout.simple_list_item_1);
         auditContainerListLV.setAdapter(adapter);
         containerList = AuditDisplayObjInstance.getInstance().getAuditList();
         adapter.addAll(containerList);
@@ -94,7 +101,7 @@ public class AuditDisplay extends BaseActivity {
         final Button addBtn = findViewById(R.id.addContainerBtn);
         addBtn.setOnClickListener(v -> {
             String container = auditItemET.getText().toString();
-            if (!containerList.contains(container) && !container.isEmpty() ) {
+            if (!containerList.contains(container) && !container.isEmpty()) {
                 containerList.add(0, container);
                 adapter.insert(container, 0);
                 adapter.notifyDataSetChanged();
@@ -111,7 +118,8 @@ public class AuditDisplay extends BaseActivity {
             adapter.notifyDataSetChanged();
             auditCountTV.setText(String.valueOf(containerList.size()));
         });
-        if (!RemoteApiUIHandler.isDownloading()) {
+        if (!downloading) {
+            downloading = true;
             //double click to remove elements
             auditContainerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
                 clicks++;
@@ -149,12 +157,56 @@ public class AuditDisplay extends BaseActivity {
             });
             // onClickListener listens if the submit button is clicked
             findViewById(R.id.submitBtn).setOnClickListener(v -> {
-                new RemoteApiUIHandler(this, auditRemarkET.getText().toString(),
-                        containerList).execute();
+                String remark = null;
+                try {
+                    remark = URLEncoder.encode(auditRemarkET.getText().toString(), "utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    //                            exception = new Exception(e.getMessage());
+                }
+                String url = baseURL + "audit.json?remark=" + remark +
+                        createListForURL(containerList, "c");
+                Runnable runnable = () -> {
+                    if (thread.isInterrupted()) {
+                        return;
+                    }
+                    final ExecutorService service =
+                            Executors.newFixedThreadPool(1);
+                    final Future < String > task =
+                            service.submit(new NewRemoteAPIDownload(url));
+                    try {
+                        data = task.get();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+                    runOnUiThread(() -> {
+                        if (null == data) {
+                            Toast.makeText(AuditDisplay.this,
+                                    "There was a problem.  " +
+                                            "The audit was not added.",
+                                    Toast.LENGTH_SHORT).show();
+                            auditRemarkET.requestFocus();
+                        } else if (data.contains("success")) {
+                            Toast.makeText(AuditDisplay.this,
+                                    "The audit was added.",
+                                    Toast.LENGTH_SHORT).show();
+                            auditRemarkET.requestFocus();
+                            containerList.clear();
+                            adapter.clear();
+                            adapter.notifyDataSetChanged();
+                            auditCountTV.setText(String.valueOf(containerList.size()));
+                        }
+                    });
+                };
+                thread = new Thread(runnable);
+                thread.start();
                 auditItemET.setText("");
                 auditRemarkET.setText("");
                 auditCountTV.setText("");
             });
+            downloading = false;
         }
     }
 
