@@ -25,8 +25,12 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.zxing.integration.android.IntentIntegrator;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
 import javax.net.ssl.SSLContext;
@@ -255,5 +259,25 @@ public abstract class BaseActivity extends AppCompatActivity {
 		alert = alertDialog.create();
 		alert.show();
 		alert.setCanceledOnTouchOutside(false);
+	}
+
+	public String createListForURL(ArrayList< String > list, String paramKeyword) {
+		String delim = "&" + paramKeyword + "=";
+		StringBuilder sb = new StringBuilder();
+		if (list != null && list.size() > 0) {
+			sb.append(delim);
+			int i = 0;
+			while (i < list.size() - 1) {
+				try {
+					sb.append(URLEncoder.encode(list.get(i), "utf-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				sb.append(delim);
+				i++;
+			}
+			sb.append(list.get(i));
+		}
+		return sb.toString();
 	}
 }
