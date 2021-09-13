@@ -22,8 +22,11 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -51,6 +54,8 @@ public class TakePhoto extends BaseActivity {
     // I need it here to capture the requestCode when IntentIntegrator is used for API <= 24
     private static final int SCAN_BARCODE_REQUEST = 49374;
 
+    private volatile ArrayList<File> fileList;
+
     @Override
     public int getLayoutResource() {
         return R.layout.activity_take_photo;
@@ -70,10 +75,20 @@ public class TakePhoto extends BaseActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        Set<File> fileSet = new HashSet<>(fileList);
+        for (File f : fileSet){
+            f.delete();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         cameraOn = sp.getBoolean("cameraOn", false);
         Button cameraBtn = findViewById(R.id.cameraBtn);
+        fileList = new ArrayList<File>();
         if (!cameraOn) {
             cameraBtn.setVisibility(View.GONE);
         } else {
@@ -168,7 +183,7 @@ public class TakePhoto extends BaseActivity {
                             uploadImageIV.setImageDrawable(null);
                             barcodeET.requestFocus();
                         }
-                        file.delete();
+                        fileList.add(file);
                     });
                 };
                 thread = new Thread(runnable);
