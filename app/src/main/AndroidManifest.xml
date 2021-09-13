@@ -112,11 +112,6 @@
             android:label="Photo"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
-        <activity
-            android:name=".TakePhoto_Test"
-            android:label="PhotoTest"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

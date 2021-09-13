@@ -52,12 +52,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/photo_test"
-        android:title="photo_test"
-        app:showAsAction="never" />
-
-
-    <item
         android:id="@+id/configuration"
         android:title="@string/configuration"
         app:showAsAction="never" />
