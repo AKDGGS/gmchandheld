@@ -101,10 +101,10 @@
                     android:layout_gravity="center"
                     android:layout_weight="6.00"
                     android:inputType="text"
-                    android:nextFocusLeft="@+id/itemET"
-                    android:nextFocusRight="@+id/itemET"
-                    android:nextFocusUp="@+id/itemET"
-                    android:nextFocusDown="@+id/itemET"
+                    android:nextFocusLeft="@+id/descriptionET"
+                    android:nextFocusRight="@+id/descriptionET"
+                    android:nextFocusUp="@+id/descriptionET"
+                    android:nextFocusDown="@+id/descriptionET"
                     android:selectAllOnFocus="true"
                     app:backgroundTint="@color/colorPrimary" />
 

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -139,6 +140,16 @@ public class TakePhoto extends BaseActivity {
                 }
             }
         });
+
+        // KeyListener listens if enter is pressed
+        barcodeET.setOnKeyListener((v, keyCode, event) -> {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                descriptionET.requestFocus();
+                return true;
+            }
+            return false;
+        });
+
         submitBtn = findViewById(R.id.submitBtn);
         submitBtn.setEnabled(false);
         submitBtn.setOnClickListener(view -> {
