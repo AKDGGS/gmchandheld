@@ -2,7 +2,6 @@ package gov.alaska.gmchandheld;
 
 import androidx.annotation.Nullable;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,8 +18,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -82,7 +79,7 @@ public class MoveContents extends BaseActivity {
 							}
 							final ExecutorService service = Executors.newFixedThreadPool(1);
 							final Future<String> task = service
-									.submit(new NewRemoteAPIDownload(finalURL));
+									.submit(new RemoteAPIDownload(finalURL));
 							try {
 								data = task.get();
 							} catch (ExecutionException e) {

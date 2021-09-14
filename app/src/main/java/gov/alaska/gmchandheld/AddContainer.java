@@ -124,7 +124,7 @@ public class AddContainer extends BaseActivity {
 								final ExecutorService service =
 										Executors.newFixedThreadPool(1);
 								final Future<String> task =
-										service.submit(new NewRemoteAPIDownload(url));
+										service.submit(new RemoteAPIDownload(url));
 								try {
 									data = task.get();
 								} catch (ExecutionException e) {

@@ -102,7 +102,7 @@ public class SummaryDisplay extends BaseActivity {
                                     final Future<String> task;
 
                                     service = Executors.newFixedThreadPool(1);
-                                    task = service.submit(new NewRemoteAPIDownload(finalBase
+                                    task = service.submit(new RemoteAPIDownload(finalBase
                                             + "summary.json?barcode=" + finalBarcode));
 
                                     try {

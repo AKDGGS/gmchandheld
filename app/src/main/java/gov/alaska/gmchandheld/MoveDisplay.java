@@ -178,7 +178,7 @@ public class MoveDisplay extends BaseActivity {
 									return;
 								}
 								final ExecutorService service = Executors.newFixedThreadPool(1);
-								final Future<String> task = service.submit(new NewRemoteAPIDownload(url));
+								final Future<String> task = service.submit(new RemoteAPIDownload(url));
 								try {
 									data = task.get();
 								} catch (ExecutionException e) {

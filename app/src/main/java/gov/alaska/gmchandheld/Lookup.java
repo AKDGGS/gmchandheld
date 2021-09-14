@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -15,14 +14,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.common.util.JsonUtils;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutionException;
@@ -131,7 +127,7 @@ public class Lookup extends BaseActivity {
 								return;
 							}
 								final ExecutorService service = Executors.newFixedThreadPool(1);
-								final Future<String> task = service.submit(new NewRemoteAPIDownload(url));
+								final Future<String> task = service.submit(new RemoteAPIDownload(url));
 								try {
 									data = task.get();
 								} catch (ExecutionException e) {

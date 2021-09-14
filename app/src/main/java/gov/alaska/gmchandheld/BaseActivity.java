@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.PowerManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,13 +23,11 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.zxing.integration.android.IntentIntegrator;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
 
 import javax.net.ssl.SSLContext;
 
@@ -181,11 +177,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			this.startActivity(intentAddContainer);
 			return true;
-		} else if (item.getItemId() == (R.id.photo_test)) {
-			Intent intentAddContainer = new Intent(this, TakePhoto_Test.class);
-			intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			this.startActivity(intentAddContainer);
-			return true;
 		}else {
 			return super.onOptionsItemSelected(item);
 		}
@@ -247,7 +238,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 			@Override
 			public void onClick(DialogInterface dialogInterface, int i) {
 				dialogInterface.cancel();
-				RemoteApiUIHandler.setDownloading(false);
 				if(alert != null) {
 					alert.dismiss();
 					alert = null;

@@ -316,7 +316,9 @@ public class Configuration extends BaseActivity {
     }
 
     public void updateAPK() {
-        new UpdateCheckLastModifiedDate(this).execute();
+        if (!urlET.getText().toString().isEmpty()) {
+            new UpdateCheckLastModifiedDate(this).execute();
+        }
     }
 
     @Override

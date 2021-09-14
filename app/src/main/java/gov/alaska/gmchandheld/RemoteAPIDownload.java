@@ -9,11 +9,11 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 
 
-public class NewRemoteAPIDownload implements Callable<String> {
+public class RemoteAPIDownload implements Callable<String> {
     private Exception exception = null;
     private String url;
 
-    public NewRemoteAPIDownload(String url) {
+    public RemoteAPIDownload(String url) {
         this.url = url;
     }
 

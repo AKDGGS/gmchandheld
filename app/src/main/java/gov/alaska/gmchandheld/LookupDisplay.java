@@ -106,7 +106,7 @@ public class LookupDisplay extends BaseActivity {
                                     final Future<String> task;
 
                                     service = Executors.newFixedThreadPool(1);
-                                    task = service.submit(new NewRemoteAPIDownload(finalBase
+                                    task = service.submit(new RemoteAPIDownload(finalBase
                                             + "inventory.json?barcode=" + finalBarcode));
 
                                     try {
