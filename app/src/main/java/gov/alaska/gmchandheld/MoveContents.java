@@ -71,45 +71,45 @@ public class MoveContents extends BaseActivity {
 					}
 
 					String finalURL = baseURL + "movecontents.json?" + sb.toString();
-					Runnable runnable = new Runnable() {
-						@Override
-						public void run() {
-							if (thread.isInterrupted()) {
-								return;
-							}
-							final ExecutorService service = Executors.newFixedThreadPool(1);
-							final Future<String> task = service
-									.submit(new RemoteAPIDownload(finalURL));
-							try {
-								data = task.get();
-							} catch (ExecutionException e) {
-								e.printStackTrace();
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-								return;
-							}
-
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									if (null == data) {
-										Toast.makeText(MoveContents.this,
-												"There was a problem. Nothing was moved.",
-												Toast.LENGTH_LONG).show();
-										moveContentsFromET.requestFocus();
-									} else if (data.contains("success")) {
-										Toast.makeText(MoveContents.this,
-												"The contents were moved.",
-												Toast.LENGTH_LONG).show();
-										moveContentsFromET.requestFocus();
-									}
-								}
-							});
-						}
-					};
-					downloading = false;
-					thread = new Thread(runnable);
-					thread.start();
+//					Runnable runnable = new Runnable() {
+//						@Override
+//						public void run() {
+//							if (thread.isInterrupted()) {
+//								return;
+//							}
+//							final ExecutorService service = Executors.newFixedThreadPool(1);
+//							final Future<String> task = service
+//									.submit(new RemoteAPIDownload(finalURL));
+//							try {
+//								data = task.get();
+//							} catch (ExecutionException e) {
+//								e.printStackTrace();
+//							} catch (InterruptedException e) {
+//								e.printStackTrace();
+//								return;
+//							}
+//
+//							runOnUiThread(new Runnable() {
+//								@Override
+//								public void run() {
+//									if (null == data) {
+//										Toast.makeText(MoveContents.this,
+//												"There was a problem. Nothing was moved.",
+//												Toast.LENGTH_LONG).show();
+//										moveContentsFromET.requestFocus();
+//									} else if (data.contains("success")) {
+//										Toast.makeText(MoveContents.this,
+//												"The contents were moved.",
+//												Toast.LENGTH_LONG).show();
+//										moveContentsFromET.requestFocus();
+//									}
+//								}
+//							});
+//						}
+//					};
+//					downloading = false;
+//					thread = new Thread(runnable);
+//					thread.start();
 					moveContentsFromET.setText("");
 					moveContentsToET.setText("");
 					moveContentsFromET.requestFocus();

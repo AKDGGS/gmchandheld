@@ -170,44 +170,44 @@ public class MoveDisplay extends BaseActivity {
 						}
 						String url = baseURL + "move.json?d=" + destination
 								+ containersToUrlList(containerList, "c");
-
-						Runnable runnable = new Runnable() {
-							@Override
-							public void run() {
-								if (thread.isInterrupted()) {
-									return;
-								}
-								final ExecutorService service = Executors.newFixedThreadPool(1);
-								final Future<String> task = service.submit(new RemoteAPIDownload(url));
-								try {
-									data = task.get();
-								} catch (ExecutionException e) {
-									e.printStackTrace();
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-									return;
-								}
-
-								runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										if (null == data){
-											Toast.makeText(MoveDisplay.this, "There was a problem. Nothing was moved.",
-													Toast.LENGTH_LONG).show();
-											destinationET.requestFocus();
-										} else if (data.contains("success")){
-											Toast.makeText(MoveDisplay.this, "The contents were moved.",
-													Toast.LENGTH_LONG).show();
-											destinationET.requestFocus();
-										}
-									}
-								});
-							}
-						};
-
-						downloading = false;
-						thread = new Thread(runnable);
-						thread.start();
+//
+//						Runnable runnable = new Runnable() {
+//							@Override
+//							public void run() {
+//								if (thread.isInterrupted()) {
+//									return;
+//								}
+//								final ExecutorService service = Executors.newFixedThreadPool(1);
+//								final Future<String> task = service.submit(new RemoteAPIDownload(url));
+//								try {
+//									data = task.get();
+//								} catch (ExecutionException e) {
+//									e.printStackTrace();
+//								} catch (InterruptedException e) {
+//									e.printStackTrace();
+//									return;
+//								}
+//
+//								runOnUiThread(new Runnable() {
+//									@Override
+//									public void run() {
+//										if (null == data){
+//											Toast.makeText(MoveDisplay.this, "There was a problem. Nothing was moved.",
+//													Toast.LENGTH_LONG).show();
+//											destinationET.requestFocus();
+//										} else if (data.contains("success")){
+//											Toast.makeText(MoveDisplay.this, "The contents were moved.",
+//													Toast.LENGTH_LONG).show();
+//											destinationET.requestFocus();
+//										}
+//									}
+//								});
+//							}
+//						};
+//
+//						downloading = false;
+//						thread = new Thread(runnable);
+//						thread.start();
 						itemET.setText("");
 						destinationET.setText("");
 						containerList.clear();

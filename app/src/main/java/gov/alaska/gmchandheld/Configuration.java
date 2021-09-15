@@ -26,11 +26,15 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Configuration extends BaseActivity {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
     private EditText hourInput, minuteInput, urlET, apiET;
-    private String hour, minute, url;
+    private String hour, minute, url, data;
 
     @Override
     public int getLayoutResource() {
@@ -54,6 +58,7 @@ public class Configuration extends BaseActivity {
         if (urlET.getText().toString().isEmpty()) {
             enableTSL(this);
         }
+
         // KeyListener listens if enter is pressed
         urlET.setOnKeyListener((v, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
@@ -101,8 +106,8 @@ public class Configuration extends BaseActivity {
             checkSDKLevel();
             startActivityForResult(BaseActivity.intent, 2);
         });
-        final Button updateButton = findViewById(R.id.updateBtn);
-        updateButton.setOnClickListener(v -> updateAPK());
+        final Button updateBtn = findViewById(R.id.updateBtn);
+        updateBtn.setOnClickListener(v -> updateAPK());
         updateViews();
         hourInputChangeWatcher();
         minuteInputChangeWatcher();
@@ -191,6 +196,10 @@ public class Configuration extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) { }
         });
+        if (sp.getBoolean("firstrun", true)) {
+            checkIssuesList();
+            sp.edit().putBoolean("firstrun", false).apply();
+        }
     }
 
     public String getApiKey() {
@@ -317,8 +326,44 @@ public class Configuration extends BaseActivity {
 
     public void updateAPK() {
         if (!urlET.getText().toString().isEmpty()) {
+            checkIssuesList();
             new UpdateCheckLastModifiedDate(this).execute();
         }
+    }
+
+    private void checkIssuesList() {
+//        Runnable runnable = () -> {
+//            if (thread.isInterrupted()) {
+//                return;
+//            }
+//            final ExecutorService service =
+//                    Executors.newFixedThreadPool(1);
+//            final Future< String > task =
+//                    service.submit(new RemoteAPIDownload("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json"));
+//            try {
+//                data = task.get();
+////                setIssuesString(data);
+//                editor = sp.edit();
+//                editor.putString("issuesString", data).commit();
+//
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//                return;
+//            }
+//            runOnUiThread(() -> {
+//                if (null == data) {
+//                    Toast.makeText(Configuration.this,"There was a problem.  " +
+//                            "Nothing was changed.",	Toast.LENGTH_SHORT).show();
+//                } else if (data.contains("success")) {
+//                    Toast.makeText(Configuration.this,"The recode was successful.",
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        };
+//        thread = new Thread(runnable);
+//        thread.start();
     }
 
     @Override

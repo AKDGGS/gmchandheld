@@ -3,7 +3,6 @@ package gov.alaska.gmchandheld;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -234,17 +233,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 		title.setGravity(Gravity.CENTER);
 		title.setTextSize(16);
 		alertDialog.setCustomTitle(title);
-		alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialogInterface, int i) {
-				dialogInterface.cancel();
-				if(alert != null) {
-					alert.dismiss();
-					alert = null;
-				}
-				thread.interrupt();
-
+		alertDialog.setNegativeButton("Cancel", (dialogInterface, i) -> {
+			dialogInterface.cancel();
+			if(alert != null) {
+				alert.dismiss();
+				alert = null;
 			}
+			thread.interrupt();
+
 		});
 		alert = alertDialog.create();
 		alert.show();

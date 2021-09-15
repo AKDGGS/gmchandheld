@@ -33,7 +33,8 @@ public class Lookup extends BaseActivity {
 	private EditText barcodeET;
 	private static String lastAdded;
 	private Exception exception;
-	private String data, barcode;
+	private String barcode;
+	private volatile String data;
 	private volatile boolean isCancel = false;
 
 	public Lookup() {
@@ -118,68 +119,110 @@ public class Lookup extends BaseActivity {
 					}
 
 					String url = baseURL+ "inventory.json?barcode=" + barcode;
-					String finalBarcode = barcode;
-
-					Runnable runnable = new Runnable(){
-						@Override
-						public void run() {
-							if (thread.isInterrupted()){
-								return;
-							}
-								final ExecutorService service = Executors.newFixedThreadPool(1);
-								final Future<String> task = service.submit(new RemoteAPIDownload(url));
-								try {
-									data = task.get();
-								} catch (ExecutionException e) {
-									e.printStackTrace();
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-									return;
-								}
-								service.shutdownNow();
-
-							if (data == null || data.length() <= 2) {
-								if (alert != null){
-									alert.dismiss();
-									alert = null;
-								}
-								runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										Toast.makeText(Lookup.this,
-												"There was an error looking up " + finalBarcode + ".", Toast.LENGTH_LONG).show();
-									}
-								});
-								} else {
-									LookupLogicForDisplay lookupLogicForDisplayObj;
-									lookupLogicForDisplayObj = new LookupLogicForDisplay();
-									LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
-											= lookupLogicForDisplayObj;
-									lookupLogicForDisplayObj.setBarcodeQuery(finalBarcode);
-									try {
-										lookupLogicForDisplayObj.processRawJSON(data);
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
-									intent = new Intent(Lookup.this, LookupDisplay.class);
-									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-											| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-									intent.putExtra("barcode", finalBarcode);
-									Lookup.this.startActivity(intent);
-
-									if (!lookupHistory.isEmpty()) {
-										lastAdded = lookupHistory.get(0);
-									}
-									if (!finalBarcode.equals(lastAdded)) {
-										lookupHistory.add(0, finalBarcode);
-									}
-								}
-							downloading = false;
-							}
-					};
-
-					thread = new Thread(runnable);
+					RemoteAPIDownload downloader = new RemoteAPIDownload();
+					downloader.setUrl(url);
+					thread = new Thread(downloader);
 					thread.start();
+					while(thread.isAlive()) {
+						data = downloader.getData();
+						Integer responseCode = downloader.getResponseCode();
+						if (responseCode != null){
+							System.out.println(responseCode);
+						}
+						if(data != null) {
+							LookupLogicForDisplay lookupLogicForDisplayObj;
+							lookupLogicForDisplayObj = new LookupLogicForDisplay();
+							LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
+									= lookupLogicForDisplayObj;
+							lookupLogicForDisplayObj.setBarcodeQuery(barcode);
+							try {
+								lookupLogicForDisplayObj.processRawJSON(data);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							intent = new Intent(Lookup.this, LookupDisplay.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+									| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+							intent.putExtra("barcode", barcode);
+							Lookup.this.startActivity(intent);
+
+							if (!lookupHistory.isEmpty()) {
+								lastAdded = lookupHistory.get(0);
+							}
+							if (!barcode.equals(lastAdded)) {
+								lookupHistory.add(0, barcode);
+							}
+						}
+					}
+//
+//					System.out.println(data);
+
+
+//					String finalBarcode = barcode;
+//					Runnable runnable = new Runnable(){
+//						@Override
+//						public void run() {
+//							if (thread.isInterrupted()){
+//								return;
+//							}
+//							final ExecutorService service = Executors.newFixedThreadPool(1);
+//							RemoteAPIDownload downloader = new RemoteAPIDownload(url);
+//							final Future<String> task = service.submit(downloader);
+//							try {
+//								data = task.get();
+//							} catch (ExecutionException e) {
+//								e.printStackTrace();
+//							} catch (InterruptedException e) {
+//								e.printStackTrace();
+//								return;
+//							}
+//							service.shutdownNow();
+//
+//							System.out.println("response code: " + downloader.getResponseCode());
+//							System.out.println("response message: " + downloader.getResponseMessage());
+//
+//							if (data == null || data.length() <= 2) {
+//								if (alert != null){
+//									alert.dismiss();
+//									alert = null;
+//								}
+//								runOnUiThread(new Runnable() {
+//									@Override
+//									public void run() {
+//										Toast.makeText(Lookup.this,
+//												"There was an error looking up " + finalBarcode + ".", Toast.LENGTH_LONG).show();
+//									}
+//								});
+//								} else {
+//									LookupLogicForDisplay lookupLogicForDisplayObj;
+//									lookupLogicForDisplayObj = new LookupLogicForDisplay();
+//									LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
+//											= lookupLogicForDisplayObj;
+//									lookupLogicForDisplayObj.setBarcodeQuery(finalBarcode);
+//									try {
+//										lookupLogicForDisplayObj.processRawJSON(data);
+//									} catch (Exception e) {
+//										e.printStackTrace();
+//									}
+//									intent = new Intent(Lookup.this, LookupDisplay.class);
+//									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+//											| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//									intent.putExtra("barcode", finalBarcode);
+//									Lookup.this.startActivity(intent);
+//
+//									if (!lookupHistory.isEmpty()) {
+//										lastAdded = lookupHistory.get(0);
+//									}
+//									if (!finalBarcode.equals(lastAdded)) {
+//										lookupHistory.add(0, finalBarcode);
+//									}
+//								}
+//							downloading = false;
+//							}
+//					};
+
+//					thread = new Thread(runnable);
+//					thread.start();
 					barcodeET.setText("");
 				}
 			});

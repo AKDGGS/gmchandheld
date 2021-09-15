@@ -109,68 +109,68 @@ public class Summary extends BaseActivity {
                         String url = baseURL + "summary.json?barcode=" + barcode;
                         String finalBarcode = barcode;
 
-                        Runnable runnable = new Runnable(){
-                            @Override
-                            public void run() {
-                                if (thread.isInterrupted()){
-                                    return;
-                                }
-                                final ExecutorService service = Executors.newFixedThreadPool(1);
-                                final Future<String> task = service.submit(new RemoteAPIDownload(url));
-                                try {
-                                    data = task.get();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                    return;
-                                }
-                                service.shutdownNow();
-
-                                if (data == null || data.length() <= 2) {
-                                    if (alert != null){
-                                        alert.dismiss();
-                                        alert = null;
-                                    }
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(Summary.this,
-                                                    "There was an error looking up " + finalBarcode + ".", Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                } else {
-                                    SummaryLogicForDisplay summaryLogicForDisplayObj;
-                                    summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-                                    SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj
-                                            = summaryLogicForDisplayObj;
-                                    summaryLogicForDisplayObj.setBarcodeQuery(finalBarcode);
-                                    try {
-                                        summaryLogicForDisplayObj.processRawJSON(data);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    intent = new Intent(Summary.this, SummaryDisplay.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    intent.putExtra("barcode", finalBarcode);
-                                    Summary.this.startActivity(intent);
-
-                                    if (!summaryHistory.isEmpty()) {
-                                        lastAdded = summaryHistory.get(0);
-                                    }
-                                    if (!finalBarcode.equals(lastAdded)) {
-                                        summaryHistory.add(0, finalBarcode);
-                                    }
-                                }
-                                downloading = false;
-                            }
-
-                        };
-
-                        thread = new Thread(runnable);
-                        thread.start();
-                        barcodeET.setText("");
+//                        Runnable runnable = new Runnable(){
+//                            @Override
+//                            public void run() {
+//                                if (thread.isInterrupted()){
+//                                    return;
+//                                }
+//                                final ExecutorService service = Executors.newFixedThreadPool(1);
+//                                final Future<String> task = service.submit(new RemoteAPIDownload(url));
+//                                try {
+//                                    data = task.get();
+//                                } catch (ExecutionException e) {
+//                                    e.printStackTrace();
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                    return;
+//                                }
+//                                service.shutdownNow();
+//
+//                                if (data == null || data.length() <= 2) {
+//                                    if (alert != null){
+//                                        alert.dismiss();
+//                                        alert = null;
+//                                    }
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            Toast.makeText(Summary.this,
+//                                                    "There was an error looking up " + finalBarcode + ".", Toast.LENGTH_LONG).show();
+//                                        }
+//                                    });
+//                                } else {
+//                                    SummaryLogicForDisplay summaryLogicForDisplayObj;
+//                                    summaryLogicForDisplayObj = new SummaryLogicForDisplay();
+//                                    SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj
+//                                            = summaryLogicForDisplayObj;
+//                                    summaryLogicForDisplayObj.setBarcodeQuery(finalBarcode);
+//                                    try {
+//                                        summaryLogicForDisplayObj.processRawJSON(data);
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                    intent = new Intent(Summary.this, SummaryDisplay.class);
+//                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+//                                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                                    intent.putExtra("barcode", finalBarcode);
+//                                    Summary.this.startActivity(intent);
+//
+//                                    if (!summaryHistory.isEmpty()) {
+//                                        lastAdded = summaryHistory.get(0);
+//                                    }
+//                                    if (!finalBarcode.equals(lastAdded)) {
+//                                        summaryHistory.add(0, finalBarcode);
+//                                    }
+//                                }
+//                                downloading = false;
+//                            }
+//
+//                        };
+//
+//                        thread = new Thread(runnable);
+//                        thread.start();
+//                        barcodeET.setText("");
                     }
                 }
             });

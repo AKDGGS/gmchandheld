@@ -165,43 +165,43 @@ public class AuditDisplay extends BaseActivity {
                 }
                 String url = baseURL + "audit.json?remark=" + remark +
                         createListForURL(containerList, "c");
-                Runnable runnable = () -> {
-                    if (thread.isInterrupted()) {
-                        return;
-                    }
-                    final ExecutorService service =
-                            Executors.newFixedThreadPool(1);
-                    final Future < String > task =
-                            service.submit(new RemoteAPIDownload(url));
-                    try {
-                        data = task.get();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        return;
-                    }
-                    runOnUiThread(() -> {
-                        if (null == data) {
-                            Toast.makeText(AuditDisplay.this,
-                                    "There was a problem.  " +
-                                            "The audit was not added.",
-                                    Toast.LENGTH_SHORT).show();
-                            auditRemarkET.requestFocus();
-                        } else if (data.contains("success")) {
-                            Toast.makeText(AuditDisplay.this,
-                                    "The audit was added.",
-                                    Toast.LENGTH_SHORT).show();
-                            auditRemarkET.requestFocus();
-                            containerList.clear();
-                            adapter.clear();
-                            adapter.notifyDataSetChanged();
-                            auditCountTV.setText(String.valueOf(containerList.size()));
-                        }
-                    });
-                };
-                thread = new Thread(runnable);
-                thread.start();
+//                Runnable runnable = () -> {
+//                    if (thread.isInterrupted()) {
+//                        return;
+//                    }
+//                    final ExecutorService service =
+//                            Executors.newFixedThreadPool(1);
+//                    final Future < String > task =
+//                            service.submit(new RemoteAPIDownload(url));
+//                    try {
+//                        data = task.get();
+//                    } catch (ExecutionException e) {
+//                        e.printStackTrace();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                        return;
+//                    }
+//                    runOnUiThread(() -> {
+//                        if (null == data) {
+//                            Toast.makeText(AuditDisplay.this,
+//                                    "There was a problem.  " +
+//                                            "The audit was not added.",
+//                                    Toast.LENGTH_SHORT).show();
+//                            auditRemarkET.requestFocus();
+//                        } else if (data.contains("success")) {
+//                            Toast.makeText(AuditDisplay.this,
+//                                    "The audit was added.",
+//                                    Toast.LENGTH_SHORT).show();
+//                            auditRemarkET.requestFocus();
+//                            containerList.clear();
+//                            adapter.clear();
+//                            adapter.notifyDataSetChanged();
+//                            auditCountTV.setText(String.valueOf(containerList.size()));
+//                        }
+//                    });
+//                };
+//                thread = new Thread(runnable);
+//                thread.start();
                 auditItemET.setText("");
                 auditRemarkET.setText("");
                 auditCountTV.setText("");

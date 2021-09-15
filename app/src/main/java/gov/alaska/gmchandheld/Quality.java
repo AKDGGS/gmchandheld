@@ -38,7 +38,8 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         selectedItems.add("needs_inventory");
         selectedItemsDisplayList = new ArrayList < > ();
         selectedItemsDisplayList.add("Needs Inventory");
-        checkedItems = new boolean[10];
+        checkedItems = new boolean[sp.getString("issuesString", "needs_inventory")
+                .split(",").length];
         checkedItems[0] = true;
     }
 
@@ -130,45 +131,39 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                             sb.append(containersToUrlList(selectedItems, "i"));
                         }
                         String url = baseURL + "addinventoryquality.json?" + sb.toString();
-                        Runnable runnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                if (thread.isInterrupted()) {
-                                    return;
-                                }
-                                final ExecutorService service =
-                                        Executors.newFixedThreadPool(1);
-                                final Future < String > task =
-                                        service.submit(new RemoteAPIDownload(url));
-                                try {
-                                    data = task.get();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                    return;
-                                }
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (null == data) {
-                                            Toast.makeText(Quality.this,
-                                                    "There was a problem.  " +
-                                                            "The inventory was not added.",
-                                                    Toast.LENGTH_SHORT).show();
-                                            barcodeET.requestFocus();
-                                        } else if (data.contains("success")) {
-                                            Toast.makeText(Quality.this,
-                                                    "The inventory was added.",
-                                                    Toast.LENGTH_SHORT).show();
-                                            barcodeET.requestFocus();
-                                        }
-                                    }
-                                });
-                            }
-                        };
-                        thread = new Thread(runnable);
-                        thread.start();
+//                        Runnable runnable = () -> {
+//                            if (thread.isInterrupted()) {
+//                                return;
+//                            }
+//                            final ExecutorService service =
+//                                    Executors.newFixedThreadPool(1);
+//                            final Future < String > task =
+//                                    service.submit(new RemoteAPIDownload(url));
+//                            try {
+//                                data = task.get();
+//                            } catch (ExecutionException e) {
+//                                e.printStackTrace();
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                                return;
+//                            }
+//                            runOnUiThread(() -> {
+//                                if (null == data) {
+//                                    Toast.makeText(Quality.this,
+//                                            "There was a problem.  " +
+//                                                    "The inventory was not added.",
+//                                            Toast.LENGTH_SHORT).show();
+//                                    barcodeET.requestFocus();
+//                                } else if (data.contains("success")) {
+//                                    Toast.makeText(Quality.this,
+//                                            "The inventory was added.",
+//                                            Toast.LENGTH_SHORT).show();
+//                                    barcodeET.requestFocus();
+//                                }
+//                            });
+//                        };
+//                        thread = new Thread(runnable);
+//                        thread.start();
                     }
                     barcodeET.setText("");
                     remarkET.setText("");

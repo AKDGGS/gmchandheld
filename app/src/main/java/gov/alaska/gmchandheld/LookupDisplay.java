@@ -96,74 +96,74 @@ public class LookupDisplay extends BaseActivity {
                             final String finalBarcode = barcode;
                             final String finalBase = baseURL;
 
-                            Runnable runnable = new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (thread.isInterrupted()) {
-                                        return;
-                                    }
-                                    final ExecutorService service;
-                                    final Future<String> task;
-
-                                    service = Executors.newFixedThreadPool(1);
-                                    task = service.submit(new RemoteAPIDownload(finalBase
-                                            + "inventory.json?barcode=" + finalBarcode));
-
-                                    try {
-                                        data = task.get();
-                                    } catch (final InterruptedException ex) {
-                                        ex.printStackTrace();
-                                    } catch (final ExecutionException ex) {
-                                        ex.printStackTrace();
-                                    }
-                                    service.shutdownNow();
-                                    if (data == null || data.length() <= 2) {
-                                        if (alert != null){
-                                            alert.dismiss();
-                                            alert = null;
-                                        }
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Toast.makeText(LookupDisplay.this,
-                                                        "There was an error looking up " + finalBarcode + ".", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-
-                                    } else {
-                                        LookupLogicForDisplay lookupLogicForDisplayObj =
-                                                new LookupLogicForDisplay();
-                                        LookupDisplayObjInstance.getInstance()
-                                                .lookupLogicForDisplayObj
-                                                = lookupLogicForDisplayObj;
-                                        lookupLogicForDisplayObj.setBarcodeQuery(finalBarcode);
-                                        try {
-                                            lookupLogicForDisplayObj.processRawJSON(data);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        intent = new Intent(LookupDisplay.this,
-                                                LookupDisplay.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        intent.putExtra("barcode", finalBarcode);
-
-                                        startActivity(intent);
-
-                                        if (!Lookup.getLookupHistory().isEmpty()) {
-                                            Lookup.setLastAdded(Lookup.getLookupHistory().get(0));
-                                        }
-                                        if (!finalBarcode.equals(Lookup.getLastAdded()) & !finalBarcode.isEmpty()) {
-                                            Lookup.getLookupHistory().add(0, finalBarcode);
-                                        }
-                                    }
-                                    downloading = false;
-                                }
-                            };
-                            invisibleET.setText("");
-
-                            thread = new Thread(runnable);
-                            thread.start();
+//                            Runnable runnable = new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    if (thread.isInterrupted()) {
+//                                        return;
+//                                    }
+//                                    final ExecutorService service;
+//                                    final Future<String> task;
+//
+//                                    service = Executors.newFixedThreadPool(1);
+//                                    task = service.submit(new RemoteAPIDownload(finalBase
+//                                            + "inventory.json?barcode=" + finalBarcode));
+//
+//                                    try {
+//                                        data = task.get();
+//                                    } catch (final InterruptedException ex) {
+//                                        ex.printStackTrace();
+//                                    } catch (final ExecutionException ex) {
+//                                        ex.printStackTrace();
+//                                    }
+//                                    service.shutdownNow();
+//                                    if (data == null || data.length() <= 2) {
+//                                        if (alert != null){
+//                                            alert.dismiss();
+//                                            alert = null;
+//                                        }
+//                                        runOnUiThread(new Runnable() {
+//                                            @Override
+//                                            public void run() {
+//                                                Toast.makeText(LookupDisplay.this,
+//                                                        "There was an error looking up " + finalBarcode + ".", Toast.LENGTH_LONG).show();
+//                                            }
+//                                        });
+//
+//                                    } else {
+//                                        LookupLogicForDisplay lookupLogicForDisplayObj =
+//                                                new LookupLogicForDisplay();
+//                                        LookupDisplayObjInstance.getInstance()
+//                                                .lookupLogicForDisplayObj
+//                                                = lookupLogicForDisplayObj;
+//                                        lookupLogicForDisplayObj.setBarcodeQuery(finalBarcode);
+//                                        try {
+//                                            lookupLogicForDisplayObj.processRawJSON(data);
+//                                        } catch (Exception e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                        intent = new Intent(LookupDisplay.this,
+//                                                LookupDisplay.class);
+//                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+//                                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                                        intent.putExtra("barcode", finalBarcode);
+//
+//                                        startActivity(intent);
+//
+//                                        if (!Lookup.getLookupHistory().isEmpty()) {
+//                                            Lookup.setLastAdded(Lookup.getLookupHistory().get(0));
+//                                        }
+//                                        if (!finalBarcode.equals(Lookup.getLastAdded()) & !finalBarcode.isEmpty()) {
+//                                            Lookup.getLookupHistory().add(0, finalBarcode);
+//                                        }
+//                                    }
+//                                    downloading = false;
+//                                }
+//                            };
+//                            invisibleET.setText("");
+//
+//                            thread = new Thread(runnable);
+//                            thread.start();
                             return true;
                         }
                     }

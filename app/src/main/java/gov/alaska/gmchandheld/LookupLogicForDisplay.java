@@ -1,6 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;

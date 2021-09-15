@@ -95,38 +95,38 @@ public class Recode extends BaseActivity {
 						sb.append("&new=").append(newBarcode);
 					}
 					String url = baseURL + "recode.json?" + sb.toString();
-					Runnable runnable = () -> {
-						if (thread.isInterrupted()) {
-							return;
-						}
-						final ExecutorService service =
-								Executors.newFixedThreadPool(1);
-						final Future < String > task =
-								service.submit(new RemoteAPIDownload(url));
-						try {
-							data = task.get();
-						} catch (ExecutionException e) {
-							e.printStackTrace();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-							return;
-						}
-						runOnUiThread(() -> {
-							if (null == data) {
-								Toast.makeText(Recode.this,"There was a problem.  " +
-												"Nothing was changed.",	Toast.LENGTH_SHORT).show();
-								oldBarcodeET.requestFocus();
-							} else if (data.contains("success")) {
-								Toast.makeText(Recode.this,"The recode was successful.",
-										Toast.LENGTH_SHORT).show();
-								newBarcodeET.setText("");
-								oldBarcodeET.setText("");
-								oldBarcodeET.requestFocus();
-							}
-						});
-					};
-					thread = new Thread(runnable);
-					thread.start();
+//					Runnable runnable = () -> {
+//						if (thread.isInterrupted()) {
+//							return;
+//						}
+//						final ExecutorService service =
+//								Executors.newFixedThreadPool(1);
+//						final Future < String > task =
+//								service.submit(new RemoteAPIDownload(url));
+//						try {
+//							data = task.get();
+//						} catch (ExecutionException e) {
+//							e.printStackTrace();
+//						} catch (InterruptedException e) {
+//							e.printStackTrace();
+//							return;
+//						}
+//						runOnUiThread(() -> {
+//							if (null == data) {
+//								Toast.makeText(Recode.this,"There was a problem.  " +
+//												"Nothing was changed.",	Toast.LENGTH_SHORT).show();
+//								oldBarcodeET.requestFocus();
+//							} else if (data.contains("success")) {
+//								Toast.makeText(Recode.this,"The recode was successful.",
+//										Toast.LENGTH_SHORT).show();
+//								newBarcodeET.setText("");
+//								oldBarcodeET.setText("");
+//								oldBarcodeET.requestFocus();
+//							}
+//						});
+//					};
+//					thread = new Thread(runnable);
+//					thread.start();
 				}
 			});
 			// KeyListener listens if enter is pressed
