@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 
-public class Lookup extends BaseActivity implements DownloadingCallbackInterface{
+public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback{
 	private ListView listView;
 	private static LinkedList<String> lookupHistory;
 	private EditText barcodeET;
@@ -202,8 +202,8 @@ public class Lookup extends BaseActivity implements DownloadingCallbackInterface
 	}
 
 	@Override
-	public void displayData(String data, String responseMessage) {
-		if (data == null || data.length() <= 2) {
+	public void displayData(String data, int responseCode, String responseMessage) {
+		if (data == null || data.length() <= 2 || responseCode != 200) {
 			if (alert != null) {
 				alert.dismiss();
 				alert = null;

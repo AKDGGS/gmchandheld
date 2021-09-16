@@ -7,16 +7,11 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-interface DownloadingCallbackInterface {
-    void displayData(String data, String responseMessage);
-
-}
-
 public class RemoteAPIDownload implements Runnable {
     private String url;
-    private DownloadingCallbackInterface downloadingCallback;
+    private RemoteAPIDownloadCallback downloadingCallback;
 
-    public void setAPICallback(DownloadingCallbackInterface downloadingCallback){
+    public void setAPICallback(RemoteAPIDownloadCallback downloadingCallback){
         this.downloadingCallback = downloadingCallback;
     }
 
@@ -52,11 +47,12 @@ public class RemoteAPIDownload implements Runnable {
                     }
                 }
                 if (connection.getErrorStream() != null) {
-                    System.out.println("REsponse Code " + connection.getResponseCode());
-                    System.out.println("Error Stream: " + connection.getErrorStream());
-                } else {
-                    downloadingCallback.displayData(sb.toString(), connection.getResponseMessage());
+                    sb.append(connection.getResponseMessage());
+                    System.out.println("RCL : " + connection.getResponseCode());
+                    System.out.println("ML " + connection.getResponseMessage());
                 }
+                downloadingCallback.displayData(sb.toString(), connection.getResponseCode(), connection.getResponseMessage());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

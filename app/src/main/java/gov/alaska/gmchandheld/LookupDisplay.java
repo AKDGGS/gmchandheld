@@ -25,7 +25,7 @@ import androidx.core.content.ContextCompat;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class LookupDisplay extends BaseActivity implements DownloadingCallbackInterface{
+public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCallback{
     private ExpandableListView expandableListView;
     private EditText invisibleET;
     private String url, barcode;
@@ -193,8 +193,9 @@ public class LookupDisplay extends BaseActivity implements DownloadingCallbackIn
     }
 
     @Override
-    public void displayData(String data, String responseMessage) {
-        if (data == null || data.length() <= 2) {
+    public void displayData(String data, int responseCode, String responseMessage) {
+        System.out.println("Response Code: " + responseCode);
+        if (data == null || data.length() <= 2 || responseCode != 200) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;
