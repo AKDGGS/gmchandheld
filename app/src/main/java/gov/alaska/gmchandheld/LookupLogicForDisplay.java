@@ -26,7 +26,6 @@ public class LookupLogicForDisplay {
 	private boolean radiationWarningFlag;
 	private final ArrayList<String> typeFlagList = new ArrayList<>();
 	private String barcodeQuery;
-	private StringBuilder sb;
 
 	public LookupLogicForDisplay() {
 		keyList = new ArrayList<>();
@@ -294,7 +293,7 @@ public class LookupLogicForDisplay {
 	private InventoryObject handleArray(Object parent, String name, JSONArray a) throws
 			Exception {
 		InventoryObject io;
-		sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		if (name == null) {
 			io = new InventoryObject(name);
 		} else {

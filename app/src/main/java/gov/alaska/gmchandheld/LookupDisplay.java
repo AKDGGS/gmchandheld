@@ -19,18 +19,16 @@ import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
+
 import androidx.core.content.ContextCompat;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-public class LookupDisplay extends BaseActivity {
+public class LookupDisplay extends BaseActivity implements DownloadingCallbackInterface{
     private ExpandableListView expandableListView;
     private EditText invisibleET;
-    private volatile String data;
+    private String url, barcode;
 
     @Override
     public int getLayoutResource() {
@@ -84,87 +82,23 @@ public class LookupDisplay extends BaseActivity {
                 if (invisibleET.getText().toString().trim().length() != 0) {
                     if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                             (keyCode == KeyEvent.KEYCODE_ENTER)) {
-
-                        String barcode = invisibleET.getText().toString();
+                        barcode = invisibleET.getText().toString();
                         processingAlert(LookupDisplay.this, barcode);
                         if (!barcode.isEmpty()) {
                             try {
                                 barcode = URLEncoder.encode(barcode, "utf-8");
                             } catch (UnsupportedEncodingException e) {
-//                                exception = new Exception(e.getMessage());
+                                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                             }
-                            final String finalBarcode = barcode;
-                            final String finalBase = baseURL;
 
-//                            Runnable runnable = new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    if (thread.isInterrupted()) {
-//                                        return;
-//                                    }
-//                                    final ExecutorService service;
-//                                    final Future<String> task;
-//
-//                                    service = Executors.newFixedThreadPool(1);
-//                                    task = service.submit(new RemoteAPIDownload(finalBase
-//                                            + "inventory.json?barcode=" + finalBarcode));
-//
-//                                    try {
-//                                        data = task.get();
-//                                    } catch (final InterruptedException ex) {
-//                                        ex.printStackTrace();
-//                                    } catch (final ExecutionException ex) {
-//                                        ex.printStackTrace();
-//                                    }
-//                                    service.shutdownNow();
-//                                    if (data == null || data.length() <= 2) {
-//                                        if (alert != null){
-//                                            alert.dismiss();
-//                                            alert = null;
-//                                        }
-//                                        runOnUiThread(new Runnable() {
-//                                            @Override
-//                                            public void run() {
-//                                                Toast.makeText(LookupDisplay.this,
-//                                                        "There was an error looking up " + finalBarcode + ".", Toast.LENGTH_LONG).show();
-//                                            }
-//                                        });
-//
-//                                    } else {
-//                                        LookupLogicForDisplay lookupLogicForDisplayObj =
-//                                                new LookupLogicForDisplay();
-//                                        LookupDisplayObjInstance.getInstance()
-//                                                .lookupLogicForDisplayObj
-//                                                = lookupLogicForDisplayObj;
-//                                        lookupLogicForDisplayObj.setBarcodeQuery(finalBarcode);
-//                                        try {
-//                                            lookupLogicForDisplayObj.processRawJSON(data);
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                        intent = new Intent(LookupDisplay.this,
-//                                                LookupDisplay.class);
-//                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-//                                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                        intent.putExtra("barcode", finalBarcode);
-//
-//                                        startActivity(intent);
-//
-//                                        if (!Lookup.getLookupHistory().isEmpty()) {
-//                                            Lookup.setLastAdded(Lookup.getLookupHistory().get(0));
-//                                        }
-//                                        if (!finalBarcode.equals(Lookup.getLastAdded()) & !finalBarcode.isEmpty()) {
-//                                            Lookup.getLookupHistory().add(0, finalBarcode);
-//                                        }
-//                                    }
-//                                    downloading = false;
-//                                }
-//                            };
-//                            invisibleET.setText("");
-//
-//                            thread = new Thread(runnable);
-//                            thread.start();
-                            return true;
+                            url = baseURL+ "inventory.json?barcode=" + barcode;
+                            RemoteAPIDownload downloader = new RemoteAPIDownload();
+                            downloader.setUrl(url);
+                            thread = new Thread(downloader);
+                            thread.start();
+                            downloader.setAPICallback(this);
+                            invisibleET.setText("");
+                            downloading = false;
                         }
                     }
                 }
@@ -257,4 +191,45 @@ public class LookupDisplay extends BaseActivity {
         }
         return super.dispatchKeyEvent(event);
     }
+
+    @Override
+    public void displayData(String data, String responseMessage) {
+        if (data == null || data.length() <= 2) {
+            if (alert != null) {
+                alert.dismiss();
+                alert = null;
+            }
+            runOnUiThread(() -> Toast.makeText(LookupDisplay.this,
+                    "There was an error looking up " + barcode + ".\n" +
+                            "Does the barcode exist?", Toast.LENGTH_LONG).show());
+        } else {
+            LookupLogicForDisplay lookupLogicForDisplayObj;
+            lookupLogicForDisplayObj = new LookupLogicForDisplay();
+            LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj
+                    = lookupLogicForDisplayObj;
+            lookupLogicForDisplayObj.setBarcodeQuery(barcode);
+            try {
+                lookupLogicForDisplayObj.processRawJSON(data);
+            } catch (Exception e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            intent = new Intent(LookupDisplay.this, LookupDisplay.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("barcode", barcode);
+            LookupDisplay.this.startActivity(intent);
+
+            if (!Lookup.getLookupHistory().isEmpty()) {
+                Lookup.setLastAdded(Lookup.getLookupHistory().get(0));
+            }
+            if (!barcode.equals(Lookup.getLastAdded()) & !barcode.isEmpty()) {
+                Lookup.getLookupHistory().add(0, barcode);
+            }
+        }
+    }
 }
+
+// Delete later
+//                                    if (thread.isInterrupted()) {
+//                                        return;
+//                                    }
