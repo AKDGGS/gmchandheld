@@ -57,7 +57,6 @@ public class SummaryDisplay extends BaseActivity {
         super.onRestart();
         invisibleET = findViewById(R.id.invisibleET);
         invisibleET.setText("");
-        this.recreate();
     }
 
     @Override
