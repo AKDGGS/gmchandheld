@@ -27,6 +27,8 @@ import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.net.ssl.SSLContext;
 
@@ -41,6 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected volatile Thread thread;
 	protected volatile AlertDialog alert;
 	protected volatile boolean downloading;
+	protected ThreadPoolExecutor executor;
 
 	@Override
 	protected void onStop() {
@@ -62,6 +65,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 			alert.dismiss();
 			alert = null;
 		}
+
+		if (executor != null){
+			executor.shutdownNow();
+		}
 	}
 
 	@Override
@@ -80,6 +87,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 		editor = sp.edit();
 		checkAPIkeyExists(this);
 		baseURL = BaseActivity.sp.getString("urlText", "");
+		if (executor == null){
+			executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+		}
 	}
 
 	protected abstract int getLayoutResource();
@@ -239,7 +249,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 				alert.dismiss();
 				alert = null;
 			}
-			thread.interrupt();
+			if (thread != null) {
+				thread.interrupt();
+			}
 
 		});
 		alert = alertDialog.create();
