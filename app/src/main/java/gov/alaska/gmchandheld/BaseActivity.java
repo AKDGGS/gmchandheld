@@ -40,10 +40,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected IntentIntegrator qrScan;
 	protected static Intent intent;
 	protected static String baseURL;
-	protected volatile Thread thread;
+	protected Thread thread;
 	protected volatile AlertDialog alert;
 	protected volatile boolean downloading;
-	protected ThreadPoolExecutor executor;
+	protected RemoteAPIDownload remoteAPIDownload;
+
 
 	@Override
 	protected void onStop() {
@@ -66,8 +67,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 			alert = null;
 		}
 
-		if (executor != null){
-			executor.shutdownNow();
+		if (thread!= null){
+			thread.interrupt();
 		}
 	}
 
@@ -87,8 +88,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 		editor = sp.edit();
 		checkAPIkeyExists(this);
 		baseURL = BaseActivity.sp.getString("urlText", "");
-		if (executor == null){
-			executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+		remoteAPIDownload = new RemoteAPIDownload();
+		if (thread == null){
+			thread = new Thread(remoteAPIDownload);
 		}
 	}
 
