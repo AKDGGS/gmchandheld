@@ -72,38 +72,35 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
         invisibleET = findViewById(R.id.invisibleET);
         invisibleET.setInputType(InputType.TYPE_NULL);
 
-        if (!downloading) {
-            downloading = true;
-            invisibleET.setFocusable(true);
-            invisibleET.setOnKeyListener((v, keyCode, event) -> {
-                if (keyCode == KeyEvent.KEYCODE_DEL) {
-                    invisibleET.setText("");
-                }
-                if (invisibleET.getText().toString().trim().length() != 0) {
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                            (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        barcode = invisibleET.getText().toString();
-                        processingAlert(LookupDisplay.this, barcode);
-                        if (!barcode.isEmpty()) {
-                            try {
-                                barcode = URLEncoder.encode(barcode, "utf-8");
-                            } catch (UnsupportedEncodingException e) {
-                                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-
-                            url = baseURL+ "inventory.json?barcode=" + barcode;
-                            RemoteAPIDownload downloader = new RemoteAPIDownload();
-                            downloader.setUrl(url);
-                            thread = new Thread(downloader);
-                            thread.start();
-                            downloader.setAPICallback(this);
-                            invisibleET.setText("");
-                            downloading = false;
+        invisibleET.setFocusable(true);
+        invisibleET.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_DEL) {
+                invisibleET.setText("");
+            }
+            if (invisibleET.getText().toString().trim().length() != 0) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    invisibleET.setEnabled(false);
+                    barcode = invisibleET.getText().toString();
+                    processingAlert(LookupDisplay.this, barcode);
+                    if (!barcode.isEmpty()) {
+                        try {
+                            barcode = URLEncoder.encode(barcode, "utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                         }
+
+                        url = baseURL+ "inventory.json?barcode=" + barcode;
+                        remoteAPIDownload.setUrl(url);
+                        remoteAPIDownload.setAPICallback(this);
+                        thread.start();
+                        invisibleET.setText("");
+                        invisibleET.setEnabled(true);
                     }
                 }
-                return false;
-            });
+            }
+            return false;
+        });
 
             LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
                     .getInstance().lookupLogicForDisplayObj;
@@ -143,7 +140,7 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                 return true; // This prevents the expander from being collapsed
             });
 
-        }
+//        }
     }
 
     @Override
@@ -194,7 +191,6 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        System.out.println("Response Code: " + responseCode);
         if (data == null || data.length() <= 2 || responseCode != 200) {
             if (alert != null) {
                 alert.dismiss();
@@ -229,8 +225,3 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
         }
     }
 }
-
-// Delete later
-//                                    if (thread.isInterrupted()) {
-//                                        return;
-//                                    }

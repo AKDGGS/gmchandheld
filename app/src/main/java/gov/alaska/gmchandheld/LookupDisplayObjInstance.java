@@ -11,8 +11,9 @@ public class LookupDisplayObjInstance {
 	}
 	public static LookupDisplayObjInstance getInstance()
 	{
-		if (obj == null)
+		if (obj == null) {
 			obj = new LookupDisplayObjInstance();
+		}
 		return obj;
 	}
 	public LookupLogicForDisplay lookupLogicForDisplayObj;
