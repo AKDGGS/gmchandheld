@@ -14,26 +14,25 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-public class AuditDisplay extends BaseActivity {
+public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallback{
     private ArrayList < String > containerList;
     private ArrayAdapter < String > adapter;
     private EditText auditRemarkET, auditItemET;
     private Button clearAllBtn;
     private int clicks; //used to count double clicks for deletion
-    private String data;
+    private TextView auditCountTV;
 
     public AuditDisplay() {
         clicks = 0;
@@ -56,7 +55,7 @@ public class AuditDisplay extends BaseActivity {
         checkAPIkeyExists(this);
         auditItemET = findViewById(R.id.itemET);
         auditRemarkET = findViewById(R.id.remarkET);
-        final TextView auditCountTV = findViewById(R.id.auditCountTV);
+        auditCountTV = findViewById(R.id.auditCountTV);
         clearAllBtn = findViewById(R.id.clearAllBtn);
         ListView auditContainerListLV = findViewById(R.id.listViewGetContainersToAudit);
         adapter = new ArrayAdapter < > (this, android.R.layout.simple_list_item_1);
@@ -163,45 +162,15 @@ public class AuditDisplay extends BaseActivity {
                 } catch (UnsupportedEncodingException e) {
                     //                            exception = new Exception(e.getMessage());
                 }
-                String url = baseURL + "audit.json?remark=" + remark +
-                        createListForURL(containerList, "c");
-//                Runnable runnable = () -> {
-//                    if (thread.isInterrupted()) {
-//                        return;
-//                    }
-//                    final ExecutorService service =
-//                            Executors.newFixedThreadPool(1);
-//                    final Future < String > task =
-//                            service.submit(new RemoteAPIDownload(url));
-//                    try {
-//                        data = task.get();
-//                    } catch (ExecutionException e) {
-//                        e.printStackTrace();
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                        return;
-//                    }
-//                    runOnUiThread(() -> {
-//                        if (null == data) {
-//                            Toast.makeText(AuditDisplay.this,
-//                                    "There was a problem.  " +
-//                                            "The audit was not added.",
-//                                    Toast.LENGTH_SHORT).show();
-//                            auditRemarkET.requestFocus();
-//                        } else if (data.contains("success")) {
-//                            Toast.makeText(AuditDisplay.this,
-//                                    "The audit was added.",
-//                                    Toast.LENGTH_SHORT).show();
-//                            auditRemarkET.requestFocus();
-//                            containerList.clear();
-//                            adapter.clear();
-//                            adapter.notifyDataSetChanged();
-//                            auditCountTV.setText(String.valueOf(containerList.size()));
-//                        }
-//                    });
-//                };
-//                thread = new Thread(runnable);
-//                thread.start();
+
+                try {
+                    remoteAPIDownload.setFetchDataObj(baseURL + "audit.json?remark=" + remark +
+                                    createListForURL(containerList, "c"),
+                            BaseActivity.apiKeyBase,
+                            this);
+                } catch (Exception e) {
+                    System.out.println("Exception: " + e.getMessage());
+                }
                 auditItemET.setText("");
                 auditRemarkET.setText("");
                 auditCountTV.setText("");
@@ -265,5 +234,39 @@ public class AuditDisplay extends BaseActivity {
             }
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void displayData(String data, int responseCode, String responseMessage) {
+        System.out.println(data);
+        runOnUiThread(() -> {
+            if (null == data) {
+                Toast.makeText(AuditDisplay.this,
+                        "There was a problem. The audit was not added.",
+                        Toast.LENGTH_SHORT).show();
+                auditRemarkET.requestFocus();
+            } else if (data.contains("success")) {
+                Toast.makeText(AuditDisplay.this,"The audit was added.",
+                        Toast.LENGTH_SHORT).show();
+                auditRemarkET.requestFocus();
+                containerList.clear();
+                adapter.clear();
+                adapter.notifyDataSetChanged();
+                auditCountTV.setText(String.valueOf(containerList.size()));
+            }
+        });
+    }
+
+    @Override
+    public void displayException(Exception e) {
+        if (e.getMessage() != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    System.out.println(e.getMessage());
+                }
+            });
+        }
     }
 }
