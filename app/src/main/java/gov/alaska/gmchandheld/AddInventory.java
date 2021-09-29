@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -22,19 +23,14 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-public class AddInventory extends BaseActivity implements IssuesFragment.onMultiChoiceListener {
-    private IntentIntegrator qrScan;
-    private EditText barcodeET;
-    private TextView showIssuesTV;
+public class AddInventory extends BaseActivity implements IssuesFragment.onMultiChoiceListener, RemoteAPIDownloadCallback {
     private static ArrayList<String> selectedItems;
     private static boolean[] checkedItems;
     private static ArrayList<String> selectedItemsDisplayList;
-    private String data;
+    private IntentIntegrator qrScan;
+    private EditText barcodeET;
+    private TextView showIssuesTV;
 
     public AddInventory() {
         selectedItems = new ArrayList<>();
@@ -102,7 +98,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         });
         // KeyListener listens if enter is pressed
         barcodeET.setOnKeyListener((v, keyCode, event) -> {
-            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 remarkET.requestFocus();
                 return true;
             }
@@ -112,77 +108,50 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             downloading = true;
             // onClickListener listens if the submit button is clicked
             submit_button.setOnClickListener(v -> {
-                    if (!(TextUtils.isEmpty(barcodeET.getText()))) {
-                        String container = barcodeET.getText().toString();
-                        if (!container.isEmpty()) {
-                            String barcode = null;
-                            String remark = null;
-                            try {
-                                barcode = URLEncoder.encode(barcodeET.getText().toString(), "utf-8");
-                                if (remarkET.getText() != null) {
-                                    remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
-                                }
-                            } catch (UnsupportedEncodingException e) {
+                if (!(TextUtils.isEmpty(barcodeET.getText()))) {
+                    String container = barcodeET.getText().toString();
+                    if (!container.isEmpty()) {
+                        String barcode = null;
+                        String remark = null;
+                        try {
+                            barcode = URLEncoder.encode(barcodeET.getText().toString(), "utf-8");
+                            if (remarkET.getText() != null) {
+                                remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
+                            }
+                        } catch (UnsupportedEncodingException e) {
 //                                exception = new Exception(e.getMessage());
-                            }
-                            StringBuilder sb = new StringBuilder();
-                            if (barcode != null) {
-                                sb.append("barcode=").append(barcode);
-                            }
-                            if (remark != null) {
-                                sb.append("&remark=").append(remark);
-                            }
-                            if (selectedItems != null) {
-                                sb.append(containersToUrlList(selectedItems, "i"));
-                            }
-                            String url = baseURL + "addinventory.json?" + sb.toString();
-//                            Runnable runnable = () -> {
-//                                if (thread.isInterrupted()) {
-//                                    return;
-//                                }
-//                                final ExecutorService service =
-//                                        Executors.newFixedThreadPool(1);
-//                                final Future<String> task =
-//                                        service.submit(new RemoteAPIDownload(url));
-//                                try {
-//                                    data = task.get();
-//                                } catch (ExecutionException e) {
-//                                    e.printStackTrace();
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                    return;
-//                                }
-//
-//                                runOnUiThread(() -> {
-//                                    if (null == data){
-//                                        Toast.makeText(AddInventory.this,
-//                                                "There was a problem.  " +
-//                                                        "The inventory was not added.",
-//                                                Toast.LENGTH_SHORT).show();
-//                                        barcodeET.requestFocus();
-//                                    } else if (data.contains("success")){
-//                                        Toast.makeText(AddInventory.this,
-//                                                "The inventory was added.",
-//                                                Toast.LENGTH_SHORT).show();
-//                                        barcodeET.requestFocus();
-//                                    }
-//                                });
-//                            };
-//                            thread = new Thread(runnable);
-//                            thread.start();
                         }
-                        barcodeET.setText("");
-                        remarkET.setText("");
-                        barcodeET.requestFocus();
-                        showIssuesTV.setText("");
-                        selectedItems.clear();
-                        selectedItemsDisplayList.clear();
-                        checkedItems = new boolean[10];
-                        checkedItems[0] = true;
-                        selectedItems.add("needs_inventory");
-                        selectedItemsDisplayList.add("Needs Inventory");
-                        showIssuesTV.setText(listToString(selectedItemsDisplayList));
+                        StringBuilder sb = new StringBuilder();
+                        if (barcode != null) {
+                            sb.append("barcode=").append(barcode);
+                        }
+                        if (remark != null) {
+                            sb.append("&remark=").append(remark);
+                        }
+                        if (selectedItems != null) {
+                            sb.append(containersToUrlList(selectedItems, "i"));
+                        }
+
+                        try {
+                            remoteAPIDownload.setFetchDataObj(baseURL + "addinventory.json?" + sb.toString(),
+                                    BaseActivity.apiKeyBase,
+                                    this);
+                        } catch (Exception e) {
+                            System.out.println("Exception: " + e.getMessage());
+                        }
                     }
+                    barcodeET.setText("");
+                    remarkET.setText("");
+                    barcodeET.requestFocus();
+                    showIssuesTV.setText("");
+                    selectedItems.clear();
+                    selectedItemsDisplayList.clear();
+                    checkedItems = new boolean[10];
+                    checkedItems[0] = true;
+                    selectedItems.add("needs_inventory");
+                    selectedItemsDisplayList.add("Needs Inventory");
+                    showIssuesTV.setText(listToString(selectedItemsDisplayList));
+                }
             });
             downloading = false;
         }
@@ -226,7 +195,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     public void onNegativebuttonClicked() {
     }
 
-    public String listToString(ArrayList<String> arrList){
+    public String listToString(ArrayList<String> arrList) {
         StringBuilder sb = new StringBuilder();
         //used to display the list in the app
         sb.setLength(0); //clears the display list so unchecked items are removed
@@ -254,5 +223,34 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             sb.append(list.get(i));
         }
         return sb.toString();
+    }
+
+    @Override
+    public void displayData(String data, int responseCode, String responseMessage) {
+        runOnUiThread(() -> {
+            if (null == data) {
+                Toast.makeText(AddInventory.this,
+                        "There was a problem. The inventory was not added.",
+                        Toast.LENGTH_SHORT).show();
+                barcodeET.requestFocus();
+            } else if (data.contains("success")) {
+                Toast.makeText(AddInventory.this, "The inventory was added.",
+                        Toast.LENGTH_SHORT).show();
+                barcodeET.requestFocus();
+            }
+        });
+    }
+
+    @Override
+    public void displayException(Exception e) {
+        if (e.getMessage() != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    System.out.println(e.getMessage());
+                }
+            });
+        }
     }
 }
