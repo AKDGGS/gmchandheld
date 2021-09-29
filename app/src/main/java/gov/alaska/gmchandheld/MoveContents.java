@@ -1,6 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import androidx.annotation.Nullable;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +11,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -19,12 +20,8 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-public class MoveContents extends BaseActivity {
+public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallback{
 	private EditText moveContentsFromET, moveContentsToET;
 	private String data;
 
@@ -70,46 +67,14 @@ public class MoveContents extends BaseActivity {
 						sb.append("&dest=").append(destination);
 					}
 
-					String finalURL = baseURL + "movecontents.json?" + sb.toString();
-//					Runnable runnable = new Runnable() {
-//						@Override
-//						public void run() {
-//							if (thread.isInterrupted()) {
-//								return;
-//							}
-//							final ExecutorService service = Executors.newFixedThreadPool(1);
-//							final Future<String> task = service
-//									.submit(new RemoteAPIDownload(finalURL));
-//							try {
-//								data = task.get();
-//							} catch (ExecutionException e) {
-//								e.printStackTrace();
-//							} catch (InterruptedException e) {
-//								e.printStackTrace();
-//								return;
-//							}
-//
-//							runOnUiThread(new Runnable() {
-//								@Override
-//								public void run() {
-//									if (null == data) {
-//										Toast.makeText(MoveContents.this,
-//												"There was a problem. Nothing was moved.",
-//												Toast.LENGTH_LONG).show();
-//										moveContentsFromET.requestFocus();
-//									} else if (data.contains("success")) {
-//										Toast.makeText(MoveContents.this,
-//												"The contents were moved.",
-//												Toast.LENGTH_LONG).show();
-//										moveContentsFromET.requestFocus();
-//									}
-//								}
-//							});
-//						}
-//					};
+					try {
+						remoteAPIDownload.setFetchDataObj(baseURL + "movecontents.json?" + sb.toString(),
+								BaseActivity.apiKeyBase,
+								this);
+					} catch (Exception e) {
+						System.out.println("Exception: " + e.getMessage());
+					}
 //					downloading = false;
-//					thread = new Thread(runnable);
-//					thread.start();
 					moveContentsFromET.setText("");
 					moveContentsToET.setText("");
 					moveContentsFromET.requestFocus();
@@ -196,6 +161,37 @@ public class MoveContents extends BaseActivity {
 					}
 				}
 			}
+		}
+	}
+
+	@Override
+	public void displayData(String data, int responseCode, String responseMessage) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (null == data) {
+					Toast.makeText(MoveContents.this,"There was a problem. Nothing was moved.",
+							Toast.LENGTH_LONG).show();
+					moveContentsFromET.requestFocus();
+				} else if (data.contains("success")) {
+					Toast.makeText(MoveContents.this,"The contents were moved.",
+							Toast.LENGTH_LONG).show();
+					moveContentsFromET.requestFocus();
+				}
+			}
+		});
+	}
+
+	@Override
+	public void displayException(Exception e) {
+		if (e.getMessage() != null) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+					System.out.println(e.getMessage());
+				}
+			});
 		}
 	}
 }
