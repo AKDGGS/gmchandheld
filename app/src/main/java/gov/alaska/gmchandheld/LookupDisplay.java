@@ -25,7 +25,7 @@ import androidx.core.content.ContextCompat;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCallback{
+public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
     private ExpandableListView expandableListView;
     private EditText invisibleET;
     private String url, barcode;
@@ -44,7 +44,7 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     @Override
-	protected void onStop() {
+    protected void onStop() {
         super.onStop();
         if (alert != null) {
             alert.dismiss();
@@ -53,7 +53,7 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     @Override
-	protected void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         if (alert != null) {
             alert.dismiss();
@@ -90,10 +90,15 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                         }
 
-                        url = baseURL+ "inventory.json?barcode=" + barcode;
-                        remoteAPIDownload.setUrl(url);
-                        remoteAPIDownload.setAPICallback(this);
-                        thread.start();
+                        url = baseURL + "inventory.json?barcode=" + barcode;
+                        try {
+                            remoteAPIDownload.setFetchDataObj(url,
+                                    BaseActivity.apiKeyBase,
+                                    this);
+                        } catch (Exception e) {
+                            System.out.println("Exception: " + e.getMessage());
+                        }
+
                         invisibleET.setText("");
                         invisibleET.setEnabled(true);
                     }
@@ -102,45 +107,43 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
             return false;
         });
 
-            LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
-                    .getInstance().lookupLogicForDisplayObj;
-            SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
-            SpannableString subtitle = new SpannableString(
-                    lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
-            if (getSupportActionBar() != null) {
-                if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-                    title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    LookupDisplay.this.getSupportActionBar().setTitle(title);
-                    if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
-                        subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0,
-                                subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
-                    }
-                    if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
-                        LookupDisplay.this.getSupportActionBar()
-                                .setBackgroundDrawable(new ColorDrawable(ContextCompat
-                                        .getColor(this, R.color.colorRadiation)));
-                    }
-                }
-            }
-            if (getIntent().getStringExtra("barcode") != null) {
+        LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
+                .getInstance().lookupLogicForDisplayObj;
+        SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
+        SpannableString subtitle = new SpannableString(
+                lookupLogicForDisplayObj.getKeyList().size() + " Result(s)");
+        if (getSupportActionBar() != null) {
+            if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this,
-                    lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
-            expandableListView.setAdapter(listAdapter);
-            if (listAdapter.getGroupCount() >= 1) {
-                for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-                    expandableListView.expandGroup(i);
+                LookupDisplay.this.getSupportActionBar().setTitle(title);
+                if (lookupLogicForDisplayObj.getKeyList().size() > 0) {
+                    subtitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0,
+                            subtitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    LookupDisplay.this.getSupportActionBar().setSubtitle(subtitle);
+                }
+                if (lookupLogicForDisplayObj.getRadiationWarningFlag()) {
+                    LookupDisplay.this.getSupportActionBar()
+                            .setBackgroundDrawable(new ColorDrawable(ContextCompat
+                                    .getColor(this, R.color.colorRadiation)));
                 }
             }
-            expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
-                return true; // This prevents the expander from being collapsed
-            });
-
-//        }
+        }
+        if (getIntent().getStringExtra("barcode") != null) {
+            title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        ExpandableListAdapter listAdapter = new LookupExpListAdapter(LookupDisplay.this,
+                lookupLogicForDisplayObj.getKeyList(), lookupLogicForDisplayObj.getDisplayDict());
+        expandableListView.setAdapter(listAdapter);
+        if (listAdapter.getGroupCount() >= 1) {
+            for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+                expandableListView.expandGroup(i);
+            }
+        }
+        expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+            return true; // This prevents the expander from being collapsed
+        });
     }
 
     @Override
@@ -222,6 +225,18 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
             if (!barcode.equals(Lookup.getLastAdded()) & !barcode.isEmpty()) {
                 Lookup.getLookupHistory().add(0, barcode);
             }
+        }
+    }
+
+    @Override
+    public void displayException(Exception e) {
+        if (e.getMessage() != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(e.getMessage());
+                }
+            });
         }
     }
 }

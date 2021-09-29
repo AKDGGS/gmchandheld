@@ -78,7 +78,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 		checkAPIkeyExists(this);
 	}
 
-
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -88,10 +87,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 		editor = sp.edit();
 		checkAPIkeyExists(this);
 		baseURL = BaseActivity.sp.getString("urlText", "");
+
 		remoteAPIDownload = new RemoteAPIDownload();
 		if (thread == null){
-			thread = new Thread(remoteAPIDownload);
+			thread = new Thread(remoteAPIDownload, "remoteAPIDownloadThread");
+			thread.start();
 		}
+
 	}
 
 	protected abstract int getLayoutResource();
