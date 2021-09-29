@@ -164,10 +164,11 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                     } catch (UnsupportedEncodingException e) {
 //							exception = new Exception(e.getMessage());
                     }
-                    String url = baseURL + "move.json?d=" + destination
-                            + containersToUrlList(containerList, "c");
+
                     try {
-                        remoteAPIDownload.setFetchDataObj(url,
+                        remoteAPIDownload.setFetchDataObj(baseURL + "move.json?d=" +
+                                        destination +
+                                        containersToUrlList(containerList, "c"),
                                 BaseActivity.apiKeyBase,
                                 this);
                     } catch (Exception e) {
