@@ -238,7 +238,6 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        System.out.println(data);
         runOnUiThread(() -> {
             if (null == data) {
                 Toast.makeText(AuditDisplay.this,
