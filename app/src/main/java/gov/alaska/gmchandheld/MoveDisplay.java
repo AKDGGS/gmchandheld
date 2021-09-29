@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -24,273 +25,269 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-public class MoveDisplay extends BaseActivity {
-	private ArrayList<String> containerList;
-	private ArrayAdapter<String> adapter;
-	private EditText itemET, destinationET;
-	private int clicks;  //used to count double clicks for deletion
-	private String data;
+public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
+    private ArrayList<String> containerList;
+    private ArrayAdapter<String> adapter;
+    private EditText itemET, destinationET;
+    private int clicks;  //used to count double clicks for deletion
 
-	public MoveDisplay() {
-		clicks = 0;
-	}
+    public MoveDisplay() {
+        clicks = 0;
+    }
 
-	@Override
-	public int getLayoutResource() {
-		return R.layout.move_display;
-	}
+    @Override
+    public int getLayoutResource() {
+        return R.layout.move_display;
+    }
 
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		this.recreate();
-	}
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        this.recreate();
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		checkAPIkeyExists(this);
-		destinationET = findViewById(R.id.toET);
-		itemET = findViewById(R.id.itemET);
-		final TextView moveCountTV = findViewById(R.id.moveCountTV);
-		final Button addBtn = findViewById(R.id.addContainerBtn);
-		ListView containerListLV = findViewById(R.id.listViewContainersToMove);
-		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
-		containerListLV.setAdapter(adapter);
-		containerList = MoveDisplayObjInstance.getInstance().getMoveList();
-		adapter.addAll(containerList);
-		moveCountTV.setText(String.valueOf(containerList.size()));
-		Button cameraBtn = findViewById(R.id.cameraBtn);
-		Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
-		if (!sp.getBoolean("cameraOn", false)){
-			LinearLayout.LayoutParams params =
-					new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
-			params.weight = 6.75f;
-			LinearLayout.LayoutParams params2 =
-					new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
-			params2.weight = 3f;
-			destinationET.setLayoutParams(params);
-			itemET.setLayoutParams(params);
-			moveCountTV.setLayoutParams(params2);
-			cameraBtn.setVisibility(View.GONE);
-			itemCameraBtn.setVisibility(View.GONE);
-		} else {
-			qrScan = new IntentIntegrator(this);
-		}
-		cameraBtn.setOnClickListener(view -> {
-			if (Build.VERSION.SDK_INT <= 24) {
-				intent = qrScan.createScanIntent();
-			} else {
-				intent = new Intent(MoveDisplay.this, CameraToScanner.class);
-			}
-			startActivityForResult(intent, 1);
-		});
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        checkAPIkeyExists(this);
+        destinationET = findViewById(R.id.toET);
+        itemET = findViewById(R.id.itemET);
+        final TextView moveCountTV = findViewById(R.id.moveCountTV);
+        final Button addBtn = findViewById(R.id.addContainerBtn);
+        ListView containerListLV = findViewById(R.id.listViewContainersToMove);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        containerListLV.setAdapter(adapter);
+        containerList = MoveDisplayObjInstance.getInstance().getMoveList();
+        adapter.addAll(containerList);
+        moveCountTV.setText(String.valueOf(containerList.size()));
+        Button cameraBtn = findViewById(R.id.cameraBtn);
+        Button itemCameraBtn = findViewById(R.id.itemCameraBtn);
+        if (!sp.getBoolean("cameraOn", false)) {
+            LinearLayout.LayoutParams params =
+                    new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.weight = 6.75f;
+            LinearLayout.LayoutParams params2 =
+                    new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params2.weight = 3f;
+            destinationET.setLayoutParams(params);
+            itemET.setLayoutParams(params);
+            moveCountTV.setLayoutParams(params2);
+            cameraBtn.setVisibility(View.GONE);
+            itemCameraBtn.setVisibility(View.GONE);
+        } else {
+            qrScan = new IntentIntegrator(this);
+        }
+        cameraBtn.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT <= 24) {
+                intent = qrScan.createScanIntent();
+            } else {
+                intent = new Intent(MoveDisplay.this, CameraToScanner.class);
+            }
+            startActivityForResult(intent, 1);
+        });
 
-		itemCameraBtn.setOnClickListener(view -> {
-			if (Build.VERSION.SDK_INT <= 24) {
-				intent = qrScan.createScanIntent();
-			} else {
-				intent = new Intent(MoveDisplay.this, CameraToScanner.class);
-			}
-			startActivityForResult(intent, 2);
+        itemCameraBtn.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT <= 24) {
+                intent = qrScan.createScanIntent();
+            } else {
+                intent = new Intent(MoveDisplay.this, CameraToScanner.class);
+            }
+            startActivityForResult(intent, 2);
 
-		});
-		addBtn.setOnClickListener(v -> {
-			String container = itemET.getText().toString();
-			if (!containerList.contains(container) && !container.isEmpty() &&
-					!container.equals(destinationET.getText().toString())) {
-				containerList.add(0, container);
-				adapter.insert(container, 0);
-				adapter.notifyDataSetChanged();
-				moveCountTV.setText(String.valueOf(containerList.size()));
-			}
-			itemET.setText("");
-			itemET.requestFocus();
-		});
-		findViewById(R.id.clearAllBtn).setOnClickListener(v -> {
-			itemET.setText("");
-			itemET.requestFocus();
-			containerList.clear();
-			adapter.clear();
-			adapter.notifyDataSetChanged();
-			moveCountTV.setText(String.valueOf(containerList.size()));
-		});
-		if (!downloading) {
-			downloading = true;
-			//double click to remove elements
-			containerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
-				clicks++;
-				Handler handler = new Handler();
-				handler.postDelayed(() -> {
-					if (clicks == 2) {
-						adapter.remove(containerList.get(position));
-						containerList.remove(position);
-						adapter.notifyDataSetChanged();
-						moveCountTV.setText(String.valueOf(containerList.size()));
-					}
-					clicks = 0;
-				}, 500);
-			});
+        });
+        addBtn.setOnClickListener(v -> {
+            String container = itemET.getText().toString();
+            if (!containerList.contains(container) && !container.isEmpty() &&
+                    !container.equals(destinationET.getText().toString())) {
+                containerList.add(0, container);
+                adapter.insert(container, 0);
+                adapter.notifyDataSetChanged();
+                moveCountTV.setText(String.valueOf(containerList.size()));
+            }
+            itemET.setText("");
+            itemET.requestFocus();
+        });
+        findViewById(R.id.clearAllBtn).setOnClickListener(v -> {
+            itemET.setText("");
+            itemET.requestFocus();
+            containerList.clear();
+            adapter.clear();
+            adapter.notifyDataSetChanged();
+            moveCountTV.setText(String.valueOf(containerList.size()));
+        });
+        if (!downloading) {
+            downloading = true;
+            //double click to remove elements
+            containerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
+                clicks++;
+                Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    if (clicks == 2) {
+                        adapter.remove(containerList.get(position));
+                        containerList.remove(position);
+                        adapter.notifyDataSetChanged();
+                        moveCountTV.setText(String.valueOf(containerList.size()));
+                    }
+                    clicks = 0;
+                }, 500);
+            });
 
-			// KeyListener listens if enter is pressed
-			itemET.setOnKeyListener((v, keyCode, event) -> {
-				if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
-						KeyEvent.KEYCODE_ENTER)) {
-					addBtn.performClick();
-					itemET.requestFocus();
-					return true;
-				}
-				return false;
-			});
-			// KeyListener listens if enter is pressed
-			destinationET.setOnKeyListener((v, keyCode, event) -> {
-				if (!(TextUtils.isEmpty(destinationET.getText()))) {
-					if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
-							KeyEvent.KEYCODE_ENTER)) {
-						itemET.requestFocus();
-						return true;
-					}
-				}
-				return false;
-			});
-			// onClickListener listens if the submit button is clicked
-			findViewById(R.id.submitBtn).setOnClickListener(v -> {
-					if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
-						String destination = null;
-						try {
-							destination = URLEncoder.encode(destinationET.getText().toString(),
-									"utf-8");
-						} catch (UnsupportedEncodingException e) {
+            // KeyListener listens if enter is pressed
+            itemET.setOnKeyListener((v, keyCode, event) -> {
+                if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
+                        KeyEvent.KEYCODE_ENTER)) {
+                    addBtn.performClick();
+                    itemET.requestFocus();
+                    return true;
+                }
+                return false;
+            });
+            // KeyListener listens if enter is pressed
+            destinationET.setOnKeyListener((v, keyCode, event) -> {
+                if (!(TextUtils.isEmpty(destinationET.getText()))) {
+                    if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
+                            KeyEvent.KEYCODE_ENTER)) {
+                        itemET.requestFocus();
+                        return true;
+                    }
+                }
+                return false;
+            });
+            // onClickListener listens if the submit button is clicked
+            findViewById(R.id.submitBtn).setOnClickListener(v -> {
+                if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
+                    String destination = null;
+                    try {
+                        destination = URLEncoder.encode(destinationET.getText().toString(),
+                                "utf-8");
+                    } catch (UnsupportedEncodingException e) {
 //							exception = new Exception(e.getMessage());
-						}
-						String url = baseURL + "move.json?d=" + destination
-								+ containersToUrlList(containerList, "c");
-//
-//						Runnable runnable = new Runnable() {
-//							@Override
-//							public void run() {
-//								if (thread.isInterrupted()) {
-//									return;
-//								}
-//								final ExecutorService service = Executors.newFixedThreadPool(1);
-//								final Future<String> task = service.submit(new RemoteAPIDownload(url));
-//								try {
-//									data = task.get();
-//								} catch (ExecutionException e) {
-//									e.printStackTrace();
-//								} catch (InterruptedException e) {
-//									e.printStackTrace();
-//									return;
-//								}
-//
-//								runOnUiThread(new Runnable() {
-//									@Override
-//									public void run() {
-//										if (null == data){
-//											Toast.makeText(MoveDisplay.this, "There was a problem. Nothing was moved.",
-//													Toast.LENGTH_LONG).show();
-//											destinationET.requestFocus();
-//										} else if (data.contains("success")){
-//											Toast.makeText(MoveDisplay.this, "The contents were moved.",
-//													Toast.LENGTH_LONG).show();
-//											destinationET.requestFocus();
-//										}
-//									}
-//								});
-//							}
-//						};
-//
-//						downloading = false;
-//						thread = new Thread(runnable);
-//						thread.start();
-						itemET.setText("");
-						destinationET.setText("");
-						containerList.clear();
-						adapter.clear();
-						adapter.notifyDataSetChanged();
-						moveCountTV.setText("");
-					}
-			});
-		}
-	}
+                    }
+                    String url = baseURL + "move.json?d=" + destination
+                            + containersToUrlList(containerList, "c");
+                    try {
+                        remoteAPIDownload.setFetchDataObj(url,
+                                BaseActivity.apiKeyBase,
+                                this);
+                    } catch (Exception e) {
+                        System.out.println("Exception: " + e.getMessage());
+                    }
+                    itemET.setText("");
+                    destinationET.setText("");
+                    containerList.clear();
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
+                    moveCountTV.setText("");
+                }
+            });
+        }
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		if (Build.VERSION.SDK_INT <= 24) {
-			switch (requestCode){
-				case 1: {
-					destinationET = findViewById(R.id.toET);
-					IntentResult result = IntentIntegrator.parseActivityResult(
-							IntentIntegrator.REQUEST_CODE, resultCode, data);
-					destinationET.setText(result.getContents());
-				}
-				break;
-				case 2:{
-					itemET = findViewById(R.id.itemET);
-					IntentResult result = IntentIntegrator.parseActivityResult(
-							IntentIntegrator.REQUEST_CODE, resultCode, data);
-					itemET.setText(result.getContents());
-				}
-				break;
-			}
-		} else {
-			switch (requestCode){
-				case 1: {
-					if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
-						Barcode barcode = data.getParcelableExtra("barcode");
-						EditText destinationEt = findViewById(R.id.toET);
-						if (barcode != null) {
-							destinationEt.setText(barcode.displayValue);
-						}
-					}
-					break;
-				}
-				case 2:{
-					if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
-						Barcode barcode = data.getParcelableExtra("barcode");
-						EditText itemEt = findViewById(R.id.itemET);
-						if(barcode != null) {
-							itemEt.setText(barcode.displayValue);
-						}
-					}
-					break;
-				}
-				default:
-					super.onActivityResult(requestCode, resultCode, data);
-			}
-		}
-	}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (Build.VERSION.SDK_INT <= 24) {
+            switch (requestCode) {
+                case 1: {
+                    destinationET = findViewById(R.id.toET);
+                    IntentResult result = IntentIntegrator.parseActivityResult(
+                            IntentIntegrator.REQUEST_CODE, resultCode, data);
+                    destinationET.setText(result.getContents());
+                }
+                break;
+                case 2: {
+                    itemET = findViewById(R.id.itemET);
+                    IntentResult result = IntentIntegrator.parseActivityResult(
+                            IntentIntegrator.REQUEST_CODE, resultCode, data);
+                    itemET.setText(result.getContents());
+                }
+                break;
+            }
+        } else {
+            switch (requestCode) {
+                case 1: {
+                    if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
+                        Barcode barcode = data.getParcelableExtra("barcode");
+                        EditText destinationEt = findViewById(R.id.toET);
+                        if (barcode != null) {
+                            destinationEt.setText(barcode.displayValue);
+                        }
+                    }
+                    break;
+                }
+                case 2: {
+                    if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
+                        Barcode barcode = data.getParcelableExtra("barcode");
+                        EditText itemEt = findViewById(R.id.itemET);
+                        if (barcode != null) {
+                            itemEt.setText(barcode.displayValue);
+                        }
+                    }
+                    break;
+                }
+                default:
+                    super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+    }
 
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		if (itemET.hasFocus() & event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-			return true;
-		}
-		return super.dispatchKeyEvent(event);
-	}
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (itemET.hasFocus() & event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
 
-	public String containersToUrlList(ArrayList<String> list, String paramKeyword) {
-		String delim = "&" + paramKeyword + "=";
-		StringBuilder sb = new StringBuilder();
-		if (list != null && list.size() > 0) {
-			sb.append(delim);
-			int i = 0;
-			while (i < list.size() - 1) {
-				try {
-					sb.append(URLEncoder.encode(list.get(i), "utf-8"));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-				sb.append(delim);
-				i++;
-			}
-			sb.append(list.get(i));
-		}
-		return sb.toString();
-	}
+    public String containersToUrlList(ArrayList<String> list, String paramKeyword) {
+        String delim = "&" + paramKeyword + "=";
+        StringBuilder sb = new StringBuilder();
+        if (list != null && list.size() > 0) {
+            sb.append(delim);
+            int i = 0;
+            while (i < list.size() - 1) {
+                try {
+                    sb.append(URLEncoder.encode(list.get(i), "utf-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                sb.append(delim);
+                i++;
+            }
+            sb.append(list.get(i));
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public void displayData(String data, int responseCode, String responseMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (null == data) {
+                    Toast.makeText(MoveDisplay.this, "There was a problem. Nothing was moved.",
+                            Toast.LENGTH_LONG).show();
+                    destinationET.requestFocus();
+                } else if (data.contains("success")) {
+                    Toast.makeText(MoveDisplay.this, "The contents were moved.",
+                            Toast.LENGTH_LONG).show();
+                    destinationET.requestFocus();
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void displayException(Exception e) {
+        if (e.getMessage() != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    System.out.println(e.getMessage());
+                }
+            });
+        }
+    }
 }
