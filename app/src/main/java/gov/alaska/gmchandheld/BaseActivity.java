@@ -40,10 +40,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected IntentIntegrator qrScan;
 	protected static Intent intent;
 	protected static String baseURL;
-	protected Thread thread;
+	protected Thread thread, photoThread;
 	protected volatile AlertDialog alert;
 	protected volatile boolean downloading;
 	protected RemoteAPIDownload remoteAPIDownload;
+	protected UploadPhoto uploadPhoto;
 
 
 	@Override
@@ -94,6 +95,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 			thread.start();
 		}
 
+		uploadPhoto = new UploadPhoto();
+		if (photoThread == null){
+			photoThread = new Thread(uploadPhoto, "uploadThread");
+			photoThread.start();
+		}
 	}
 
 	protected abstract int getLayoutResource();
