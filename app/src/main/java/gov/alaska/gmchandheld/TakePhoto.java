@@ -32,23 +32,22 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback{
+public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback {
+    private static final int CAM_REQUEST = 1;
+    private static final String PHOTO_PATH = "/sdcard/DCIM/Camera/";
+    // 49374 return code is hardcoded into the Zxing file.
+    // I need it here to capture the requestCode when IntentIntegrator is used for API <= 24
+    private static final int SCAN_BARCODE_REQUEST = 49374;
     private TextView imageViewTV;
     private ImageView uploadImageIV;
     private Button submitBtn;
     private EditText barcodeET, descriptionET;
-    private volatile File file;
+    private File file;
     private String barcode, description;
-    private static final int CAM_REQUEST = 1;
-    private static final String PHOTO_PATH = "/sdcard/DCIM/Camera/";
     private Uri image_uri;
     private boolean cameraOn;
     private Integer responseCode;
-    // 49374 return code is hardcoded into the Zxing file.
-    // I need it here to capture the requestCode when IntentIntegrator is used for API <= 24
-    private static final int SCAN_BARCODE_REQUEST = 49374;
-
-    private volatile ArrayList<File> fileList;
+    private ArrayList<File> fileList;
 
     @Override
     public int getLayoutResource() {
@@ -72,7 +71,7 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
     protected void onPause() {
         super.onPause();
         Set<File> fileSet = new HashSet<>(fileList);
-        for (File f : fileSet){
+        for (File f : fileSet) {
             f.delete();
         }
     }
@@ -136,7 +135,7 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
 
         // KeyListener listens if enter is pressed
         barcodeET.setOnKeyListener((v, keyCode, event) -> {
-            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 descriptionET.requestFocus();
                 return true;
             }
@@ -164,44 +163,8 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
                 }
-
-//                Runnable runnable = () -> {
-//                    if (thread.isInterrupted()) {
-//                        return;
-//                    }
-//                    final ExecutorService service =
-//                            Executors.newFixedThreadPool(1);
-//                    final Future < Integer > task =
-//                            service.submit(new UploadImage(barcode, description, url, file));
-//                    try {
-//                        responseCode = task.get();
-//                        System.out.println("ResponseCode: " + responseCode);
-//                    } catch (ExecutionException e) {
-//                        e.printStackTrace();
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                        return;
-//                    }
-//                    runOnUiThread(() -> {
-//                        if (responseCode == 200 | responseCode == 302) {
-//                            Toast.makeText(TakePhoto.this, "The photo was uploaded.",
-//                                    Toast.LENGTH_SHORT).show();
-//                            barcodeET.setText("");
-//                            descriptionET.setText("");
-//                            uploadImageIV.setImageDrawable(null);
-//                            imageViewTV.setText(R.string.click_to_add_image);
-//                        } else {
-//                            Toast.makeText(TakePhoto.this,
-//                                    "There was a problem finding the image. Please take it again.",
-//                                    Toast.LENGTH_SHORT).show();
-//                            uploadImageIV.setImageDrawable(null);
-//                            barcodeET.requestFocus();
-//                        }
-//                        fileList.add(file);
-//                    });
-//                };
-//                thread = new Thread(runnable);
-//                thread.start();
+                System.out.println("File: " + file + " " + file.exists());
+                fileList.add(file);
             }
         });
     }
@@ -281,7 +244,6 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                 uploadImageIV.setImageDrawable(null);
                 barcodeET.requestFocus();
             }
-            fileList.add(file);
         });
     }
 
@@ -296,47 +258,4 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
             });
         }
     }
-
-//    private class UploadImage implements Callable < Integer > {
-//        private String url,
-//                barcode,
-//                description;
-//        private File file;
-//
-//        public UploadImage(String barcode, String description, String url, File file) {
-//            this.barcode = barcode;
-//            this.description = description;
-//            this.url = url;
-//            this.file = file;
-//        }
-//
-//        @Override
-//        public Integer call() throws Exception {
-//            OkHttpClient client = new OkHttpClient().newBuilder()
-//                    .followRedirects(false)
-//                    .followSslRedirects(false)
-//                    .build();
-//            okhttp3.Response response = null;
-//            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-//            builder.addFormDataPart("barcode", barcode);
-//            builder.addFormDataPart("content", file.getName(),
-//                    RequestBody.create(MediaType.parse("Image/jpeg"), file));
-//            if (description != null) {
-//                builder.addFormDataPart("description", description);
-//            }
-//            MultipartBody body = builder.build();
-//            ImageFileRequestBody imageFileRequestBody = new ImageFileRequestBody(body);
-//            Request request = new Request.Builder()
-//                    .header("Authorization", "Token " + BaseActivity.apiKeyBase)
-//                    .url(url)
-//                    .post(imageFileRequestBody)
-//                    .build();
-//            try {
-//                response = client.newCall(request).execute();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return response.code();
-//        }
-//    }
 }
