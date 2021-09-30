@@ -25,12 +25,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 
+
 public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
     private static LinkedList<String> lookupHistory;
     private static String lastAdded;
     private ListView listView;
     private EditText barcodeET;
     private String barcode, url;
+    private Button submitBtn;
 
     public Lookup() {
         lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
@@ -95,7 +97,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
             }
         });
         barcodeET = findViewById(R.id.barcodeET);
-        Button submitBtn = findViewById(R.id.submitBtn);
+        submitBtn = findViewById(R.id.submitBtn);
 
         // populates the history list
         listView = findViewById(R.id.listViewBarcodeHistory);
@@ -108,23 +110,23 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
         submitBtn.setOnClickListener(v -> {
             submitBtn.setEnabled(false);
             barcode = barcodeET.getText().toString();
-            processingAlert(this, barcode);
             if (!barcode.isEmpty()) {
+                processingAlert(this, barcode);
                 try {
                     barcode = URLEncoder.encode(barcode, "utf-8");
                 } catch (UnsupportedEncodingException e) {
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
-                url = baseURL + "inventory.json?barcode=" + barcode;
                 try {
-                    remoteAPIDownload.setFetchDataObj(url,
+                    uploadPhoto.setUploadPhotoObj(baseURL + "inventory.json?barcode=" + barcode,
                             BaseActivity.apiKeyBase,
+                            null,
                             this);
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
                 }
-                barcodeET.setText("");
             }
+            barcodeET.setText("");
             submitBtn.setEnabled(true);
         });
         // KeyListener listens if enter is pressed
