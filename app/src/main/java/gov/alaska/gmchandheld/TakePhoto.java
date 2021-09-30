@@ -1,7 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -17,10 +15,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,18 +31,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 
-public class TakePhoto extends BaseActivity {
+public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback{
     private TextView imageViewTV;
     private ImageView uploadImageIV;
     private Button submitBtn;
@@ -162,43 +155,53 @@ public class TakePhoto extends BaseActivity {
                 if (descriptionET.getText().toString().trim().length() != 0) {
                     description = descriptionET.getText().toString().trim();
                 }
-                Runnable runnable = () -> {
-                    if (thread.isInterrupted()) {
-                        return;
-                    }
-                    final ExecutorService service =
-                            Executors.newFixedThreadPool(1);
-                    final Future < Integer > task =
-                            service.submit(new UploadImage(barcode, description, url, file));
-                    try {
-                        responseCode = task.get();
-                        System.out.println("ResponseCode: " + responseCode);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        return;
-                    }
-                    runOnUiThread(() -> {
-                        if (responseCode == 200 | responseCode == 302) {
-                            Toast.makeText(TakePhoto.this, "The photo was uploaded.",
-                                    Toast.LENGTH_SHORT).show();
-                            barcodeET.setText("");
-                            descriptionET.setText("");
-                            uploadImageIV.setImageDrawable(null);
-                            imageViewTV.setText(R.string.click_to_add_image);
-                        } else {
-                            Toast.makeText(TakePhoto.this,
-                                    "There was a problem finding the image. Please take it again.",
-                                    Toast.LENGTH_SHORT).show();
-                            uploadImageIV.setImageDrawable(null);
-                            barcodeET.requestFocus();
-                        }
-                        fileList.add(file);
-                    });
-                };
-                thread = new Thread(runnable);
-                thread.start();
+                try {
+                    uploadPhoto.setUploadPhotoObj("https://maps.dggs.alaska.gov/gmcdev//upload.json",
+                            BaseActivity.apiKeyBase,
+                            file.getAbsolutePath(),
+                            barcode,
+                            description, this);
+                } catch (Exception e) {
+                    System.out.println("Exception: " + e.getMessage());
+                }
+
+//                Runnable runnable = () -> {
+//                    if (thread.isInterrupted()) {
+//                        return;
+//                    }
+//                    final ExecutorService service =
+//                            Executors.newFixedThreadPool(1);
+//                    final Future < Integer > task =
+//                            service.submit(new UploadImage(barcode, description, url, file));
+//                    try {
+//                        responseCode = task.get();
+//                        System.out.println("ResponseCode: " + responseCode);
+//                    } catch (ExecutionException e) {
+//                        e.printStackTrace();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                        return;
+//                    }
+//                    runOnUiThread(() -> {
+//                        if (responseCode == 200 | responseCode == 302) {
+//                            Toast.makeText(TakePhoto.this, "The photo was uploaded.",
+//                                    Toast.LENGTH_SHORT).show();
+//                            barcodeET.setText("");
+//                            descriptionET.setText("");
+//                            uploadImageIV.setImageDrawable(null);
+//                            imageViewTV.setText(R.string.click_to_add_image);
+//                        } else {
+//                            Toast.makeText(TakePhoto.this,
+//                                    "There was a problem finding the image. Please take it again.",
+//                                    Toast.LENGTH_SHORT).show();
+//                            uploadImageIV.setImageDrawable(null);
+//                            barcodeET.requestFocus();
+//                        }
+//                        fileList.add(file);
+//                    });
+//                };
+//                thread = new Thread(runnable);
+//                thread.start();
             }
         });
     }
@@ -261,46 +264,79 @@ public class TakePhoto extends BaseActivity {
         }
     }
 
-    private class UploadImage implements Callable < Integer > {
-        private String url,
-                barcode,
-                description;
-        private File file;
-
-        public UploadImage(String barcode, String description, String url, File file) {
-            this.barcode = barcode;
-            this.description = description;
-            this.url = url;
-            this.file = file;
-        }
-
-        @Override
-        public Integer call() throws Exception {
-            OkHttpClient client = new OkHttpClient().newBuilder()
-                    .followRedirects(false)
-                    .followSslRedirects(false)
-                    .build();
-            okhttp3.Response response = null;
-            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-            builder.addFormDataPart("barcode", barcode);
-            builder.addFormDataPart("content", file.getName(),
-                    RequestBody.create(MediaType.parse("Image/jpeg"), file));
-            if (description != null) {
-                builder.addFormDataPart("description", description);
+    @Override
+    public void displayData(String data, int responseCode, String responseMessage) {
+        runOnUiThread(() -> {
+            if (responseCode == 200 | responseCode == 302) {
+                Toast.makeText(TakePhoto.this, "The photo was uploaded.",
+                        Toast.LENGTH_SHORT).show();
+                barcodeET.setText("");
+                descriptionET.setText("");
+                uploadImageIV.setImageDrawable(null);
+                imageViewTV.setText(R.string.click_to_add_image);
+            } else {
+                Toast.makeText(TakePhoto.this,
+                        "There was a problem finding the image. Please take it again.",
+                        Toast.LENGTH_SHORT).show();
+                uploadImageIV.setImageDrawable(null);
+                barcodeET.requestFocus();
             }
-            MultipartBody body = builder.build();
-            ImageFileRequestBody imageFileRequestBody = new ImageFileRequestBody(body);
-            Request request = new Request.Builder()
-                    .header("Authorization", "Token " + BaseActivity.apiKeyBase)
-                    .url(url)
-                    .post(imageFileRequestBody)
-                    .build();
-            try {
-                response = client.newCall(request).execute();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response.code();
+            fileList.add(file);
+        });
+    }
+
+    @Override
+    public void displayException(Exception e) {
+        if (e.getMessage() != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(e.getMessage());
+                }
+            });
         }
     }
+
+//    private class UploadImage implements Callable < Integer > {
+//        private String url,
+//                barcode,
+//                description;
+//        private File file;
+//
+//        public UploadImage(String barcode, String description, String url, File file) {
+//            this.barcode = barcode;
+//            this.description = description;
+//            this.url = url;
+//            this.file = file;
+//        }
+//
+//        @Override
+//        public Integer call() throws Exception {
+//            OkHttpClient client = new OkHttpClient().newBuilder()
+//                    .followRedirects(false)
+//                    .followSslRedirects(false)
+//                    .build();
+//            okhttp3.Response response = null;
+//            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+//            builder.addFormDataPart("barcode", barcode);
+//            builder.addFormDataPart("content", file.getName(),
+//                    RequestBody.create(MediaType.parse("Image/jpeg"), file));
+//            if (description != null) {
+//                builder.addFormDataPart("description", description);
+//            }
+//            MultipartBody body = builder.build();
+//            ImageFileRequestBody imageFileRequestBody = new ImageFileRequestBody(body);
+//            Request request = new Request.Builder()
+//                    .header("Authorization", "Token " + BaseActivity.apiKeyBase)
+//                    .url(url)
+//                    .post(imageFileRequestBody)
+//                    .build();
+//            try {
+//                response = client.newCall(request).execute();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return response.code();
+//        }
+//    }
 }
