@@ -29,7 +29,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     private static boolean[] checkedItems;
     private static ArrayList<String> selectedItemsDisplayList;
     private IntentIntegrator qrScan;
-    private EditText barcodeET;
+    private EditText barcodeET, remarkET;
     private TextView showIssuesTV;
 
     public AddInventory() {
@@ -69,7 +69,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         super.onCreate(savedInstanceState);
         checkAPIkeyExists(this);
         barcodeET = findViewById(R.id.barcodeET);
-        EditText remarkET = findViewById(R.id.remarkET);
+        remarkET = findViewById(R.id.remarkET);
         Button submit_button = findViewById(R.id.submitBtn);
         showIssuesTV = findViewById(R.id.showIssuesTV);
         if (!selectedItemsDisplayList.isEmpty()) {
@@ -140,17 +140,6 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                             System.out.println("Exception: " + e.getMessage());
                         }
                     }
-                    barcodeET.setText("");
-                    remarkET.setText("");
-                    barcodeET.requestFocus();
-                    showIssuesTV.setText("");
-                    selectedItems.clear();
-                    selectedItemsDisplayList.clear();
-                    checkedItems = new boolean[10];
-                    checkedItems[0] = true;
-                    selectedItems.add("needs_inventory");
-                    selectedItemsDisplayList.add("Needs Inventory");
-                    showIssuesTV.setText(listToString(selectedItemsDisplayList));
                 }
             });
             downloading = false;
@@ -237,6 +226,17 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                 Toast.makeText(AddInventory.this, "The inventory was added.",
                         Toast.LENGTH_SHORT).show();
                 barcodeET.requestFocus();
+                barcodeET.setText("");
+                remarkET.setText("");
+                barcodeET.requestFocus();
+                showIssuesTV.setText("");
+                selectedItems.clear();
+                selectedItemsDisplayList.clear();
+                checkedItems = new boolean[10];
+                checkedItems[0] = true;
+                selectedItems.add("needs_inventory");
+                selectedItemsDisplayList.add("Needs Inventory");
+                showIssuesTV.setText(listToString(selectedItemsDisplayList));
             }
         });
     }

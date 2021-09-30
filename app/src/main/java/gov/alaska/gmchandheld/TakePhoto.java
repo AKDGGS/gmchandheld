@@ -32,6 +32,10 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+
 public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback {
     private static final int CAM_REQUEST = 1;
     private static final String PHOTO_PATH = "/sdcard/DCIM/Camera/";
@@ -154,12 +158,21 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                 if (descriptionET.getText().toString().trim().length() != 0) {
                     description = descriptionET.getText().toString().trim();
                 }
+
+                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                builder.addFormDataPart("barcode", barcode);
+                builder.addFormDataPart("content", file.getName(),
+                        RequestBody.create(MediaType.parse("Image/jpeg"), file));
+                if (description != null) {
+                    builder.addFormDataPart("description", description);
+                }
+
+                RequestBody requestBody = builder.build();
                 try {
                     uploadPhoto.setUploadPhotoObj("https://maps.dggs.alaska.gov/gmcdev//upload.json",
                             BaseActivity.apiKeyBase,
-                            file.getAbsolutePath(),
-                            barcode,
-                            description, this);
+                            requestBody,
+                            this);
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
                 }

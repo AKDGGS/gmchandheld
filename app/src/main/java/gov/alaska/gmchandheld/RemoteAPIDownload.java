@@ -58,11 +58,11 @@ public class RemoteAPIDownload implements Runnable {
                 connection.setReadTimeout(10 * 1000);
                 connection.setConnectTimeout(5 * 1000);
                 connection.connect();
-
                 try {
                     inputStream = connection.getInputStream();
-                } catch (Exception e) {
-                    inputStream = connection.getErrorStream();
+                } catch (Exception e){
+                    connection.getErrorStream();
+                    inputStream = null;
                 }
                 StringBuilder sb = new StringBuilder();
                 byte[] buffer = new byte[4096];
@@ -72,9 +72,6 @@ public class RemoteAPIDownload implements Runnable {
                     if (buffer_read > 0) {
                         sb.append(new String(buffer, 0, buffer_read));
                     }
-                }
-                if (connection.getErrorStream() != null) {
-                    sb.append(connection.getResponseMessage());
                 }
                 remoteAPIDownloadCallback.displayData(sb.toString(), connection.getResponseCode(),
                         connection.getResponseMessage());
@@ -86,6 +83,7 @@ public class RemoteAPIDownload implements Runnable {
                     url = null;
                 }
             } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() );
                 remoteAPIDownloadCallback.displayException(e);
             }
         }

@@ -193,27 +193,37 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        SummaryLogicForDisplay summaryLogicForDisplayObj;
-        summaryLogicForDisplayObj = new SummaryLogicForDisplay();
-        SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj
-                = summaryLogicForDisplayObj;
-        summaryLogicForDisplayObj.setBarcodeQuery(barcode);
-        try {
-            summaryLogicForDisplayObj.processRawJSON(data);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        intent = new Intent(Summary.this, SummaryDisplay.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("barcode", barcode);
-        Summary.this.startActivity(intent);
+        if (data == null || responseCode != 200) {
+            if (alert != null) {
+                alert.dismiss();
+                alert = null;
+            }
+            runOnUiThread(() -> Toast.makeText(Summary.this,
+                    "There was an error looking up " + barcode + ".\n" +
+                            "Does the barcode a container?", Toast.LENGTH_LONG).show());
+        } else {
+            SummaryLogicForDisplay summaryLogicForDisplayObj;
+            summaryLogicForDisplayObj = new SummaryLogicForDisplay();
+            SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj
+                    = summaryLogicForDisplayObj;
+            summaryLogicForDisplayObj.setBarcodeQuery(barcode);
+            try {
+                summaryLogicForDisplayObj.processRawJSON(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            intent = new Intent(Summary.this, SummaryDisplay.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("barcode", barcode);
+            Summary.this.startActivity(intent);
 
-        if (!summaryHistory.isEmpty()) {
-            lastAdded = summaryHistory.get(0);
-        }
-        if (!barcode.equals(lastAdded)) {
-            summaryHistory.add(0, barcode);
+            if (!summaryHistory.isEmpty()) {
+                lastAdded = summaryHistory.get(0);
+            }
+            if (!barcode.equals(lastAdded)) {
+                summaryHistory.add(0, barcode);
+            }
         }
     }
 

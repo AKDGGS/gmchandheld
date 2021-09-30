@@ -181,30 +181,40 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        SummaryLogicForDisplay summaryLogicForDisplayObj =
-                new SummaryLogicForDisplay();
-        SummaryDisplayObjInstance.getInstance()
-                .summaryLogicForDisplayObj
-                = summaryLogicForDisplayObj;
-        summaryLogicForDisplayObj.setBarcodeQuery(barcode);
-        try {
-            summaryLogicForDisplayObj.processRawJSON(data);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        intent = new Intent(SummaryDisplay.this,
-                SummaryDisplay.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("barcode", barcode);
-        startActivity(intent);
+        if (data == null || responseCode != 200) {
+            if (alert != null) {
+                alert.dismiss();
+                alert = null;
+            }
+            runOnUiThread(() -> Toast.makeText(SummaryDisplay.this,
+                    "There was an error looking up " + barcode + ".\n" +
+                            "Does the barcode a container?", Toast.LENGTH_LONG).show());
+        } else {
+            SummaryLogicForDisplay summaryLogicForDisplayObj =
+                    new SummaryLogicForDisplay();
+            SummaryDisplayObjInstance.getInstance()
+                    .summaryLogicForDisplayObj
+                    = summaryLogicForDisplayObj;
+            summaryLogicForDisplayObj.setBarcodeQuery(barcode);
+            try {
+                summaryLogicForDisplayObj.processRawJSON(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            intent = new Intent(SummaryDisplay.this,
+                    SummaryDisplay.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("barcode", barcode);
+            startActivity(intent);
 
-        if (!Summary.getSummaryHistory().isEmpty()) {
-            Summary.setLastAdded(Summary.getSummaryHistory().get(0));
-        }
-        if (!barcode.equals(Lookup.getLastAdded())
-                & !barcode.isEmpty()) {
-            Summary.getSummaryHistory().add(0, barcode);
+            if (!Summary.getSummaryHistory().isEmpty()) {
+                Summary.setLastAdded(Summary.getSummaryHistory().get(0));
+            }
+            if (!barcode.equals(Lookup.getLastAdded())
+                    & !barcode.isEmpty()) {
+                Summary.getSummaryHistory().add(0, barcode);
+            }
         }
     }
 

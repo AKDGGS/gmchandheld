@@ -30,6 +30,7 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
     private ArrayList<String> containerList;
     private ArrayAdapter<String> adapter;
     private EditText itemET, destinationET;
+    private TextView moveCountTV;
     private int clicks;  //used to count double clicks for deletion
 
     public MoveDisplay() {
@@ -53,8 +54,8 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
         checkAPIkeyExists(this);
         destinationET = findViewById(R.id.toET);
         itemET = findViewById(R.id.itemET);
-        final TextView moveCountTV = findViewById(R.id.moveCountTV);
-        final Button addBtn = findViewById(R.id.addContainerBtn);
+        moveCountTV = findViewById(R.id.moveCountTV);
+        Button addBtn = findViewById(R.id.addContainerBtn);
         ListView containerListLV = findViewById(R.id.listViewContainersToMove);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         containerListLV.setAdapter(adapter);
@@ -174,12 +175,6 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                     } catch (Exception e) {
                         System.out.println("Exception: " + e.getMessage());
                     }
-                    itemET.setText("");
-                    destinationET.setText("");
-                    containerList.clear();
-                    adapter.clear();
-                    adapter.notifyDataSetChanged();
-                    moveCountTV.setText("");
                 }
             });
         }
@@ -276,6 +271,13 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                 }
             }
         });
+
+        itemET.setText("");
+        destinationET.setText("");
+        containerList.clear();
+        adapter.clear();
+        adapter.notifyDataSetChanged();
+        moveCountTV.setText("");
 
     }
 

@@ -98,7 +98,6 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                         } catch (Exception e) {
                             System.out.println("Exception: " + e.getMessage());
                         }
-
                         invisibleET.setText("");
                         invisibleET.setEnabled(true);
                     }

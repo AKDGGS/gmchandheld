@@ -75,9 +75,6 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
 						System.out.println("Exception: " + e.getMessage());
 					}
 //					downloading = false;
-					moveContentsFromET.setText("");
-					moveContentsToET.setText("");
-					moveContentsFromET.requestFocus();
 				}
 			});
 
@@ -176,6 +173,9 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
 				} else if (data.contains("success")) {
 					Toast.makeText(MoveContents.this,"The contents were moved.",
 							Toast.LENGTH_LONG).show();
+					moveContentsFromET.requestFocus();
+					moveContentsFromET.setText("");
+					moveContentsToET.setText("");
 					moveContentsFromET.requestFocus();
 				}
 			}

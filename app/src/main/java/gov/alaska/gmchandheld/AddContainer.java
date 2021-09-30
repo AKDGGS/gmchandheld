@@ -23,7 +23,7 @@ import java.net.URLEncoder;
 
 public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallback {
     private IntentIntegrator qrScan;
-    private EditText addContainerBarcodeET;
+    private EditText addContainerBarcodeET, addContainerNameET, addContainerRemarkET;
     private String data;
 
     @Override
@@ -42,8 +42,8 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
         super.onCreate(savedInstanceState);
         checkAPIkeyExists(this);
         addContainerBarcodeET = findViewById(R.id.barcodeET);
-        EditText addContainerNameET = findViewById(R.id.nameET);
-        EditText addContainerRemarkET = findViewById(R.id.remarkET);
+        addContainerNameET = findViewById(R.id.nameET);
+        addContainerRemarkET = findViewById(R.id.remarkET);
         Button submit_button = findViewById(R.id.submitBtn);
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!sp.getBoolean("cameraOn", false)) {
@@ -122,10 +122,6 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
                             System.out.println("Exception: " + e.getMessage());
                         }
                     }
-                    addContainerBarcodeET.setText("");
-                    addContainerNameET.setText("");
-                    addContainerRemarkET.setText("");
-                    addContainerBarcodeET.requestFocus();
                 }
             });
             downloading = false;
@@ -161,6 +157,9 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
             } else if (data.contains("success")) {
                 Toast.makeText(AddContainer.this, "The container was added.",
                         Toast.LENGTH_SHORT).show();
+                addContainerBarcodeET.setText("");
+                addContainerNameET.setText("");
+                addContainerRemarkET.setText("");
                 addContainerBarcodeET.requestFocus();
             }
         });
