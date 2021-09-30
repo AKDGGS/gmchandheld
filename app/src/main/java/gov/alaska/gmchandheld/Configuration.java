@@ -17,24 +17,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-public class Configuration extends BaseActivity {
+public class Configuration extends BaseActivity implements RemoteAPIDownloadCallback {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
     private EditText hourInput, minuteInput, urlET, apiET;
-    private String hour, minute, url, data;
+    private String hour, minute, url;
 
     @Override
     public int getLayoutResource() {
@@ -61,7 +60,7 @@ public class Configuration extends BaseActivity {
 
         // KeyListener listens if enter is pressed
         urlET.setOnKeyListener((v, keyCode, event) -> {
-            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 if (!urlET.getText().toString().startsWith("https")) {
                     Toast.makeText(Configuration.this, "The URL must be https.",
                             Toast.LENGTH_SHORT).show();
@@ -133,7 +132,7 @@ public class Configuration extends BaseActivity {
         final Intent intent = new Intent(Configuration.this,
                 UpdateBroadcastReceiver.class);
         boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2,
-                intent,0) != null);
+                intent, 0) != null);
         autoUpdateBtn.setChecked(alarmUp);
         autoUpdateBtn.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             if (isChecked) {
@@ -191,10 +190,12 @@ public class Configuration extends BaseActivity {
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void afterTextChanged(Editable s) { }
+            public void afterTextChanged(Editable s) {
+            }
         });
         if (sp.getBoolean("firstrun", true)) {
             checkIssuesList();
@@ -215,10 +216,12 @@ public class Configuration extends BaseActivity {
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void afterTextChanged(Editable s) { }
+            public void afterTextChanged(Editable s) {
+            }
         });
     }
 
@@ -265,7 +268,7 @@ public class Configuration extends BaseActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() != 0) {
                     limit(hourInput, 24);
-                    if (hourInput.getText().toString().equals("24")){
+                    if (hourInput.getText().toString().equals("24")) {
                         minuteInput.setText("0");
                         BaseActivity.editor.putString("updateMinute", minuteInput.getText()
                                 .toString()).apply();
@@ -287,7 +290,7 @@ public class Configuration extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().equals(strBefore)){
+                if (!s.toString().equals(strBefore)) {
                     autoUpdateBtn.setChecked(false);
                     autoUpdateBtn.setChecked(true);
                 }
@@ -298,6 +301,7 @@ public class Configuration extends BaseActivity {
     private void minuteInputChangeWatcher() {
         minuteInput.addTextChangedListener(new TextWatcher() {
             String strBefore;
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() != 0 && !(hourInput.getText().toString().equals("24"))) {
@@ -316,7 +320,7 @@ public class Configuration extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(!s.toString().equals(strBefore)){
+                if (!s.toString().equals(strBefore)) {
                     autoUpdateBtn.setChecked(false);
                     autoUpdateBtn.setChecked(true);
                 }
@@ -332,38 +336,14 @@ public class Configuration extends BaseActivity {
     }
 
     private void checkIssuesList() {
-//        Runnable runnable = () -> {
-//            if (thread.isInterrupted()) {
-//                return;
-//            }
-//            final ExecutorService service =
-//                    Executors.newFixedThreadPool(1);
-//            final Future< String > task =
-//                    service.submit(new RemoteAPIDownload("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json"));
-//            try {
-//                data = task.get();
-////                setIssuesString(data);
-//                editor = sp.edit();
-//                editor.putString("issuesString", data).commit();
-//
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//                return;
-//            }
-//            runOnUiThread(() -> {
-//                if (null == data) {
-//                    Toast.makeText(Configuration.this,"There was a problem.  " +
-//                            "Nothing was changed.",	Toast.LENGTH_SHORT).show();
-//                } else if (data.contains("success")) {
-//                    Toast.makeText(Configuration.this,"The recode was successful.",
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        };
-//        thread = new Thread(runnable);
-//        thread.start();
+        System.out.println("Check issued reached.");
+        try {
+            remoteAPIDownload.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
+                    BaseActivity.apiKeyBase,
+                    this);
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
     }
 
     @Override
@@ -413,15 +393,14 @@ public class Configuration extends BaseActivity {
         }
     }
 
-    private void limit(EditText x, int limax){
+    private void limit(EditText x, int limax) {
 //      https://stackoverflow.com/a/25366712
-        if ( x.getText().toString()==null || x.getText().toString().length()==0){
+        if (x.getText().toString() == null || x.getText().toString().length() == 0) {
             x.setText(String.format(Locale.getDefault(), "%d", 0));
-        }
-        else {
+        } else {
             int z = Integer.parseInt(x.getText().toString());
-            if (z < 0 || z >limax){
-                if (z < 0 ) {
+            if (z < 0 || z > limax) {
+                if (z < 0) {
                     x.setText(String.format(Locale.getDefault(), "%d", 0));
                 } else {
                     x.setText(String.format(Locale.getDefault(), "%d", limax));
@@ -430,7 +409,7 @@ public class Configuration extends BaseActivity {
         }
     }
 
-    private void checkSDKLevel(){
+    private void checkSDKLevel() {
         if (Build.VERSION.SDK_INT <= 24) {
             BaseActivity.intent = qrScan.createScanIntent();
         } else {
@@ -444,5 +423,24 @@ public class Configuration extends BaseActivity {
             menu.clear();
         }
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void displayData(String data, int responseCode, String responseMessage) {
+        editor = sp.edit();
+        editor.putString("issuesString", data).commit();
+    }
+
+    @Override
+    public void displayException(Exception e) {
+        if (e.getMessage() != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    System.out.println(e.getMessage());
+                }
+            });
+        }
     }
 }

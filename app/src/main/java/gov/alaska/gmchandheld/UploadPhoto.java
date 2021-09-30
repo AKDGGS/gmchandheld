@@ -1,10 +1,12 @@
 package gov.alaska.gmchandheld;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -12,13 +14,11 @@ import okhttp3.RequestBody;
 public class UploadPhoto implements Runnable {
     private RemoteAPIDownloadCallback remoteAPIDownloadCallback;
     private String url, token, barcode, description;
-    private File file;
+    private RequestBody body;
 
     public void setUploadPhotoObj(String url,
                                   String token,
-                                  String file,
-                                  String barcode,
-                                  String description,
+                                  RequestBody body,
                                   RemoteAPIDownloadCallback remoteAPIDownloadCallback) throws Exception {
         if (url == null) {
             throw new Exception("URL is null");
@@ -28,13 +28,7 @@ public class UploadPhoto implements Runnable {
         if (token == null) {
             throw new Exception("The token can't be null");
         }
-        if (!new File(file).exists()) {
-            throw new Exception("The file can't be found.");
-        }
 
-        if (barcode == null) {
-            throw new Exception("The barcode can't be null");
-        }
         if (remoteAPIDownloadCallback == null) {
             throw new Exception("The callback can't be null");
         }
@@ -46,9 +40,7 @@ public class UploadPhoto implements Runnable {
 
             this.url = url;
             this.token = token;
-            this.file = new File(file);
-            this.barcode = barcode;
-            this.description = description;
+            this.body = body;
             this.remoteAPIDownloadCallback = remoteAPIDownloadCallback;
             notify();
         }
@@ -67,43 +59,79 @@ public class UploadPhoto implements Runnable {
             }
 
             try {
-                OkHttpClient client = new OkHttpClient().newBuilder()
-                        .followRedirects(false)
-                        .followSslRedirects(false)
-                        .build();
-                okhttp3.Response response = null;
-                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                builder.addFormDataPart("barcode", barcode);
-                builder.addFormDataPart("content", file.getName(),
-                        RequestBody.create(MediaType.parse("Image/jpeg"), file));
-                if (description != null) {
-                    builder.addFormDataPart("description", description);
-                }
+                if (body == null){
+                    InputStream inputStream;
+                    HttpURLConnection connection;
+                    URL myURL;
+                    synchronized (this) {
+                        myURL = new URL(url);
+                    }
+                    connection = (HttpURLConnection) myURL.openConnection();
+                    connection.setRequestMethod("GET");
+                    if (token != null) {
+                        connection.setRequestProperty("Authorization", "Token " + token);
+                    }
+                    connection.setReadTimeout(10 * 1000);
+                    connection.setConnectTimeout(5 * 1000);
+                    connection.connect();
 
-                MultipartBody body = builder.build();
-                ImageFileRequestBody imageFileRequestBody = new ImageFileRequestBody(body);
-                Request request;
-                synchronized (this) {
-                    request = new Request.Builder()
-                            .header("Authorization", "Token " + token)
-                            .url(url)
-                            .post(imageFileRequestBody)
-                            .build();
+                    try {
+                        inputStream = connection.getInputStream();
+                    } catch (Exception e) {
+                        inputStream = connection.getErrorStream();
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    byte[] buffer = new byte[4096];
+                    int buffer_read = 0;
+                    while (buffer_read != -1) {
+                        buffer_read = inputStream.read(buffer);
+                        if (buffer_read > 0) {
+                            sb.append(new String(buffer, 0, buffer_read));
+                        }
+                    }
+                    if (connection.getErrorStream() != null) {
+                        sb.append(connection.getResponseMessage());
+                    }
+                    remoteAPIDownloadCallback.displayData(sb.toString(), connection.getResponseCode(),
+                            connection.getResponseMessage());
+                    inputStream.close();
+                    connection.disconnect();
                 }
-                try {
-                    response = client.newCall(request).execute();
-                    remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                else if (body.contentType().type().equals("multipart")){
+                    ImageFileRequestBody imageFileRequestBody;
+                    Request request;
+
+                    OkHttpClient client = new OkHttpClient().newBuilder()
+                            .followRedirects(false)
+                            .followSslRedirects(false)
+                            .build();
+                    okhttp3.Response response = null;
+
+                    switch (body.contentType().type()) {
+                        case "multipart":
+                            imageFileRequestBody = new ImageFileRequestBody(body);
+                            synchronized (this) {
+                                request = new Request.Builder()
+                                        .header("Authorization", "Token " + token)
+                                        .url(url)
+                                        .post(imageFileRequestBody)
+                                        .build();
+                            }
+                            response = client.newCall(request).execute();
+                            break;
+                    }
+                    try {
+                        remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             } catch (Exception e) {
                 remoteAPIDownloadCallback.displayException(e);
             }
             synchronized (this) {
                 this.remoteAPIDownloadCallback = null;
-                this.description = null;
-                this.barcode = null;
-                this.file = null;
+                this.body = null;
                 this.token = null;
                 this.url = null;
             }
