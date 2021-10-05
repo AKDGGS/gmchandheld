@@ -169,7 +169,7 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
 
                 RequestBody requestBody = builder.build();
                 try {
-                    uploadPhoto.setUploadPhotoObj("https://maps.dggs.alaska.gov/gmcdev//upload.json",
+                    remoteAPIDownload.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev//upload.json",
                             BaseActivity.apiKeyBase,
                             requestBody,
                             this);
