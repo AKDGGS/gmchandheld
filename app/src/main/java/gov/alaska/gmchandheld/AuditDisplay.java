@@ -166,6 +166,7 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
                 remoteAPIDownload.setFetchDataObj(baseURL + "audit.json?remark=" + remark +
                                 createListForURL(containerList, "c"),
                         BaseActivity.apiKeyBase,
+                        null,
                         this);
             } catch (Exception e) {
                 System.out.println("Exception: " + e.getMessage());

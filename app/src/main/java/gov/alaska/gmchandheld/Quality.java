@@ -28,7 +28,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     private static ArrayList<String> selectedItems;
     private static boolean[] checkedItems;
     private static ArrayList<String> selectedItemsDisplayList;
-    private EditText barcodeET;
+    private EditText barcodeET, remarkET;
     private TextView showIssuesTV;
     private String data;
 
@@ -70,7 +70,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         super.onCreate(savedInstanceState);
         checkAPIkeyExists(this);
         barcodeET = findViewById(R.id.barcodeET);
-        final EditText remarkET = findViewById(R.id.remarkET);
+        remarkET = findViewById(R.id.remarkET);
         showIssuesTV = findViewById(R.id.showIssuesTV);
         if (!selectedItemsDisplayList.isEmpty()) {
             showIssuesTV.setText(listToString(selectedItemsDisplayList));
@@ -103,90 +103,48 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             }
             return false;
         });
-        if (!downloading) {
-            downloading = true;
-            // onClickListener listens if the submit button is clicked
-            findViewById(R.id.submitBtn).setOnClickListener(v -> {
-                if (!(TextUtils.isEmpty(barcodeET.getText()))) {
-                    if (!barcodeET.getText().toString().isEmpty()) {
-                        String barcode = null;
-                        String remark = null;
-                        try {
-                            barcode = URLEncoder.encode(barcodeET.getText().toString(), "utf-8");
-                            if (remarkET.getText() != null) {
-                                remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
-                            }
-                        } catch (UnsupportedEncodingException e) {
-                            //                            exception = new Exception(e.getMessage());
-                        }
-                        StringBuilder sb = new StringBuilder();
-                        if (barcode != null) {
-                            sb.append("barcode=").append(barcode);
-                        }
-                        if (remark != null) {
-                            sb.append("&remark=").append(remark);
-                        }
-                        if (selectedItems != null) {
-                            sb.append(containersToUrlList(selectedItems, "i"));
-                        }
 
-                        try {
-                            remoteAPIDownload.setFetchDataObj(baseURL + "addinventoryquality.json?" + sb.toString(),
-                                    BaseActivity.apiKeyBase,
-                                    this);
-                        } catch (Exception e) {
-                            System.out.println("Exception: " + e.getMessage());
+        // onClickListener listens if the submit button is clicked
+        findViewById(R.id.submitBtn).setOnClickListener(v -> {
+            if (!(TextUtils.isEmpty(barcodeET.getText()))) {
+                if (!barcodeET.getText().toString().isEmpty()) {
+                    String barcode = null;
+                    String remark = null;
+                    try {
+                        barcode = URLEncoder.encode(barcodeET.getText().toString(), "utf-8");
+                        if (remarkET.getText() != null) {
+                            System.out.println("Remark before encoding: " + remarkET.getText());
+                            remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
                         }
-
-//                        Runnable runnable = () -> {
-//                            if (thread.isInterrupted()) {
-//                                return;
-//                            }
-//                            final ExecutorService service =
-//                                    Executors.newFixedThreadPool(1);
-//                            final Future < String > task =
-//                                    service.submit(new RemoteAPIDownload(url));
-//                            try {
-//                                data = task.get();
-//                            } catch (ExecutionException e) {
-//                                e.printStackTrace();
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                                return;
-//                            }
-//                            runOnUiThread(() -> {
-//                                if (null == data) {
-//                                    Toast.makeText(Quality.this,
-//                                            "There was a problem.  " +
-//                                                    "The inventory was not added.",
-//                                            Toast.LENGTH_SHORT).show();
-//                                    barcodeET.requestFocus();
-//                                } else if (data.contains("success")) {
-//                                    Toast.makeText(Quality.this,
-//                                            "The inventory was added.",
-//                                            Toast.LENGTH_SHORT).show();
-//                                    barcodeET.requestFocus();
-//                                }
-//                            });
-//                        };
-//                        thread = new Thread(runnable);
-//                        thread.start();
+                    } catch (UnsupportedEncodingException e) {
+                        //                            exception = new Exception(e.getMessage());
                     }
-                    barcodeET.setText("");
-                    remarkET.setText("");
-                    barcodeET.requestFocus();
-                    showIssuesTV.setText("");
-                    selectedItems.clear();
-                    selectedItemsDisplayList.clear();
-                    checkedItems = new boolean[10];
-                    checkedItems[0] = true;
-                    selectedItems.add("needs_inventory");
-                    selectedItemsDisplayList.add("Needs Inventory");
-                    showIssuesTV.setText(listToString(selectedItemsDisplayList));
+                    StringBuilder sb = new StringBuilder();
+                    if (barcode != null && barcode.length() > 0) {
+                        sb.append("barcode=").append(barcode);
+                    }
+                    if (remark != null && remark.length() > 0) {
+                        System.out.println("Remark: " + remark.length());
+                        sb.append("&remark=").append(remark);
+                    }
+                    if (selectedItems != null) {
+                        sb.append(containersToUrlList(selectedItems, "i"));
+                    }
+
+                    System.out.println(sb.toString());
+
+                    try {
+                        remoteAPIDownload.setFetchDataObj(baseURL + "addinventoryquality.json?" + sb.toString(),
+                                BaseActivity.apiKeyBase,
+                                null,
+                                this);
+                    } catch (Exception e) {
+                        System.out.println("Exception: " + e.getMessage());
+                    }
                 }
-            });
-            downloading = false;
-        }
+            }
+        });
+
         showIssuesTV = findViewById(R.id.showIssuesTV);
         Button issuesBtn = findViewById(R.id.issuesBtn);
         issuesBtn.setOnClickListener(view -> {
@@ -260,7 +218,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
         runOnUiThread(() -> {
-            if (null == data) {
+            if (null == data || data.length() <= 2) {
                 Toast.makeText(Quality.this,
                         "There was a problem. The inventory was not updated.",
                         Toast.LENGTH_SHORT).show();
@@ -269,6 +227,17 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                 Toast.makeText(Quality.this, "The inventory was updated.",
                         Toast.LENGTH_SHORT).show();
                 barcodeET.requestFocus();
+                barcodeET.setText("");
+                remarkET.setText("");
+                barcodeET.requestFocus();
+                showIssuesTV.setText("");
+                selectedItems.clear();
+                selectedItemsDisplayList.clear();
+                checkedItems = new boolean[10];
+                checkedItems[0] = true;
+                selectedItems.add("needs_inventory");
+                selectedItemsDisplayList.add("Needs Inventory");
+                showIssuesTV.setText(listToString(selectedItemsDisplayList));
             }
         });
     }
@@ -279,8 +248,12 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    System.out.println(e.getMessage());
+                    if (e.getMessage().isEmpty()){
+                        Toast.makeText(getApplicationContext(), "There was an error.",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }

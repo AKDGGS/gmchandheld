@@ -117,67 +117,66 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
             adapter.notifyDataSetChanged();
             moveCountTV.setText(String.valueOf(containerList.size()));
         });
-        if (!downloading) {
-            downloading = true;
-            //double click to remove elements
-            containerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
-                clicks++;
-                Handler handler = new Handler();
-                handler.postDelayed(() -> {
-                    if (clicks == 2) {
-                        adapter.remove(containerList.get(position));
-                        containerList.remove(position);
-                        adapter.notifyDataSetChanged();
-                        moveCountTV.setText(String.valueOf(containerList.size()));
-                    }
-                    clicks = 0;
-                }, 500);
-            });
 
-            // KeyListener listens if enter is pressed
-            itemET.setOnKeyListener((v, keyCode, event) -> {
+        //double click to remove elements
+        containerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
+            clicks++;
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                if (clicks == 2) {
+                    adapter.remove(containerList.get(position));
+                    containerList.remove(position);
+                    adapter.notifyDataSetChanged();
+                    moveCountTV.setText(String.valueOf(containerList.size()));
+                }
+                clicks = 0;
+            }, 500);
+        });
+
+        // KeyListener listens if enter is pressed
+        itemET.setOnKeyListener((v, keyCode, event) -> {
+            if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
+                    KeyEvent.KEYCODE_ENTER)) {
+                addBtn.performClick();
+                itemET.requestFocus();
+                return true;
+            }
+            return false;
+        });
+        // KeyListener listens if enter is pressed
+        destinationET.setOnKeyListener((v, keyCode, event) -> {
+            if (!(TextUtils.isEmpty(destinationET.getText()))) {
                 if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
                         KeyEvent.KEYCODE_ENTER)) {
-                    addBtn.performClick();
                     itemET.requestFocus();
                     return true;
                 }
-                return false;
-            });
-            // KeyListener listens if enter is pressed
-            destinationET.setOnKeyListener((v, keyCode, event) -> {
-                if (!(TextUtils.isEmpty(destinationET.getText()))) {
-                    if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
-                            KeyEvent.KEYCODE_ENTER)) {
-                        itemET.requestFocus();
-                        return true;
-                    }
-                }
-                return false;
-            });
-            // onClickListener listens if the submit button is clicked
-            findViewById(R.id.submitBtn).setOnClickListener(v -> {
-                if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
-                    String destination = null;
-                    try {
-                        destination = URLEncoder.encode(destinationET.getText().toString(),
-                                "utf-8");
-                    } catch (UnsupportedEncodingException e) {
+            }
+            return false;
+        });
+        // onClickListener listens if the submit button is clicked
+        findViewById(R.id.submitBtn).setOnClickListener(v -> {
+            if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
+                String destination = null;
+                try {
+                    destination = URLEncoder.encode(destinationET.getText().toString(),
+                            "utf-8");
+                } catch (UnsupportedEncodingException e) {
 //							exception = new Exception(e.getMessage());
-                    }
-
-                    try {
-                        remoteAPIDownload.setFetchDataObj(baseURL + "move.json?d=" +
-                                        destination +
-                                        containersToUrlList(containerList, "c"),
-                                BaseActivity.apiKeyBase,
-                                this);
-                    } catch (Exception e) {
-                        System.out.println("Exception: " + e.getMessage());
-                    }
                 }
-            });
-        }
+
+                try {
+                    remoteAPIDownload.setFetchDataObj(baseURL + "move.json?d=" +
+                                    destination +
+                                    containersToUrlList(containerList, "c"),
+                            BaseActivity.apiKeyBase,
+                            null,
+                            this);
+                } catch (Exception e) {
+                    System.out.println("Exception: " + e.getMessage());
+                }
+            }
+        });
     }
 
     @Override
@@ -268,16 +267,16 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                     Toast.makeText(MoveDisplay.this, "The contents were moved.",
                             Toast.LENGTH_LONG).show();
                     destinationET.requestFocus();
+                    itemET.setText("");
+                    destinationET.setText("");
+                    containerList.clear();
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
+                    moveCountTV.setText("");
                 }
             }
         });
 
-        itemET.setText("");
-        destinationET.setText("");
-        containerList.clear();
-        adapter.clear();
-        adapter.notifyDataSetChanged();
-        moveCountTV.setText("");
 
     }
 

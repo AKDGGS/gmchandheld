@@ -70,70 +70,48 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
             }
             startActivityForResult(intent, 2);
         });
-        if (!downloading) {
-            downloading = true;
-            // onClickListener listens if the submit button is clicked
-            findViewById(R.id.submitBtn).setOnClickListener(v -> {
-                if ((!oldBarcodeET.getText().toString().isEmpty()) &&
-                        (!newBarcodeET.getText().toString().isEmpty())) {
-                    String barcode = null;
-                    String newBarcode = null;
-                    try {
-                        barcode = URLEncoder.encode(oldBarcodeET.getText().toString(),
-                                "utf-8");
-                        newBarcode = URLEncoder.encode(newBarcodeET.getText().toString(),
-                                "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-                        //						exception = new Exception(e.getMessage());
-                    }
 
-                    StringBuilder sb = new StringBuilder();
-                    if (barcode != null) {
-                        sb.append("old=").append(barcode);
-                    }
-                    if (newBarcode != null) {
-                        sb.append("&new=").append(newBarcode);
-                    }
-
-					try {
-						remoteAPIDownload.setFetchDataObj(baseURL + "recode.json?" + sb.toString(),
-								BaseActivity.apiKeyBase,this);
-					} catch (Exception e) {
-						System.out.println("Exception: " + e.getMessage());
-					}
-//					Runnable runnable = () -> {
-//						if (thread.isInterrupted()) {
-//							return;
-//						}
-//						final ExecutorService service =
-//								Executors.newFixedThreadPool(1);
-//						final Future < String > task =
-//								service.submit(new RemoteAPIDownload(url));
-//						try {
-//							data = task.get();
-//						} catch (ExecutionException e) {
-//							e.printStackTrace();
-//						} catch (InterruptedException e) {
-//							e.printStackTrace();
-//							return;
-//						}
-
-//					};
-//					thread = new Thread(runnable);
-//					thread.start();
+        // onClickListener listens if the submit button is clicked
+        findViewById(R.id.submitBtn).setOnClickListener(v -> {
+            if ((!oldBarcodeET.getText().toString().isEmpty()) &&
+                    (!newBarcodeET.getText().toString().isEmpty())) {
+                String barcode = null;
+                String newBarcode = null;
+                try {
+                    barcode = URLEncoder.encode(oldBarcodeET.getText().toString(),
+                            "utf-8");
+                    newBarcode = URLEncoder.encode(newBarcodeET.getText().toString(),
+                            "utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    //						exception = new Exception(e.getMessage());
                 }
-            });
-            // KeyListener listens if enter is pressed
-            oldBarcodeET.setOnKeyListener((v, keyCode, event) -> {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    newBarcodeET.requestFocus();
-                    return true;
+
+                StringBuilder sb = new StringBuilder();
+                if (barcode != null) {
+                    sb.append("old=").append(barcode);
                 }
-                return false;
-            });
-            downloading = false;
-        }
+                if (newBarcode != null) {
+                    sb.append("&new=").append(newBarcode);
+                }
+
+                try {
+                    remoteAPIDownload.setFetchDataObj(baseURL + "recode.json?" + sb.toString(),
+                            BaseActivity.apiKeyBase, null,this);
+                } catch (Exception e) {
+                    System.out.println("Exception: " + e.getMessage());
+                }
+
+            }
+        });
+        // KeyListener listens if enter is pressed
+        oldBarcodeET.setOnKeyListener((v, keyCode, event) -> {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                newBarcodeET.requestFocus();
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override

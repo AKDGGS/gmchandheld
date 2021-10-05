@@ -83,49 +83,47 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
             }
             return false;
         });
-        if (!downloading) {
-            downloading = true;
-            // onClickListener listens if the submit button is clicked
-            submit_button.setOnClickListener(v -> {
-                if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
-                    if (!addContainerBarcodeET.getText().toString().isEmpty()) {
-                        String barcode = null;
-                        String name = null;
-                        String remark = null;
-                        try {
-                            barcode = URLEncoder
-                                    .encode(addContainerBarcodeET.getText().toString(),
-                                            "utf-8");
-                            name = URLEncoder.encode(addContainerNameET.getText().toString(),
-                                    "utf-8");
-                            remark = URLEncoder.encode(addContainerRemarkET.getText().toString(),
-                                    "utf-8");
-                        } catch (UnsupportedEncodingException e) {
-//								exception = new Exception(e.getMessage());
-                        }
-                        StringBuilder sb = new StringBuilder();
-                        if (barcode != null) {
-                            sb.append("barcode=").append(barcode);
-                        }
-                        if (name != null) {
-                            sb.append("&name=").append(name);
-                        }
-                        if (remark != null) {
-                            sb.append("&remark=").append(remark);
-                        }
 
-                        try {
-                            remoteAPIDownload.setFetchDataObj(baseURL + "addcontainer.json?" + sb.toString(),
-                                    BaseActivity.apiKeyBase,
-                                    this);
-                        } catch (Exception e) {
-                            System.out.println("Exception: " + e.getMessage());
-                        }
+        // onClickListener listens if the submit button is clicked
+        submit_button.setOnClickListener(v -> {
+            if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
+                if (!addContainerBarcodeET.getText().toString().isEmpty()) {
+                    String barcode = null;
+                    String name = null;
+                    String remark = null;
+                    try {
+                        barcode = URLEncoder
+                                .encode(addContainerBarcodeET.getText().toString(),
+                                        "utf-8");
+                        name = URLEncoder.encode(addContainerNameET.getText().toString(),
+                                "utf-8");
+                        remark = URLEncoder.encode(addContainerRemarkET.getText().toString(),
+                                "utf-8");
+                    } catch (UnsupportedEncodingException e) {
+//								exception = new Exception(e.getMessage());
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    if (barcode != null) {
+                        sb.append("barcode=").append(barcode);
+                    }
+                    if (name != null) {
+                        sb.append("&name=").append(name);
+                    }
+                    if (remark != null) {
+                        sb.append("&remark=").append(remark);
+                    }
+
+                    try {
+                        remoteAPIDownload.setFetchDataObj(baseURL + "addcontainer.json?" + sb.toString(),
+                                BaseActivity.apiKeyBase,
+                                null,
+                                this);
+                    } catch (Exception e) {
+                        System.out.println("Exception: " + e.getMessage());
                     }
                 }
-            });
-            downloading = false;
-        }
+            }
+        });
     }
 
     @Override

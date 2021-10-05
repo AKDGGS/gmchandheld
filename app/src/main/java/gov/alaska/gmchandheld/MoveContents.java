@@ -21,177 +21,175 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallback{
-	private EditText moveContentsFromET, moveContentsToET;
-	private String data;
+public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallback {
+    private EditText moveContentsFromET, moveContentsToET;
+    private String data;
 
-	@Override
-	public int getLayoutResource() {
-		return R.layout.move_contents;
-	}
+    @Override
+    public int getLayoutResource() {
+        return R.layout.move_contents;
+    }
 
-	@Override
-	public void onRestart() {
-		super.onRestart();
-		this.recreate();
-	}
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        this.recreate();
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		checkAPIkeyExists(this);
-		moveContentsFromET = findViewById(R.id.fromET);
-		moveContentsToET = findViewById(R.id.toET);
-		// onClickListener listens if the submit button is clicked
-		if (!downloading) {
-			downloading = true;
-			findViewById(R.id.submitBtn).setOnClickListener(v -> {
-				if (!(TextUtils.isEmpty(moveContentsFromET.getText())) &
-						!(TextUtils.isEmpty(moveContentsToET.getText()))) {
-					String source = null;
-					String destination = null;
-					try {
-						source = URLEncoder.encode(moveContentsFromET.getText().toString(),
-								"utf-8");
-						destination = URLEncoder.encode(moveContentsToET.getText().toString(),
-								"utf-8");
-					} catch (UnsupportedEncodingException e) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        checkAPIkeyExists(this);
+        moveContentsFromET = findViewById(R.id.fromET);
+        moveContentsToET = findViewById(R.id.toET);
+        // onClickListener listens if the submit button is clicked
+
+        findViewById(R.id.submitBtn).setOnClickListener(v -> {
+            if (!(TextUtils.isEmpty(moveContentsFromET.getText())) &
+                    !(TextUtils.isEmpty(moveContentsToET.getText()))) {
+                String source = null;
+                String destination = null;
+                try {
+                    source = URLEncoder.encode(moveContentsFromET.getText().toString(),
+                            "utf-8");
+                    destination = URLEncoder.encode(moveContentsToET.getText().toString(),
+                            "utf-8");
+                } catch (UnsupportedEncodingException e) {
 //						exception = new Exception(e.getMessage());
-					}
+                }
 
-					StringBuilder sb = new StringBuilder();
-					if (source != null) {
-						sb.append("src=").append(source);
-					}
-					if (destination != null) {
-						sb.append("&dest=").append(destination);
-					}
+                StringBuilder sb = new StringBuilder();
+                if (source != null) {
+                    sb.append("src=").append(source);
+                }
+                if (destination != null) {
+                    sb.append("&dest=").append(destination);
+                }
 
-					try {
-						remoteAPIDownload.setFetchDataObj(baseURL + "movecontents.json?" + sb.toString(),
-								BaseActivity.apiKeyBase,
-								this);
-					} catch (Exception e) {
-						System.out.println("Exception: " + e.getMessage());
-					}
-//					downloading = false;
-				}
-			});
+                try {
+                    remoteAPIDownload.setFetchDataObj(baseURL + "movecontents.json?" + sb.toString(),
+                            BaseActivity.apiKeyBase,
+                            null,
+                            this);
+                } catch (Exception e) {
+                    System.out.println("Exception: " + e.getMessage());
+                }
+            }
+        });
 
-		}
-		// KeyListener listens if enter is pressed
-		moveContentsFromET.setOnKeyListener((v, keyCode, event) -> {
-			if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
-				moveContentsToET.requestFocus();
-				return true;
-			}
-			return false;
-		});
-		Button fromCameraBtn = findViewById(R.id.fromCameraBtn);
-		Button toCameraBtn = findViewById(R.id.toCameraBtn);
-		if (!sp.getBoolean("cameraOn", false)){
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
-					LinearLayout.LayoutParams.WRAP_CONTENT);
-			params.weight = 8.25f;
-			moveContentsFromET.setLayoutParams(params);
-			moveContentsToET.setLayoutParams(params);
-			fromCameraBtn.setVisibility(View.GONE);
-			toCameraBtn.setVisibility(View.GONE);
-		} else {
-			qrScan = new IntentIntegrator(this);
-			qrScan.setBeepEnabled(true);
-		}
-		fromCameraBtn.setOnClickListener(view -> {
-			if (Build.VERSION.SDK_INT <= 24) {
-				intent = qrScan.createScanIntent();
-			} else {
-				intent = new Intent(MoveContents.this, CameraToScanner.class);
-			}
-			startActivityForResult(intent, 1);
-		});
-		toCameraBtn.setOnClickListener(view -> {
-			if (Build.VERSION.SDK_INT <= 24) {
-				intent = qrScan.createScanIntent();
-			} else {
-				intent = new Intent(MoveContents.this, CameraToScanner.class);
-			}
-			startActivityForResult(intent, 2);
-		});
-	}
+        // KeyListener listens if enter is pressed
+        moveContentsFromET.setOnKeyListener((v, keyCode, event) -> {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                moveContentsToET.requestFocus();
+                return true;
+            }
+            return false;
+        });
+        Button fromCameraBtn = findViewById(R.id.fromCameraBtn);
+        Button toCameraBtn = findViewById(R.id.toCameraBtn);
+        if (!sp.getBoolean("cameraOn", false)) {
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.weight = 8.25f;
+            moveContentsFromET.setLayoutParams(params);
+            moveContentsToET.setLayoutParams(params);
+            fromCameraBtn.setVisibility(View.GONE);
+            toCameraBtn.setVisibility(View.GONE);
+        } else {
+            qrScan = new IntentIntegrator(this);
+            qrScan.setBeepEnabled(true);
+        }
+        fromCameraBtn.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT <= 24) {
+                intent = qrScan.createScanIntent();
+            } else {
+                intent = new Intent(MoveContents.this, CameraToScanner.class);
+            }
+            startActivityForResult(intent, 1);
+        });
+        toCameraBtn.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT <= 24) {
+                intent = qrScan.createScanIntent();
+            } else {
+                intent = new Intent(MoveContents.this, CameraToScanner.class);
+            }
+            startActivityForResult(intent, 2);
+        });
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		if (Build.VERSION.SDK_INT <= 24) {
-			IntentResult result = IntentIntegrator.parseActivityResult(
-					IntentIntegrator.REQUEST_CODE, resultCode, data);
-			switch (requestCode){
-				case 1: {
-					moveContentsFromET = findViewById(R.id.fromET);
-					moveContentsFromET.setText(result.getContents());
-				}
-				break;
-				case 2:{
-					moveContentsToET = findViewById(R.id.toET);
-					moveContentsToET.setText(result.getContents());
-				}
-				break;
-			}
-		} else {
-			if (data != null) {
-				Barcode barcode = data.getParcelableExtra("barcode");
-				if (barcode != null) {
-					switch (requestCode) {
-						case 1: {
-							if (resultCode == CommonStatusCodes.SUCCESS) {
-								moveContentsFromET.setText(barcode.displayValue);
-							}
-							break;
-						}
-						case 2: {
-							if (resultCode == CommonStatusCodes.SUCCESS) {
-								moveContentsToET.setText(barcode.displayValue);
-							}
-							break;
-						}
-						default:
-							super.onActivityResult(requestCode, resultCode, data);
-					}
-				}
-			}
-		}
-	}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (Build.VERSION.SDK_INT <= 24) {
+            IntentResult result = IntentIntegrator.parseActivityResult(
+                    IntentIntegrator.REQUEST_CODE, resultCode, data);
+            switch (requestCode) {
+                case 1: {
+                    moveContentsFromET = findViewById(R.id.fromET);
+                    moveContentsFromET.setText(result.getContents());
+                }
+                break;
+                case 2: {
+                    moveContentsToET = findViewById(R.id.toET);
+                    moveContentsToET.setText(result.getContents());
+                }
+                break;
+            }
+        } else {
+            if (data != null) {
+                Barcode barcode = data.getParcelableExtra("barcode");
+                if (barcode != null) {
+                    switch (requestCode) {
+                        case 1: {
+                            if (resultCode == CommonStatusCodes.SUCCESS) {
+                                moveContentsFromET.setText(barcode.displayValue);
+                            }
+                            break;
+                        }
+                        case 2: {
+                            if (resultCode == CommonStatusCodes.SUCCESS) {
+                                moveContentsToET.setText(barcode.displayValue);
+                            }
+                            break;
+                        }
+                        default:
+                            super.onActivityResult(requestCode, resultCode, data);
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	public void displayData(String data, int responseCode, String responseMessage) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (null == data) {
-					Toast.makeText(MoveContents.this,"There was a problem. Nothing was moved.",
-							Toast.LENGTH_LONG).show();
-					moveContentsFromET.requestFocus();
-				} else if (data.contains("success")) {
-					Toast.makeText(MoveContents.this,"The contents were moved.",
-							Toast.LENGTH_LONG).show();
-					moveContentsFromET.requestFocus();
-					moveContentsFromET.setText("");
-					moveContentsToET.setText("");
-					moveContentsFromET.requestFocus();
-				}
-			}
-		});
-	}
+    @Override
+    public void displayData(String data, int responseCode, String responseMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (null == data) {
+                    Toast.makeText(MoveContents.this, "There was a problem. Nothing was moved.",
+                            Toast.LENGTH_LONG).show();
+                    moveContentsFromET.requestFocus();
+                } else if (data.contains("success")) {
+                    Toast.makeText(MoveContents.this, "The contents were moved.",
+                            Toast.LENGTH_LONG).show();
+                    moveContentsFromET.requestFocus();
+                    moveContentsFromET.setText("");
+                    moveContentsToET.setText("");
+                    moveContentsFromET.requestFocus();
+                }
+            }
+        });
+    }
 
-	@Override
-	public void displayException(Exception e) {
-		if (e.getMessage() != null) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-					System.out.println(e.getMessage());
-				}
-			});
-		}
-	}
+    @Override
+    public void displayException(Exception e) {
+        if (e.getMessage() != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    System.out.println(e.getMessage());
+                }
+            });
+        }
+    }
 }

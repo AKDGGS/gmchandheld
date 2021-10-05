@@ -104,46 +104,45 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             }
             return false;
         });
-        if (!downloading) {
-            downloading = true;
-            // onClickListener listens if the submit button is clicked
-            submit_button.setOnClickListener(v -> {
-                if (!(TextUtils.isEmpty(barcodeET.getText()))) {
-                    String container = barcodeET.getText().toString();
-                    if (!container.isEmpty()) {
-                        String barcode = null;
-                        String remark = null;
-                        try {
-                            barcode = URLEncoder.encode(barcodeET.getText().toString(), "utf-8");
-                            if (remarkET.getText() != null) {
-                                remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
-                            }
-                        } catch (UnsupportedEncodingException e) {
-//                                exception = new Exception(e.getMessage());
-                        }
-                        StringBuilder sb = new StringBuilder();
-                        if (barcode != null) {
-                            sb.append("barcode=").append(barcode);
-                        }
-                        if (remark != null) {
-                            sb.append("&remark=").append(remark);
-                        }
-                        if (selectedItems != null) {
-                            sb.append(containersToUrlList(selectedItems, "i"));
-                        }
 
-                        try {
-                            remoteAPIDownload.setFetchDataObj(baseURL + "addinventory.json?" + sb.toString(),
-                                    BaseActivity.apiKeyBase,
-                                    this);
-                        } catch (Exception e) {
-                            System.out.println("Exception: " + e.getMessage());
+        // onClickListener listens if the submit button is clicked
+        submit_button.setOnClickListener(v -> {
+            if (!(TextUtils.isEmpty(barcodeET.getText()))) {
+                String container = barcodeET.getText().toString();
+                if (!container.isEmpty()) {
+                    String barcode = null;
+                    String remark = null;
+                    try {
+                        barcode = URLEncoder.encode(barcodeET.getText().toString(), "utf-8");
+                        if (remarkET.getText() != null) {
+                            remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
                         }
+                    } catch (UnsupportedEncodingException e) {
+//                                exception = new Exception(e.getMessage());
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    if (barcode != null) {
+                        sb.append("barcode=").append(barcode);
+                    }
+                    if (remark != null) {
+                        sb.append("&remark=").append(remark);
+                    }
+                    if (selectedItems != null) {
+                        sb.append(containersToUrlList(selectedItems, "i"));
+                    }
+
+                    try {
+                        remoteAPIDownload.setFetchDataObj(baseURL + "addinventory.json?" + sb.toString(),
+                                BaseActivity.apiKeyBase,
+                                null,
+                                this);
+                    } catch (Exception e) {
+                        System.out.println("Exception: " + e.getMessage());
                     }
                 }
-            });
-            downloading = false;
-        }
+            }
+        });
+
         showIssuesTV = findViewById(R.id.showIssuesTV);
         Button issuesBtn = findViewById(R.id.issuesBtn);
         issuesBtn.setOnClickListener(view -> {
