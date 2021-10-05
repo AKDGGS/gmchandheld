@@ -18,6 +18,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
 public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
@@ -65,22 +66,20 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
         expandableListView = findViewById(R.id.expandableListView);
         invisibleET = findViewById(R.id.invisibleET);
         invisibleET.setInputType(InputType.TYPE_NULL);
-        if (!downloading) {
-            downloading = true;
-            invisibleET.setFocusable(true);
-            invisibleET.setOnKeyListener((v, keyCode, event) -> {
-                if (keyCode == KeyEvent.KEYCODE_DEL) {
-                    invisibleET.setText("");
-                }
-                if (invisibleET.getText().toString().trim().length() != 0) {
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                            (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        barcode = invisibleET.getText().toString();
-                        processingAlert(this, barcode);
-                        if (!barcode.isEmpty()) {
-                            try {
-                                barcode = URLEncoder.encode(barcode, "utf-8");
-                            } catch (UnsupportedEncodingException e) {
+        invisibleET.setFocusable(true);
+        invisibleET.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_DEL) {
+                invisibleET.setText("");
+            }
+            if (invisibleET.getText().toString().trim().length() != 0) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    barcode = invisibleET.getText().toString();
+                    processingAlert(this, barcode);
+                    if (!barcode.isEmpty()) {
+                        try {
+                            barcode = URLEncoder.encode(barcode, "utf-8");
+                        } catch (UnsupportedEncodingException e) {
 //                                exception = new Exception(e.getMessage());
                         }
                         try {
@@ -105,46 +104,45 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
         SpannableString subtitle = new SpannableString(
                 summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");
 
-            if (getSupportActionBar() != null) {
-                if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
-                    title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    this.getSupportActionBar().setTitle(title);
-
-                    if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
-                        subtitle.setSpan(new ForegroundColorSpan(Color.BLACK),
-                                0,
-                                subtitle.length(),
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        this.getSupportActionBar().setSubtitle(subtitle);
-                    }
-                }
-            }
-            intent = getIntent();
-            barcode = intent.getStringExtra("barcode"); //refers to the query barcode.
-            if (barcode != null) {
+        if (getSupportActionBar() != null) {
+            if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                this.getSupportActionBar().setTitle(title);
+
                 if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
                     subtitle.setSpan(new ForegroundColorSpan(Color.BLACK),
                             0,
                             subtitle.length(),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    this.getSupportActionBar().setSubtitle(subtitle);
                 }
             }
-            ExpandableListAdapter listAdapter = new LookupExpListAdapter(this,
-                    summaryLogicForDisplayObj.getKeyList(),
-                    summaryLogicForDisplayObj.getDisplayDict());
-            expandableListView.setAdapter(listAdapter);
-            if (listAdapter.getGroupCount() >= 1) {
-                for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-                    expandableListView.expandGroup(i);
-                }
-            }
-            expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
-                return true; // Expander cannot be collapsed
-            });
         }
+        intent = getIntent();
+        barcode = intent.getStringExtra("barcode"); //refers to the query barcode.
+        if (barcode != null) {
+            title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
+                subtitle.setSpan(new ForegroundColorSpan(Color.BLACK),
+                        0,
+                        subtitle.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+        ExpandableListAdapter listAdapter = new LookupExpListAdapter(this,
+                summaryLogicForDisplayObj.getKeyList(),
+                summaryLogicForDisplayObj.getDisplayDict());
+        expandableListView.setAdapter(listAdapter);
+        if (listAdapter.getGroupCount() >= 1) {
+            for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+                expandableListView.expandGroup(i);
+            }
+        }
+        expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+            return true; // Expander cannot be collapsed
+        });
     }
 
     //makes the volume keys scroll up/down
@@ -181,7 +179,7 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        if (data == null || responseCode != 200) {
+        if (data == null || !(responseCode < HttpURLConnection.HTTP_BAD_REQUEST)) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;
@@ -221,10 +219,15 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
     @Override
     public void displayException(Exception e) {
         if (e.getMessage() != null) {
+            if (alert != null) {
+                alert.dismiss();
+                alert = null;
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    invisibleET.setText("");
                 }
             });
         }

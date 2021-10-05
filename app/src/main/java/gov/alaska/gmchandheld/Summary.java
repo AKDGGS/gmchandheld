@@ -19,8 +19,7 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 
@@ -193,7 +192,7 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        if (data == null || responseCode != 200) {
+        if (data == null || !(responseCode < HttpURLConnection.HTTP_BAD_REQUEST)) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;
@@ -230,10 +229,15 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
     @Override
     public void displayException(Exception e) {
         if (e.getMessage() != null) {
+            if (alert != null) {
+                alert.dismiss();
+                alert = null;
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    barcodeET.setText("");
                 }
             });
         }
