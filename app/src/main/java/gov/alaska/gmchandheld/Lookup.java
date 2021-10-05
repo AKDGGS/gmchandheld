@@ -118,7 +118,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
                 try {
-                    uploadPhoto.setUploadPhotoObj(baseURL + "inventory.json?barcode=" + barcode,
+                    remoteAPIDownload.setFetchDataObj(baseURL + "inventory.json?barcode=" + barcode,
                             BaseActivity.apiKeyBase,
                             null,
                             this);
