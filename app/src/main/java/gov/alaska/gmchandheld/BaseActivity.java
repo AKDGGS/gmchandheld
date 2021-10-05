@@ -42,9 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected static String baseURL;
 	protected Thread thread, photoThread;
 	protected volatile AlertDialog alert;
-	protected volatile boolean downloading;
 	protected RemoteAPIDownload remoteAPIDownload;
-	protected UploadPhoto uploadPhoto;
 
 
 	@Override
@@ -93,12 +91,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 		if (thread == null){
 			thread = new Thread(remoteAPIDownload, "remoteAPIDownloadThread");
 			thread.start();
-		}
-
-		uploadPhoto = new UploadPhoto();
-		if (photoThread == null){
-			photoThread = new Thread(uploadPhoto, "uploadThread");
-			photoThread.start();
 		}
 	}
 
