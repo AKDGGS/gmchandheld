@@ -5,10 +5,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
 import org.apache.commons.lang3.text.WordUtils;
+
 import java.util.ArrayList;
 
 public class IssuesFragment extends DialogFragment {
@@ -16,12 +19,6 @@ public class IssuesFragment extends DialogFragment {
     private ArrayList<String> selectedItemsDisplayList;
     private boolean[] checkedItems;
     private onMultiChoiceListener mListener;
-
-    public interface onMultiChoiceListener {
-        void onPostitiveButtonClicked(String[] list, ArrayList<String> selectedItems);
-
-        void onNegativebuttonClicked();
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -42,11 +39,11 @@ public class IssuesFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         SharedPreferences sp = this.getActivity().getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-        String issuesStr  = sp.getString("issuesString", "needs_inventory");
+        String issuesStr = sp.getString("issuesString", "needs_inventory");
         // creates two lists one for display the other for the databases
         String[] issuesListDisplay = WordUtils.capitalize(issuesStr, '"', '_')
                 .replaceAll("[\"\\[\\]]", "")
-                .replace('_',' ').split(",");
+                .replace('_', ' ').split(",");
         String[] issuesListDb = issuesStr.replaceAll("[\"\\[\\]]", "")
                 .split(",");
         switch (getContext().getClass().getSimpleName()) {
@@ -61,7 +58,7 @@ public class IssuesFragment extends DialogFragment {
                 checkedItems = Quality.getCheckedItems();
                 break;
         }
-                builder.setTitle("Select")
+        builder.setTitle("Select")
                 .setMultiChoiceItems(issuesListDisplay, checkedItems, ((dialogInterface, i, b) -> {
                     if (b) {
                         selectedItemsDisplayList.add(issuesListDisplay[i]);
@@ -75,6 +72,12 @@ public class IssuesFragment extends DialogFragment {
                         mListener.onPostitiveButtonClicked(issuesListDisplay, selectedItems))
                 .setNegativeButton("Cancel", (dialogInterface, i) ->
                         mListener.onNegativebuttonClicked());
-            return builder.create();
-        }
+        return builder.create();
+    }
+
+    public interface onMultiChoiceListener {
+        void onPostitiveButtonClicked(String[] list, ArrayList<String> selectedItems);
+
+        void onNegativebuttonClicked();
+    }
 }

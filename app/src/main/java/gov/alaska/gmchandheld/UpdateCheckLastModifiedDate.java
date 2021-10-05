@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -60,7 +61,7 @@ public class UpdateCheckLastModifiedDate extends AsyncTask<Void, Void, Long> {
             intent.putExtra("LAST_MODIFIED_DATE", lastModifiedDate);
             mContext.startActivity(intent);
         } else {
-            Toast t = Toast.makeText(mContext.getApplicationContext(),"No update available.",
+            Toast t = Toast.makeText(mContext.getApplicationContext(), "No update available.",
                     Toast.LENGTH_SHORT);
             t.show();
             Intent intent = new Intent(mContext, Lookup.class);

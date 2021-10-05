@@ -1,8 +1,6 @@
 package gov.alaska.gmchandheld;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -14,13 +12,13 @@ public class RemoteAPIDownload implements Runnable {
 
     private final Object lockObj = new Object();
     private RemoteAPIDownloadCallback remoteAPIDownloadCallback;
-    private String url, token, barcode, description;
+    private String url, token;
     private RequestBody body;
 
     public void setFetchDataObj(String url,
-                                  String token,
-                                  RequestBody body,
-                                  RemoteAPIDownloadCallback remoteAPIDownloadCallback) throws Exception {
+                                String token,
+                                RequestBody body,
+                                RemoteAPIDownloadCallback remoteAPIDownloadCallback) throws Exception {
         if (url == null) {
             throw new Exception("URL is null");
         }
@@ -75,22 +73,8 @@ public class RemoteAPIDownload implements Runnable {
                     connection.setReadTimeout(10 * 1000);
                     connection.setConnectTimeout(5 * 1000);
                     connection.connect();
-
-                    try {
-                        inputStream = connection.getInputStream();
-                    } catch (Exception e) {
-                        final BufferedReader bufferedReader = new BufferedReader(
-                                new InputStreamReader(connection.getErrorStream()));
-                        final StringBuilder errorString = new StringBuilder();
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            errorString.append(line);
-                        }
-                        bufferedReader.close();
-                        System.out.println("ERROR STREAM: " + errorString.toString());
-                        throw new Exception(errorString.toString());
-                    }
                     StringBuilder sb = new StringBuilder();
+                    inputStream = connection.getInputStream();
                     byte[] buffer = new byte[4096];
                     int buffer_read = 0;
                     while (buffer_read != -1) {
@@ -100,7 +84,11 @@ public class RemoteAPIDownload implements Runnable {
                         }
                     }
                     if (connection.getErrorStream() != null) {
-                        sb.append(connection.getResponseMessage());
+                        int length;
+                        while ((length = connection.getErrorStream().read(buffer)) != -1) {
+                            sb.append(new String(buffer, 0, length));
+                        }
+                        throw new Exception(sb.toString());
                     }
                     remoteAPIDownloadCallback.displayData(sb.toString(), connection.getResponseCode(),
                             connection.getResponseMessage());
@@ -114,21 +102,16 @@ public class RemoteAPIDownload implements Runnable {
                             .followRedirects(false)
                             .followSslRedirects(false)
                             .build();
-                    okhttp3.Response response = null;
-
-                    switch (body.contentType().type()) {
-                        case "multipart":
-                            imageFileRequestBody = new ImageFileRequestBody(body);
-                            synchronized (this) {
-                                request = new Request.Builder()
-                                        .header("Authorization", "Token " + token)
-                                        .url(url)
-                                        .post(imageFileRequestBody)
-                                        .build();
-                            }
-                            response = client.newCall(request).execute();
-                            break;
+                    okhttp3.Response response;
+                    imageFileRequestBody = new ImageFileRequestBody(body);
+                    synchronized (this) {
+                        request = new Request.Builder()
+                                .header("Authorization", "Token " + token)
+                                .url(url)
+                                .post(imageFileRequestBody)
+                                .build();
                     }
+                    response = client.newCall(request).execute();
                     try {
                         remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message());
                     } catch (Exception e) {

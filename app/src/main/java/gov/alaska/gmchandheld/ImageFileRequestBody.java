@@ -8,6 +8,7 @@ import okio.BufferedSink;
 
 public class ImageFileRequestBody extends RequestBody {
     protected RequestBody delegate;
+
     public ImageFileRequestBody(RequestBody delegate) {
         this.delegate = delegate;
     }

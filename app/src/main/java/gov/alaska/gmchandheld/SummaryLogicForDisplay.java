@@ -1,11 +1,15 @@
 package gov.alaska.gmchandheld;
 
-import android.content.Context;
+import static android.graphics.Typeface.BOLD;
+import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+
 import android.text.SpannableStringBuilder;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,17 +18,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import gov.alaska.gmchandheld.comparators.SortInventoryObjectList;
 
-import static android.graphics.Typeface.BOLD;
-import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+import gov.alaska.gmchandheld.comparators.SortInventoryObjectList;
 
 public class SummaryLogicForDisplay {
     private final List<String> keyList;
     private final Map<String, List<SpannableStringBuilder>> displayDict;
+    private final ArrayList<String> typeFlagList = new ArrayList<>();
     private int numberOfBoxes, ID;
     private String barcodeQuery;
-    private final ArrayList<String> typeFlagList = new ArrayList<>();
 
     public SummaryLogicForDisplay() {
         keyList = new ArrayList<>();
@@ -35,7 +37,17 @@ public class SummaryLogicForDisplay {
         nf.setMaximumFractionDigits(1);
     }
 
-    public int getNumberOfBoxes() {return numberOfBoxes;}
+    public static void createIndentedText(SpannableStringBuilder text,
+                                          int marginFirstLine,
+                                          int marginNextLines) {
+        //https://www.programmersought.com/article/45371641877/
+        text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0,
+                text.length(), 0);
+    }
+
+    public int getNumberOfBoxes() {
+        return numberOfBoxes;
+    }
 
     public List<String> getKeyList() {
         return keyList;
@@ -45,17 +57,29 @@ public class SummaryLogicForDisplay {
         return displayDict;
     }
 
-    public void setID(int ID) { this.ID = ID; }
+    public void setID(int ID) {
+        this.ID = ID;
+    }
 
-    public void setBarcodeQuery(String barcodeQuery) {this.barcodeQuery = barcodeQuery;}
+    public String getBarcodeQuery() {
+        return barcodeQuery;
+    }
 
-    public String getBarcodeQuery() {return barcodeQuery;}
+    public void setBarcodeQuery(String barcodeQuery) {
+        this.barcodeQuery = barcodeQuery;
+    }
 
-    public ArrayList<String> getTypeFlagList() {return typeFlagList;}
-
-    public void setTypeFlag(String typeFlag) {this.typeFlagList.add(typeFlag);}
+    public ArrayList<String> getTypeFlagList() {
+        return typeFlagList;
+    }
 
     //*********************************************************************************************
+
+    public void setTypeFlag(String typeFlag) {
+        this.typeFlagList.add(typeFlag);
+    }
+
+//*********************************************************************************************
 
     public void processRawJSON(String rawJSON) throws Exception {
         if (rawJSON.trim().charAt(0) == '[') {
@@ -86,7 +110,7 @@ public class SummaryLogicForDisplay {
         Collections.sort(o.getChildren(), new SortInventoryObjectList());
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         if (o.getName() != null && !o.getName().equals(currKey) && !(o.getName().contains("Object"))) {
-           //Barcode is not added to the displayList because it is in the Label
+            //Barcode is not added to the displayList because it is in the Label
             if (!"Barcode".equals(o.getName())) {
                 for (int i = 0; i < depth - 1; i++) {
                     //Font spacing and size varies depending on the font chosen.
@@ -109,11 +133,11 @@ public class SummaryLogicForDisplay {
                 if (!Character.isWhitespace(ssb.charAt(3))) {
                     createIndentedText(ssb, 3, indentationIncrement);
                 } else if (!Character.isWhitespace(ssb.charAt(6))) {
-                    createIndentedText(ssb, 6,indentationIncrement * 2);
+                    createIndentedText(ssb, 6, indentationIncrement * 2);
                 } else if (!Character.isWhitespace(ssb.charAt(9))) {
                     createIndentedText(ssb, 9, indentationIncrement * 3);
                 } else {
-                    createIndentedText(ssb, 0,indentationIncrement * 4);
+                    createIndentedText(ssb, 0, indentationIncrement * 4);
                 }
                 displayList.add(ssb);
                 dict.put(currKey, displayList);
@@ -126,7 +150,7 @@ public class SummaryLogicForDisplay {
         }
     }
 
-//*********************************************************************************************
+    //*********************************************************************************************
 
     public InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
         switch (o.getClass().getName()) {
@@ -145,9 +169,9 @@ public class SummaryLogicForDisplay {
         }
     }
 
-    //*********************************************************************************************
+//*********************************************************************************************
 
-    private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception{
+    private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
         InventoryObject io;
         if (name == null) {
             if (!"".equals(o.optString("ID"))) {
@@ -288,8 +312,6 @@ public class SummaryLogicForDisplay {
         return io;
     }
 
-//*********************************************************************************************
-
     private InventoryObject handleSimple(Object parent, String name, Object o) {
         if (name == null) {
             return null;
@@ -315,13 +337,5 @@ public class SummaryLogicForDisplay {
             default:
                 return new InventoryObject(name, o);
         }
-    }
-
-    public static void createIndentedText(SpannableStringBuilder text,
-                                                            int marginFirstLine,
-                                                            int marginNextLines) {
-        //https://www.programmersought.com/article/45371641877/
-        text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0,
-                text.length(), 0);
     }
 }

@@ -19,6 +19,7 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.LinkedList;

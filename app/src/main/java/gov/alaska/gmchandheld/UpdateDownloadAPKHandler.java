@@ -1,9 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -18,6 +14,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,6 +43,18 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
             Manifest.permission.REQUEST_INSTALL_PACKAGES
     };
 
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // If we don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -63,7 +77,7 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
                 .setMessage("Tap Update to install the app.")
                 .setCancelable(false)
                 .setNeutralButton("Ignore Update", (dialogInterface, i) -> {
-                    Toast.makeText(this,"Ignore This Update.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Ignore This Update.", Toast.LENGTH_LONG).show();
                     //If a user refuses an update, the last modified date for that update
                     // is saved in shared preferences,
                     SharedPreferences sp = getSharedPreferences("sharedPrefs",
@@ -71,7 +85,7 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
                     Configuration.editor = sp.edit();
                     Configuration.editor.putLong("ignoreUpdateDateSP", lastModifiedRefused)
                             .apply();
-                    Intent intent1 = new Intent(this,Lookup.class);
+                    Intent intent1 = new Intent(this, Lookup.class);
                     intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     UpdateDownloadAPKHandler.this.startActivity(intent1);
                 })
@@ -91,12 +105,10 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
                 100);
     }
 
-
     private static class DownloadFileFromURL extends AsyncTask<String, String, String> {
+        private final WeakReference<UpdateDownloadAPKHandler> mActivity;
         int versionJsonResponseCode;
         String filename = "current.apk";
-
-        private final WeakReference<UpdateDownloadAPKHandler> mActivity;
 
         public DownloadFileFromURL(UpdateDownloadAPKHandler context) {
             mActivity = new WeakReference<>(context);
@@ -164,18 +176,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
             } else {
                 Toast.makeText(context, "No update available.", Toast.LENGTH_LONG).show();
             }
-        }
-    }
-
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // If we don't have permission so prompt the user
-            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
         }
     }
 }
