@@ -47,7 +47,6 @@ public class RemoteAPIDownload implements Runnable {
                 URL myURL;
                 synchronized (lockObj) {
                     myURL = new URL(url);
-                    lockObj.notify();
                 }
                 connection = (HttpURLConnection) myURL.openConnection();
                 connection.setRequestMethod("GET");
@@ -78,7 +77,6 @@ public class RemoteAPIDownload implements Runnable {
                 remoteAPIDownloadCallback = null;
                 token = null;
                 url = null;
-                lockObj.notify();
             }
         }
     }
