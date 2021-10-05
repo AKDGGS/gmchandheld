@@ -3,15 +3,11 @@ package gov.alaska.gmchandheld;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class RemoteAPIDownload implements Runnable {
-    private static Lock lock = new ReentrantLock();
     private RemoteAPIDownloadCallback remoteAPIDownloadCallback;
     private String url, token;
-    private Condition cond = lock.newCondition();
+    private Object lockObj = new Object();
 
     public void setFetchDataObj(String url, String token, RemoteAPIDownloadCallback remoteAPIDownloadCallback) throws Exception {
         if (url == null) {
@@ -22,41 +18,36 @@ public class RemoteAPIDownload implements Runnable {
         }
 
         new URL(url);
-        try {
-            lock.lock();
+        synchronized (lockObj) {
             if (this.url != null) {
                 throw new Exception("Fetch is busy");
             }
             this.url = url;
             this.token = token;
             this.remoteAPIDownloadCallback = remoteAPIDownloadCallback;
-            cond.signal();
-        } finally {
-            lock.unlock();
+            lockObj.notify();
         }
     }
 
     public void run() {
         //Infinitely produce items
         while (true) {
-            try {
-                lock.lock();
-                cond.await();
-            } catch (Exception e) {
-                continue;
-            } finally {
-                lock.unlock();
+            synchronized (lockObj) {
+                try {
+                    lockObj.wait();
+                } catch (Exception e) {
+//                    dataCallback.displayException(e);
+                    continue;
+                }
             }
 
             try {
                 InputStream inputStream;
                 HttpURLConnection connection;
                 URL myURL;
-                try {
-                    lock.lock();
+                synchronized (lockObj) {
                     myURL = new URL(url);
-                } finally {
-                    lock.lock();
+                    lockObj.notify();
                 }
                 connection = (HttpURLConnection) myURL.openConnection();
                 connection.setRequestMethod("GET");
@@ -83,13 +74,11 @@ public class RemoteAPIDownload implements Runnable {
             } catch (Exception e) {
                 remoteAPIDownloadCallback.displayException(e);
             }
-            try {
-                lock.lock();
+            synchronized (lockObj) {
                 remoteAPIDownloadCallback = null;
                 token = null;
                 url = null;
-            } finally {
-                lock.unlock();
+                lockObj.notify();
             }
         }
     }
