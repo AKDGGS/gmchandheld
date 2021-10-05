@@ -344,10 +344,10 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     private void checkIssuesList() {
-        System.out.println("Check issued reached.");
         try {
             remoteAPIDownload.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
                     BaseActivity.apiKeyBase,
+                    null,
                     this);
         } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
