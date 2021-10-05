@@ -52,7 +52,6 @@ public class RemoteAPIDownload implements Runnable {
                 try {
                     lockObj.wait();
                 } catch (Exception e) {
-//                    fetchDataCallback.displayException(e);
                     continue;
                 }
             }
