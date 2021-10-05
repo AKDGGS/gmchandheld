@@ -50,6 +50,14 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        updateViews();
+        loadData();
+        saveData();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         urlET = findViewById(R.id.urlET);
