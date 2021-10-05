@@ -22,6 +22,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 
@@ -31,7 +32,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
     private static String lastAdded;
     private ListView listView;
     private EditText barcodeET;
-    private String barcode, url;
+    private String barcode;
     private Button submitBtn;
 
     public Lookup() {
@@ -114,7 +115,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
                 processingAlert(this, barcode);
                 try {
                     barcode = URLEncoder.encode(barcode, "utf-8");
-                } catch (UnsupportedEncodingException e) {
+                } catch (Exception e) {
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
                 try {
@@ -207,7 +208,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        if (data == null || data.length() <= 2 || responseCode != 200) {
+        if (data == null || data.length() <= 2 || !(responseCode < HttpURLConnection.HTTP_BAD_REQUEST)) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;
@@ -244,10 +245,15 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
     @Override
     public void displayException(Exception e) {
         if (e.getMessage() != null) {
+            if (alert != null) {
+                alert.dismiss();
+                alert = null;
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    barcodeET.setText("");
                 }
             });
         }

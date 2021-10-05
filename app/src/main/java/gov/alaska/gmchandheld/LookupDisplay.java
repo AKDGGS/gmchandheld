@@ -23,12 +23,13 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
 public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
     private ExpandableListView expandableListView;
     private EditText invisibleET;
-    private String url, barcode;
+    private String barcode;
 
     @Override
     public int getLayoutResource() {
@@ -90,7 +91,6 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                         }
 
-                        url = baseURL + "inventory.json?barcode=" + barcode;
                         try {
                             remoteAPIDownload.setFetchDataObj(baseURL + "inventory.json?barcode=" + barcode,
                                     BaseActivity.apiKeyBase,
@@ -194,7 +194,7 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        if (data == null || data.length() <= 2 || responseCode != 200) {
+        if (data == null || data.length() <= 2 || !(responseCode < HttpURLConnection.HTTP_BAD_REQUEST)) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;
@@ -231,10 +231,15 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
     @Override
     public void displayException(Exception e) {
         if (e.getMessage() != null) {
+            if (alert != null) {
+                alert.dismiss();
+                alert = null;
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println(e.getMessage());
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    invisibleET.setText("");
                 }
             });
         }
