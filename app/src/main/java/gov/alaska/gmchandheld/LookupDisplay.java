@@ -41,7 +41,6 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
         super.onRestart();
         invisibleET = findViewById(R.id.invisibleET);
         invisibleET.setText("");
-        this.recreate();
     }
 
     @Override
