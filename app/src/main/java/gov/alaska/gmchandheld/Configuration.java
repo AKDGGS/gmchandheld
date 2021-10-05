@@ -50,14 +50,6 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        updateViews();
-        loadData();
-        saveData();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         urlET = findViewById(R.id.urlET);
@@ -202,8 +194,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) { }
         });
         if (sp.getBoolean("firstrun", true)) {
             checkIssuesList();
