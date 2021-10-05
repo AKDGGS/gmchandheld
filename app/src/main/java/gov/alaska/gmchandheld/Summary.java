@@ -93,45 +93,45 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
         Button submitBtn = findViewById(R.id.submitBtn);
         barcodeET = findViewById(R.id.barcodeET);
 
-        if (!downloading) {
-            downloading = true;
-            submitBtn.setOnClickListener(v -> {
-                if (!barcodeET.getText().toString().isEmpty()) {
-                    barcode = barcodeET.getText().toString();
-                    processingAlert(this, barcode);
-                    if (!barcode.isEmpty()) {
-                        try {
-                            barcode = URLEncoder.encode(barcode, "utf-8");
-                        } catch (UnsupportedEncodingException e) {
-//                            exception = new Exception(e.getMessage());
-                        }
-                        try {
-                            remoteAPIDownload.setFetchDataObj(
-                                    baseURL + "summary.json?barcode=" +  barcode,
-                                    BaseActivity.apiKeyBase,
-                                    this);
-                        } catch (Exception e) {
-                            System.out.println("Exception: " + e.getMessage());
-                        }
-                        barcodeET.setText("");
+        submitBtn.setOnClickListener(v -> {
+            submitBtn.setEnabled(false);
+            if (!barcodeET.getText().toString().isEmpty()) {
+                barcode = barcodeET.getText().toString();
+                processingAlert(this, barcode);
+                if (!barcode.isEmpty()) {
+                    try {
+                        barcode = URLEncoder.encode(barcode, "utf-8");
+                    } catch (Exception e) {
+//                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                    try {
+                        remoteAPIDownload.setFetchDataObj(
+                                baseURL + "summary.json?barcode=" + barcode,
+                                BaseActivity.apiKeyBase,
+                                null,
+                                this);
+                    } catch (Exception e) {
+                        System.out.println("Exception: " + e.getMessage());
                     }
                 }
-            });
-            // KeyListener listens if enter is pressed
-            barcodeET.setOnKeyListener((v, keyCode, event) -> {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    submitBtn.performClick();
-                    return true;
-                }
-                return false;
-            });
-            // Clicking barcode in history list.
-            listView.setOnItemClickListener((parent, view, position, id) -> {
-                barcodeET.setText(listView.getItemAtPosition(position).toString());
+            }
+            barcodeET.setText("");
+            submitBtn.setEnabled(true);
+        });
+        // KeyListener listens if enter is pressed
+        barcodeET.setOnKeyListener((v, keyCode, event) -> {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 submitBtn.performClick();
-            });
-        }
+                return true;
+            }
+            return false;
+        });
+        // Clicking barcode in history list.
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            barcodeET.setText(listView.getItemAtPosition(position).toString());
+            submitBtn.performClick();
+        });
     }
 
     @Override

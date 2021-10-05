@@ -82,28 +82,28 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
                                 barcode = URLEncoder.encode(barcode, "utf-8");
                             } catch (UnsupportedEncodingException e) {
 //                                exception = new Exception(e.getMessage());
-                            }
-                            try {
-                                remoteAPIDownload.setFetchDataObj(baseURL
-                                                + "summary.json?barcode=" + barcode,
-                                        BaseActivity.apiKeyBase,
-                                        this);
-                            } catch (Exception e) {
-                                System.out.println("Exception: " + e.getMessage());
-                            }
-                            invisibleET.setText("");
-                            return true;
                         }
+                        try {
+                            remoteAPIDownload.setFetchDataObj(baseURL
+                                            + "summary.json?barcode=" + barcode,
+                                    BaseActivity.apiKeyBase,
+                                    null,
+                                    this);
+                        } catch (Exception e) {
+                            System.out.println("Exception: " + e.getMessage());
+                        }
+                        return true;
                     }
                 }
-                return false;
-            });
-            SummaryLogicForDisplay summaryLogicForDisplayObj;
-            summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance()
-                    .summaryLogicForDisplayObj;
-            SpannableString title = new SpannableString(summaryLogicForDisplayObj.getBarcodeQuery());
-            SpannableString subtitle = new SpannableString(
-                    summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");
+            }
+            return false;
+        });
+        SummaryLogicForDisplay summaryLogicForDisplayObj;
+        summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance()
+                .summaryLogicForDisplayObj;
+        SpannableString title = new SpannableString(summaryLogicForDisplayObj.getBarcodeQuery());
+        SpannableString subtitle = new SpannableString(
+                summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");
 
             if (getSupportActionBar() != null) {
                 if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
