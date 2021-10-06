@@ -14,6 +14,11 @@ public class RemoteAPIDownload implements Runnable {
     private RemoteAPIDownloadCallback remoteAPIDownloadCallback;
     private String url, token;
     private RequestBody body;
+    private boolean running;
+
+    public RemoteAPIDownload() {
+        running = true;
+    }
 
     public void setUrl(String url) {
         this.url = url;
@@ -23,6 +28,9 @@ public class RemoteAPIDownload implements Runnable {
                                 String token,
                                 RequestBody body,
                                 RemoteAPIDownloadCallback remoteAPIDownloadCallback) throws Exception {
+
+        running = true;
+
         if (url == null) {
             throw new Exception("URL is null");
         }
@@ -37,6 +45,7 @@ public class RemoteAPIDownload implements Runnable {
         }
 
         synchronized (lockObj) {
+            System.out.print(" lock 1 ");
             if (this.url != null) {
                 throw new Exception("Uploading is busy");
             }
@@ -49,13 +58,17 @@ public class RemoteAPIDownload implements Runnable {
     }
 
     public void run() {
-
         //Infinitely produce items
-        while (!Thread.currentThread().isInterrupted()) {
+        while (running) {
+            if (Thread.currentThread().isInterrupted()) {
+                running = false;
+            }
             synchronized (lockObj) {
+                System.out.print("************** lock 2 ");
                 try {
                     lockObj.wait();
                 } catch (Exception e) {
+                    System.out.println("Exception thrown in lock 2: " + e.getMessage());
                     continue;
                 }
             }
@@ -66,6 +79,7 @@ public class RemoteAPIDownload implements Runnable {
                     HttpURLConnection connection;
                     URL myURL;
                     synchronized (lockObj) {
+                        System.out.print(" lock 3 ");
                         myURL = new URL(url);
                     }
                     connection = (HttpURLConnection) myURL.openConnection();
@@ -73,9 +87,12 @@ public class RemoteAPIDownload implements Runnable {
                     if (token != null) {
                         connection.setRequestProperty("Authorization", "Token " + token);
                     }
-                    connection.setReadTimeout(10 * 1000);
+                    connection.setReadTimeout(5 * 1000);
                     connection.setConnectTimeout(5 * 1000);
                     connection.connect();
+
+                    System.out.print("Response code: " + url.toString() + " " + connection.getResponseCode());
+
                     StringBuilder sb = new StringBuilder();
                     inputStream = connection.getInputStream();
                     byte[] buffer = new byte[4096];
@@ -91,7 +108,6 @@ public class RemoteAPIDownload implements Runnable {
                         while ((length = connection.getErrorStream().read(buffer)) != -1) {
                             sb.append(new String(buffer, 0, length));
                         }
-                        System.out.println("Remote: " + sb.toString());
                         throw new Exception(sb.toString());
                     }
                     remoteAPIDownloadCallback.displayData(sb.toString(), connection.getResponseCode(),
@@ -109,6 +125,7 @@ public class RemoteAPIDownload implements Runnable {
                     okhttp3.Response response;
                     imageFileRequestBody = new ImageFileRequestBody(body);
                     synchronized (this) {
+                        System.out.print(" lock 4 ");
                         request = new Request.Builder()
                                 .header("Authorization", "Token " + token)
                                 .url(url)
@@ -126,6 +143,7 @@ public class RemoteAPIDownload implements Runnable {
                 remoteAPIDownloadCallback.displayException(e);
             }
             synchronized (lockObj) {
+                System.out.print(" lock 5 ");
                 this.remoteAPIDownloadCallback = null;
                 this.body = null;
                 this.token = null;
