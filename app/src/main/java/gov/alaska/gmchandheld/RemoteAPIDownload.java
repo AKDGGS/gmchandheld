@@ -15,6 +15,10 @@ public class RemoteAPIDownload implements Runnable {
     private String url, token;
     private RequestBody body;
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public void setFetchDataObj(String url,
                                 String token,
                                 RequestBody body,
@@ -36,7 +40,6 @@ public class RemoteAPIDownload implements Runnable {
             if (this.url != null) {
                 throw new Exception("Uploading is busy");
             }
-
             this.url = url;
             this.token = token;
             this.body = body;
@@ -46,8 +49,9 @@ public class RemoteAPIDownload implements Runnable {
     }
 
     public void run() {
+
         //Infinitely produce items
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             synchronized (lockObj) {
                 try {
                     lockObj.wait();
@@ -87,6 +91,7 @@ public class RemoteAPIDownload implements Runnable {
                         while ((length = connection.getErrorStream().read(buffer)) != -1) {
                             sb.append(new String(buffer, 0, length));
                         }
+                        System.out.println("Remote: " + sb.toString());
                         throw new Exception(sb.toString());
                     }
                     remoteAPIDownloadCallback.displayData(sb.toString(), connection.getResponseCode(),

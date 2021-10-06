@@ -86,7 +86,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         baseURL = BaseActivity.sp.getString("urlText", "");
 
         remoteAPIDownload = new RemoteAPIDownload();
-        if (thread == null) {
+        if (thread == null){
             thread = new Thread(remoteAPIDownload, "remoteAPIDownloadThread");
             thread.start();
         }
@@ -252,6 +252,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
         alert = alertDialog.create();
         alert.show();
+        thread.interrupt();
+        remoteAPIDownload.setUrl(null);
         alert.setCanceledOnTouchOutside(false);
     }
 
