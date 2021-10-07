@@ -76,7 +76,6 @@ public class RemoteAPIDownload implements Runnable {
             try {
                 if (body == null) {
                     try {
-
                         URL myURL;
                         synchronized (lockObj) {
                             myURL = new URL(url);
