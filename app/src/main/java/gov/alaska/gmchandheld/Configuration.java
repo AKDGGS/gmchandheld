@@ -54,9 +54,6 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         super.onCreate(savedInstanceState);
         urlET = findViewById(R.id.urlET);
         urlET.requestFocus();
-        if (urlET.getText().toString().isEmpty()) {
-            enableTSL(this);
-        }
 
         // KeyListener listens if enter is pressed
         urlET.setOnKeyListener((v, keyCode, event) -> {
