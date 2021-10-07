@@ -50,7 +50,6 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
     private String barcode, description;
     private Uri image_uri;
     private boolean cameraOn;
-    private Integer responseCode;
     private ArrayList<File> fileList;
 
     @Override
@@ -85,7 +84,7 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
         super.onCreate(savedInstanceState);
         cameraOn = sp.getBoolean("cameraOn", false);
         Button cameraBtn = findViewById(R.id.cameraBtn);
-        fileList = new ArrayList<File>();
+        fileList = new ArrayList<>();
         if (!cameraOn) {
             cameraBtn.setVisibility(View.GONE);
         } else {
@@ -150,8 +149,6 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
         submitBtn.setEnabled(false);
         submitBtn.setOnClickListener(view -> {
             if (file.exists()) {
-                String urlBase = BaseActivity.sp.getString("urlText", "");
-                String url = urlBase + "/upload.json";
                 if (barcodeET.getText().toString().trim().length() != 0) {
                     barcode = barcodeET.getText().toString().trim();
                 }
@@ -169,14 +166,13 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
 
                 RequestBody requestBody = builder.build();
                 try {
-                    remoteAPIDownload.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev//upload.json",
+                    remoteAPIDownload.setFetchDataObj(baseURL + "/upload.json",
                             BaseActivity.apiKeyBase,
                             requestBody,
                             this);
                 } catch (Exception e) {
-                    System.out.println("Exception: " + e.getMessage());
+                    displayException(e);
                 }
-                System.out.println("File: " + file + " " + file.exists());
                 fileList.add(file);
             }
         });
@@ -197,7 +193,6 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                                            @NonNull int[] grantResults) {
         if (requestCode == 1000) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                System.out.println("File " + file);
                 openCamera(file);
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
@@ -266,7 +261,7 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println(e.getMessage());
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
         }
