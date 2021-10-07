@@ -1,36 +1,63 @@
 package gov.alaska.gmchandheld;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.net.ssl.SSLContext;
+
 public class GetToken extends AppCompatActivity {
-    private EditText apiTokenET;
+    SharedPreferences sp;
+    private EditText apiTokenET, urlET;
+    private TextView urlTV;
     private IntentIntegrator apiQrScan;
-    private Button submitBtn;
+    private Button submitBtn, urlCameraBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_token);
+        urlET = findViewById(R.id.urlET);
+        urlTV = findViewById(R.id.urlTV);
         apiTokenET = findViewById(R.id.apiTokenET);
-        apiTokenET.requestFocus();
+        urlCameraBtn = findViewById(R.id.urlCameraBtn);
+        sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+        if (!sp.getString("urlText", "").equals("")) {
+            urlTV.setVisibility(View.GONE);
+            urlET.setVisibility(View.GONE);
+            urlCameraBtn.setVisibility(View.GONE);
+            apiTokenET.requestFocus();
+        } else {
+            enableTSL(this);
+            urlET.requestFocus();
+        }
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("GMC Handheld");
+
         loadGetToken();
     }
 
@@ -38,8 +65,10 @@ public class GetToken extends AppCompatActivity {
         LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
         apiTokenET = findViewById(R.id.apiTokenET);
         Button cameraBtn = findViewById(R.id.cameraBtn);
+//        urlCameraBtn = findViewById(R.id.urlCameraBtn);
         if (!BaseActivity.sp.getBoolean("cameraOn", false)) {
             cameraBtn.setVisibility(View.GONE);
+            urlCameraBtn.setVisibility(View.GONE);
         } else {
             apiQrScan = new IntentIntegrator(this);
             apiQrScan.setBeepEnabled(true);
@@ -54,6 +83,16 @@ public class GetToken extends AppCompatActivity {
         });
         submitBtn = findViewById(R.id.submitBtn);
         submitBtn.setOnClickListener(v -> {
+            EditText urlET = findViewById(R.id.urlET);
+            SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+            TextView urlTV = findViewById(R.id.urlTV);
+
+            if (sp.getString("urlText", "").equals("")) {
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("urlText", urlET.getText().toString());
+                editor.apply();
+            }
+
             if (!apiTokenET.getText().toString().isEmpty()) {
                 BaseActivity.apiKeyBase = apiTokenET.getText().toString();
                 finish();
