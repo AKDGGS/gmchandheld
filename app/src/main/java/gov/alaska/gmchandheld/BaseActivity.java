@@ -14,24 +14,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.zxing.integration.android.IntentIntegrator;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-
-import javax.net.ssl.SSLContext;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public static String apiKeyBase = null;
@@ -188,28 +178,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             return true;
         } else {
             return super.onOptionsItemSelected(item);
-        }
-    }
-
-    public void enableTSL(Context mContext) {
-        try {
-            // enables TSL-1.2 if Google Play is updated on old devices.
-            // doesn't work with emulators
-            // https://stackoverflow.com/a/29946540
-            ProviderInstaller.installIfNeeded(mContext);
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-        SSLContext sslContext;
-        try {
-            sslContext = SSLContext.getInstance("TLSv1.2");
-            sslContext.init(null, null, null);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
         }
     }
 
