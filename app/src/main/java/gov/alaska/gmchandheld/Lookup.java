@@ -71,7 +71,6 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableTSL(this);
         barcodeET = findViewById(R.id.barcodeET);
         barcodeET.requestFocus();
         deleteApkFile();
