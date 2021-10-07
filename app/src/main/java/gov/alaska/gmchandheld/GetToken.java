@@ -39,6 +39,7 @@ public class GetToken extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_token);
+        enableTSL(this);
         urlET = findViewById(R.id.urlET);
         urlTV = findViewById(R.id.urlTV);
         apiTokenET = findViewById(R.id.apiTokenET);
@@ -50,7 +51,6 @@ public class GetToken extends AppCompatActivity {
             urlCameraBtn.setVisibility(View.GONE);
             apiTokenET.requestFocus();
         } else {
-            enableTSL(this);
             urlET.requestFocus();
         }
 
