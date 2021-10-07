@@ -130,4 +130,26 @@ public class GetToken extends AppCompatActivity {
             }
         }
     }
+
+    public void enableTSL(Context mContext) {
+        try {
+            // enables TSL-1.2 if Google Play is updated on old devices.
+            // doesn't work with emulators
+            // https://stackoverflow.com/a/29946540
+            ProviderInstaller.installIfNeeded(mContext);
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
+        SSLContext sslContext;
+        try {
+            sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(null, null, null);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+    }
 }
