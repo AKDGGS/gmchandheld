@@ -55,26 +55,27 @@ public class RemoteAPIDownload implements Runnable {
 
     public void run() {
         //Infinitely produce items
-        while (true) {
-            synchronized (lockObj) {
+        synchronized (lockObj) {
+            while (true) {
+//            synchronized (lockObj) {
                 try {
                     url = null;
                     lockObj.wait();
                 } catch (Exception e) {
                     continue;
                 }
-            }
-            Request request;
-            okhttp3.Response response;
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .followRedirects(false)
-                    .followSslRedirects(false)
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .writeTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(10, TimeUnit.SECONDS)
-                    .build();
+//            }
+                Request request;
+                okhttp3.Response response;
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .followRedirects(false)
+                        .followSslRedirects(false)
+                        .connectTimeout(10, TimeUnit.SECONDS)
+                        .writeTimeout(10, TimeUnit.SECONDS)
+                        .readTimeout(10, TimeUnit.SECONDS)
+                        .build();
 
-            try {
+                try {
                     if (body == null) {
                         try {
                             URL myURL;
@@ -90,7 +91,7 @@ public class RemoteAPIDownload implements Runnable {
                             response = client.newCall(request).execute();
                             int timeout = 10000;
                             long elapsed = System.currentTimeMillis() - startTime;
-                            System.out.println(elapsed > timeout);
+
                             if (elapsed > timeout) {
                                 throw new InterruptedException("Total timeout");
                             }
@@ -102,13 +103,13 @@ public class RemoteAPIDownload implements Runnable {
                     } else if (body.contentType().type().equals("multipart")) {
                         ImageFileRequestBody imageFileRequestBody;
                         imageFileRequestBody = new ImageFileRequestBody(body);
-                        synchronized (this) {
-                            request = new Request.Builder()
-                                    .header("Authorization", "Token " + token)
-                                    .url(url)
-                                    .post(imageFileRequestBody)
-                                    .build();
-                        }
+//                        synchronized (this) {
+                        request = new Request.Builder()
+                                .header("Authorization", "Token " + token)
+                                .url(url)
+                                .post(imageFileRequestBody)
+                                .build();
+//                        }
                         long startTime = System.currentTimeMillis();
                         response = client.newCall(request).execute();
                         int timeout = 10000;
@@ -118,10 +119,11 @@ public class RemoteAPIDownload implements Runnable {
                         }
                         remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message());
                     }
-            } catch (InterruptedException interruptedException){
-                remoteAPIDownloadCallback.displayException(interruptedException);
-            } catch (Exception e) {
-                remoteAPIDownloadCallback.displayException(e);
+                } catch (InterruptedException interruptedException) {
+                    remoteAPIDownloadCallback.displayException(interruptedException);
+                } catch (Exception e) {
+                    remoteAPIDownloadCallback.displayException(e);
+                }
             }
         }
     }
