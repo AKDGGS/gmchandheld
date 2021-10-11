@@ -54,76 +54,70 @@ public class RemoteAPIDownload implements Runnable {
     }
 
     public void run() {
+        URL myURL;
         //Infinitely produce items
-        synchronized (lockObj) {
-            while (true) {
-//            synchronized (lockObj) {
+        while (true) {
+            synchronized (lockObj) {
                 try {
                     url = null;
                     lockObj.wait();
+                    myURL = new URL(url);
                 } catch (Exception e) {
                     continue;
                 }
-//            }
-                Request request;
-                okhttp3.Response response;
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .followRedirects(false)
-                        .followSslRedirects(false)
-                        .connectTimeout(10, TimeUnit.SECONDS)
-                        .writeTimeout(10, TimeUnit.SECONDS)
-                        .readTimeout(10, TimeUnit.SECONDS)
-                        .build();
-
-                try {
-                    if (body == null) {
-                        try {
-                            URL myURL;
-                            synchronized (lockObj) {
-                                myURL = new URL(url);
-                            }
-                            request = new Request.Builder()
-                                    .header("Authorization", "Token " + token)
-                                    .url(myURL)
-                                    .build();
-
-                            long startTime = System.currentTimeMillis();
-                            response = client.newCall(request).execute();
-                            int timeout = 10000;
-                            long elapsed = System.currentTimeMillis() - startTime;
-
-                            if (elapsed > timeout) {
-                                throw new InterruptedException("Total timeout");
-                            }
-                            remoteAPIDownloadCallback.displayData(response.body().string(), response.code(), response.message());
-                        } catch (Exception e) {
-                            remoteAPIDownloadCallback.displayException(e);
-                            e.printStackTrace();
-                        }
-                    } else if (body.contentType().type().equals("multipart")) {
-                        ImageFileRequestBody imageFileRequestBody;
-                        imageFileRequestBody = new ImageFileRequestBody(body);
-//                        synchronized (this) {
+            }
+            Request request;
+            okhttp3.Response response;
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .followRedirects(false)
+                    .followSslRedirects(false)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .build();
+            try {
+                if (body == null) {
+                    try {
                         request = new Request.Builder()
                                 .header("Authorization", "Token " + token)
-                                .url(url)
-                                .post(imageFileRequestBody)
+                                .url(myURL)
                                 .build();
-//                        }
+
                         long startTime = System.currentTimeMillis();
                         response = client.newCall(request).execute();
                         int timeout = 10000;
                         long elapsed = System.currentTimeMillis() - startTime;
+                        System.out.println(elapsed > timeout);
                         if (elapsed > timeout) {
-                            throw new InterruptedException("Timeout");
+                            throw new InterruptedException("Total timeout");
                         }
-                        remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message());
+                        remoteAPIDownloadCallback.displayData(response.body().string(), response.code(), response.message());
+                    } catch (Exception e) {
+                        remoteAPIDownloadCallback.displayException(e);
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException interruptedException) {
-                    remoteAPIDownloadCallback.displayException(interruptedException);
-                } catch (Exception e) {
-                    remoteAPIDownloadCallback.displayException(e);
+                } else if (body.contentType().type().equals("multipart")) {
+                    ImageFileRequestBody imageFileRequestBody;
+                    imageFileRequestBody = new ImageFileRequestBody(body);
+                    request = new Request.Builder()
+                            .header("Authorization", "Token " + token)
+                            .url(myURL)
+                            .post(imageFileRequestBody)
+                            .build();
+
+                    long startTime = System.currentTimeMillis();
+                    response = client.newCall(request).execute();
+                    int timeout = 10000;
+                    long elapsed = System.currentTimeMillis() - startTime;
+                    if (elapsed > timeout) {
+                        throw new InterruptedException("Timeout");
+                    }
+                    remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message());
                 }
+            } catch (InterruptedException interruptedException) {
+                remoteAPIDownloadCallback.displayException(interruptedException);
+            } catch (Exception e) {
+                remoteAPIDownloadCallback.displayException(e);
             }
         }
     }
