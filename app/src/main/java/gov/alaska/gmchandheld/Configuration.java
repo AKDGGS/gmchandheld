@@ -115,7 +115,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         saveData();
     }
 
-    private void cameraToScannerChangeWatcher() {
+    public void cameraToScannerChangeWatcher() {
         cameraToScannerBtn.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             if (isChecked) {
                 BaseActivity.editor.putBoolean("cameraOn", true).apply();
@@ -125,7 +125,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         });
     }
 
-    private void autoUpdateChangeWatcher() {
+    public void autoUpdateChangeWatcher() {
         final Intent intent = new Intent(Configuration.this,
                 UpdateBroadcastReceiver.class);
         boolean alarmUp = (PendingIntent.getBroadcast(Configuration.this, 2,
@@ -179,7 +179,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         });
     }
 
-    private void urlInputChangeWatcher() {
+    public void urlInputChangeWatcher() {
         urlET.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -204,7 +204,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         return apiET.getText().toString();
     }
 
-    private void apiInputChangeWatcher() {
+    public void apiInputChangeWatcher() {
         apiET.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -256,7 +256,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         cameraToScannerBtn.setChecked(sp.getBoolean("cameraOn", false));
     }
 
-    private void hourInputChangeWatcher() {
+    public void hourInputChangeWatcher() {
         hourInput.addTextChangedListener(new TextWatcher() {
             String strBefore;
 
@@ -294,7 +294,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         });
     }
 
-    private void minuteInputChangeWatcher() {
+    public void minuteInputChangeWatcher() {
         minuteInput.addTextChangedListener(new TextWatcher() {
             String strBefore;
 
@@ -331,14 +331,14 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         }
     }
 
-    private void checkIssuesList() {
+    public void checkIssuesList() {
         try {
             remoteAPIDownload.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
                     BaseActivity.apiKeyBase,
                     null,
                     this);
         } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -389,7 +389,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         }
     }
 
-    private void limit(EditText x, int limax) {
+    public void limit(EditText x, int limax) {
 //      https://stackoverflow.com/a/25366712
         if (x.getText().toString() == null || x.getText().toString().length() == 0) {
             x.setText(String.format(Locale.getDefault(), "%d", 0));
@@ -405,7 +405,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         }
     }
 
-    private void checkSDKLevel() {
+    public void checkSDKLevel() {
         if (Build.VERSION.SDK_INT <= 24) {
             BaseActivity.intent = qrScan.createScanIntent();
         } else {
@@ -434,7 +434,6 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    System.out.println(e.getMessage());
                 }
             });
         }
