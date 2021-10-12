@@ -82,7 +82,6 @@ public class RemoteAPIDownload implements Runnable {
                                 .header("Authorization", "Token " + token)
                                 .url(myURL)
                                 .build();
-
                         long startTime = System.currentTimeMillis();
                         response = client.newCall(request).execute();
                         int timeout = 10000;

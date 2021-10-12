@@ -14,11 +14,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import com.google.zxing.integration.android.IntentIntegrator;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -76,7 +79,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         baseURL = BaseActivity.sp.getString("urlText", "");
 
         remoteAPIDownload = new RemoteAPIDownload();
-        if (thread == null){
+        if (thread == null) {
             thread = new Thread(remoteAPIDownload, "remoteAPIDownloadThread");
             thread.start();
         }

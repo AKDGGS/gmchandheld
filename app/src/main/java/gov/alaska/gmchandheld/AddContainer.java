@@ -24,7 +24,6 @@ import java.net.URLEncoder;
 public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallback {
     private IntentIntegrator qrScan;
     private EditText addContainerBarcodeET, addContainerNameET, addContainerRemarkET;
-    private String data;
 
     @Override
     public int getLayoutResource() {

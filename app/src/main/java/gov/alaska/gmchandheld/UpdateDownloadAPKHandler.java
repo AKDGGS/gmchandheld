@@ -131,7 +131,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
                             .getExternalCacheDir() + "/" + filename);
                     byte[] data = new byte[1024];
                     long total = 0;
-
                     while ((count = input.read(data)) != -1) {
                         total += count;
                         output.write(data, 0, count);
