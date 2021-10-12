@@ -15,63 +15,6 @@
         layout="@layout/toolbar" />
 
     <TextView
-        android:id="@+id/urlTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:text="Please enter the URL."
-        android:textColor="#ff353535"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="12dp"
-        android:weightSum="8">
-
-        <EditText
-            android:id="@+id/urlET"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_weight="6"
-            android:inputType="text"
-            android:paddingStart="16dp"
-            android:paddingLeft="16dp"
-            android:text=""
-            android:hint="The URL can be blank."
-            android:selectAllOnFocus="true"
-            android:nextFocusDown="@+id/apiTokenET"
-            android:nextFocusUp="@+id/apiTokenET"
-            android:nextFocusLeft="@+id/apiTokenET"
-            android:nextFocusRight="@+id/apiTokenET"
-            tools:ignore="RtlSymmetry" />
-
-        <Button
-            android:id="@+id/urlCameraBtn"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1.0"
-            android:drawableBottom="@drawable/ic_scanner_qr"
-            android:nextFocusDown="@+id/cameraBtn"
-            android:nextFocusUp="@+id/cameraBtn"
-            android:nextFocusLeft="@+id/cameraBtn"
-            android:nextFocusRight="@+id/cameraBtn"
-            android:layout_marginEnd="5dp" />
-    </LinearLayout>
-
-
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
