@@ -22,7 +22,6 @@ import java.net.URLEncoder;
 
 public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
     private EditText oldBarcodeET, newBarcodeET;
-    private String data;
 
     @Override
     public int getLayoutResource() {
@@ -96,7 +95,7 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
 
                 try {
                     remoteAPIDownload.setFetchDataObj(baseURL + "recode.json?" + sb.toString(),
-                            BaseActivity.apiKeyBase, null,this);
+                            BaseActivity.apiKeyBase, null, this);
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
                 }
