@@ -24,10 +24,10 @@ import gov.alaska.gmchandheld.comparators.SortInventoryObjectList;
 public class LookupLogicForDisplay {
     private final List<String> keyList;
     private final Map<String, List<SpannableStringBuilder>> displayDict;
-    private int ID;
     private final NumberFormat nf = NumberFormat.getNumberInstance();
-    private boolean radiationWarningFlag;
     private final ArrayList<String> typeFlagList = new ArrayList<>();
+    private int ID;
+    private boolean radiationWarningFlag;
     private String barcodeQuery;
 
     public LookupLogicForDisplay() {
@@ -36,6 +36,11 @@ public class LookupLogicForDisplay {
         radiationWarningFlag = false;
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(1);
+    }
+
+    public static void createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
+        //https://www.programmersought.com/article/45371641877/
+        text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
     }
 
     public List<String> getKeyList() {
@@ -62,15 +67,17 @@ public class LookupLogicForDisplay {
         this.typeFlagList.add(typeFlag);
     }
 
-    public void setBarcodeQuery(String barcodeQuery) {
-        this.barcodeQuery = barcodeQuery;
-    }
-
     public String getBarcodeQuery() {
         return barcodeQuery;
     }
 
     //*********************************************************************************************
+
+    public void setBarcodeQuery(String barcodeQuery) {
+        this.barcodeQuery = barcodeQuery;
+    }
+
+//*********************************************************************************************
 
     public void processRawJSON(String rawJSON) throws Exception {
 
@@ -145,7 +152,7 @@ public class LookupLogicForDisplay {
         }
     }
 
-//*********************************************************************************************
+    //*********************************************************************************************
 
     public InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
         switch (o.getClass().getName()) {
@@ -164,7 +171,7 @@ public class LookupLogicForDisplay {
         }
     }
 
-    //*********************************************************************************************
+//*********************************************************************************************
 
     private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
         InventoryObject io;
@@ -343,8 +350,6 @@ public class LookupLogicForDisplay {
         }
         return io;
     }
-
-//*********************************************************************************************
 
     private InventoryObject handleSimple(Object parent, String name, Object o) {
         // Simple values should always have a name
@@ -562,10 +567,5 @@ public class LookupLogicForDisplay {
             default:
                 return new InventoryObject(name, o);
         }
-    }
-
-    public static void createIndentedText(SpannableStringBuilder text, int marginFirstLine, int marginNextLines) {
-        //https://www.programmersought.com/article/45371641877/
-        text.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines), 0, text.length(), 0);
     }
 }
