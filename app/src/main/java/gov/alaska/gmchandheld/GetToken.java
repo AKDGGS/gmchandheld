@@ -30,8 +30,7 @@ import javax.net.ssl.SSLContext;
 
 public class GetToken extends AppCompatActivity {
     SharedPreferences sp;
-    private EditText apiTokenET, urlET;
-    private TextView urlTV;
+    private EditText apiTokenET;
     private IntentIntegrator apiQrScan;
     private Button submitBtn, urlCameraBtn;
 
@@ -40,8 +39,8 @@ public class GetToken extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_token);
         enableTSL(this);
-        urlET = findViewById(R.id.urlET);
-        urlTV = findViewById(R.id.urlTV);
+        EditText urlET = findViewById(R.id.urlET);
+        TextView urlTV = findViewById(R.id.urlTV);
         apiTokenET = findViewById(R.id.apiTokenET);
         urlCameraBtn = findViewById(R.id.urlCameraBtn);
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
