@@ -23,7 +23,6 @@ import java.net.URLEncoder;
 
 public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallback {
     private EditText moveContentsFromET, moveContentsToET;
-    private String data;
 
     @Override
     public int getLayoutResource() {
