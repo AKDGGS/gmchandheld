@@ -106,7 +106,7 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
         imageViewTV = findViewById(R.id.imageViewTv);
         String filename = "img_" + new SimpleDateFormat("yyyyMMddHHmm'.jpeg'", Locale.US)
                 .format(new Date());
-        File file = new File(PHOTO_PATH + filename);
+        file = new File(PHOTO_PATH + filename);
         uploadImageIV.setOnClickListener(view -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.CAMERA) ==
@@ -178,9 +178,9 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
         });
     }
 
-    private void openCamera(File file) {
+    private void openCamera(File f) {
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
+        values.put(MediaStore.Images.Media.DATA, f.getAbsolutePath());
         image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 values);
         Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
