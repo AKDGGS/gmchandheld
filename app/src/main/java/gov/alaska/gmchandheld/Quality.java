@@ -30,7 +30,6 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     private static ArrayList<String> selectedItemsDisplayList;
     private EditText barcodeET, remarkET;
     private TextView showIssuesTV;
-    private String data;
 
     public Quality() {
         selectedItems = new ArrayList<>();
@@ -248,7 +247,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (e.getMessage().isEmpty()){
+                    if (e.getMessage().isEmpty()) {
                         Toast.makeText(getApplicationContext(), "There was an error.",
                                 Toast.LENGTH_LONG).show();
                     } else {
