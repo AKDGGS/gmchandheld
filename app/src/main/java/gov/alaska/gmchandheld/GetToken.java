@@ -9,7 +9,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,31 +31,19 @@ public class GetToken extends AppCompatActivity {
     SharedPreferences sp;
     private EditText apiTokenET;
     private IntentIntegrator apiQrScan;
-    private Button submitBtn, urlCameraBtn;
+    private Button submitBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_token);
         enableTSL(this);
-        EditText urlET = findViewById(R.id.urlET);
-        TextView urlTV = findViewById(R.id.urlTV);
         apiTokenET = findViewById(R.id.apiTokenET);
-        urlCameraBtn = findViewById(R.id.urlCameraBtn);
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-        if (!sp.getString("urlText", "").equals("")) {
-            urlTV.setVisibility(View.GONE);
-            urlET.setVisibility(View.GONE);
-            urlCameraBtn.setVisibility(View.GONE);
-            apiTokenET.requestFocus();
-        } else {
-            urlET.requestFocus();
-        }
-
+        apiTokenET.requestFocus();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("GMC Handheld");
-
         loadGetToken();
     }
 
@@ -64,10 +51,8 @@ public class GetToken extends AppCompatActivity {
         LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
         apiTokenET = findViewById(R.id.apiTokenET);
         Button cameraBtn = findViewById(R.id.cameraBtn);
-//        urlCameraBtn = findViewById(R.id.urlCameraBtn);
         if (!BaseActivity.sp.getBoolean("cameraOn", false)) {
             cameraBtn.setVisibility(View.GONE);
-            urlCameraBtn.setVisibility(View.GONE);
         } else {
             apiQrScan = new IntentIntegrator(this);
             apiQrScan.setBeepEnabled(true);
@@ -82,16 +67,6 @@ public class GetToken extends AppCompatActivity {
         });
         submitBtn = findViewById(R.id.submitBtn);
         submitBtn.setOnClickListener(v -> {
-            EditText urlET = findViewById(R.id.urlET);
-            SharedPreferences sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-            TextView urlTV = findViewById(R.id.urlTV);
-
-            if (sp.getString("urlText", "").equals("")) {
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString("urlText", urlET.getText().toString());
-                editor.apply();
-            }
-
             if (!apiTokenET.getText().toString().isEmpty()) {
                 BaseActivity.apiKeyBase = apiTokenET.getText().toString();
                 finish();

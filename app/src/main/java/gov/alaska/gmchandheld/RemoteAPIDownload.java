@@ -86,7 +86,6 @@ public class RemoteAPIDownload implements Runnable {
                         response = client.newCall(request).execute();
                         int timeout = 10000;
                         long elapsed = System.currentTimeMillis() - startTime;
-                        System.out.println(elapsed > timeout);
                         if (elapsed > timeout) {
                             throw new InterruptedException("Total timeout");
                         }
