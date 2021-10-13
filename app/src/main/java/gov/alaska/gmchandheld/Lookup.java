@@ -206,14 +206,27 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        if (data == null || data.length() <= 2 || !(responseCode < HttpURLConnection.HTTP_BAD_REQUEST)) {
+        if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2 ) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;
             }
-            runOnUiThread(() -> Toast.makeText(Lookup.this,
-                    "There was an error looking up " + barcode + ".\n" +
-                            "Does the barcode exist?", Toast.LENGTH_LONG).show());
+            if (responseCode == 403){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(Lookup.this,
+                                "The token is not correct.", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(Lookup.this, Configuration.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Lookup.this.startActivity(intent);
+                    }
+                });
+            } else {
+                runOnUiThread(() -> Toast.makeText(Lookup.this,
+                        "There was an error looking up " + barcode + ".\n" +
+                                "Does the barcode exist?", Toast.LENGTH_LONG).show());
+            }
         } else {
             LookupLogicForDisplay lookupLogicForDisplayObj;
             lookupLogicForDisplayObj = new LookupLogicForDisplay();
