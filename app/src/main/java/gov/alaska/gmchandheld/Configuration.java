@@ -237,6 +237,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         BaseActivity.editor.putBoolean("cameraOn", cameraToScannerBtn.isChecked());
         BaseActivity.editor.putBoolean("alarmOn", autoUpdateBtn.isChecked());
         BaseActivity.editor.apply();
+        checkIssuesList();
     }
 
     public void loadData() {
@@ -423,8 +424,13 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        editor = sp.edit();
-        editor.putString("issuesString", data).commit();
+        if (responseCode != 403) {
+            editor = sp.edit();
+            editor.putString("issuesString", data).commit();
+        } else {
+            Toast.makeText(Configuration.this,
+                    "The token is not correct.", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
