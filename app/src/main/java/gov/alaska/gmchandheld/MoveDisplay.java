@@ -23,6 +23,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
@@ -259,10 +260,23 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (null == data) {
-                    Toast.makeText(MoveDisplay.this, "There was a problem. Nothing was moved.",
-                            Toast.LENGTH_LONG).show();
-                    destinationET.requestFocus();
+                if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
+                    if (responseCode == 403) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MoveDisplay.this,
+                                        "The token is not correct.", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(MoveDisplay.this, Configuration.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                MoveDisplay.this.startActivity(intent);
+                            }
+                        });
+                    } else {
+                        Toast.makeText(MoveDisplay.this, "There was a problem. Nothing was moved.",
+                                Toast.LENGTH_LONG).show();
+                        destinationET.requestFocus();
+                    }
                 } else if (data.contains("success")) {
                     Toast.makeText(MoveDisplay.this, "The contents were moved.",
                             Toast.LENGTH_LONG).show();

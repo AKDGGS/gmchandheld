@@ -246,11 +246,24 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                 uploadImageIV.setImageDrawable(null);
                 imageViewTV.setText(R.string.click_to_add_image);
             } else {
-                Toast.makeText(TakePhoto.this,
-                        "There was a problem finding the image. Please take it again.",
-                        Toast.LENGTH_SHORT).show();
-                uploadImageIV.setImageDrawable(null);
-                barcodeET.requestFocus();
+                if (responseCode == 403) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(TakePhoto.this,
+                                    "The token is not correct.", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(TakePhoto.this, Configuration.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            TakePhoto.this.startActivity(intent);
+                        }
+                    });
+                } else {
+                    Toast.makeText(TakePhoto.this,
+                            "There was a problem finding the image. Please take it again.",
+                            Toast.LENGTH_SHORT).show();
+                    uploadImageIV.setImageDrawable(null);
+                    barcodeET.requestFocus();
+                }
             }
         });
     }

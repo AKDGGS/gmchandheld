@@ -19,6 +19,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
 public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallback {
@@ -163,10 +164,24 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (null == data) {
-                    Toast.makeText(MoveContents.this, "There was a problem. Nothing was moved.",
-                            Toast.LENGTH_LONG).show();
-                    moveContentsFromET.requestFocus();
+                System.out.println(data);
+                if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
+                    if (responseCode == 403) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MoveContents.this,
+                                        "The token is not correct.", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(MoveContents.this, Configuration.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                MoveContents.this.startActivity(intent);
+                            }
+                        });
+                    } else {
+                        Toast.makeText(MoveContents.this, "There was a problem. Nothing was moved.",
+                                Toast.LENGTH_LONG).show();
+                        moveContentsFromET.requestFocus();
+                    }
                 } else if (data.contains("success")) {
                     Toast.makeText(MoveContents.this, "The contents were moved.",
                             Toast.LENGTH_LONG).show();

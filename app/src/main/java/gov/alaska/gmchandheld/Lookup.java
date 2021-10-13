@@ -206,7 +206,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2 ) {
+        if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;

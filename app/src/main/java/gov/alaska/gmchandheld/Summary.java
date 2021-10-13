@@ -193,14 +193,27 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        if (data == null || !(responseCode < HttpURLConnection.HTTP_BAD_REQUEST)) {
+        if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;
             }
-            runOnUiThread(() -> Toast.makeText(Summary.this,
-                    "There was an error looking up " + barcode + ".\n" +
-                            "Does the barcode a container?", Toast.LENGTH_LONG).show());
+            if (responseCode == 403) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(Summary.this,
+                                "The token is not correct.", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(Summary.this, Configuration.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Summary.this.startActivity(intent);
+                    }
+                });
+            } else {
+                runOnUiThread(() -> Toast.makeText(Summary.this,
+                        "There was an error looking up " + barcode + ".\n" +
+                                "Does the barcode a container?", Toast.LENGTH_LONG).show());
+            }
         } else {
             SummaryLogicForDisplay summaryLogicForDisplayObj;
             summaryLogicForDisplayObj = new SummaryLogicForDisplay();

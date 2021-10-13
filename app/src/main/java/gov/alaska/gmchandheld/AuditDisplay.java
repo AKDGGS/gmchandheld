@@ -23,6 +23,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
@@ -235,11 +236,24 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
         runOnUiThread(() -> {
-            if (null == data) {
-                Toast.makeText(AuditDisplay.this,
-                        "There was a problem. The audit was not added.",
-                        Toast.LENGTH_SHORT).show();
-                remarkET.requestFocus();
+            if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
+                if (responseCode == 403) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AuditDisplay.this,
+                                    "The token is not correct.", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(AuditDisplay.this, Configuration.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            AuditDisplay.this.startActivity(intent);
+                        }
+                    });
+                } else {
+                    Toast.makeText(AuditDisplay.this,
+                            "There was a problem. The audit was not added.",
+                            Toast.LENGTH_SHORT).show();
+                    remarkET.requestFocus();
+                }
             } else if (data.contains("success")) {
                 Toast.makeText(AuditDisplay.this, "The audit was added.",
                         Toast.LENGTH_SHORT).show();

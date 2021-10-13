@@ -179,14 +179,27 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage) {
-        if (data == null || !(responseCode < HttpURLConnection.HTTP_BAD_REQUEST)) {
+        if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;
             }
-            runOnUiThread(() -> Toast.makeText(SummaryDisplay.this,
-                    "There was an error looking up " + barcode + ".\n" +
-                            "Does the barcode a container?", Toast.LENGTH_LONG).show());
+            if (responseCode == 403) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SummaryDisplay.this,
+                                "The token is not correct.", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(SummaryDisplay.this, Configuration.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        SummaryDisplay.this.startActivity(intent);
+                    }
+                });
+            } else {
+                runOnUiThread(() -> Toast.makeText(SummaryDisplay.this,
+                        "There was an error looking up " + barcode + ".\n" +
+                                "Does the barcode a container?", Toast.LENGTH_LONG).show());
+            }
         } else {
             SummaryLogicForDisplay summaryLogicForDisplayObj =
                     new SummaryLogicForDisplay();
