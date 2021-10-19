@@ -59,7 +59,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         urlET.setOnKeyListener((v, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 if (!urlET.getText().toString().startsWith("https")) {
-                    Toast.makeText(Configuration.this, "The URL must be https.",
+                    Toast.makeText(Configuration.this, "The URL must use https.",
                             Toast.LENGTH_SHORT).show();
                     urlET.requestFocus();
                     urlET.selectAll();
