@@ -29,7 +29,7 @@
     <string name="minute">Minute</string>
     <string name="audit">Audit</string>
     <string name="updating_app">Updating App</string>
-    <string name="camera_to_scanner">Camera to Scanner</string>
+    <string name="camera_as_scanner">Camera as Scanner</string>
     <string name="off">Off</string>
     <string name="on">On</string>
     <string name="automatic_updates">Automatic Updates</string>
