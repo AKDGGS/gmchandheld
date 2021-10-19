@@ -32,7 +32,7 @@ import java.util.Locale;
 
 public class Configuration extends BaseActivity implements RemoteAPIDownloadCallback {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
-    private EditText hourInput, minuteInput, urlET, apiET;
+    private EditText hourInput, minuteInput, urlET;
     private String hour, minute, url;
 
     @Override
@@ -63,9 +63,6 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                             Toast.LENGTH_SHORT).show();
                     urlET.requestFocus();
                     urlET.selectAll();
-                } else {
-                    invalidateOptionsMenu();  //creates the menu
-                    apiET.requestFocus();
                 }
                 return true;
             }
@@ -79,16 +76,13 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
-        apiET = findViewById(R.id.apiET);
         autoUpdateBtn = findViewById(R.id.autoUpdateBtn);
         hourInput = findViewById(R.id.hourET);
         minuteInput = findViewById(R.id.minuteET);
         cameraToScannerBtn = findViewById(R.id.cameraToScannerBtn);
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
-        Button apiCameraBtn = findViewById(R.id.apiCameraBtn);
         if (!sp.getBoolean("cameraOn", false)) {
             urlCameraBtn.setVisibility(View.GONE);
-            apiCameraBtn.setVisibility(View.GONE);
         } else {
             qrScan = new IntentIntegrator(this);
             qrScan.setBeepEnabled(true);
@@ -98,17 +92,13 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
             checkSDKLevel();
             startActivityForResult(BaseActivity.intent, 1);
         });
-        apiCameraBtn.setOnClickListener(view -> {
-            checkSDKLevel();
-            startActivityForResult(BaseActivity.intent, 2);
-        });
+
         final Button updateBtn = findViewById(R.id.updateBtn);
         updateBtn.setOnClickListener(v -> updateAPK());
         updateViews();
         hourInputChangeWatcher();
         minuteInputChangeWatcher();
         urlInputChangeWatcher();
-        apiInputChangeWatcher();
         autoUpdateChangeWatcher();
         cameraToScannerChangeWatcher();
         loadData();
@@ -199,28 +189,6 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         }
     }
 
-    public String getApiKey() {
-        apiET = findViewById(R.id.apiET);
-        return apiET.getText().toString();
-    }
-
-    public void apiInputChangeWatcher() {
-        apiET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                BaseActivity.apiKeyBase = getApiKey();
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-    }
-
     public String getUrl() {
         urlET = findViewById(R.id.urlET);
         url = urlET.getText().toString();
@@ -250,7 +218,6 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
 
     public void updateViews() {
         urlET.setText(BaseActivity.sp.getString("urlText", ""));
-        apiET.setText(BaseActivity.apiKeyBase);
         hourInput.setText(sp.getString("updateHour", "24"));
         minuteInput.setText(sp.getString("updateMinute", "0"));
         autoUpdateBtn.setChecked(sp.getBoolean("alarmOn", true));
@@ -346,47 +313,18 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (Build.VERSION.SDK_INT <= 24) {
-            switch (requestCode) {
-                case 1: {
-                    urlET = findViewById(R.id.urlET);
-                    IntentResult result = IntentIntegrator
-                            .parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
-                    urlET.setText(result.getContents());
-                }
-                break;
-                case 2: {
-                    apiET = findViewById(R.id.apiET);
-                    IntentResult result = IntentIntegrator
-                            .parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
-                    apiET.setText(result.getContents());
-                }
-                break;
+            urlET = findViewById(R.id.urlET);
+            IntentResult result = IntentIntegrator
+                    .parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data);
+            urlET.setText(result.getContents());
+        } else if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
+            Barcode barcode = data.getParcelableExtra("barcode");
+            EditText edit_text = findViewById(R.id.urlET);
+            if (barcode != null) {
+                edit_text.setText(barcode.displayValue);
             }
         } else {
-            switch (requestCode) {
-                case 1: {
-                    if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
-                        Barcode barcode = data.getParcelableExtra("barcode");
-                        EditText edit_text = findViewById(R.id.urlET);
-                        if (barcode != null) {
-                            edit_text.setText(barcode.displayValue);
-                        }
-                    }
-                    break;
-                }
-                case 2: {
-                    if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
-                        Barcode barcode = data.getParcelableExtra("barcode");
-                        EditText edit_text = findViewById(R.id.apiET);
-                        if (barcode != null) {
-                            edit_text.setText(barcode.displayValue);
-                        }
-                    }
-                    break;
-                }
-                default:
-                    super.onActivityResult(requestCode, resultCode, data);
-            }
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
