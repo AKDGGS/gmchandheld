@@ -74,6 +74,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
         barcodeET = findViewById(R.id.barcodeET);
         barcodeET.requestFocus();
         deleteApkFile();
+        setAlarm();
         loadLookup();
     }
 
@@ -211,7 +212,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
                 alert.dismiss();
                 alert = null;
             }
-            if (responseCode == 403){
+            if (responseCode == 403) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -265,6 +266,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     barcodeET.setText("");
+
                 }
             });
         }
