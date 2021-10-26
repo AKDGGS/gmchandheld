@@ -235,26 +235,6 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
         return super.dispatchKeyEvent(event);
     }
 
-    public String containersToUrlList(ArrayList<String> list, String paramKeyword) {
-        String delim = "&" + paramKeyword + "=";
-        StringBuilder sb = new StringBuilder();
-        if (list != null && list.size() > 0) {
-            sb.append(delim);
-            int i = 0;
-            while (i < list.size() - 1) {
-                try {
-                    sb.append(URLEncoder.encode(list.get(i), "utf-8"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                sb.append(delim);
-                i++;
-            }
-            sb.append(list.get(i));
-        }
-        return sb.toString();
-    }
-
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         runOnUiThread(new Runnable() {
