@@ -104,12 +104,14 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
                     } catch (Exception e) {
 //                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
+
                     try {
                         remoteAPIDownload.setFetchDataObj(
                                 baseURL + "summary.json?barcode=" + barcode,
                                 BaseActivity.apiKeyBase,
                                 null,
-                                this);
+                                this,
+                                0);
                     } catch (Exception e) {
                         System.out.println("Exception: " + e.getMessage());
                     }
@@ -192,7 +194,7 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
             if (alert != null) {
                 alert.dismiss();
@@ -204,7 +206,7 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
                     public void run() {
                         Toast.makeText(Summary.this,
                                 "The token is not correct.", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(Summary.this, Configuration.class);
+                        Intent intent = new Intent(Summary.this, GetToken.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         Summary.this.startActivity(intent);
                     }
@@ -212,7 +214,7 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
             } else {
                 runOnUiThread(() -> Toast.makeText(Summary.this,
                         "There was an error looking up " + barcode + ".\n" +
-                                "Does the barcode a container?", Toast.LENGTH_LONG).show());
+                                "Is the barcode a container?", Toast.LENGTH_LONG).show());
             }
         } else {
             SummaryLogicForDisplay summaryLogicForDisplayObj;

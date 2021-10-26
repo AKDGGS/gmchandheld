@@ -68,7 +68,6 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkAPIkeyExists(this);
         barcodeET = findViewById(R.id.barcodeET);
         remarkET = findViewById(R.id.remarkET);
         showIssuesTV = findViewById(R.id.showIssuesTV);
@@ -128,16 +127,16 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                         sb.append("&remark=").append(remark);
                     }
                     if (selectedItems != null) {
-                        sb.append(containersToUrlList(selectedItems, "i"));
+                        sb.append(createListForURL(selectedItems, "i"));
                     }
-
-                    System.out.println(sb.toString());
 
                     try {
                         remoteAPIDownload.setFetchDataObj(baseURL + "addinventoryquality.json?" + sb.toString(),
                                 BaseActivity.apiKeyBase,
                                 null,
-                                this);
+                                this,
+                                0);
+
                     } catch (Exception e) {
                         System.out.println("Exception: " + e.getMessage());
                     }
@@ -216,7 +215,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
                 if (responseCode == 403) {
@@ -225,7 +224,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                         public void run() {
                             Toast.makeText(Quality.this,
                                     "The token is not correct.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(Quality.this, Configuration.class);
+                            Intent intent = new Intent(Quality.this, GetToken.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             Quality.this.startActivity(intent);
                         }

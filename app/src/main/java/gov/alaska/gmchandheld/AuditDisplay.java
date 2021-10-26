@@ -53,7 +53,6 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkAPIkeyExists(this);
         itemET = findViewById(R.id.itemET);
         remarkET = findViewById(R.id.remarkET);
         countTV = findViewById(R.id.auditCountTV);
@@ -168,7 +167,8 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
                                 createListForURL(containerList, "c"),
                         BaseActivity.apiKeyBase,
                         null,
-                        this);
+                        this,
+                        0);
             } catch (Exception e) {
                 System.out.println("Exception: " + e.getMessage());
             }
@@ -234,7 +234,7 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
                 if (responseCode == 403) {
@@ -243,7 +243,7 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
                         public void run() {
                             Toast.makeText(AuditDisplay.this,
                                     "The token is not correct.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(AuditDisplay.this, Configuration.class);
+                            Intent intent = new Intent(AuditDisplay.this, GetToken.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             AuditDisplay.this.startActivity(intent);
                         }

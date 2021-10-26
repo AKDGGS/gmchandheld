@@ -60,7 +60,6 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
     @Override
     public void onRestart() {
         super.onRestart();
-        checkAPIkeyExists(this);
         cameraOn = sp.getBoolean("cameraOn", false);
         View v = findViewById(R.id.cameraBtn);
         if (!cameraOn) {
@@ -165,11 +164,13 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                 }
 
                 RequestBody requestBody = builder.build();
+
                 try {
                     remoteAPIDownload.setFetchDataObj(baseURL + "/upload.json",
                             BaseActivity.apiKeyBase,
                             requestBody,
-                            this);
+                            this,
+                            RemoteAPIDownload.POST);
                 } catch (Exception e) {
                     displayException(e);
                 }
@@ -236,7 +237,7 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         runOnUiThread(() -> {
             if (responseCode == 200 | responseCode == 302) {
                 Toast.makeText(TakePhoto.this, "The photo was uploaded.",
@@ -252,7 +253,7 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                         public void run() {
                             Toast.makeText(TakePhoto.this,
                                     "The token is not correct.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(TakePhoto.this, Configuration.class);
+                            Intent intent = new Intent(TakePhoto.this, GetToken.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             TakePhoto.this.startActivity(intent);
                         }

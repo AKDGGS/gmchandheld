@@ -52,7 +52,6 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkAPIkeyExists(this);
         destinationET = findViewById(R.id.toET);
         itemET = findViewById(R.id.itemET);
         moveCountTV = findViewById(R.id.moveCountTV);
@@ -169,10 +168,11 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                 try {
                     remoteAPIDownload.setFetchDataObj(baseURL + "move.json?d=" +
                                     destination +
-                                    containersToUrlList(containerList, "c"),
+                                    createListForURL(containerList, "c"),
                             BaseActivity.apiKeyBase,
                             null,
-                            this);
+                            this,
+                            0);
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
                 }
@@ -256,7 +256,7 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -267,7 +267,7 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                             public void run() {
                                 Toast.makeText(MoveDisplay.this,
                                         "The token is not correct.", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(MoveDisplay.this, Configuration.class);
+                                Intent intent = new Intent(MoveDisplay.this, GetToken.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 MoveDisplay.this.startActivity(intent);
                             }
@@ -290,8 +290,6 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                 }
             }
         });
-
-
     }
 
     @Override

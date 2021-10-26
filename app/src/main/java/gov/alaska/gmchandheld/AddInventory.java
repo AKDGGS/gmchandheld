@@ -68,7 +68,6 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkAPIkeyExists(this);
         barcodeET = findViewById(R.id.barcodeET);
         remarkET = findViewById(R.id.remarkET);
         Button submit_button = findViewById(R.id.submitBtn);
@@ -129,14 +128,15 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                         sb.append("&remark=").append(remark);
                     }
                     if (selectedItems != null) {
-                        sb.append(containersToUrlList(selectedItems, "i"));
+                        sb.append(createListForURL(selectedItems, "i"));
                     }
 
                     try {
                         remoteAPIDownload.setFetchDataObj(baseURL + "addinventory.json?" + sb.toString(),
                                 BaseActivity.apiKeyBase,
                                 null,
-                                this);
+                                this,
+                                0);
                     } catch (Exception e) {
                         System.out.println("Exception: " + e.getMessage());
                     }
@@ -194,28 +194,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         return sb.toString();
     }
 
-    public String containersToUrlList(ArrayList<String> list, String paramKeyword) {
-        String delim = "&" + paramKeyword + "=";
-        StringBuilder sb = new StringBuilder();
-        if (list != null && list.size() > 0) {
-            sb.append(delim);
-            int i = 0;
-            while (i < list.size() - 1) {
-                try {
-                    sb.append(URLEncoder.encode(list.get(i), "utf-8"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                sb.append(delim);
-                i++;
-            }
-            sb.append(list.get(i));
-        }
-        return sb.toString();
-    }
-
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
                 if (responseCode == 403) {
@@ -224,7 +204,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                         public void run() {
                             Toast.makeText(AddInventory.this,
                                     "The token is not correct.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(AddInventory.this, Configuration.class);
+                            Intent intent = new Intent(AddInventory.this, GetToken.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             AddInventory.this.startActivity(intent);
                         }

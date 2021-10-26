@@ -39,7 +39,6 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkAPIkeyExists(this);
         moveContentsFromET = findViewById(R.id.fromET);
         moveContentsToET = findViewById(R.id.toET);
         // onClickListener listens if the submit button is clicked
@@ -70,7 +69,8 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
                     remoteAPIDownload.setFetchDataObj(baseURL + "movecontents.json?" + sb.toString(),
                             BaseActivity.apiKeyBase,
                             null,
-                            this);
+                            this,
+                            0);
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
                 }
@@ -160,7 +160,7 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -172,7 +172,7 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
                             public void run() {
                                 Toast.makeText(MoveContents.this,
                                         "The token is not correct.", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(MoveContents.this, Configuration.class);
+                                Intent intent = new Intent(MoveContents.this, GetToken.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 MoveContents.this.startActivity(intent);
                             }

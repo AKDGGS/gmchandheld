@@ -64,7 +64,6 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkAPIkeyExists(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -89,12 +88,12 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                         } catch (UnsupportedEncodingException e) {
                             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                         }
-
                         try {
                             remoteAPIDownload.setFetchDataObj(baseURL + "inventory.json?barcode=" + barcode,
                                     BaseActivity.apiKeyBase,
                                     null,
-                                    this);
+                                    this,
+                                    0);
                         } catch (Exception e) {
                             System.out.println("Exception: " + e.getMessage());
                         }
@@ -192,8 +191,8 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
-        if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2 ) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2) {
             if (alert != null) {
                 alert.dismiss();
                 alert = null;
@@ -204,15 +203,21 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                     public void run() {
                         Toast.makeText(LookupDisplay.this,
                                 "The token is not correct.", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(LookupDisplay.this, Configuration.class);
+                        Intent intent = new Intent(LookupDisplay.this, GetToken.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         LookupDisplay.this.startActivity(intent);
                     }
                 });
             } else {
-                runOnUiThread(() -> Toast.makeText(LookupDisplay.this,
-                        "There was an error looking up " + barcode + ".\n" +
-                                "Does the barcode exist?", Toast.LENGTH_LONG).show());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(LookupDisplay.this,
+                                "There was an error looking up " + barcode + ".\n" +
+                                        "Is the barcode in inventory?", Toast.LENGTH_LONG).show();
+                        invisibleET.setText("");
+                    }
+                });
             }
         } else {
             LookupLogicForDisplay lookupLogicForDisplayObj;

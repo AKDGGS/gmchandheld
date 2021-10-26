@@ -96,7 +96,10 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
 
                 try {
                     remoteAPIDownload.setFetchDataObj(baseURL + "recode.json?" + sb.toString(),
-                            BaseActivity.apiKeyBase, null, this);
+                            BaseActivity.apiKeyBase,
+                            null,
+                            this,
+                            0);
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
                 }
@@ -159,7 +162,7 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
                 if (responseCode == 403) {
@@ -168,7 +171,7 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
                         public void run() {
                             Toast.makeText(Recode.this,
                                     "The token is not correct.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(Recode.this, Configuration.class);
+                            Intent intent = new Intent(Recode.this, GetToken.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             Recode.this.startActivity(intent);
                         }

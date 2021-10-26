@@ -59,7 +59,6 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkAPIkeyExists(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -82,12 +81,14 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
                         } catch (UnsupportedEncodingException e) {
 //                                exception = new Exception(e.getMessage());
                         }
+
                         try {
                             remoteAPIDownload.setFetchDataObj(baseURL
                                             + "summary.json?barcode=" + barcode,
                                     BaseActivity.apiKeyBase,
                                     null,
-                                    this);
+                                    this,
+                                    0);
                         } catch (Exception e) {
                             System.out.println("Exception: " + e.getMessage());
                         }
@@ -178,7 +179,7 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
             if (alert != null) {
                 alert.dismiss();
@@ -190,15 +191,21 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
                     public void run() {
                         Toast.makeText(SummaryDisplay.this,
                                 "The token is not correct.", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(SummaryDisplay.this, Configuration.class);
+                        Intent intent = new Intent(SummaryDisplay.this, GetToken.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         SummaryDisplay.this.startActivity(intent);
                     }
                 });
             } else {
-                runOnUiThread(() -> Toast.makeText(SummaryDisplay.this,
-                        "There was an error looking up " + barcode + ".\n" +
-                                "Does the barcode a container?", Toast.LENGTH_LONG).show());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SummaryDisplay.this,
+                                "There was an error looking up " + barcode + ".\n" +
+                                        "Is the barcode a container?", Toast.LENGTH_LONG).show();
+                        invisibleET.setText("");
+                    }
+                });
             }
         } else {
             SummaryLogicForDisplay summaryLogicForDisplayObj =

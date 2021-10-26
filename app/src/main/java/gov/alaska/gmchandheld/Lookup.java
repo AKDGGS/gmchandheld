@@ -121,7 +121,8 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
                     remoteAPIDownload.setFetchDataObj(baseURL + "inventory.json?barcode=" + barcode,
                             BaseActivity.apiKeyBase,
                             null,
-                            this);
+                            this,
+                            0);
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
                 }
@@ -206,7 +207,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage) {
+    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2) {
             if (alert != null) {
                 alert.dismiss();
@@ -218,7 +219,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
                     public void run() {
                         Toast.makeText(Lookup.this,
                                 "The token is not correct.", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(Lookup.this, Configuration.class);
+                        Intent intent = new Intent(Lookup.this, GetToken.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         Lookup.this.startActivity(intent);
                     }
