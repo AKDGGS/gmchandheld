@@ -1,7 +1,9 @@
 package gov.alaska.gmchandheld;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +27,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public static String apiKeyBase = null;
@@ -32,12 +35,17 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected static SharedPreferences.Editor editor;
     protected static Intent intent;
     protected static String baseURL;
+    protected static boolean updateAvailable;
+    protected static Date updateAvailableBuildDate;
     protected Toolbar toolbar;
     protected IntentIntegrator qrScan;
     protected Thread thread;
-    protected volatile AlertDialog alert;
     protected RemoteAPIDownload remoteAPIDownload;
+    protected volatile AlertDialog alert;
 
+    public static boolean getUpdateAvailable() {
+        return updateAvailable;
+    }
 
     @Override
     protected void onStop() {
@@ -66,13 +74,22 @@ public abstract class BaseActivity extends AppCompatActivity {
         configureToolbar();
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         editor = sp.edit();
+
         checkAPIkeyExists(this);
+
         baseURL = BaseActivity.sp.getString("urlText", "");
 
         remoteAPIDownload = new RemoteAPIDownload();
         if (thread == null) {
             thread = new Thread(remoteAPIDownload, "remoteAPIDownloadThread");
             thread.start();
+        }
+
+        System.out.println("Update? " + BaseActivity.getUpdateAvailable());
+        if (BaseActivity.getUpdateAvailable()) {
+            Intent intent = new Intent(this, UpdateDownloadAPKHandler.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            this.startActivity(intent);
         }
     }
 
@@ -237,5 +254,23 @@ public abstract class BaseActivity extends AppCompatActivity {
             sb.append(list.get(i));
         }
         return sb.toString();
+    }
+
+    public void setAlarm() {
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, UpdateBroadcastReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        am.setRepeating(AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis(),
+                Integer.parseInt(sp.getString("interval", "60")) * 1000L,
+                pendingIntent);
+    }
+
+    public void cancelAlarm() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, UpdateBroadcastReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        alarmManager.cancel(pendingIntent);
     }
 }
