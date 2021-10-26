@@ -53,15 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
-        }
-    }
-
-    @Override
     protected void onRestart() {
         super.onRestart();
         checkAPIkeyExists(this);
