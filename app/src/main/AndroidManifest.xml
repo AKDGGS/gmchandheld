@@ -31,7 +31,6 @@
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter android:label="@string/app_name"> <!-- name of app -->
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -105,9 +104,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Translucent" />
         <activity
-            android:name=".UpdateAppActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".TakePhoto"
             android:label="Photo"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -127,7 +123,7 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="gov.alaska.gmchandheld.android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
