@@ -3,16 +3,22 @@ package gov.alaska.gmchandheld;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class RemoteAPIDownload implements Runnable {
 
+    public static final int GET = 0;
+    public static final int POST = 1;
+    public static final int HEAD = 2;
     private final Object lockObj;
     private RemoteAPIDownloadCallback remoteAPIDownloadCallback;
     private String url, token;
     private RequestBody body;
+    private int requestType;
 
     public RemoteAPIDownload() {
         lockObj = new Object();
@@ -25,17 +31,17 @@ public class RemoteAPIDownload implements Runnable {
     public void setFetchDataObj(String url,
                                 String token,
                                 RequestBody body,
-                                RemoteAPIDownloadCallback remoteAPIDownloadCallback) throws Exception {
-
+                                RemoteAPIDownloadCallback remoteAPIDownloadCallback,
+                                int requestType) throws Exception {
 
         if (url == null) {
             throw new Exception("URL is null");
         }
         new URL(url);
 
-        if (token == null) {
-            throw new Exception("The token can't be null");
-        }
+//        if (token == null) {
+//            throw new Exception("The token can't be null");
+//        }
 
         if (remoteAPIDownloadCallback == null) {
             throw new Exception("The callback can't be null");
@@ -49,6 +55,7 @@ public class RemoteAPIDownload implements Runnable {
             this.token = token;
             this.body = body;
             this.remoteAPIDownloadCallback = remoteAPIDownloadCallback;
+            this.requestType = requestType;
             lockObj.notify();
         }
     }
@@ -67,6 +74,34 @@ public class RemoteAPIDownload implements Runnable {
                 }
             }
             Request request;
+            switch (requestType) {
+                case GET:
+                    request = new Request.Builder()
+                            .header("Authorization", "Token " + BaseActivity.apiKeyBase)
+                            .url(myURL)
+                            .build();
+                    break;
+                case POST:
+                    ImageFileRequestBody imageFileRequestBody;
+                    imageFileRequestBody = new ImageFileRequestBody(body);
+                    request = new Request.Builder()
+                            .header("Authorization", "Token " + BaseActivity.apiKeyBase)
+                            .url(myURL)
+                            .post(imageFileRequestBody)
+                            .build();
+                    break;
+                case HEAD:
+                    request = new Request.Builder()
+                            .header("Authorization", "Token " + BaseActivity.apiKeyBase)
+                            .url(myURL)
+                            .head()
+                            .build();
+                    break;
+                default:
+                    System.out.println("Default reached");
+                    request = null;
+            }
+
             okhttp3.Response response;
             OkHttpClient client = new OkHttpClient.Builder()
                     .followRedirects(false)
@@ -76,41 +111,32 @@ public class RemoteAPIDownload implements Runnable {
                     .readTimeout(10, TimeUnit.SECONDS)
                     .build();
             try {
-                if (body == null) {
-                    try {
-                        request = new Request.Builder()
-                                .header("Authorization", "Token " + token)
-                                .url(myURL)
-                                .build();
-                        long startTime = System.currentTimeMillis();
-                        response = client.newCall(request).execute();
-                        int timeout = 10000;
-                        long elapsed = System.currentTimeMillis() - startTime;
-                        if (elapsed > timeout) {
-                            throw new InterruptedException("Total timeout");
-                        }
-                        remoteAPIDownloadCallback.displayData(response.body().string(), response.code(), response.message());
-                    } catch (Exception e) {
-                        remoteAPIDownloadCallback.displayException(e);
-                        e.printStackTrace();
-                    }
-                } else if (body.contentType().type().equals("multipart")) {
-                    ImageFileRequestBody imageFileRequestBody;
-                    imageFileRequestBody = new ImageFileRequestBody(body);
-                    request = new Request.Builder()
-                            .header("Authorization", "Token " + token)
-                            .url(myURL)
-                            .post(imageFileRequestBody)
-                            .build();
+                long startTime = System.currentTimeMillis();
+                response = client.newCall(request).execute();
+                int timeout = 15 * 1000;
+                long elapsed = System.currentTimeMillis() - startTime;
+                if (elapsed > timeout) {
+                    throw new InterruptedException("Timeout");
+                }
 
-                    long startTime = System.currentTimeMillis();
-                    response = client.newCall(request).execute();
-                    int timeout = 10000;
-                    long elapsed = System.currentTimeMillis() - startTime;
-                    if (elapsed > timeout) {
-                        throw new InterruptedException("Timeout");
+                try {
+                    switch (requestType) {
+                        case GET: {
+                            remoteAPIDownloadCallback.displayData(response.body().string(), response.code(), response.message(), requestType);
+                            break;
+                        }
+                        case POST: {
+                            remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message(), requestType);
+                            break;
+                        }
+                        case HEAD: {
+                            remoteAPIDownloadCallback.displayData(response.headers().get("Last-Modified"), response.code(), response.message(), requestType);
+                            break;
+                        }
                     }
-                    remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message());
+                } catch (Exception e) {
+                    remoteAPIDownloadCallback.displayException(e);
+                    e.printStackTrace();
                 }
             } catch (InterruptedException interruptedException) {
                 remoteAPIDownloadCallback.displayException(interruptedException);
