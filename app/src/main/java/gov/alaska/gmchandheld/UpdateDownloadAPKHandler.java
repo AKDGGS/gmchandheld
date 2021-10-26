@@ -69,9 +69,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
     }
 
     private void alert() {
-        Intent intent = getIntent();
-        final long lastModifiedRefused = intent.getLongExtra("LAST_MODIFIED_DATE",
-                0);
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Update Available")
                 .setMessage("Tap Update to install the app.")
@@ -83,8 +80,9 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
                     SharedPreferences sp = getSharedPreferences("sharedPrefs",
                             Context.MODE_PRIVATE);
                     Configuration.editor = sp.edit();
-                    Configuration.editor.putLong("ignoreUpdateDateSP", lastModifiedRefused)
+                    Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
                             .apply();
+                    BaseActivity.updateAvailable = false;
                     Intent intent1 = new Intent(this, Lookup.class);
                     intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     UpdateDownloadAPKHandler.this.startActivity(intent1);
@@ -172,8 +170,6 @@ public class UpdateDownloadAPKHandler extends AppCompatActivity
                 if (context != null) {
                     context.startActivity(intent);
                 }
-            } else {
-                Toast.makeText(context, "No update available.", Toast.LENGTH_LONG).show();
             }
         }
     }
