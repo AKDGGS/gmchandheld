@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -183,65 +182,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="20dp"
-                    android:weightSum="6">
+                    android:weightSum="4">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
+                        android:layout_weight="3"
                         android:gravity="center_horizontal"
-                        android:text="@string/hour"
+                        android:text= "Update Check Interval (minutes)"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/hourET"
+                        android:id="@+id/updateIntervalET"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center_horizontal"
                         android:inputType="number"
                         android:maxLines="1"
+                        android:nextFocusLeft="@+id/updateIntervalET"
+                        android:nextFocusRight="@+id/updateIntervalET"
+                        android:nextFocusUp="@+id/updateIntervalET"
+                        android:nextFocusDown="@+id/updateIntervalET"
                         android:selectAllOnFocus="true"
-                        android:text="@string/_24"
-                        android:textSize="14sp"
-                        android:nextFocusDown="@+id/hourET"
-                        android:nextFocusUp="@+id/hourET"
-                        android:nextFocusLeft="@+id/hourET"
-                        android:nextFocusRight="@+id/hourET"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:gravity="center_horizontal"
-                        android:text="@string/minute"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/minuteET"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:inputType="number"
-                        android:maxLines="1"
-                        android:selectAllOnFocus="true"
-                        android:text="@string/_0"
-                        android:textSize="14sp"
-                        android:nextFocusDown="@+id/minuteET"
-                        android:nextFocusUp="@+id/minuteET"
-                        android:nextFocusLeft="@+id/minuteET"
-                        android:nextFocusRight="@+id/minuteET"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <View
@@ -260,13 +230,12 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:text="@string/check_for_updates"
-                        android:textSize="12sp"
-                        android:nextFocusDown="@+id/updateBtn"
-                        android:nextFocusUp="@+id/updateBtn"
                         android:nextFocusLeft="@+id/updateBtn"
-                        android:nextFocusRight="@+id/updateBtn"/>
-
+                        android:nextFocusRight="@+id/updateBtn"
+                        android:nextFocusUp="@+id/updateBtn"
+                        android:nextFocusDown="@+id/updateBtn"
+                        android:text="@string/check_for_updates"
+                        android:textSize="12sp" />
                 </RelativeLayout>
 
                 <View
@@ -279,6 +248,3 @@
         </ScrollView>
     </LinearLayout>
 </LinearLayout>
-
-
-    <!--URL "http://maps.dggs.alaska.gov/gmcdev/"-->
