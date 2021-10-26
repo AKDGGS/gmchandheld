@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,38 +29,77 @@ import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.SSLContext;
 
 public class GetToken extends AppCompatActivity {
-    SharedPreferences sp;
-    private EditText apiTokenET;
-    private IntentIntegrator apiQrScan;
-    private Button submitBtn;
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+    private EditText apiTokenET, urlET;
+    private IntentIntegrator qrScan;
+    private Button submitBtn, urlCameraBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_token);
-        enableTSL(this);
-        apiTokenET = findViewById(R.id.apiTokenET);
-        sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-        apiTokenET.requestFocus();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("GMC Handheld");
+        enableTSL(this);
+
+        apiTokenET = findViewById(R.id.apiTokenET);
+        TextView urlTV = findViewById(R.id.urlTV);
+        urlET = findViewById(R.id.urlET);
+        urlCameraBtn = findViewById(R.id.urlCameraBtn);
+        sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+        if (sp.getString("urlText", "").isEmpty()) {
+            loadGetURL();
+        } else {
+            urlTV.setVisibility(View.INVISIBLE);
+            urlET.setVisibility(View.INVISIBLE);
+            urlCameraBtn.setVisibility(View.INVISIBLE);
+            apiTokenET.requestFocus();
+        }
         loadGetToken();
     }
 
+    public void loadGetURL() {
+        urlET.requestFocus();
+        if (!BaseActivity.sp.getBoolean("cameraOn", false)) {
+            urlCameraBtn.setVisibility(View.GONE);
+        } else {
+            qrScan = new IntentIntegrator(this);
+            qrScan.setBeepEnabled(true);
+        }
+        urlCameraBtn.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT <= 24) {
+                qrScan.initiateScan();
+            } else {
+                Intent intent = new Intent(GetToken.this, CameraToScanner.class);
+                startActivityForResult(intent, 0);
+            }
+        });
+        urlET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+                    editor = sp.edit();
+                    editor.putString("urlText", urlET.getText().toString()).apply();
+                }
+            }
+        });
+    }
+
     public void loadGetToken() {
-        LookupDisplayObjInstance.getInstance().lookupLogicForDisplayObj = null;
         apiTokenET = findViewById(R.id.apiTokenET);
         Button cameraBtn = findViewById(R.id.cameraBtn);
         if (!BaseActivity.sp.getBoolean("cameraOn", false)) {
             cameraBtn.setVisibility(View.GONE);
         } else {
-            apiQrScan = new IntentIntegrator(this);
-            apiQrScan.setBeepEnabled(true);
+            qrScan = new IntentIntegrator(this);
+            qrScan.setBeepEnabled(true);
         }
         cameraBtn.setOnClickListener(view -> {
             if (Build.VERSION.SDK_INT <= 24) {
-                apiQrScan.initiateScan();
+                qrScan.initiateScan();
             } else {
                 Intent intent = new Intent(GetToken.this, CameraToScanner.class);
                 startActivityForResult(intent, 0);
