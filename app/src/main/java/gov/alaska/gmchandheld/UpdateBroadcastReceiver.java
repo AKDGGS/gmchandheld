@@ -9,8 +9,6 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.Date;
 
-import okhttp3.Request;
-
 public class UpdateBroadcastReceiver extends BroadcastReceiver implements RemoteAPIDownloadCallback {
     Thread t1, t2;
     SharedPreferences sp;
@@ -25,11 +23,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
             getURLIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(getURLIntent);
         } else {
-            Request request = new Request.Builder()
-                    .header("Authorization", "Token " + BaseActivity.apiKeyBase)
-                    .url(BaseActivity.sp.getString("urlText", "") + "app/current.apk")
-                    .head()
-                    .build();
             RemoteAPIDownload updateChecker = new RemoteAPIDownload();
             if (t1 == null) {
                 t1 = new Thread(updateChecker, "updateCheck");
@@ -52,10 +45,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
                 t2.start();
             }
 
-            Request requestCheckIssues = new Request.Builder()
-                    .header("Authorization", "Token " + BaseActivity.apiKeyBase)
-                    .url(BaseActivity.sp.getString("urlText", "") + "/qualitylist.json")
-                    .build();
             try {
                 issuesChecker.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
                         BaseActivity.apiKeyBase,
@@ -79,7 +68,7 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
                     //gets the last refused modified date from shared preferences.
                     // (The last refused modified date comes from UpdateDownloadAPKHandler
                     long lastRefusedUpdate = BaseActivity.sp.getLong("ignoreUpdateDateSP", 0);
-
+//                    System.out.println("Update? " + BaseActivity.getUpdateAvailable());
                     if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) &
                             (buildDate.compareTo(updateBuildDate) < 0)) {
                         BaseActivity.updateAvailable = true;
