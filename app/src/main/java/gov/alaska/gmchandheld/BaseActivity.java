@@ -85,7 +85,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             thread.start();
         }
 
-        System.out.println("Update? " + BaseActivity.getUpdateAvailable());
         if (BaseActivity.getUpdateAvailable()) {
             Intent intent = new Intent(this, UpdateDownloadAPKHandler.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
