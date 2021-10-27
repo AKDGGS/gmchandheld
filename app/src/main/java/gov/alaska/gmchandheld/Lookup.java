@@ -15,7 +15,10 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -23,7 +26,11 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
+
+import javax.net.ssl.SSLContext;
 
 
 public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
@@ -71,6 +78,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        enableTSL(this);
         barcodeET = findViewById(R.id.barcodeET);
         barcodeET.requestFocus();
         deleteApkFile();
@@ -270,6 +278,28 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
 
                 }
             });
+        }
+    }
+
+    public void enableTSL(Context mContext) {
+        try {
+            // enables TSL-1.2 if Google Play is updated on old devices.
+            // doesn't work with emulators
+            // https://stackoverflow.com/a/29946540
+            ProviderInstaller.installIfNeeded(mContext);
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
+        SSLContext sslContext;
+        try {
+            sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(null, null, null);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
         }
     }
 }
