@@ -1,5 +1,6 @@
 package gov.alaska.gmchandheld;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -82,7 +83,15 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
         barcodeET = findViewById(R.id.barcodeET);
         barcodeET.requestFocus();
         deleteApkFile();
-        setAlarm();
+        Intent myIntent = new Intent(Lookup.this, UpdateBroadcastReceiver.class);
+        boolean isWorking = (PendingIntent.getBroadcast(Lookup.this, 101, myIntent, PendingIntent.FLAG_NO_CREATE) != null);
+        if (isWorking) {
+            System.out.println("alarm is already on");
+        } else {
+            setAlarm();
+            System.out.println("alarm is now set");
+        }
+//        setAlarm();
         loadLookup();
     }
 

@@ -258,7 +258,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void setAlarm() {
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, UpdateBroadcastReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 101, intent, 0);
 
         am.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis(),
@@ -269,7 +269,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void cancelAlarm() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, UpdateBroadcastReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 101, intent, 0);
         alarmManager.cancel(pendingIntent);
     }
 }
