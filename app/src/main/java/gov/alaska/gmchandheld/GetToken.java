@@ -108,7 +108,7 @@ public class GetToken extends AppCompatActivity {
         submitBtn = findViewById(R.id.submitBtn);
         submitBtn.setOnClickListener(v -> {
             if (!apiTokenET.getText().toString().isEmpty()) {
-                BaseActivity.apiKeyBase = apiTokenET.getText().toString();
+                BaseActivity.setToken(apiTokenET.getText().toString());
                 finish();
             }
         });
@@ -128,7 +128,7 @@ public class GetToken extends AppCompatActivity {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             apiTokenET.setText(result.getContents());
             if (!apiTokenET.getText().toString().isEmpty()) {
-                BaseActivity.apiKeyBase = apiTokenET.getText().toString();
+                BaseActivity.setToken(apiTokenET.getText().toString());
                 Intent intent = new Intent(GetToken.this, Lookup.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 GetToken.this.startActivity(intent);

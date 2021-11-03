@@ -95,8 +95,8 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
                 }
 
                 try {
-                    remoteAPIDownload.setFetchDataObj(baseURL + "recode.json?" + sb.toString(),
-                            BaseActivity.apiKeyBase,
+                    getRemoteAPIDownload().setFetchDataObj(baseURL + "recode.json?" + sb.toString(),
+                            BaseActivity.getToken(),
                             null,
                             this,
                             0);

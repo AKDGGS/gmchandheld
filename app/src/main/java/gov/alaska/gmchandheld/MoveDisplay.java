@@ -166,10 +166,10 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                 }
 
                 try {
-                    remoteAPIDownload.setFetchDataObj(baseURL + "move.json?d=" +
+                    getRemoteAPIDownload().setFetchDataObj(baseURL + "move.json?d=" +
                                     destination +
                                     createListForURL(containerList, "c"),
-                            BaseActivity.apiKeyBase,
+                            BaseActivity.getToken(),
                             null,
                             this,
                             0);

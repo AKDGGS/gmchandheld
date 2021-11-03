@@ -113,8 +113,8 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
                     }
 
                     try {
-                        remoteAPIDownload.setFetchDataObj(baseURL + "addcontainer.json?" + sb.toString(),
-                                BaseActivity.apiKeyBase,
+                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addcontainer.json?" + sb.toString(),
+                                BaseActivity.getToken(),
                                 null,
                                 this,
                                 0);

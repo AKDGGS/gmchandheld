@@ -191,8 +191,8 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
 
     public void checkIssuesList() {
         try {
-            remoteAPIDownload.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
-                    apiKeyBase,
+            getRemoteAPIDownload().setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
+                    BaseActivity.getToken(),
                     null,
                     this,
                     0);

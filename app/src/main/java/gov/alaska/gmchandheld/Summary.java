@@ -106,9 +106,9 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
                     }
 
                     try {
-                        remoteAPIDownload.setFetchDataObj(
+                        getRemoteAPIDownload().setFetchDataObj(
                                 baseURL + "summary.json?barcode=" + barcode,
-                                BaseActivity.apiKeyBase,
+                                BaseActivity.getToken(),
                                 null,
                                 this,
                                 0);

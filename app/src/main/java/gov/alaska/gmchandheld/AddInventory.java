@@ -132,8 +132,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                     }
 
                     try {
-                        remoteAPIDownload.setFetchDataObj(baseURL + "addinventory.json?" + sb.toString(),
-                                BaseActivity.apiKeyBase,
+                       getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventory.json?" + sb.toString(),
+                                BaseActivity.getToken(),
                                 null,
                                 this,
                                 0);

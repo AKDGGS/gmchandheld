@@ -66,8 +66,8 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
                 }
 
                 try {
-                    remoteAPIDownload.setFetchDataObj(baseURL + "movecontents.json?" + sb.toString(),
-                            BaseActivity.apiKeyBase,
+                    getRemoteAPIDownload().setFetchDataObj(baseURL + "movecontents.json?" + sb.toString(),
+                            BaseActivity.getToken(),
                             null,
                             this,
                             0);

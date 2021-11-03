@@ -89,8 +89,8 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                         try {
-                            remoteAPIDownload.setFetchDataObj(baseURL + "inventory.json?barcode=" + barcode,
-                                    BaseActivity.apiKeyBase,
+                            getRemoteAPIDownload().setFetchDataObj(baseURL + "inventory.json?barcode=" + barcode,
+                                    BaseActivity.getToken(),
                                     null,
                                     this,
                                     0);

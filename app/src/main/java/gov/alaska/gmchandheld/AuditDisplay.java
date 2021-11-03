@@ -163,9 +163,9 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
             }
 
             try {
-                remoteAPIDownload.setFetchDataObj(baseURL + "audit.json?remark=" + remark +
+                getRemoteAPIDownload().setFetchDataObj(baseURL + "audit.json?remark=" + remark +
                                 createListForURL(containerList, "c"),
-                        BaseActivity.apiKeyBase,
+                        BaseActivity.getToken(),
                         null,
                         this,
                         0);

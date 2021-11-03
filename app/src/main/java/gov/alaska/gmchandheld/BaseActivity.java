@@ -30,21 +30,33 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    public static String apiKeyBase = null;
+    private static String token = null;
     protected static SharedPreferences sp;
     protected static SharedPreferences.Editor editor;
     protected static Intent intent;
     protected static String baseURL;
     protected static boolean updateAvailable;
     protected static Date updateAvailableBuildDate;
+    private static Thread thread;
+    private static RemoteAPIDownload remoteAPIDownload;
     protected Toolbar toolbar;
     protected IntentIntegrator qrScan;
-    protected Thread thread;
-    protected RemoteAPIDownload remoteAPIDownload;
     protected volatile AlertDialog alert;
 
     public static boolean getUpdateAvailable() {
         return updateAvailable;
+    }
+
+    public static String getToken() {
+        return token;
+    }
+
+    public static void setToken(String token) {
+        BaseActivity.token = token;
+    }
+
+    public static RemoteAPIDownload getRemoteAPIDownload() {
+        return remoteAPIDownload;
     }
 
     @Override
@@ -52,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onStop();
         PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
         if (!pm.isScreenOn()) {
-            apiKeyBase = "";
+            token = "";
         }
         if (alert != null) {
             alert.dismiss();
@@ -202,7 +214,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void checkAPIkeyExists(Context mContext) {
-        if (null == apiKeyBase || apiKeyBase.isEmpty()) {
+        if (null == token || token.isEmpty()) {
             Intent intent = new Intent(mContext, GetToken.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mContext.startActivity(intent);
