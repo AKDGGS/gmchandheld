@@ -2,11 +2,11 @@ package gov.alaska.gmchandheld;
 
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RemoteAPIDownload implements Runnable {
 
@@ -38,10 +38,6 @@ public class RemoteAPIDownload implements Runnable {
         }
         new URL(url);
 
-//        if (token == null) {
-//            throw new Exception("The token can't be null");
-//        }
-
         if (remoteAPIDownloadCallback == null) {
             throw new Exception("The callback can't be null");
         }
@@ -61,6 +57,7 @@ public class RemoteAPIDownload implements Runnable {
 
     public void run() {
         URL myURL;
+        Request request;
         //Infinitely produce items
         while (true) {
             synchronized (lockObj) {
@@ -72,74 +69,58 @@ public class RemoteAPIDownload implements Runnable {
                     continue;
                 }
             }
-            Request request;
             switch (requestType) {
                 case GET:
                     request = new Request.Builder()
-                            .header("Authorization", "Token " + BaseActivity.apiKeyBase)
+                            .header("Authorization", "Token " + BaseActivity.getToken())
                             .url(myURL)
                             .build();
                     break;
                 case POST:
-                    ImageFileRequestBody imageFileRequestBody;
-                    imageFileRequestBody = new ImageFileRequestBody(body);
                     request = new Request.Builder()
-                            .header("Authorization", "Token " + BaseActivity.apiKeyBase)
+                            .header("Authorization", "Token " + BaseActivity.getToken())
                             .url(myURL)
-                            .post(imageFileRequestBody)
+                            .post(body)
                             .build();
                     break;
                 case HEAD:
                     request = new Request.Builder()
-                            .header("Authorization", "Token " + BaseActivity.apiKeyBase)
+                            .header("Authorization", "Token " + BaseActivity.getToken())
                             .url(myURL)
                             .head()
                             .build();
                     break;
                 default:
-                    System.out.println("Default reached");
                     request = null;
+                    continue;
             }
 
-            okhttp3.Response response;
             OkHttpClient client = new OkHttpClient.Builder()
                     .followRedirects(false)
                     .followSslRedirects(false)
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
+                    .callTimeout(5, TimeUnit.SECONDS)
+                    .connectTimeout(1, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
                     .build();
-            try {
-                long startTime = System.currentTimeMillis();
-                response = client.newCall(request).execute();
-                int timeout = 15 * 1000;
-                long elapsed = System.currentTimeMillis() - startTime;
-                if (elapsed > timeout) {
-                    throw new InterruptedException("Timeout");
-                }
 
-                try {
-                    switch (requestType) {
-                        case GET: {
-                            remoteAPIDownloadCallback.displayData(response.body().string(), response.code(), response.message(), requestType);
-                            break;
-                        }
-                        case POST: {
-                            remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message(), requestType);
-                            break;
-                        }
-                        case HEAD: {
-                            remoteAPIDownloadCallback.displayData(response.headers().get("Last-Modified"), response.code(), response.message(), requestType);
-                            break;
-                        }
+            try (Response response = client.newCall(request).execute()) {
+                switch (requestType) {
+                    case GET: {
+                        remoteAPIDownloadCallback.displayData(response.body().string(), response.code(), response.message(), requestType);
+                        break;
                     }
-                } catch (Exception e) {
-                    remoteAPIDownloadCallback.displayException(e);
-                    e.printStackTrace();
+                    case POST: {
+                        remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message(), requestType);
+                        break;
+                    }
+                    case HEAD: {
+                        remoteAPIDownloadCallback.displayData(response.headers().get("Last-Modified"), response.code(), response.message(), requestType);
+                        break;
+                    }
                 }
-            } catch (InterruptedException interruptedException) {
-                remoteAPIDownloadCallback.displayException(interruptedException);
             } catch (Exception e) {
+                e.printStackTrace();
                 remoteAPIDownloadCallback.displayException(e);
             }
         }
