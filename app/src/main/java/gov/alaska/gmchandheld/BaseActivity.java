@@ -91,8 +91,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         baseURL = BaseActivity.sp.getString("urlText", "");
 
-        remoteAPIDownload = new RemoteAPIDownload();
         if (thread == null) {
+            remoteAPIDownload = new RemoteAPIDownload();
             thread = new Thread(remoteAPIDownload, "remoteAPIDownloadThread");
             thread.start();
         }
@@ -273,8 +273,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 101, intent, 0);
 
         am.setRepeating(AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis(),
-                Integer.parseInt(sp.getString("interval", "60")) * 1000L,
+                System.currentTimeMillis() + 5000, // five second delay
+                Integer.parseInt(sp.getString("interval", "30")) * 1000L,
                 pendingIntent);
     }
 
