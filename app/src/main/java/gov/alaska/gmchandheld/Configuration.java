@@ -224,6 +224,10 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         if (responseCode != 403) {
             switch (requestType) {
                 case RemoteAPIDownload.GET:
+                    editor = sp.edit();
+                    editor.putString("issuesString", data).commit();
+                    break;
+                case RemoteAPIDownload.HEAD:
                     Date updateBuildDate = new Date(data);
                     Date buildDate = new Date(BuildConfig.TIMESTAMP);
 
@@ -236,13 +240,8 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                             (buildDate.compareTo(updateBuildDate) < 0);
                     checkIssuesList();
                     break;
-                case RemoteAPIDownload.HEAD:
-                    editor = sp.edit();
-                    editor.putString("issuesString", data).commit();
-                    System.out.println(data);
-                    break;
                 default:
-                    System.out.println("Error: the request Type isn't understood");
+                    System.out.println("Configure Exception: the request type isn't GET, POST, or HEAD");
             }
         } else {
             Toast.makeText(Configuration.this,
