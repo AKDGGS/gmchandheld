@@ -131,8 +131,8 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                     }
 
                     try {
-                        remoteAPIDownload.setFetchDataObj(baseURL + "addinventoryquality.json?" + sb.toString(),
-                                BaseActivity.apiKeyBase,
+                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventoryquality.json?" + sb.toString(),
+                                BaseActivity.getToken(),
                                 null,
                                 this,
                                 0);
