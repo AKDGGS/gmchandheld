@@ -10,12 +10,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class UpdateBroadcastReceiver extends BroadcastReceiver implements RemoteAPIDownloadCallback {
-    Thread t1, t2;
-    SharedPreferences sp;
+    private SharedPreferences sp;
+    public static Thread t1, t2;
+    public static RemoteAPIDownload updateChecker, issuesChecker;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println("time: " + Calendar.getInstance().getTime());
         sp = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 
         if (sp.getString("urlText", "").isEmpty()) {
@@ -23,31 +23,31 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
             getURLIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(getURLIntent);
         } else {
-            RemoteAPIDownload updateChecker = new RemoteAPIDownload();
             if (t1 == null) {
-                t1 = new Thread(updateChecker, "updateCheck");
+                updateChecker = new RemoteAPIDownload();
+                t1 = new Thread(updateChecker, "updateCheckerThread");
                 t1.start();
             }
 
             try {
                 updateChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
-                        BaseActivity.apiKeyBase,
+                        BaseActivity.getToken(),
                         null,
                         this,
                         RemoteAPIDownload.HEAD);
             } catch (Exception e) {
-//                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
 
-            RemoteAPIDownload issuesChecker = new RemoteAPIDownload();
             if (t2 == null) {
-                t2 = new Thread(issuesChecker, "updateCheck");
+                issuesChecker = new RemoteAPIDownload();
+                t2 = new Thread(issuesChecker, "updateCheckerThread");
                 t2.start();
             }
 
             try {
                 issuesChecker.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
-                        BaseActivity.apiKeyBase,
+                        BaseActivity.getToken(),
                         null,
                         this,
                         RemoteAPIDownload.GET);
@@ -61,6 +61,11 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         if (responseCode != 403) {
             switch (requestType) {
+                case RemoteAPIDownload.GET:
+                    SharedPreferences.Editor editor;
+                    editor = sp.edit();
+                    editor.putString("issuesString", data).apply();
+                    break;
                 case RemoteAPIDownload.HEAD:
                     Date updateBuildDate = new Date(data);
                     Date buildDate = new Date(BuildConfig.TIMESTAMP);
@@ -68,7 +73,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
                     //gets the last refused modified date from shared preferences.
                     // (The last refused modified date comes from UpdateDownloadAPKHandler
                     long lastRefusedUpdate = BaseActivity.sp.getLong("ignoreUpdateDateSP", 0);
-//                    System.out.println("Update? " + BaseActivity.getUpdateAvailable());
                     if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) &
                             (buildDate.compareTo(updateBuildDate) < 0)) {
                         BaseActivity.updateAvailable = true;
@@ -77,20 +81,15 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
                         BaseActivity.updateAvailable = false;
                     }
                     break;
-                case RemoteAPIDownload.GET:
-                    SharedPreferences.Editor editor;
-                    editor = sp.edit();
-                    editor.putString("issuesString", data).apply();
-                    break;
                 default:
-                    System.out.println("Error: the requestType didn't match");
+                    System.out.println("Update Broadcast Exception: the requestType didn't match GET or HEAD.");
             }
         }
     }
 
     @Override
     public void displayException(Exception e) {
-        System.out.println("Broadcast error: " + e.getMessage());
+        System.out.println("Broadcast Exception: " + e.getMessage());
         e.printStackTrace();
     }
 }
