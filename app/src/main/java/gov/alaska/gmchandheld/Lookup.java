@@ -85,13 +85,9 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
         deleteApkFile();
         Intent myIntent = new Intent(Lookup.this, UpdateBroadcastReceiver.class);
         boolean isWorking = (PendingIntent.getBroadcast(Lookup.this, 101, myIntent, PendingIntent.FLAG_NO_CREATE) != null);
-        if (isWorking) {
-            System.out.println("alarm is already on");
-        } else {
+        if (!isWorking) {
             setAlarm();
-            System.out.println("alarm is now set");
         }
-//        setAlarm();
         loadLookup();
     }
 
