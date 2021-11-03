@@ -90,7 +90,7 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
                                     this,
                                     0);
                         } catch (Exception e) {
-                            System.out.println("Exception: " + e.getMessage());
+                            System.out.println("Summary Display Exception: " + e.getMessage());
                         }
                         return true;
                     }

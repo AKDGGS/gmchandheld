@@ -141,7 +141,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
                             this,
                             0);
                 } catch (Exception e) {
-                    System.out.println("Exception: " + e.getMessage());
+                    System.out.println("Lookup Exception: " + e.getMessage());
                 }
             }
             barcodeET.setText("");
@@ -230,6 +230,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
                 alert.dismiss();
                 alert = null;
             }
+            System.out.println("Response Code: " + responseCode);
             if (responseCode == 403) {
                 runOnUiThread(new Runnable() {
                     @Override

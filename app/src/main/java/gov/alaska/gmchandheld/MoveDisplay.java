@@ -174,7 +174,8 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                             this,
                             0);
                 } catch (Exception e) {
-                    System.out.println("Exception: " + e.getMessage());
+                    System.out.println("Move Display Exception: " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
         });
@@ -279,7 +280,7 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    System.out.println(e.getMessage());
+                    System.out.println("Move Display exception: " + e.getMessage());
                 }
             });
         }

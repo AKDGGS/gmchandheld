@@ -119,7 +119,8 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
                                 this,
                                 0);
                     } catch (Exception e) {
-                        System.out.println("Exception: " + e.getMessage());
+                        System.out.println("Add Container Exception: " + e.getMessage());
+                        e.printStackTrace();
                     }
                 }
             }
@@ -183,7 +184,7 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    System.out.println(e.getMessage());
+                    System.out.println("Add Container Exception: " + e.getMessage());
                 }
             });
         }

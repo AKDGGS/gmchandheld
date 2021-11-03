@@ -113,7 +113,7 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
                                 this,
                                 0);
                     } catch (Exception e) {
-                        System.out.println("Exception: " + e.getMessage());
+                        System.out.println("Summary Exception: " + e.getMessage());
                     }
                 }
             }

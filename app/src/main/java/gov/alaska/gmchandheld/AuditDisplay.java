@@ -170,7 +170,8 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
                         this,
                         0);
             } catch (Exception e) {
-                System.out.println("Exception: " + e.getMessage());
+                System.out.println("Audit Display Exception: " + e.getMessage());
+                e.printStackTrace();
             }
         });
     }

@@ -72,7 +72,8 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
                             this,
                             0);
                 } catch (Exception e) {
-                    System.out.println("Exception: " + e.getMessage());
+                    System.out.println("Move Contents Exception: " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
         });
@@ -164,7 +165,6 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                System.out.println(data);
                 if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
                     if (responseCode == 403) {
                         runOnUiThread(new Runnable() {
@@ -201,7 +201,7 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    System.out.println(e.getMessage());
+                    System.out.println("Move Content exception: " + e.getMessage());
                 }
             });
         }

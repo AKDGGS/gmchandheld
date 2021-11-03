@@ -138,7 +138,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                                 this,
                                 0);
                     } catch (Exception e) {
-                        System.out.println("Exception: " + e.getMessage());
+                        System.out.println("Add Inventory Exception: " + e.getMessage());
+                        e.printStackTrace();
                     }
                 }
             }
@@ -241,7 +242,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    System.out.println(e.getMessage());
+                    System.out.println("Add Inventory Exception: " + e.getMessage());
                 }
             });
         }

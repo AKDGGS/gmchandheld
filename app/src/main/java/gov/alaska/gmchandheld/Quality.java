@@ -112,7 +112,6 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                     try {
                         barcode = URLEncoder.encode(barcodeET.getText().toString(), "utf-8");
                         if (remarkET.getText() != null) {
-                            System.out.println("Remark before encoding: " + remarkET.getText());
                             remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
                         }
                     } catch (UnsupportedEncodingException e) {
@@ -123,7 +122,6 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                         sb.append("barcode=").append(barcode);
                     }
                     if (remark != null && remark.length() > 0) {
-                        System.out.println("Remark: " + remark.length());
                         sb.append("&remark=").append(remark);
                     }
                     if (selectedItems != null) {
@@ -138,7 +136,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                                 0);
 
                     } catch (Exception e) {
-                        System.out.println("Exception: " + e.getMessage());
+                        System.out.println("Quality Exception: " + e.getMessage());
                     }
                 }
             }
