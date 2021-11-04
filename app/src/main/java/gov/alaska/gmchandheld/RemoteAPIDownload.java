@@ -1,5 +1,12 @@
 package gov.alaska.gmchandheld;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
@@ -13,6 +20,7 @@ public class RemoteAPIDownload implements Runnable {
     public static final int GET = 0;
     public static final int POST = 1;
     public static final int HEAD = 2;
+    public static final int APK = 3;
     private final Object lockObj;
     private RemoteAPIDownloadCallback remoteAPIDownloadCallback;
     private String url, token;
@@ -70,6 +78,7 @@ public class RemoteAPIDownload implements Runnable {
                 }
             }
             switch (requestType) {
+                case APK:
                 case GET:
                     request = new Request.Builder()
                             .header("Authorization", "Token " + BaseActivity.getToken())
@@ -98,25 +107,47 @@ public class RemoteAPIDownload implements Runnable {
             OkHttpClient client = new OkHttpClient.Builder()
                     .followRedirects(false)
                     .followSslRedirects(false)
-                    .callTimeout(5, TimeUnit.SECONDS)
-                    .connectTimeout(1, TimeUnit.SECONDS)
-                    .writeTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(10, TimeUnit.SECONDS)
+                    .callTimeout(15, TimeUnit.SECONDS)
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .writeTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
+                int count;
+                InputStream input;
+                input = new BufferedInputStream(response.body().byteStream(), 8192);
                 switch (requestType) {
-                    case GET: {
-                        remoteAPIDownloadCallback.displayData(response.body().string(), response.code(), response.message(), requestType);
-                        break;
-                    }
+                    case GET:
                     case POST: {
-                        remoteAPIDownloadCallback.displayData(response.toString(), response.code(), response.message(), requestType);
+                        StringBuilder textBuilder = new StringBuilder();
+                        try (Reader reader = new BufferedReader(new InputStreamReader
+                                (input))) {
+                            int c = 0;
+                            while ((c = reader.read()) != -1) {
+                                textBuilder.append((char) c);
+                            }
+                        }
+                        input.close();
+                        remoteAPIDownloadCallback.displayData(textBuilder.toString(), response.code(), response.message(), requestType);
                         break;
                     }
                     case HEAD: {
                         remoteAPIDownloadCallback.displayData(response.headers().get("Last-Modified"), response.code(), response.message(), requestType);
                         break;
+                    }
+                    case APK: {
+                        OutputStream output = new FileOutputStream(BaseActivity.sp.getString("apkSavePath", ""));
+                        byte[] data = new byte[1024];
+                        long total = 0;
+                        while ((count = input.read(data)) != -1) {
+                            total += count;
+                            output.write(data, 0, count);
+                        }
+                        output.flush();
+                        output.close();
+                        input.close();
+                        remoteAPIDownloadCallback.displayData(null, response.code(), response.message(), requestType);
                     }
                 }
             } catch (Exception e) {
