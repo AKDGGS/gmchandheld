@@ -182,14 +182,19 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     public void updateAPK() {
-        try {
-            getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
-                    BaseActivity.getToken(),
-                    null,
-                    this,
-                    RemoteAPIDownload.APK);
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
+        sendBroadcast(intent);
+        System.out.println("Update? " + BaseActivity.getUpdateAvailable());
+        if (BaseActivity.getUpdateAvailable()) {
+            try {
+                getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
+                        BaseActivity.getToken(),
+                        null,
+                        this,
+                        RemoteAPIDownload.APK);
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }
     }
 
