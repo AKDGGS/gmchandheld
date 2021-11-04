@@ -274,7 +274,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         am.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + 5000, // five second delay
-                Integer.parseInt(sp.getString("interval", "30")) * 1000L,
+                Integer.parseInt(sp.getString("interval", "60")) * 60 * 1000L,
                 pendingIntent);
     }
 
