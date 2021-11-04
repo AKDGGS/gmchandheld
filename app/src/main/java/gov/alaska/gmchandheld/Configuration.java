@@ -252,7 +252,6 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                     break;
                 }
                 case RemoteAPIDownload.APK: {
-                    System.out.println("APK display data.");
                     Intent intent;
                     File apkFile = new File(sp.getString("apkSavePath", ""));
                     Uri uriFile = Uri.fromFile(apkFile);
@@ -269,9 +268,10 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                     if (this != null) {
                         this.startActivity(intent);
                     }
+                    break;
                 }
                 default:
-                    System.out.println("Configure Exception: the request type isn't GET, POST, HEAD, or APK");
+                    System.out.println("Configure Exception: the request type isn't GET, POST, HEAD, or APK ");
             }
         } else if (responseCode == 403) {
             runOnUiThread(new Runnable() {
