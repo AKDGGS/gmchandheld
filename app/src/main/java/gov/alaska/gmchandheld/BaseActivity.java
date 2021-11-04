@@ -29,14 +29,14 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 
-public abstract class BaseActivity extends AppCompatActivity {
-    private static String token = null;
+public abstract class BaseActivity extends AppCompatActivity implements RemoteAPIDownloadCallback {
     protected static SharedPreferences sp;
     protected static SharedPreferences.Editor editor;
     protected static Intent intent;
     protected static String baseURL;
     protected static boolean updateAvailable;
     protected static Date updateAvailableBuildDate;
+    private static String token = null;
     private static Thread thread;
     private static RemoteAPIDownload remoteAPIDownload;
     protected Toolbar toolbar;
@@ -87,6 +87,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         editor = sp.edit();
 
+        if (sp.getString("apkSavePath", "").isEmpty()) {
+            String filename = "current.apk";
+            editor.putString("apkSavePath", BaseActivity.this.getExternalCacheDir() + "/" + filename).apply();
+        }
+
         checkAPIkeyExists(this);
 
         baseURL = BaseActivity.sp.getString("urlText", "");
@@ -98,9 +103,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         if (BaseActivity.getUpdateAvailable()) {
-            Intent intent = new Intent(this, UpdateDownloadAPKHandler.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            this.startActivity(intent);
+            Intent intentConfiguration = new Intent(this, Configuration.class);
+            intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            this.startActivity(intentConfiguration);
         }
     }
 
