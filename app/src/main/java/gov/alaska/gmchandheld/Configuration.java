@@ -1,6 +1,7 @@
 package gov.alaska.gmchandheld;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -13,12 +14,14 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.io.File;
 import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.util.Date;
@@ -74,6 +77,10 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
+
+        if (BaseActivity.getUpdateAvailable()) {
+            downloadingAlert();
+        }
         autoUpdateBtn = findViewById(R.id.autoUpdateBtn);
         updateIntervalET = findViewById(R.id.updateIntervalET);
         cameraToScannerBtn = findViewById(R.id.cameraToScannerBtn);
@@ -175,13 +182,14 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     public void updateAPK() {
-        if (BaseActivity.getUpdateAvailable()) {
-            Intent intent = new Intent(Configuration.this, UpdateDownloadAPKHandler.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Configuration.this.startActivity(intent);
-        } else {
-            Toast.makeText(Configuration.this, "No update is available.",
-                    Toast.LENGTH_SHORT).show();
+        try {
+            getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
+                    BaseActivity.getToken(),
+                    null,
+                    this,
+                    RemoteAPIDownload.APK);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -219,11 +227,12 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
         if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
             switch (requestType) {
-                case RemoteAPIDownload.GET:
+                case RemoteAPIDownload.GET: {
                     editor = sp.edit();
                     editor.putString("issuesString", data).commit();
                     break;
-                case RemoteAPIDownload.HEAD:
+                }
+                case RemoteAPIDownload.HEAD: {
                     Date updateBuildDate = new Date(data);
                     Date buildDate = new Date(BuildConfig.TIMESTAMP);
 
@@ -236,8 +245,28 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                             (buildDate.compareTo(updateBuildDate) < 0);
                     checkIssuesList();
                     break;
+                }
+                case RemoteAPIDownload.APK: {
+                    System.out.println("APK display data.");
+                    Intent intent;
+                    File apkFile = new File(sp.getString("apkSavePath", ""));
+                    Uri uriFile = Uri.fromFile(apkFile);
+                    if (this != null) {
+                        if (Build.VERSION.SDK_INT >= 24) {
+                            uriFile = FileProvider.getUriForFile(this,
+                                    this.getPackageName() + ".provider", apkFile);
+                        }
+                    }
+                    intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
+                    intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    if (this != null) {
+                        this.startActivity(intent);
+                    }
+                }
                 default:
-                    System.out.println("Configure Exception: the request type isn't GET, POST, or HEAD");
+                    System.out.println("Configure Exception: the request type isn't GET, POST, HEAD, or APK");
             }
         } else if (responseCode == 403) {
             runOnUiThread(new Runnable() {
@@ -278,6 +307,42 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                     e.printStackTrace();
                 }
             });
+        }
+    }
+
+    private void downloadingAlert() {
+        final androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Update Available")
+                .setMessage("Tap Update to install the app.")
+                .setCancelable(false)
+                .setNeutralButton("Ignore Update", (dialogInterface, i) -> {
+                    Toast.makeText(this, "Ignore This Update.", Toast.LENGTH_LONG).show();
+                    //If a user refuses an update, the last modified date for that update
+                    // is saved in shared preferences,
+                    Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
+                            .apply();
+                    BaseActivity.updateAvailable = false;
+                })
+                .setPositiveButton("Update", (dialogInterface, i) -> {
+                    Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
+                            .apply();
+                    downloadAPKFile();
+                })
+                .create();
+        dialog.show();
+    }
+
+    public void downloadAPKFile() {
+        if (BaseActivity.getUpdateAvailable()) {
+            try {
+                BaseActivity.getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
+                        BaseActivity.getToken(),
+                        null,
+                        this,
+                        RemoteAPIDownload.APK);
+            } catch (Exception e) {
+                System.out.println("Error with the update.");
+            }
         }
     }
 }
