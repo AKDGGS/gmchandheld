@@ -193,11 +193,11 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2) {
-            if (alert != null) {
-                alert.dismiss();
-                alert = null;
-            }
             if (responseCode == 403) {
                 runOnUiThread(new Runnable() {
                     @Override
