@@ -1,8 +1,11 @@
 package gov.alaska.gmchandheld;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +18,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -34,7 +38,14 @@ import java.util.LinkedList;
 import javax.net.ssl.SSLContext;
 
 
-public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
+public class Lookup extends BaseActivity {
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.REQUEST_INSTALL_PACKAGES
+    };
     private static LinkedList<String> lookupHistory;
     private static String lastAdded;
     private ListView listView;
@@ -62,6 +73,18 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
         Lookup.lastAdded = lastAdded;
     }
 
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // If we don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
     @Override
     public int getLayoutResource() {
         return R.layout.lookup_main;
@@ -82,6 +105,7 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
         enableTSL(this);
         barcodeET = findViewById(R.id.barcodeET);
         barcodeET.requestFocus();
+        verifyStoragePermissions(Lookup.this);
         deleteApkFile();
         Intent myIntent = new Intent(Lookup.this, UpdateBroadcastReceiver.class);
         boolean isWorking = (PendingIntent.getBroadcast(Lookup.this, 101, myIntent, PendingIntent.FLAG_NO_CREATE) != null);
@@ -221,12 +245,11 @@ public class Lookup extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2) {
-            if (alert != null) {
-                alert.dismiss();
-                alert = null;
-            }
-            System.out.println("Response Code: " + responseCode);
             if (responseCode == 403) {
                 runOnUiThread(new Runnable() {
                     @Override
