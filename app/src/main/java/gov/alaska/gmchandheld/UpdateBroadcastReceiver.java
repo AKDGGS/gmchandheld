@@ -6,60 +6,58 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
+import java.net.HttpURLConnection;
 import java.util.Calendar;
 import java.util.Date;
 
 public class UpdateBroadcastReceiver extends BroadcastReceiver implements RemoteAPIDownloadCallback {
+    private static Thread t1, t2;
+    private static RemoteAPIDownload updateChecker, issuesChecker;
     private SharedPreferences sp;
-    public static Thread t1, t2;
-    public static RemoteAPIDownload updateChecker, issuesChecker;
+    private Context mContext;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        mContext = context;
         sp = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
 
-        if (sp.getString("urlText", "").isEmpty()) {
-            Intent getURLIntent = new Intent(context, GetToken.class);
-            getURLIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(getURLIntent);
-        } else {
-            if (t1 == null) {
-                updateChecker = new RemoteAPIDownload();
-                t1 = new Thread(updateChecker, "updateCheckerThread");
-                t1.start();
-            }
-
-            try {
-                updateChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
-                        BaseActivity.getToken(),
-                        null,
-                        this,
-                        RemoteAPIDownload.HEAD);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            if (t2 == null) {
-                issuesChecker = new RemoteAPIDownload();
-                t2 = new Thread(issuesChecker, "updateCheckerThread");
-                t2.start();
-            }
-
-            try {
-                issuesChecker.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
-                        BaseActivity.getToken(),
-                        null,
-                        this,
-                        RemoteAPIDownload.GET);
-            } catch (Exception e) {
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-            }
+        if (t1 == null) {
+            updateChecker = new RemoteAPIDownload();
+            t1 = new Thread(updateChecker, "updateCheckerThread");
+            t1.start();
         }
+
+        try {
+            updateChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
+                    BaseActivity.getToken(),
+                    null,
+                    this,
+                    RemoteAPIDownload.HEAD);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (t2 == null) {
+            issuesChecker = new RemoteAPIDownload();
+            t2 = new Thread(issuesChecker, "updateCheckerThread");
+            t2.start();
+        }
+
+        try {
+            issuesChecker.setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
+                    BaseActivity.getToken(),
+                    null,
+                    this,
+                    RemoteAPIDownload.GET);
+        } catch (Exception e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
     }
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
-        if (responseCode != 403) {
+        if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
             switch (requestType) {
                 case RemoteAPIDownload.GET:
                     SharedPreferences.Editor editor;
@@ -84,6 +82,23 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
                 default:
                     System.out.println("Update Broadcast Exception: the requestType didn't match GET or HEAD.");
             }
+        } else if (responseCode == 403) {
+            Toast.makeText(mContext,
+                    "The token is not correct.", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(mContext, GetToken.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    mContext.startActivity(intent);
+        } else if (responseCode == 404) {
+                    Toast.makeText(mContext,
+                            "The URL is not correct.", Toast.LENGTH_LONG).show();
+                    BaseActivity.editor.putString("urlText", "").apply();
+                    Intent intent = new Intent(mContext, GetToken.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    mContext.startActivity(intent);
+
+        }  else {
+            Toast.makeText(mContext,
+                    "Something went wrong.", Toast.LENGTH_LONG).show();
         }
     }
 
