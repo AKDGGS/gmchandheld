@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -99,7 +97,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         final Button updateBtn = findViewById(R.id.updateBtn);
         updateBtn.setOnClickListener(v -> updateAPK());
         updateViews();
-        urlInputChangeWatcher();
+        urlChangeFocusWatcher();
         updateIntervalChangeFocusWatcher();
         cameraToScannerChangeWatcher();
         loadData();
@@ -115,19 +113,16 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         });
     }
 
-    public void urlInputChangeWatcher() {
-        urlET.addTextChangedListener(new TextWatcher() {
+    public void urlChangeFocusWatcher() {
+        updateIntervalET = findViewById(R.id.updateIntervalET);
+        updateIntervalET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                BaseActivity.editor.putString("urlText", getUrl()).apply();
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    BaseActivity.editor.putString("urlText", getUrl()).apply();
+                    checkIssuesList();
+                }
             }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) { }
         });
     }
 
@@ -192,7 +187,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
 
     public void checkIssuesList() {
         try {
-            getRemoteAPIDownload().setFetchDataObj("https://maps.dggs.alaska.gov/gmcdev/qualitylist.json",
+            getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
                     BaseActivity.getToken(),
                     null,
                     this,
@@ -267,7 +262,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                     Configuration.this.startActivity(intent);
                 }
             });
-        }  else {
+        } else {
             Toast.makeText(Configuration.this,
                     "Something went wrong.", Toast.LENGTH_LONG).show();
         }
