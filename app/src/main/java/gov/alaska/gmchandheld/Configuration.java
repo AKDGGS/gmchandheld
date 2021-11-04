@@ -21,6 +21,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -221,7 +222,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
-        if (responseCode != 403) {
+        if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
             switch (requestType) {
                 case RemoteAPIDownload.GET:
                     editor = sp.edit();
@@ -243,9 +244,32 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                 default:
                     System.out.println("Configure Exception: the request type isn't GET, POST, or HEAD");
             }
-        } else {
+        } else if (responseCode == 403) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(Configuration.this,
+                            "The token is not correct.", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(Configuration.this, GetToken.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Configuration.this.startActivity(intent);
+                }
+            });
+        } else if (responseCode == 404) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(Configuration.this,
+                            "The URL is not correct.", Toast.LENGTH_LONG).show();
+                    BaseActivity.editor.putString("urlText", "").apply();
+                    Intent intent = new Intent(Configuration.this, GetToken.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Configuration.this.startActivity(intent);
+                }
+            });
+        }  else {
             Toast.makeText(Configuration.this,
-                    "The token is not correct.", Toast.LENGTH_LONG).show();
+                    "Something went wrong.", Toast.LENGTH_LONG).show();
         }
     }
 

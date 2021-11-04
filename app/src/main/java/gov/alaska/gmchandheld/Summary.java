@@ -211,6 +211,18 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
                         Summary.this.startActivity(intent);
                     }
                 });
+            } else if (responseCode == 404) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(Summary.this,
+                                "The URL is not correct.", Toast.LENGTH_LONG).show();
+                        BaseActivity.editor.putString("urlText", "").apply();
+                        Intent intent = new Intent(Summary.this, GetToken.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Summary.this.startActivity(intent);
+                    }
+                });
             } else {
                 runOnUiThread(() -> Toast.makeText(Summary.this,
                         "There was an error looking up " + barcode + ".\n" +

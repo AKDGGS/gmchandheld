@@ -160,6 +160,18 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
                             AddContainer.this.startActivity(intent);
                         }
                     });
+                } else if (responseCode == 404) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AddContainer.this,
+                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
+                            BaseActivity.editor.putString("urlText", "").apply();
+                            Intent intent = new Intent(AddContainer.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            AddContainer.this.startActivity(intent);
+                        }
+                    });
                 } else {
                     Toast.makeText(AddContainer.this,
                             "There was a problem. The container was not added.",

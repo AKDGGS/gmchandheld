@@ -176,6 +176,18 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
                             Recode.this.startActivity(intent);
                         }
                     });
+                } else if (responseCode == 404) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Recode.this,
+                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
+                            BaseActivity.editor.putString("urlText", "").apply();
+                            Intent intent = new Intent(Recode.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            Recode.this.startActivity(intent);
+                        }
+                    });
                 } else {
                     Toast.makeText(Recode.this, "There was a problem.  " +
                             "Nothing was changed.", Toast.LENGTH_SHORT).show();

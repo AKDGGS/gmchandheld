@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -244,6 +245,18 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
                         public void run() {
                             Toast.makeText(AuditDisplay.this,
                                     "The token is not correct.", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(AuditDisplay.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            AuditDisplay.this.startActivity(intent);
+                        }
+                    });
+                } else if (responseCode == 404) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AuditDisplay.this,
+                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
+                            BaseActivity.editor.putString("urlText", "").apply();
                             Intent intent = new Intent(AuditDisplay.this, GetToken.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             AuditDisplay.this.startActivity(intent);

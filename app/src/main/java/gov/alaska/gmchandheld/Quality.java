@@ -207,6 +207,18 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                             Quality.this.startActivity(intent);
                         }
                     });
+                } else if (responseCode == 404) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Quality.this,
+                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
+                            BaseActivity.editor.putString("urlText", "").apply();
+                            Intent intent = new Intent(Quality.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            Quality.this.startActivity(intent);
+                        }
+                    });
                 } else {
                     Toast.makeText(Quality.this,
                             "There was a problem. The inventory was not updated.",

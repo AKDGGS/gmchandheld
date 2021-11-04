@@ -11,6 +11,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
@@ -191,6 +192,18 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
                     public void run() {
                         Toast.makeText(SummaryDisplay.this,
                                 "The token is not correct.", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(SummaryDisplay.this, GetToken.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        SummaryDisplay.this.startActivity(intent);
+                    }
+                });
+            } else if (responseCode == 404) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SummaryDisplay.this,
+                                "The URL is not correct.", Toast.LENGTH_LONG).show();
+                        BaseActivity.editor.putString("urlText", "").apply();
                         Intent intent = new Intent(SummaryDisplay.this, GetToken.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         SummaryDisplay.this.startActivity(intent);
