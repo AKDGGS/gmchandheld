@@ -83,6 +83,8 @@ public class GetToken extends AppCompatActivity {
                     sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
                     editor = sp.edit();
                     editor.putString("urlText", urlET.getText().toString()).apply();
+                    Intent intent = new Intent(GetToken.this, UpdateBroadcastReceiver.class);
+                    sendBroadcast(intent);
                 }
             }
         });
