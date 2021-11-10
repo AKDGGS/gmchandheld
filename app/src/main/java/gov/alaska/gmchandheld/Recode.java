@@ -17,9 +17,8 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
+import java.util.HashMap;
 
 public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
     private EditText oldBarcodeET, newBarcodeET;
@@ -75,31 +74,15 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
             if ((!oldBarcodeET.getText().toString().isEmpty()) &&
                     (!newBarcodeET.getText().toString().isEmpty())) {
-                String barcode = null;
-                String newBarcode = null;
-                try {
-                    barcode = URLEncoder.encode(oldBarcodeET.getText().toString(),
-                            "utf-8");
-                    newBarcode = URLEncoder.encode(newBarcodeET.getText().toString(),
-                            "utf-8");
-                } catch (UnsupportedEncodingException e) {
-                    Toast.makeText(Recode.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-                StringBuilder sb = new StringBuilder();
-                if (barcode != null) {
-                    sb.append("old=").append(barcode);
-                }
-                if (newBarcode != null) {
-                    sb.append("&new=").append(newBarcode);
-                }
+                HashMap<String, Object> params = new HashMap<>();
+                params.put("old", oldBarcodeET.getText().toString());
+                params.put("new", newBarcodeET.getText().toString());
 
                 try {
-                    getRemoteAPIDownload().setFetchDataObj(baseURL + "recode.json?" + sb.toString(),
-                            BaseActivity.getToken(),
-                            null,
+                    getRemoteAPIDownload().setFetchDataObj(baseURL + "recode.json?",
                             this,
-                            0);
+                            0,
+                            params);
                 } catch (Exception e) {
                     System.out.println("Recode Exception: " + e.getMessage());
                 }

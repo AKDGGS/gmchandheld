@@ -22,6 +22,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
@@ -99,19 +100,15 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
                 barcode = barcodeET.getText().toString();
                 processingAlert(this, barcode);
                 if (!barcode.isEmpty()) {
-                    try {
-                        barcode = URLEncoder.encode(barcode, "utf-8");
-                    } catch (Exception e) {
-//                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                    HashMap<String, Object> params = new HashMap<>();
+                    params.put("barcode", barcode);
 
                     try {
                         getRemoteAPIDownload().setFetchDataObj(
-                                baseURL + "summary.json?barcode=" + barcode,
-                                BaseActivity.getToken(),
-                                null,
+                                baseURL + "summary.json?",
                                 this,
-                                0);
+                                0,
+                                params);
                     } catch (Exception e) {
                         System.out.println("Summary Exception: " + e.getMessage());
                     }

@@ -28,6 +28,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -148,29 +149,27 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
         submitBtn.setEnabled(false);
         submitBtn.setOnClickListener(view -> {
             if (file.exists()) {
-                if (barcodeET.getText().toString().trim().length() != 0) {
-                    barcode = barcodeET.getText().toString().trim();
-                }
-                if (descriptionET.getText().toString().trim().length() != 0) {
-                    description = descriptionET.getText().toString().trim();
-                }
+//                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+//                builder.addFormDataPart("barcode", barcode);
+//                builder.addFormDataPart("content", file.getName(),
+//                        RequestBody.create(MediaType.parse("Image/jpeg"), file));
+//                if (description != null) {
+//                    builder.addFormDataPart("description", description);
+//                }
+//
+//                RequestBody requestBody = builder.build();
 
-                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                builder.addFormDataPart("barcode", barcode);
-                builder.addFormDataPart("content", file.getName(),
-                        RequestBody.create(MediaType.parse("Image/jpeg"), file));
-                if (description != null) {
-                    builder.addFormDataPart("description", description);
-                }
-
-                RequestBody requestBody = builder.build();
+                HashMap<String, Object> params = new HashMap<>();
+                params.put("barcode", barcodeET.getText().toString().trim());
+                params.put("description", descriptionET.getText().toString().trim());
+                params.put("filename", file);
+                System.out.println("File: " + file + " " + file.getName() + " " + file.getClass());
 
                 try {
                     getRemoteAPIDownload().setFetchDataObj(baseURL + "/upload.json",
-                            BaseActivity.getToken(),
-                            requestBody,
                             this,
-                            RemoteAPIDownload.POST);
+                            RemoteAPIDownload.POST,
+                            params);
                 } catch (Exception e) {
                     displayException(e);
                 }

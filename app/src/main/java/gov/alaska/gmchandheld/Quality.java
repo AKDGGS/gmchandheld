@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Quality extends BaseActivity implements IssuesFragment.onMultiChoiceListener, RemoteAPIDownloadCallback {
     private static ArrayList<String> selectedItems;
@@ -107,33 +108,16 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
             if (!(TextUtils.isEmpty(barcodeET.getText()))) {
                 if (!barcodeET.getText().toString().isEmpty()) {
-                    String barcode = null;
-                    String remark = null;
-                    try {
-                        barcode = URLEncoder.encode(barcodeET.getText().toString(), "utf-8");
-                        if (remarkET.getText() != null) {
-                            remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
-                        }
-                    } catch (UnsupportedEncodingException e) {
-                        //                            exception = new Exception(e.getMessage());
-                    }
-                    StringBuilder sb = new StringBuilder();
-                    if (barcode != null && barcode.length() > 0) {
-                        sb.append("barcode=").append(barcode);
-                    }
-                    if (remark != null && remark.length() > 0) {
-                        sb.append("&remark=").append(remark);
-                    }
-                    if (selectedItems != null) {
-                        sb.append(createListForURL(selectedItems, "i"));
-                    }
+                    HashMap<String, Object> params = new HashMap<>();
+                    params.put("barcode", barcodeET.getText().toString());
+                    params.put("remark", remarkET.getText().toString());
+                    params.put("i", selectedItems);
 
                     try {
-                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventoryquality.json?" + sb.toString(),
-                                BaseActivity.getToken(),
-                                null,
+                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventoryquality.json?",
                                 this,
-                                0);
+                                0,
+                                params);
 
                     } catch (Exception e) {
                         System.out.println("Quality Exception: " + e.getMessage());

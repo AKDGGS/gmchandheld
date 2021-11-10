@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AddInventory extends BaseActivity implements IssuesFragment.onMultiChoiceListener, RemoteAPIDownloadCallback {
     private static ArrayList<String> selectedItems;
@@ -110,33 +111,15 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             if (!(TextUtils.isEmpty(barcodeET.getText()))) {
                 String container = barcodeET.getText().toString();
                 if (!container.isEmpty()) {
-                    String barcode = null;
-                    String remark = null;
+                    HashMap<String, Object> params = new HashMap<>();
+                    params.put("barcode", barcodeET.getText().toString());
+                    params.put("remark", remarkET.getText().toString());
+                    params.put("i", selectedItems);
                     try {
-                        barcode = URLEncoder.encode(barcodeET.getText().toString(), "utf-8");
-                        if (remarkET.getText() != null) {
-                            remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
-                        }
-                    } catch (UnsupportedEncodingException e) {
-//                                exception = new Exception(e.getMessage());
-                    }
-                    StringBuilder sb = new StringBuilder();
-                    if (barcode != null) {
-                        sb.append("barcode=").append(barcode);
-                    }
-                    if (remark != null) {
-                        sb.append("&remark=").append(remark);
-                    }
-                    if (selectedItems != null) {
-                        sb.append(createListForURL(selectedItems, "i"));
-                    }
-
-                    try {
-                       getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventory.json?" + sb.toString(),
-                                BaseActivity.getToken(),
-                                null,
+                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventory.json?",
                                 this,
-                                0);
+                                0,
+                                params);
                     } catch (Exception e) {
                         System.out.println("Add Inventory Exception: " + e.getMessage());
                         e.printStackTrace();

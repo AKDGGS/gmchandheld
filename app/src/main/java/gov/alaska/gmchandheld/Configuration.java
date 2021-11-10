@@ -25,6 +25,7 @@ import java.io.File;
 import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Configuration extends BaseActivity implements RemoteAPIDownloadCallback {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
@@ -185,13 +186,13 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
         sendBroadcast(intent);
         System.out.println("Update? " + BaseActivity.getUpdateAvailable());
+        HashMap<String, Object> params = new HashMap<>();
         if (BaseActivity.getUpdateAvailable()) {
             try {
                 getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
-                        BaseActivity.getToken(),
-                        null,
                         this,
-                        RemoteAPIDownload.APK);
+                        RemoteAPIDownload.APK,
+                        params);
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -199,12 +200,12 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     public void checkIssuesList() {
+        HashMap<String, Object> params = new HashMap<>();
         try {
             getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
-                    BaseActivity.getToken(),
-                    null,
                     this,
-                    0);
+                    0,
+                    params);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -339,12 +340,12 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
 
     public void downloadAPKFile() {
         if (BaseActivity.getUpdateAvailable()) {
+            HashMap<String, Object> params = new HashMap<>();
             try {
                 BaseActivity.getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
-                        BaseActivity.getToken(),
-                        null,
                         this,
-                        RemoteAPIDownload.APK);
+                        RemoteAPIDownload.APK,
+                        params);
             } catch (Exception e) {
                 System.out.println("Error with the update.");
             }

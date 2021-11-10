@@ -2,14 +2,23 @@ package gov.alaska.gmchandheld;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -23,9 +32,10 @@ public class RemoteAPIDownload implements Runnable {
     public static final int APK = 3;
     private final Object lockObj;
     private RemoteAPIDownloadCallback remoteAPIDownloadCallback;
-    private String url, token;
+    private String url;
     private RequestBody body;
     private int requestType;
+    private HashMap<String, Object> params;
 
     public RemoteAPIDownload() {
         lockObj = new Object();
@@ -36,10 +46,9 @@ public class RemoteAPIDownload implements Runnable {
     }
 
     public void setFetchDataObj(String url,
-                                String token,
-                                RequestBody body,
                                 RemoteAPIDownloadCallback remoteAPIDownloadCallback,
-                                int requestType) throws Exception {
+                                int requestType,
+                                HashMap<String, Object> params) throws Exception {
 
         if (url == null) {
             throw new Exception("URL is null");
@@ -54,11 +63,63 @@ public class RemoteAPIDownload implements Runnable {
             if (this.url != null) {
                 throw new Exception("Uploading is busy");
             }
-            this.url = url;
-            this.token = token;
-            this.body = body;
+            StringBuilder sb = new StringBuilder();
+            this.params = params;
+            if (requestType != POST) {
+                System.out.println("NOT POST");
+                sb.append(url);
+                for (Map.Entry<String, Object> entry : params.entrySet()) {
+                    if (entry.getValue() instanceof String) {
+                        sb.append("&");
+                        sb.append(URLEncoder.encode(entry.getKey(), "utf-8"));
+                        sb.append("=");
+                        sb.append(URLEncoder.encode((String) entry.getValue(), "utf-8"));
+                    }
+                    if (entry.getValue() instanceof ArrayList) {
+                        String delim = "&" + entry.getKey() + "=";
+                        if (entry.getValue() != null && ((ArrayList<?>) entry.getValue()).size() > 0) {
+                            sb.append(delim);
+                            int i = 0;
+                            while (i < ((ArrayList<?>) entry.getValue()).size() - 1) {
+                                try {
+                                    sb.append(URLEncoder.encode(((ArrayList<String>) entry.getValue()).get(i), "utf-8"));
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                sb.append(delim);
+                                i++;
+                            }
+                            sb.append(((ArrayList<String>) entry.getValue()).get(i));
+                        }
+                    }
+                    if (entry.getValue() instanceof Integer) {
+                        System.out.println("Integer");
+                    }
+
+                    if (entry.getValue() instanceof java.io.InputStream) {
+                        System.out.println("Input Stream");
+                    }
+                }
+            } else {
+                System.out.println("POST");
+                sb.append(url);
+                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                for (Map.Entry<String, Object> entry : params.entrySet()) {
+                    if (entry.getValue() instanceof String) {
+                        builder.addFormDataPart( entry.getKey(), (String) entry.getValue());
+                    }
+                    if (entry.getValue() instanceof File){
+                        builder.addFormDataPart("content", ((File) entry.getValue()).getName(),
+                                RequestBody.create(MediaType.parse("Image/jpeg"), (File) entry.getValue()));
+                    }
+                }
+                this.body = builder.build();
+            }
+            this.url = sb.toString();
             this.remoteAPIDownloadCallback = remoteAPIDownloadCallback;
             this.requestType = requestType;
+
+            System.out.println("URL : " + this.url);
             lockObj.notify();
         }
     }
@@ -86,6 +147,7 @@ public class RemoteAPIDownload implements Runnable {
                             .build();
                     break;
                 case POST:
+                    System.out.println("POST REQUEST");
                     request = new Request.Builder()
                             .header("Authorization", "Token " + BaseActivity.getToken())
                             .url(myURL)

@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
     private ArrayList<String> containerList;
@@ -157,22 +158,15 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
         // onClickListener listens if the submit button is clicked
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
             if (!(TextUtils.isEmpty(destinationET.getText())) && (containerList.size() > 0)) {
-                String destination = null;
-                try {
-                    destination = URLEncoder.encode(destinationET.getText().toString(),
-                            "utf-8");
-                } catch (UnsupportedEncodingException e) {
-//							exception = new Exception(e.getMessage());
-                }
+                HashMap<String, Object> params = new HashMap<>();
+                params.put("d", destinationET.getText().toString());
+                params.put("c", containerList);
 
                 try {
-                    getRemoteAPIDownload().setFetchDataObj(baseURL + "move.json?d=" +
-                                    destination +
-                                    createListForURL(containerList, "c"),
-                            BaseActivity.getToken(),
-                            null,
+                    getRemoteAPIDownload().setFetchDataObj(baseURL + "move.json?",
                             this,
-                            0);
+                            0,
+                            params);
                 } catch (Exception e) {
                     System.out.println("Move Display Exception: " + e.getMessage());
                     e.printStackTrace();

@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.util.HashMap;
 
 public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
     private ExpandableListView expandableListView;
@@ -83,17 +84,18 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                     barcode = invisibleET.getText().toString();
                     processingAlert(LookupDisplay.this, barcode);
                     if (!barcode.isEmpty()) {
+//                        try {
+//                            barcode = URLEncoder.encode(barcode, "utf-8");
+//                        } catch (UnsupportedEncodingException e) {
+//                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//                        }
+                        HashMap<String, Object> params = new HashMap<>();
+                        params.put("barcode", barcode);
                         try {
-                            barcode = URLEncoder.encode(barcode, "utf-8");
-                        } catch (UnsupportedEncodingException e) {
-                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                        try {
-                            getRemoteAPIDownload().setFetchDataObj(baseURL + "inventory.json?barcode=" + barcode,
-                                    BaseActivity.getToken(),
-                                    null,
+                            getRemoteAPIDownload().setFetchDataObj(baseURL + "inventory.json?",
                                     this,
-                                    0);
+                                    0,
+                                    params);
                         } catch (Exception e) {
                             System.out.println("Lookup Exception: " + e.getMessage());
                             e.printStackTrace();

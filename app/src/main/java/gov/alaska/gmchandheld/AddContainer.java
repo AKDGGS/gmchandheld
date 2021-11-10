@@ -21,6 +21,7 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.util.HashMap;
 
 public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallback {
     private IntentIntegrator qrScan;
@@ -87,37 +88,15 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
         submit_button.setOnClickListener(v -> {
             if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
                 if (!addContainerBarcodeET.getText().toString().isEmpty()) {
-                    String barcode = null;
-                    String name = null;
-                    String remark = null;
+                    HashMap<String, Object> params = new HashMap<>();
+                    params.put("barcode", addContainerBarcodeET.getText().toString());
+                    params.put("name", addContainerNameET.getText().toString());
+                    params.put("remark", addContainerRemarkET.getText().toString());
                     try {
-                        barcode = URLEncoder
-                                .encode(addContainerBarcodeET.getText().toString(),
-                                        "utf-8");
-                        name = URLEncoder.encode(addContainerNameET.getText().toString(),
-                                "utf-8");
-                        remark = URLEncoder.encode(addContainerRemarkET.getText().toString(),
-                                "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-//								exception = new Exception(e.getMessage());
-                    }
-                    StringBuilder sb = new StringBuilder();
-                    if (barcode != null) {
-                        sb.append("barcode=").append(barcode);
-                    }
-                    if (name != null) {
-                        sb.append("&name=").append(name);
-                    }
-                    if (remark != null) {
-                        sb.append("&remark=").append(remark);
-                    }
-
-                    try {
-                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addcontainer.json?" + sb.toString(),
-                                BaseActivity.getToken(),
-                                null,
+                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addcontainer.json?",
                                 this,
-                                0);
+                                0,
+                                params);
                     } catch (Exception e) {
                         System.out.println("Add Container Exception: " + e.getMessage());
                         e.printStackTrace();

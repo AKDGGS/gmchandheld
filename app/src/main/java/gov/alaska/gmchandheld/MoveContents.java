@@ -18,9 +18,8 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
+import java.util.HashMap;
 
 public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallback {
     private EditText moveContentsFromET, moveContentsToET;
@@ -46,31 +45,15 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
             if (!(TextUtils.isEmpty(moveContentsFromET.getText())) &
                     !(TextUtils.isEmpty(moveContentsToET.getText()))) {
-                String source = null;
-                String destination = null;
-                try {
-                    source = URLEncoder.encode(moveContentsFromET.getText().toString(),
-                            "utf-8");
-                    destination = URLEncoder.encode(moveContentsToET.getText().toString(),
-                            "utf-8");
-                } catch (UnsupportedEncodingException e) {
-//						exception = new Exception(e.getMessage());
-                }
-
-                StringBuilder sb = new StringBuilder();
-                if (source != null) {
-                    sb.append("src=").append(source);
-                }
-                if (destination != null) {
-                    sb.append("&dest=").append(destination);
-                }
+                HashMap<String, Object> params = new HashMap<>();
+                params.put("src", moveContentsFromET.getText().toString());
+                params.put("dest", moveContentsToET.getText().toString());
 
                 try {
-                    getRemoteAPIDownload().setFetchDataObj(baseURL + "movecontents.json?" + sb.toString(),
-                            BaseActivity.getToken(),
-                            null,
+                    getRemoteAPIDownload().setFetchDataObj(baseURL + "movecontents.json?",
                             this,
-                            0);
+                            0,
+                            params);
                 } catch (Exception e) {
                     System.out.println("Move Contents Exception: " + e.getMessage());
                     e.printStackTrace();

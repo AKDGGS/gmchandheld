@@ -33,6 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.net.ssl.SSLContext;
@@ -149,17 +150,13 @@ public class Lookup extends BaseActivity {
             barcode = barcodeET.getText().toString();
             if (!barcode.isEmpty()) {
                 processingAlert(this, barcode);
+                HashMap<String, Object> params = new HashMap<>();
+                params.put("barcode", barcode);
                 try {
-                    barcode = URLEncoder.encode(barcode, "utf-8");
-                } catch (Exception e) {
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-                try {
-                    getRemoteAPIDownload().setFetchDataObj(baseURL + "inventory.json?barcode=" + barcode,
-                            BaseActivity.getToken(),
-                            null,
+                    getRemoteAPIDownload().setFetchDataObj(baseURL + "inventory.json?",
                             this,
-                            0);
+                            0,
+                            params);
                 } catch (Exception e) {
                     System.out.println("Lookup Exception: " + e.getMessage());
                 }

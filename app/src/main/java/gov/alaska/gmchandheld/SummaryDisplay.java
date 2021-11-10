@@ -11,16 +11,14 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
+import java.util.HashMap;
 
 public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
     private ExpandableListView expandableListView;
@@ -77,19 +75,14 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
                     barcode = invisibleET.getText().toString();
                     processingAlert(this, barcode);
                     if (!barcode.isEmpty()) {
-                        try {
-                            barcode = URLEncoder.encode(barcode, "utf-8");
-                        } catch (UnsupportedEncodingException e) {
-//                                exception = new Exception(e.getMessage());
-                        }
+                        HashMap<String, Object> params = new HashMap<>();
+                        params.put("barcode", barcode);
 
                         try {
-                            getRemoteAPIDownload().setFetchDataObj(baseURL
-                                            + "summary.json?barcode=" + barcode,
-                                    BaseActivity.getToken(),
-                                    null,
+                            getRemoteAPIDownload().setFetchDataObj(baseURL + "summary.json?",
                                     this,
-                                    0);
+                                    0,
+                                    params);
                         } catch (Exception e) {
                             System.out.println("Summary Display Exception: " + e.getMessage());
                         }

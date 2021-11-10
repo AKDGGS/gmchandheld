@@ -9,6 +9,7 @@ import android.widget.Toast;
 import java.net.HttpURLConnection;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 public class UpdateBroadcastReceiver extends BroadcastReceiver implements RemoteAPIDownloadCallback {
     private static Thread t1, t2;
@@ -24,12 +25,13 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
             t1.start();
         }
 
+        HashMap<String, Object> params = new HashMap<>();
+
         try {
             updateChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
-                    BaseActivity.getToken(),
-                    null,
                     this,
-                    RemoteAPIDownload.HEAD);
+                    RemoteAPIDownload.HEAD,
+                    params);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -42,10 +44,9 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
 
         try {
             issuesChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
-                    BaseActivity.getToken(),
-                    null,
                     this,
-                    RemoteAPIDownload.GET);
+                    RemoteAPIDownload.GET,
+                    params);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
     private ArrayList<String> containerList;
@@ -156,20 +157,15 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
         });
         // onClickListener listens if the submit button is clicked
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
-            String remark = null;
-            try {
-                remark = URLEncoder.encode(remarkET.getText().toString(), "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                //                            exception = new Exception(e.getMessage());
-            }
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("remark", remarkET.getText().toString());
+            params.put("c", containerList);
 
             try {
-                getRemoteAPIDownload().setFetchDataObj(baseURL + "audit.json?remark=" + remark +
-                                createListForURL(containerList, "c"),
-                        BaseActivity.getToken(),
-                        null,
+                getRemoteAPIDownload().setFetchDataObj(baseURL + "audit.json?remark=",
                         this,
-                        0);
+                        0,
+                        params);
             } catch (Exception e) {
                 System.out.println("Audit Display Exception: " + e.getMessage());
                 e.printStackTrace();
