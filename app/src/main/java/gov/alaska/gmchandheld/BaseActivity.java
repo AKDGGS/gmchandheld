@@ -21,12 +21,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Date;
 
 public abstract class BaseActivity extends AppCompatActivity implements RemoteAPIDownloadCallback {
@@ -34,7 +32,8 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
     protected static SharedPreferences.Editor editor;
     protected static Intent intent;
     protected static String baseURL;
-    protected static boolean updateAvailable;
+    protected static boolean updatable;
+    protected static MutableLiveData<Boolean> updateAvailable = new MutableLiveData<>();
     protected static Date updateAvailableBuildDate;
     private static String token = null;
     private static Thread thread;
@@ -43,8 +42,12 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
     protected IntentIntegrator qrScan;
     protected volatile AlertDialog alert;
 
-    public static boolean getUpdateAvailable() {
+    public static MutableLiveData<Boolean> getUpdateAvailable() {
         return updateAvailable;
+    }
+
+    public static boolean getUpdatable() {
+        return updatable;
     }
 
     public static String getToken() {
@@ -102,7 +105,9 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
             thread.start();
         }
 
-        if (BaseActivity.getUpdateAvailable()) {
+        updateAvailable.setValue(getUpdatable());
+
+        if (BaseActivity.getUpdatable()) {
             Intent intentConfiguration = new Intent(this, Configuration.class);
             intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             this.startActivity(intentConfiguration);
@@ -250,26 +255,6 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
         thread.interrupt();
         remoteAPIDownload.setUrl(null);
         alert.setCanceledOnTouchOutside(false);
-    }
-
-    public String createListForURL(ArrayList<String> list, String paramKeyword) {
-        String delim = "&" + paramKeyword + "=";
-        StringBuilder sb = new StringBuilder();
-        if (list != null && list.size() > 0) {
-            sb.append(delim);
-            int i = 0;
-            while (i < list.size() - 1) {
-                try {
-                    sb.append(URLEncoder.encode(list.get(i), "utf-8"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                sb.append(delim);
-                i++;
-            }
-            sb.append(list.get(i));
-        }
-        return sb.toString();
     }
 
     public void setAlarm() {

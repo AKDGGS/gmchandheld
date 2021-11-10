@@ -4,10 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.widget.Toast;
 
 import java.net.HttpURLConnection;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -73,11 +71,12 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
                     long lastRefusedUpdate = BaseActivity.sp.getLong("ignoreUpdateDateSP", 0);
                     if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) &
                             (buildDate.compareTo(updateBuildDate) < 0)) {
-                        BaseActivity.updateAvailable = true;
+                        BaseActivity.updatable = true;
                         BaseActivity.updateAvailableBuildDate = updateBuildDate;
                     } else {
-                        BaseActivity.updateAvailable = false;
+                        BaseActivity.updatable = false;
                     }
+                    System.out.println("Update broadcast? " + BaseActivity.updatable);
                     break;
                 default:
                     System.out.println("Update Broadcast Exception: the requestType didn't match GET or HEAD.");

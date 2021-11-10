@@ -15,6 +15,7 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.Observer;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -81,9 +82,19 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
 
-        if (BaseActivity.getUpdateAvailable()) {
-            downloadingAlert();
-        }
+
+        updateAvailable.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean == true) {
+                    System.out.println("Update available");
+                    downloadingAlert();
+                } else {
+                    System.out.println("No update is available");
+                }
+            }
+        });
+
         autoUpdateBtn = findViewById(R.id.autoUpdateBtn);
         updateIntervalET = findViewById(R.id.updateIntervalET);
         cameraToScannerBtn = findViewById(R.id.cameraToScannerBtn);
@@ -188,7 +199,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
         sendBroadcast(intent);
         HashMap<String, Object> params = new HashMap<>();
-        if (BaseActivity.getUpdateAvailable()) {
+        if (BaseActivity.getUpdatable()) {
             try {
                 OutputStream outputStream = new FileOutputStream(
                         BaseActivity.sp.getString("apkSavePath", ""));
@@ -335,7 +346,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                     // is saved in shared preferences,
                     Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
                             .apply();
-                    BaseActivity.updateAvailable = false;
+                    BaseActivity.updatable = false;
                 })
                 .setPositiveButton("Update", (dialogInterface, i) -> {
                     Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
@@ -347,7 +358,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     public void downloadAPKFile() {
-        if (BaseActivity.getUpdateAvailable()) {
+        if (BaseActivity.getUpdatable()) {
             HashMap<String, Object> params = new HashMap<>();
             try {
                 OutputStream outputStream = new FileOutputStream(
