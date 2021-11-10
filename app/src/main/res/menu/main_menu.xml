@@ -17,6 +17,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/audit"
+        android:title="@string/audit"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/moveContent"
         android:title="@string/moveContent"
         app:showAsAction="never" />
@@ -34,11 +39,6 @@
     <item
         android:id="@+id/quality"
         android:title="@string/quality"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/audit"
-        android:title="@string/audit"
         app:showAsAction="never" />
 
     <item
