@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -66,7 +65,6 @@ public class RemoteAPIDownload implements Runnable {
             StringBuilder sb = new StringBuilder();
             this.params = params;
             if (requestType != POST) {
-                System.out.println("NOT POST");
                 sb.append(url);
                 for (Map.Entry<String, Object> entry : params.entrySet()) {
                     if (entry.getValue() instanceof String) {
@@ -74,15 +72,15 @@ public class RemoteAPIDownload implements Runnable {
                         sb.append(URLEncoder.encode(entry.getKey(), "utf-8"));
                         sb.append("=");
                         sb.append(URLEncoder.encode((String) entry.getValue(), "utf-8"));
-                    }
-                    if (entry.getValue() instanceof ArrayList) {
+                    } else if (entry.getValue() instanceof ArrayList) {
                         String delim = "&" + entry.getKey() + "=";
                         if (entry.getValue() != null && ((ArrayList<?>) entry.getValue()).size() > 0) {
                             sb.append(delim);
                             int i = 0;
                             while (i < ((ArrayList<?>) entry.getValue()).size() - 1) {
                                 try {
-                                    sb.append(URLEncoder.encode(((ArrayList<String>) entry.getValue()).get(i), "utf-8"));
+                                    sb.append(URLEncoder.encode(
+                                            ((ArrayList<String>) entry.getValue()).get(i), "utf-8"));
                                 } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 }
@@ -91,26 +89,28 @@ public class RemoteAPIDownload implements Runnable {
                             }
                             sb.append(((ArrayList<String>) entry.getValue()).get(i));
                         }
-                    }
-                    if (entry.getValue() instanceof Integer) {
+                    } else if (entry.getValue() instanceof Integer) {
                         System.out.println("Integer");
-                    }
-
-                    if (entry.getValue() instanceof java.io.InputStream) {
+                    } else if (entry.getValue() instanceof java.io.InputStream) {
                         System.out.println("Input Stream");
+                    } else {
+                        System.out.println("Input not recognized.  Add it. " +
+                                entry.getValue().getClass());
                     }
                 }
             } else {
-                System.out.println("POST");
                 sb.append(url);
                 MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                 for (Map.Entry<String, Object> entry : params.entrySet()) {
                     if (entry.getValue() instanceof String) {
-                        builder.addFormDataPart( entry.getKey(), (String) entry.getValue());
-                    }
-                    if (entry.getValue() instanceof File){
+                        builder.addFormDataPart(entry.getKey(), (String) entry.getValue());
+                    } else if (entry.getValue() instanceof File) {
                         builder.addFormDataPart("content", ((File) entry.getValue()).getName(),
-                                RequestBody.create(MediaType.parse("Image/jpeg"), (File) entry.getValue()));
+                                RequestBody.create(MediaType.parse("Image/jpeg"),
+                                        (File) entry.getValue()));
+                    } else {
+                        System.out.println("Input not recognized.  Add it. " +
+                                entry.getValue().getClass());
                     }
                 }
                 this.body = builder.build();
@@ -118,8 +118,6 @@ public class RemoteAPIDownload implements Runnable {
             this.url = sb.toString();
             this.remoteAPIDownloadCallback = remoteAPIDownloadCallback;
             this.requestType = requestType;
-
-            System.out.println("URL : " + this.url);
             lockObj.notify();
         }
     }
@@ -147,7 +145,6 @@ public class RemoteAPIDownload implements Runnable {
                             .build();
                     break;
                 case POST:
-                    System.out.println("POST REQUEST");
                     request = new Request.Builder()
                             .header("Authorization", "Token " + BaseActivity.getToken())
                             .url(myURL)
@@ -191,15 +188,18 @@ public class RemoteAPIDownload implements Runnable {
                             }
                         }
                         input.close();
-                        remoteAPIDownloadCallback.displayData(textBuilder.toString(), response.code(), response.message(), requestType);
+                        remoteAPIDownloadCallback.displayData(textBuilder.toString(), response.code(),
+                                response.message(), requestType);
                         break;
                     }
                     case HEAD: {
-                        remoteAPIDownloadCallback.displayData(response.headers().get("Last-Modified"), response.code(), response.message(), requestType);
+                        remoteAPIDownloadCallback.displayData(response.headers().get("Last-Modified"),
+                                response.code(), response.message(), requestType);
                         break;
                     }
                     case APK: {
-                        OutputStream output = new FileOutputStream(BaseActivity.sp.getString("apkSavePath", ""));
+                        OutputStream output = new FileOutputStream(
+                                BaseActivity.sp.getString("apkSavePath", ""));
                         byte[] data = new byte[1024];
                         long total = 0;
                         while ((count = input.read(data)) != -1) {
@@ -209,7 +209,8 @@ public class RemoteAPIDownload implements Runnable {
                         output.flush();
                         output.close();
                         input.close();
-                        remoteAPIDownloadCallback.displayData(null, response.code(), response.message(), requestType);
+                        remoteAPIDownloadCallback.displayData(null, response.code(),
+                                response.message(), requestType);
                     }
                 }
             } catch (Exception e) {
