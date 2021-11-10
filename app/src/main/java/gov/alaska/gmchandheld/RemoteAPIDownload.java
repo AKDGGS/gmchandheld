@@ -3,7 +3,6 @@ package gov.alaska.gmchandheld;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -28,13 +27,13 @@ public class RemoteAPIDownload implements Runnable {
     public static final int GET = 0;
     public static final int POST = 1;
     public static final int HEAD = 2;
-    public static final int APK = 3;
     private final Object lockObj;
     private RemoteAPIDownloadCallback remoteAPIDownloadCallback;
     private String url;
     private RequestBody body;
     private int requestType;
     private HashMap<String, Object> params;
+    private OutputStream outputStream;
 
     public RemoteAPIDownload() {
         lockObj = new Object();
@@ -47,7 +46,8 @@ public class RemoteAPIDownload implements Runnable {
     public void setFetchDataObj(String url,
                                 RemoteAPIDownloadCallback remoteAPIDownloadCallback,
                                 int requestType,
-                                HashMap<String, Object> params) throws Exception {
+                                HashMap<String, Object> params,
+                                OutputStream outputStream) throws Exception {
 
         if (url == null) {
             throw new Exception("URL is null");
@@ -118,6 +118,7 @@ public class RemoteAPIDownload implements Runnable {
             this.url = sb.toString();
             this.remoteAPIDownloadCallback = remoteAPIDownloadCallback;
             this.requestType = requestType;
+            this.outputStream = outputStream;
             lockObj.notify();
         }
     }
@@ -137,7 +138,6 @@ public class RemoteAPIDownload implements Runnable {
                 }
             }
             switch (requestType) {
-                case APK:
                 case GET:
                     request = new Request.Builder()
                             .header("Authorization", "Token " + BaseActivity.getToken())
@@ -179,38 +179,37 @@ public class RemoteAPIDownload implements Runnable {
                 switch (requestType) {
                     case GET:
                     case POST: {
-                        StringBuilder textBuilder = new StringBuilder();
-                        try (Reader reader = new BufferedReader(new InputStreamReader
-                                (input))) {
-                            int c = 0;
-                            while ((c = reader.read()) != -1) {
-                                textBuilder.append((char) c);
+                        if (outputStream == null) {
+                            StringBuilder textBuilder = new StringBuilder();
+                            try (Reader reader = new BufferedReader(new InputStreamReader
+                                    (input))) {
+                                int c = 0;
+                                while ((c = reader.read()) != -1) {
+                                    textBuilder.append((char) c);
+                                }
                             }
+                            input.close();
+                            remoteAPIDownloadCallback.displayData(textBuilder.toString(), response.code(),
+                                    response.message(), requestType);
+                        } else {
+                            byte[] data = new byte[1024];
+                            long total = 0;
+                            while ((count = input.read(data)) != -1) {
+                                total += count;
+                                outputStream.write(data, 0, count);
+                            }
+                            outputStream.flush();
+                            outputStream.close();
+                            input.close();
+                            remoteAPIDownloadCallback.displayData(null, response.code(),
+                                    response.message(), requestType);
                         }
-                        input.close();
-                        remoteAPIDownloadCallback.displayData(textBuilder.toString(), response.code(),
-                                response.message(), requestType);
                         break;
                     }
                     case HEAD: {
                         remoteAPIDownloadCallback.displayData(response.headers().get("Last-Modified"),
                                 response.code(), response.message(), requestType);
                         break;
-                    }
-                    case APK: {
-                        OutputStream output = new FileOutputStream(
-                                BaseActivity.sp.getString("apkSavePath", ""));
-                        byte[] data = new byte[1024];
-                        long total = 0;
-                        while ((count = input.read(data)) != -1) {
-                            total += count;
-                            output.write(data, 0, count);
-                        }
-                        output.flush();
-                        output.close();
-                        input.close();
-                        remoteAPIDownloadCallback.displayData(null, response.code(),
-                                response.message(), requestType);
                     }
                 }
             } catch (Exception e) {
