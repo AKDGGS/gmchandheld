@@ -60,7 +60,7 @@ public class RemoteAPIDownload implements Runnable {
 
         synchronized (lockObj) {
             if (this.url != null) {
-                throw new Exception("Uploading is busy");
+                throw new Exception("Processing. Give me a moment and then try again.");
             }
             StringBuilder sb = new StringBuilder();
             this.params = params;
