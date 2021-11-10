@@ -16,6 +16,7 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
     private static RemoteAPIDownload updateChecker, issuesChecker;
     private SharedPreferences sp;
     private Context mContext;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         sp = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
@@ -31,7 +32,8 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
             updateChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
                     this,
                     RemoteAPIDownload.HEAD,
-                    params);
+                    params,
+                    null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,7 +48,8 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
             issuesChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
                     this,
                     RemoteAPIDownload.GET,
-                    params);
+                    params,
+                    null);
         } catch (Exception e) {
             e.printStackTrace();
         }
