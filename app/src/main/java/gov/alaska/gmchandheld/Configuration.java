@@ -22,6 +22,8 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.util.Date;
@@ -185,17 +187,21 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     public void updateAPK() {
         Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
         sendBroadcast(intent);
-        System.out.println("Update? " + BaseActivity.getUpdateAvailable());
         HashMap<String, Object> params = new HashMap<>();
         if (BaseActivity.getUpdateAvailable()) {
             try {
+                OutputStream outputStream = new FileOutputStream(
+                        BaseActivity.sp.getString("apkSavePath", ""));
                 getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
                         this,
-                        RemoteAPIDownload.APK,
-                        params);
+                        RemoteAPIDownload.GET,
+                        params,
+                        outputStream);
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
+        } else {
+            Toast.makeText(getApplicationContext(), "No update available.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -205,7 +211,8 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
             getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
                     this,
                     0,
-                    params);
+                    params,
+                    null);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -234,9 +241,29 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
             switch (requestType) {
                 case RemoteAPIDownload.GET: {
-                    editor = sp.edit();
-                    editor.putString("issuesString", data).commit();
+                    if (data != null) {
+                        editor = sp.edit();
+                        editor.putString("issuesString", data).commit();
+                    } else {
+                        Intent intent;
+                        File apkFile = new File(sp.getString("apkSavePath", ""));
+                        Uri uriFile = Uri.fromFile(apkFile);
+                        if (this != null) {
+                            if (Build.VERSION.SDK_INT >= 24) {
+                                uriFile = FileProvider.getUriForFile(this,
+                                        this.getPackageName() + ".provider", apkFile);
+                            }
+                        }
+                        intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
+                        intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if (this != null) {
+                            this.startActivity(intent);
+                        }
+                    }
                     break;
+
                 }
                 case RemoteAPIDownload.HEAD: {
                     Date updateBuildDate = new Date(data);
@@ -246,29 +273,10 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                     // (The last refused modified date comes from UpdateDownloadAPKHandler
                     long lastRefusedUpdate = BaseActivity.sp.getLong("ignoreUpdateDateSP", 0);
 
-                    BaseActivity.updateAvailable = !(updateBuildDate.compareTo(
+                    BaseActivity.updatable = !(updateBuildDate.compareTo(
                             new Date(lastRefusedUpdate)) == 0) &
                             (buildDate.compareTo(updateBuildDate) < 0);
                     checkIssuesList();
-                    break;
-                }
-                case RemoteAPIDownload.APK: {
-                    Intent intent;
-                    File apkFile = new File(sp.getString("apkSavePath", ""));
-                    Uri uriFile = Uri.fromFile(apkFile);
-                    if (this != null) {
-                        if (Build.VERSION.SDK_INT >= 24) {
-                            uriFile = FileProvider.getUriForFile(this,
-                                    this.getPackageName() + ".provider", apkFile);
-                        }
-                    }
-                    intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
-                    intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
-                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                            Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    if (this != null) {
-                        this.startActivity(intent);
-                    }
                     break;
                 }
                 default:
@@ -342,10 +350,13 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         if (BaseActivity.getUpdateAvailable()) {
             HashMap<String, Object> params = new HashMap<>();
             try {
+                OutputStream outputStream = new FileOutputStream(
+                        BaseActivity.sp.getString("apkSavePath", ""));
                 BaseActivity.getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
                         this,
-                        RemoteAPIDownload.APK,
-                        params);
+                        RemoteAPIDownload.GET,
+                        params,
+                        outputStream);
             } catch (Exception e) {
                 System.out.println("Error with the update.");
             }
