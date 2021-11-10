@@ -170,7 +170,8 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                     getRemoteAPIDownload().setFetchDataObj(baseURL + "move.json?",
                             this,
                             0,
-                            params);
+                            params,
+                            null);
                 } catch (Exception e) {
                     System.out.println("Move Display Exception: " + e.getMessage());
                     e.printStackTrace();

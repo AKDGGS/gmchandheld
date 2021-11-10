@@ -169,7 +169,8 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                     getRemoteAPIDownload().setFetchDataObj(baseURL + "/upload.json",
                             this,
                             RemoteAPIDownload.POST,
-                            params);
+                            params,
+                            null);
                 } catch (Exception e) {
                     displayException(e);
                 }

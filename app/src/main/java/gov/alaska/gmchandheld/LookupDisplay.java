@@ -95,7 +95,8 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                             getRemoteAPIDownload().setFetchDataObj(baseURL + "inventory.json?",
                                     this,
                                     0,
-                                    params);
+                                    params,
+                                    null);
                         } catch (Exception e) {
                             System.out.println("Lookup Exception: " + e.getMessage());
                             e.printStackTrace();

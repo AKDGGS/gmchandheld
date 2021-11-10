@@ -117,7 +117,8 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                         getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventoryquality.json?",
                                 this,
                                 0,
-                                params);
+                                params,
+                                null);
 
                     } catch (Exception e) {
                         System.out.println("Quality Exception: " + e.getMessage());

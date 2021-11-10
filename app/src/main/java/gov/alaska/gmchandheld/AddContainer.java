@@ -96,7 +96,8 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
                         getRemoteAPIDownload().setFetchDataObj(baseURL + "addcontainer.json?",
                                 this,
                                 0,
-                                params);
+                                params,
+                                null);
                     } catch (Exception e) {
                         System.out.println("Add Container Exception: " + e.getMessage());
                         e.printStackTrace();

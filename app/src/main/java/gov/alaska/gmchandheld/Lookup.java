@@ -156,7 +156,8 @@ public class Lookup extends BaseActivity {
                     getRemoteAPIDownload().setFetchDataObj(baseURL + "inventory.json?",
                             this,
                             0,
-                            params);
+                            params,
+                            null);
                 } catch (Exception e) {
                     System.out.println("Lookup Exception: " + e.getMessage());
                 }

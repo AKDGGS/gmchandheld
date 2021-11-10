@@ -53,7 +53,8 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
                     getRemoteAPIDownload().setFetchDataObj(baseURL + "movecontents.json?",
                             this,
                             0,
-                            params);
+                            params,
+                            null);
                 } catch (Exception e) {
                     System.out.println("Move Contents Exception: " + e.getMessage());
                     e.printStackTrace();

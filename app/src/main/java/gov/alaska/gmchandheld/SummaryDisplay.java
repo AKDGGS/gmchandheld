@@ -82,7 +82,8 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
                             getRemoteAPIDownload().setFetchDataObj(baseURL + "summary.json?",
                                     this,
                                     0,
-                                    params);
+                                    params,
+                                    null);
                         } catch (Exception e) {
                             System.out.println("Summary Display Exception: " + e.getMessage());
                         }

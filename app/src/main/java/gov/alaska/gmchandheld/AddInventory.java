@@ -119,7 +119,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                         getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventory.json?",
                                 this,
                                 0,
-                                params);
+                                params,
+                                null);
                     } catch (Exception e) {
                         System.out.println("Add Inventory Exception: " + e.getMessage());
                         e.printStackTrace();
