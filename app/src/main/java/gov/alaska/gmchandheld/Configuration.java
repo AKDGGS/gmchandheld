@@ -1,5 +1,7 @@
 package gov.alaska.gmchandheld;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -333,25 +335,35 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     private void downloadingAlert() {
-        final androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Update Available")
-                .setMessage("Tap Update to install the app.")
-                .setCancelable(false)
-                .setNeutralButton("Ignore Update", (dialogInterface, i) -> {
-                    Toast.makeText(this, "Ignore This Update.", Toast.LENGTH_LONG).show();
-                    //If a user refuses an update, the last modified date for that update
-                    // is saved in shared preferences,
-                    Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
-                            .apply();
-                    BaseActivity.updatable = false;
-                })
-                .setPositiveButton("Update", (dialogInterface, i) -> {
-                    Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
-                            .apply();
-                    downloadAPKFile();
-                })
-                .create();
-        dialog.show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Update Available.");
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                "Update",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
+                                .apply();
+                        downloadAPKFile();
+                    }
+                });
+
+        builder.setNegativeButton(
+                "Ignore the Update",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //If a user refuses an update, the last modified date for that update
+                        // is saved in shared preferences,
+                        Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
+                                .apply();
+                        BaseActivity.updatable = false;
+                    }
+                });
+        if(alert == null) {
+            alert = builder.create();
+            alert.show();
+        }
     }
 
     public void downloadAPKFile() {
