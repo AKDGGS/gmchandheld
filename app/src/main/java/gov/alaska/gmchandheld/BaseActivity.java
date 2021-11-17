@@ -38,9 +38,9 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
     private static String token = null;
     private static Thread thread;
     private static RemoteAPIDownload remoteAPIDownload;
-    protected Toolbar toolbar;
     protected IntentIntegrator qrScan;
-    protected volatile AlertDialog alert;
+    protected AlertDialog alert;
+    protected Toolbar toolbar;
 
     public static MutableLiveData<Boolean> getUpdateAvailable() {
         return updateAvailable;
