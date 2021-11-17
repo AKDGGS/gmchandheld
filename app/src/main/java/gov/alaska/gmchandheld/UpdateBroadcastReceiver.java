@@ -76,7 +76,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
                     } else {
                         BaseActivity.updatable = false;
                     }
-                    System.out.println("Update broadcast? " + BaseActivity.updatable);
                     break;
                 default:
                     System.out.println("Update Broadcast Exception: the requestType didn't match GET or HEAD.");
@@ -88,7 +87,9 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
 
     @Override
     public void displayException(Exception e) {
-        System.out.println("Broadcast Exception: " + e.getMessage());
+        if (e.getMessage() != null) {
+            System.out.println("Broadcast Exception: " + e.getMessage());
+        }
         e.printStackTrace();
     }
 }
