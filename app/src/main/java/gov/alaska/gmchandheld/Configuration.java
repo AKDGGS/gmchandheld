@@ -189,8 +189,9 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     cancelAlarm();
+                    BaseActivity.editor.putString("interval", updateIntervalET.getText().toString()).apply();
                     setAlarm();
-                }
+                 }
             }
         });
     }
