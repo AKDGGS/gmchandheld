@@ -18,9 +18,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
 import java.util.HashMap;
 
 public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallback {
@@ -93,6 +91,7 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
                     params.put("name", addContainerNameET.getText().toString());
                     params.put("remark", addContainerRemarkET.getText().toString());
                     try {
+                        processingAlert(this, "Adding container.");
                         getRemoteAPIDownload().setFetchDataObj(baseURL + "addcontainer.json?",
                                 this,
                                 0,
@@ -127,6 +126,10 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
                 if (responseCode == 403) {
@@ -171,6 +174,10 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override

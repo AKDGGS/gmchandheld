@@ -73,7 +73,7 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     barcode = invisibleET.getText().toString();
-                    processingAlert(this, barcode);
+                    processingAlert(this, "Processing " + barcode);
                     if (!barcode.isEmpty()) {
                         HashMap<String, Object> params = new HashMap<>();
                         params.put("barcode", barcode);
@@ -245,11 +245,12 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
+
         if (e.getMessage() != null) {
-            if (alert != null) {
-                alert.dismiss();
-                alert = null;
-            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

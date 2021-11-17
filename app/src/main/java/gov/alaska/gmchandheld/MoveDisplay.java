@@ -167,6 +167,7 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                 params.put("c", containerList);
 
                 try {
+                    processingAlert(this, "Moving the inventory.");
                     getRemoteAPIDownload().setFetchDataObj(baseURL + "move.json?",
                             this,
                             0,
@@ -237,6 +238,10 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -286,6 +291,10 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override

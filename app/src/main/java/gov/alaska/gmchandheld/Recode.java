@@ -79,6 +79,7 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
                 params.put("new", newBarcodeET.getText().toString());
 
                 try {
+                    processingAlert(this, "Recoding the barcode.");
                     getRemoteAPIDownload().setFetchDataObj(baseURL + "recode.json?",
                             this,
                             0,
@@ -147,6 +148,10 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
                 if (responseCode == 403) {
@@ -189,6 +194,10 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override

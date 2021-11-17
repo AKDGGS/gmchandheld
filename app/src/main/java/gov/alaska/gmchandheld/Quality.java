@@ -20,9 +20,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -114,6 +112,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                     params.put("i", selectedItems);
 
                     try {
+                        processingAlert(this, "Updating the issues list.");
                         getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventoryquality.json?",
                                 this,
                                 0,
@@ -179,6 +178,10 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
                 if (responseCode == 403) {
@@ -231,6 +234,10 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override

@@ -50,6 +50,7 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
                 params.put("dest", moveContentsToET.getText().toString());
 
                 try {
+                    processingAlert(this, "Moving the contents.");
                     getRemoteAPIDownload().setFetchDataObj(baseURL + "movecontents.json?",
                             this,
                             0,
@@ -146,6 +147,10 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -192,6 +197,10 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override

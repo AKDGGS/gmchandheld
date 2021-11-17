@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -33,10 +32,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-
 public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback {
     private static final int CAM_REQUEST = 1;
     private static final String PHOTO_PATH = "/sdcard/DCIM/Camera/";
@@ -48,7 +43,6 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
     private Button submitBtn;
     private EditText barcodeET, descriptionET;
     private File file;
-    private String barcode, description;
     private Uri image_uri;
     private boolean cameraOn;
     private ArrayList<File> fileList;
@@ -120,13 +114,11 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                     requestPermissions(permission, 1000);
                 } else {
                     if (barcodeET.getText().toString().trim().length() != 0) {
-                        barcode = barcodeET.getText().toString().trim();
                         openCamera(file);
                     }
                 }
             } else {
                 if (barcodeET.getText().toString().trim().length() != 0) {
-                    barcode = barcodeET.getText().toString().trim();
                     openCamera(file);
                 } else {
                     Toast.makeText(getApplicationContext(),
@@ -149,23 +141,13 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
         submitBtn.setEnabled(false);
         submitBtn.setOnClickListener(view -> {
             if (file.exists()) {
-//                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-//                builder.addFormDataPart("barcode", barcode);
-//                builder.addFormDataPart("content", file.getName(),
-//                        RequestBody.create(MediaType.parse("Image/jpeg"), file));
-//                if (description != null) {
-//                    builder.addFormDataPart("description", description);
-//                }
-//
-//                RequestBody requestBody = builder.build();
-
                 HashMap<String, Object> params = new HashMap<>();
                 params.put("barcode", barcodeET.getText().toString().trim());
                 params.put("description", descriptionET.getText().toString().trim());
                 params.put("filename", file);
-                System.out.println("File: " + file + " " + file.getName() + " " + file.getClass());
 
                 try {
+                    processingAlert(this, "Uploading the photo.");
                     getRemoteAPIDownload().setFetchDataObj(baseURL + "/upload.json",
                             this,
                             RemoteAPIDownload.POST,
@@ -222,10 +204,8 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                 } else {
                     if (resultCode == CommonStatusCodes.SUCCESS) {
                         if (data != null) {
-                            Barcode barcode = data.getParcelableExtra("barcode");
-                            EditText edit_text = findViewById(R.id.barcodeET);
-                            if (barcode != null) {
-                                edit_text.setText(barcode.displayValue);
+                            if (data.getParcelableExtra("barcode") != null) {
+                                barcodeET.setText(data.getParcelableExtra("barcode"));
                             }
                         }
                     } else {
@@ -238,6 +218,10 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         runOnUiThread(() -> {
             if (responseCode == 200 | responseCode == 302) {
                 Toast.makeText(TakePhoto.this, "The photo was uploaded.",
@@ -289,6 +273,10 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override

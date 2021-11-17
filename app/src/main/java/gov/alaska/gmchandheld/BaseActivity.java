@@ -231,14 +231,14 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
         }
     }
 
-    protected void processingAlert(Context mContext, String barcode) {
+    protected void processingAlert(Context mContext, String s) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         View layout = inflater.inflate(R.layout.downloading_progress_dialog,
                 ((Activity) mContext).findViewById(R.id.downloading_alert_root));
         alertDialog.setView(layout);
         TextView title = new TextView(mContext);
-        String processingTitle = "Processing " + barcode;
+        String processingTitle = s;
         title.setText(processingTitle);
         title.setGravity(Gravity.CENTER);
         title.setTextSize(16);

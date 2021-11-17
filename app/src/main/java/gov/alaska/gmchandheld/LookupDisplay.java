@@ -22,9 +22,7 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
 import java.util.HashMap;
 
 public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
@@ -82,13 +80,8 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     invisibleET.setEnabled(false);
                     barcode = invisibleET.getText().toString();
-                    processingAlert(LookupDisplay.this, barcode);
+                    processingAlert(LookupDisplay.this, "Processing " + barcode);
                     if (!barcode.isEmpty()) {
-//                        try {
-//                            barcode = URLEncoder.encode(barcode, "utf-8");
-//                        } catch (UnsupportedEncodingException e) {
-//                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-//                        }
                         HashMap<String, Object> params = new HashMap<>();
                         params.put("barcode", barcode);
                         try {
@@ -212,7 +205,7 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                         LookupDisplay.this.startActivity(intent);
                     }
                 });
-            }else if (responseCode == 404) {
+            } else if (responseCode == 404) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -263,11 +256,11 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (e.getMessage() != null) {
-            if (alert != null) {
-                alert.dismiss();
-                alert = null;
-            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

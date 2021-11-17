@@ -165,6 +165,7 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
             params.put("c", containerList);
 
             try {
+                processingAlert(this, "Uploading the audit list to the database.");
                 getRemoteAPIDownload().setFetchDataObj(baseURL + "audit.json?remark=",
                         this,
                         0,
@@ -237,6 +238,10 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
 
     @Override
     public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
                 if (responseCode == 403) {
@@ -284,6 +289,10 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override

@@ -21,7 +21,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -98,7 +97,7 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
             submitBtn.setEnabled(false);
             if (!barcodeET.getText().toString().isEmpty()) {
                 barcode = barcodeET.getText().toString();
-                processingAlert(this, barcode);
+                processingAlert(this, "Processing " + barcode);
                 if (!barcode.isEmpty()) {
                     HashMap<String, Object> params = new HashMap<>();
                     params.put("barcode", barcode);
@@ -254,11 +253,12 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
+
         if (e.getMessage() != null) {
-            if (alert != null) {
-                alert.dismiss();
-                alert = null;
-            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

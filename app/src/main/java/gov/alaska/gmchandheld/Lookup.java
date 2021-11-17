@@ -30,7 +30,6 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -149,7 +148,7 @@ public class Lookup extends BaseActivity {
             submitBtn.setEnabled(false);
             barcode = barcodeET.getText().toString();
             if (!barcode.isEmpty()) {
-                processingAlert(this, barcode);
+                processingAlert(this, "Processing " + barcode);
                 HashMap<String, Object> params = new HashMap<>();
                 params.put("barcode", barcode);
                 try {
@@ -304,11 +303,12 @@ public class Lookup extends BaseActivity {
 
     @Override
     public void displayException(Exception e) {
+        if (alert != null) {
+            alert.dismiss();
+            alert = null;
+        }
+
         if (e.getMessage() != null) {
-            if (alert != null) {
-                alert.dismiss();
-                alert = null;
-            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
