@@ -7,14 +7,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -62,32 +61,21 @@ public class RemoteAPIDownload implements Runnable {
             if (this.url != null) {
                 throw new Exception("Processing. Give me a moment and then try again.");
             }
-            StringBuilder sb = new StringBuilder();
+            HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
             this.params = params;
             if (requestType != POST) {
-                sb.append(url);
                 for (Map.Entry<String, Object> entry : params.entrySet()) {
                     if (entry.getValue() instanceof String) {
-                        sb.append("&");
-                        sb.append(URLEncoder.encode(entry.getKey(), "utf-8"));
-                        sb.append("=");
-                        sb.append(URLEncoder.encode((String) entry.getValue(), "utf-8"));
+                        String entryValue = (String) entry.getValue();
+                        httpBuilder.addQueryParameter(entry.getKey(), entryValue);
                     } else if (entry.getValue() instanceof ArrayList) {
-                        String delim = "&" + entry.getKey() + "=";
-                        if (entry.getValue() != null && ((ArrayList<?>) entry.getValue()).size() > 0) {
-                            sb.append(delim);
+                        ArrayList arrList = (ArrayList<String>) entry.getValue();
+                        if (entry.getValue() != null && arrList.size() > 0) {
                             int i = 0;
-                            while (i < ((ArrayList<?>) entry.getValue()).size() - 1) {
-                                try {
-                                    sb.append(URLEncoder.encode(
-                                            ((ArrayList<String>) entry.getValue()).get(i), "utf-8"));
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                }
-                                sb.append(delim);
+                            while (i < arrList.size()) {
+                                httpBuilder.addQueryParameter(entry.getKey(), (String) arrList.get(i));
                                 i++;
                             }
-                            sb.append(((ArrayList<String>) entry.getValue()).get(i));
                         }
                     } else if (entry.getValue() instanceof Integer) {
                         System.out.println("Integer");
@@ -99,7 +87,6 @@ public class RemoteAPIDownload implements Runnable {
                     }
                 }
             } else {
-                sb.append(url);
                 MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                 for (Map.Entry<String, Object> entry : params.entrySet()) {
                     if (entry.getValue() instanceof String) {
@@ -115,7 +102,7 @@ public class RemoteAPIDownload implements Runnable {
                 }
                 this.body = builder.build();
             }
-            this.url = sb.toString();
+            this.url = httpBuilder.toString();
             this.remoteAPIDownloadCallback = remoteAPIDownloadCallback;
             this.requestType = requestType;
             this.outputStream = outputStream;
