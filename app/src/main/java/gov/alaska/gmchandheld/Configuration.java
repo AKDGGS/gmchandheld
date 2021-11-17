@@ -86,7 +86,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         updateAvailable.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if (aBoolean == true) {
+                if (aBoolean) {
                     System.out.println("Update available");
                     downloadingAlert();
                 } else {
@@ -191,7 +191,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                     cancelAlarm();
                     BaseActivity.editor.putString("interval", updateIntervalET.getText().toString()).apply();
                     setAlarm();
-                 }
+                }
             }
         });
     }
@@ -260,19 +260,15 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                         Intent intent;
                         File apkFile = new File(sp.getString("apkSavePath", ""));
                         Uri uriFile = Uri.fromFile(apkFile);
-                        if (this != null) {
-                            if (Build.VERSION.SDK_INT >= 24) {
-                                uriFile = FileProvider.getUriForFile(this,
-                                        this.getPackageName() + ".provider", apkFile);
-                            }
+                        if (Build.VERSION.SDK_INT >= 24) {
+                            uriFile = FileProvider.getUriForFile(this,
+                                    this.getPackageName() + ".provider", apkFile);
                         }
                         intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, uriFile);
                         intent.setDataAndType(uriFile, "application/vnd.android.package-archive");
                         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
                                 Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        if (this != null) {
-                            this.startActivity(intent);
-                        }
+                        this.startActivity(intent);
                     }
                     break;
 
