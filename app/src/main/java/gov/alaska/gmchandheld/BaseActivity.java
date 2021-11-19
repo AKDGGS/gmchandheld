@@ -32,7 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
     protected static SharedPreferences.Editor editor;
     protected static Intent intent;
     protected static String baseURL;
-    protected static boolean updatable;
+    protected static volatile boolean updatable;
     protected static MutableLiveData<Boolean> updateAvailable = new MutableLiveData<>();
     protected static Date updateAvailableBuildDate;
     private static String token = null;
@@ -135,21 +135,7 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == (R.id.summary)) {
-            SummaryLogicForDisplay summaryLogicForDisplayObj;
-            summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance()
-                    .summaryLogicForDisplayObj;
-            if (summaryLogicForDisplayObj == null) {
-                Intent intentGetBarcode = new Intent(this, Summary.class);
-                intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intentGetBarcode);
-            } else {
-                Intent intentSummary = new Intent(this, SummaryDisplay.class);
-                intentSummary.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intentSummary);
-            }
-            return true;
-        } else if (item.getItemId() == (R.id.lookup)) {
+        if (item.getItemId() == (R.id.lookup)) {
             LookupLogicForDisplay lookupLogicForDisplayObj;
             lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance()
                     .lookupLogicForDisplayObj;
@@ -161,6 +147,20 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
                 Intent intentLookup = new Intent(this, LookupDisplay.class);
                 intentLookup.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intentLookup);
+            }
+            return true;
+        } else if (item.getItemId() == (R.id.summary)) {
+            SummaryLogicForDisplay summaryLogicForDisplayObj;
+            summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance()
+                    .summaryLogicForDisplayObj;
+            if (summaryLogicForDisplayObj == null) {
+                Intent intentGetBarcode = new Intent(this, Summary.class);
+                intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intentGetBarcode);
+            } else {
+                Intent intentSummary = new Intent(this, SummaryDisplay.class);
+                intentSummary.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intentSummary);
             }
             return true;
         } else if (item.getItemId() == (R.id.configuration)) {
