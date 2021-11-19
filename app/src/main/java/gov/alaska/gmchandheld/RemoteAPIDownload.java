@@ -66,8 +66,7 @@ public class RemoteAPIDownload implements Runnable {
             if (requestType != POST) {
                 for (Map.Entry<String, Object> entry : params.entrySet()) {
                     if (entry.getValue() instanceof String) {
-                        String entryValue = (String) entry.getValue();
-                        httpBuilder.addQueryParameter(entry.getKey(), entryValue);
+                        httpBuilder.addQueryParameter(entry.getKey(), (String) entry.getValue());
                     } else if (entry.getValue() instanceof ArrayList) {
                         ArrayList arrList = (ArrayList<String>) entry.getValue();
                         if (entry.getValue() != null && arrList.size() > 0) {
@@ -79,8 +78,17 @@ public class RemoteAPIDownload implements Runnable {
                         }
                     } else if (entry.getValue() instanceof Integer) {
                         System.out.println("Integer");
+                        httpBuilder.addQueryParameter(entry.getKey(), String.valueOf(entry.getValue()));
                     } else if (entry.getValue() instanceof java.io.InputStream) {
-                        System.out.println("Input Stream");
+                        StringBuilder textBuilder = new StringBuilder();
+                        try (Reader reader = new BufferedReader(new InputStreamReader
+                                ((InputStream) entry.getValue()))) {
+                            int c = 0;
+                            while ((c = reader.read()) != -1) {
+                                textBuilder.append((char) c);
+                            }
+                        }
+                        httpBuilder.addQueryParameter(entry.getKey(), textBuilder.toString());
                     } else {
                         System.out.println("Input not recognized.  Add it. " +
                                 entry.getValue().getClass());
@@ -95,6 +103,15 @@ public class RemoteAPIDownload implements Runnable {
                         builder.addFormDataPart("content", ((File) entry.getValue()).getName(),
                                 RequestBody.create(MediaType.parse("Image/jpeg"),
                                         (File) entry.getValue()));
+                    } else if (entry.getValue() instanceof ArrayList) {
+                        ArrayList arrList = (ArrayList<String>) entry.getValue();
+                        if (entry.getValue() != null && arrList.size() > 0) {
+                            int i = 0;
+                            while (i < arrList.size()) {
+                                builder.addFormDataPart(entry.getKey(), (String) arrList.get(i));
+                                i++;
+                            }
+                        }
                     } else {
                         System.out.println("Input not recognized.  Add it. " +
                                 entry.getValue().getClass());
