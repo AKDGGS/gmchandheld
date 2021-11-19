@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.MutableLiveData;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
@@ -33,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
     protected static Intent intent;
     protected static String baseURL;
     protected static volatile boolean updatable;
-    protected static MutableLiveData<Boolean> updateAvailable = new MutableLiveData<>();
+    //    protected static MutableLiveData<Boolean> updateAvailable = new MutableLiveData<>();
     protected static Date updateAvailableBuildDate;
     private static String token = null;
     private static Thread thread;
@@ -41,10 +41,6 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
     protected IntentIntegrator qrScan;
     protected AlertDialog alert;
     protected Toolbar toolbar;
-
-    public static MutableLiveData<Boolean> getUpdateAvailable() {
-        return updateAvailable;
-    }
 
     public static boolean getUpdatable() {
         return updatable;
@@ -103,14 +99,6 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
             remoteAPIDownload = new RemoteAPIDownload();
             thread = new Thread(remoteAPIDownload, "remoteAPIDownloadThread");
             thread.start();
-        }
-
-        updateAvailable.setValue(getUpdatable());
-
-        if (BaseActivity.getUpdatable()) {
-            Intent intentConfiguration = new Intent(this, Configuration.class);
-            intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentConfiguration);
         }
     }
 
