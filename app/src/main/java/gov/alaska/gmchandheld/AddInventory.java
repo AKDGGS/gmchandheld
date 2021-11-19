@@ -141,6 +141,10 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
             issueDialog.setCancelable(false);
             issueDialog.show(getSupportFragmentManager(), "Issues Dialog");
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     @Override

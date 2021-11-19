@@ -140,6 +140,10 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
         expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             return true; // Expander cannot be collapsed
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     //makes the volume keys scroll up/down

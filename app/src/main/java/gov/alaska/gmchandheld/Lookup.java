@@ -114,6 +114,10 @@ public class Lookup extends BaseActivity {
             setAlarm();
         }
         loadLookup();
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     public void loadLookup() {

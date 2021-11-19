@@ -131,6 +131,10 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
             barcodeET.setText(listView.getItemAtPosition(position).toString());
             submitBtn.performClick();
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     @Override

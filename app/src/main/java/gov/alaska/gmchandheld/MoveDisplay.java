@@ -180,6 +180,10 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
                 }
             }
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     @Override

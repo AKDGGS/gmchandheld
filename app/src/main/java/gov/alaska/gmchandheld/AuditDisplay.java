@@ -177,6 +177,10 @@ public class AuditDisplay extends BaseActivity implements RemoteAPIDownloadCallb
                 e.printStackTrace();
             }
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
 

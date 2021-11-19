@@ -71,8 +71,8 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
                     long lastRefusedUpdate = BaseActivity.sp.getLong("ignoreUpdateDateSP", 0);
                     if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) &
                             (buildDate.compareTo(updateBuildDate) < 0)) {
-                        BaseActivity.updatable = true;
                         BaseActivity.updateAvailableBuildDate = updateBuildDate;
+                        BaseActivity.updatable = true;
                         System.out.println("Update available");
                     } else {
                         BaseActivity.updatable = false;

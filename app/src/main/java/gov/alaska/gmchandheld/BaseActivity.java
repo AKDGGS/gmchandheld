@@ -274,4 +274,40 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 101, intent, 0);
         alarmManager.cancel(pendingIntent);
     }
+
+    public void downloadingAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Update Available.");
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                "Update",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
+                                .apply();
+
+                        Intent intentConfiguration = new Intent(BaseActivity.this, Configuration.class);
+                        intentConfiguration.putExtra("update", true);
+                        intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        BaseActivity.this.startActivity(intentConfiguration);
+                    }
+                });
+
+        builder.setNegativeButton(
+                "Ignore the Update",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //If a user refuses an update, the last modified date for that update
+                        // is saved in shared preferences,
+                        Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
+                                .apply();
+                        BaseActivity.updatable = false;
+                    }
+                });
+        if (alert == null) {
+            alert = builder.create();
+            alert.show();
+        }
+    }
 }

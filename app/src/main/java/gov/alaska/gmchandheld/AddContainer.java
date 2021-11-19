@@ -105,6 +105,10 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
                 }
             }
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     @Override

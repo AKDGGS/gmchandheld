@@ -159,6 +159,10 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
                 fileList.add(file);
             }
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     private void openCamera(File f) {

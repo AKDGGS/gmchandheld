@@ -101,6 +101,10 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
             }
             return false;
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     @Override

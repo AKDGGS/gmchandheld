@@ -102,6 +102,10 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
             }
             startActivityForResult(intent, 2);
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     @Override

@@ -140,6 +140,10 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
         expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             return true; // This prevents the expander from being collapsed
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     @Override

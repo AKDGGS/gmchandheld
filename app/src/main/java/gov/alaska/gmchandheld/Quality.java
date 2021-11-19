@@ -139,6 +139,10 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             issueDialog.setCancelable(false);
             issueDialog.show(getSupportFragmentManager(), "Issues Dialog");
         });
+
+        if (updatable) {
+            downloadingAlert();
+        }
     }
 
     @Override
