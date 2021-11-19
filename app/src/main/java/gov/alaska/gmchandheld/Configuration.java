@@ -1,7 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -17,7 +15,6 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
-import androidx.lifecycle.Observer;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -84,16 +81,6 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
 
-        updateAvailable.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    System.out.println("Update available");
-                    downloadingAlert();
-                }
-            }
-        });
-
         autoUpdateBtn = findViewById(R.id.autoUpdateBtn);
         updateIntervalET = findViewById(R.id.updateIntervalET);
         cameraToScannerBtn = findViewById(R.id.cameraToScannerBtn);
@@ -115,12 +102,22 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         });
 
         final Button updateBtn = findViewById(R.id.updateBtn);
-        updateBtn.setOnClickListener(v -> updateAPK());
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateAPK();
+            }
+        });
         updateViews();
         urlChangeFocusWatcher();
         updateIntervalChangeFocusWatcher();
         cameraToScannerChangeWatcher();
         loadData();
+
+        if (updatable & !sp.getBoolean("updateAccept", false)) {
+            updateAPK();
+            BaseActivity.editor.putBoolean("updateAccept", true).apply();
+        }
     }
 
     public void cameraToScannerChangeWatcher() {
