@@ -32,6 +32,7 @@ import java.io.File;
 import java.net.HttpURLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -158,6 +159,7 @@ public class Lookup extends BaseActivity {
                             params,
                             null);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     System.out.println("Lookup Exception: " + e.getMessage());
                 }
             }
@@ -241,11 +243,12 @@ public class Lookup extends BaseActivity {
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
         if (alert != null) {
             alert.dismiss();
             alert = null;
         }
+        String data = new String(byteData);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2) {
             if (responseCode == 403) {
                 runOnUiThread(new Runnable() {

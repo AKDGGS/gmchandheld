@@ -217,11 +217,12 @@ public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
         if (alert != null) {
             alert.dismiss();
             alert = null;
         }
+        String data = new String(byteData);
         runOnUiThread(() -> {
             if (responseCode == 200 | responseCode == 302) {
                 Toast.makeText(TakePhoto.this, "The photo was uploaded.",

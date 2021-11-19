@@ -18,6 +18,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import java.net.HttpURLConnection;
+import java.util.Date;
 import java.util.HashMap;
 
 public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
@@ -174,11 +175,12 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
         if (alert != null) {
             alert.dismiss();
             alert = null;
         }
+        String data = new String(byteData);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
             if (responseCode == 403) {
                 runOnUiThread(new Runnable() {

@@ -54,16 +54,16 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date updateBuildDate, int responseCode, String responseMessage, int requestType) {
         if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
             switch (requestType) {
                 case RemoteAPIDownload.GET:
+                    String data = new String(byteData);
                     SharedPreferences.Editor editor;
                     editor = sp.edit();
                     editor.putString("issuesString", data).apply();
                     break;
                 case RemoteAPIDownload.HEAD:
-                    Date updateBuildDate = new Date(data);
                     Date buildDate = new Date(BuildConfig.TIMESTAMP);
 
                     //gets the last refused modified date from shared preferences.
@@ -73,8 +73,10 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
                             (buildDate.compareTo(updateBuildDate) < 0)) {
                         BaseActivity.updatable = true;
                         BaseActivity.updateAvailableBuildDate = updateBuildDate;
+                        System.out.println("Update available");
                     } else {
                         BaseActivity.updatable = false;
+                        System.out.println("No Update available");
                     }
                     break;
                 default:

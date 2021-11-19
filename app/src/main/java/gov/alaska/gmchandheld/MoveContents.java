@@ -19,6 +19,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.net.HttpURLConnection;
+import java.util.Date;
 import java.util.HashMap;
 
 public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallback {
@@ -146,11 +147,13 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
         if (alert != null) {
             alert.dismiss();
             alert = null;
         }
+
+        String data = new String(byteData);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

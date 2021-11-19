@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import java.net.HttpURLConnection;
+import java.util.Date;
 import java.util.HashMap;
 
 public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
@@ -188,11 +189,13 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
         if (alert != null) {
             alert.dismiss();
             alert = null;
         }
+
+        String data = new String(byteData);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2) {
             if (responseCode == 403) {
                 runOnUiThread(new Runnable() {

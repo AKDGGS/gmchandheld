@@ -1,6 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -178,24 +177,14 @@ public class RemoteAPIDownload implements Runnable {
 
             try (Response response = client.newCall(request).execute()) {
                 int count;
-                InputStream input;
-                input = new BufferedInputStream(response.body().byteStream(), 8192);
                 switch (requestType) {
                     case GET:
                     case POST: {
                         if (outputStream == null) {
-                            StringBuilder textBuilder = new StringBuilder();
-                            try (Reader reader = new BufferedReader(new InputStreamReader
-                                    (input))) {
-                                int c = 0;
-                                while ((c = reader.read()) != -1) {
-                                    textBuilder.append((char) c);
-                                }
-                            }
-                            input.close();
-                            remoteAPIDownloadCallback.displayData(textBuilder.toString(), response.code(),
+                            remoteAPIDownloadCallback.displayData(response.body().bytes(), response.headers().getDate("Last-Modified"), response.code(),
                                     response.message(), requestType);
                         } else {
+                            InputStream input = response.body().byteStream();
                             byte[] data = new byte[1024];
                             long total = 0;
                             while ((count = input.read(data)) != -1) {
@@ -205,13 +194,13 @@ public class RemoteAPIDownload implements Runnable {
                             outputStream.flush();
                             outputStream.close();
                             input.close();
-                            remoteAPIDownloadCallback.displayData(null, response.code(),
+                            remoteAPIDownloadCallback.displayData(null, response.headers().getDate("Last-Modified"), response.code(),
                                     response.message(), requestType);
                         }
                         break;
                     }
                     case HEAD: {
-                        remoteAPIDownloadCallback.displayData(response.headers().get("Last-Modified"),
+                        remoteAPIDownloadCallback.displayData(null, response.headers().getDate("Last-Modified"),
                                 response.code(), response.message(), requestType);
                         break;
                     }

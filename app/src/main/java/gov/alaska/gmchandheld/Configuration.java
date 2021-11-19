@@ -84,15 +84,12 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
 
-
         updateAvailable.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {
                     System.out.println("Update available");
                     downloadingAlert();
-                } else {
-                    System.out.println("No update is available");
                 }
             }
         });
@@ -251,13 +248,13 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date updateBuildDate, int responseCode, String responseMessage, int requestType) {
         if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
             switch (requestType) {
                 case RemoteAPIDownload.GET: {
-                    if (data != null) {
+                    if (byteData != null) {
                         editor = sp.edit();
-                        editor.putString("issuesString", data).commit();
+                        editor.putString("issuesString", new String(byteData)).commit();
                     } else {
                         Intent intent;
                         File apkFile = new File(sp.getString("apkSavePath", ""));
@@ -276,7 +273,6 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
 
                 }
                 case RemoteAPIDownload.HEAD: {
-                    Date updateBuildDate = new Date(data);
                     Date buildDate = new Date(BuildConfig.TIMESTAMP);
 
                     //gets the last refused modified date from shared preferences.
@@ -360,7 +356,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                         BaseActivity.updatable = false;
                     }
                 });
-        if(alert == null) {
+        if (alert == null) {
             alert = builder.create();
             alert.show();
         }

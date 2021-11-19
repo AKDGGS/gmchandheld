@@ -21,6 +21,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.net.HttpURLConnection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -101,7 +102,6 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
                 if (!barcode.isEmpty()) {
                     HashMap<String, Object> params = new HashMap<>();
                     params.put("barcode", barcode);
-
                     try {
                         getRemoteAPIDownload().setFetchDataObj(
                                 baseURL + "summary.json?",
@@ -191,11 +191,12 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
     }
 
     @Override
-    public void displayData(String data, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
         if (alert != null) {
             alert.dismiss();
             alert = null;
         }
+        String data = new String(byteData);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
             if (responseCode == 403) {
                 runOnUiThread(new Runnable() {

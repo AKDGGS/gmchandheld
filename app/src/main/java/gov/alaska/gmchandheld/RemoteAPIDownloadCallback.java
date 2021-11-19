@@ -1,7 +1,10 @@
 package gov.alaska.gmchandheld;
 
+import java.util.Date;
+
 public interface RemoteAPIDownloadCallback {
-    void displayData(String data,
+    void displayData(byte[] byteData,
+                     Date date,
                      int responseCode,
                      String responseMessage,
                      int requestType);
