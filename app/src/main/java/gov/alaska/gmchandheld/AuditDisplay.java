@@ -161,20 +161,27 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
         });
         // onClickListener listens if the submit button is clicked
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
-            HashMap<String, Object> params = new HashMap<>();
-            params.put("remark", remarkET.getText().toString());
-            params.put("c", containerList);
+            if (!remarkET.getText().toString().isEmpty() | containerList.size() != 0) {
+                HashMap<String, Object> params = new HashMap<>();
+                params.put("remark", remarkET.getText().toString());
+                params.put("c", containerList);
 
-            try {
-                processingAlert(this, "Uploading the audit list to the database.");
-                getHTTPRequest().setFetchDataObj(baseURL + "audit.json?remark=",
-                        this,
-                        0,
-                        params,
-                        null);
-            } catch (Exception e) {
-                System.out.println("Audit Display Exception: " + e.getMessage());
-                e.printStackTrace();
+                try {
+                    processingAlert(this, "Uploading the audit list to the database.");
+                    getHTTPRequest().setFetchDataObj(baseURL + "audit.json?",
+                            this,
+                            0,
+                            params,
+                            null);
+                } catch (Exception e) {
+                    System.out.println("Audit Display Exception: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(AuditDisplay.this,
+                        "This request is empty.  Please add at least one item to the list or a" +
+                                "remark.",
+                        Toast.LENGTH_LONG).show();
             }
         });
 
