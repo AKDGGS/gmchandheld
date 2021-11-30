@@ -161,7 +161,7 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
         });
         // onClickListener listens if the submit button is clicked
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
-            if (!remarkET.getText().toString().isEmpty() | containerList.size() != 0) {
+            if (!remarkET.getText().toString().isEmpty() || containerList.size() != 0) {
                 HashMap<String, Object> params = new HashMap<>();
                 params.put("remark", remarkET.getText().toString());
                 params.put("c", containerList);
