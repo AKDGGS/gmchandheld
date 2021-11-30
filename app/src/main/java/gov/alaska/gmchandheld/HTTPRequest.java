@@ -26,7 +26,7 @@ public class HTTPRequest implements Runnable {
     public static final int POST = 1;
     public static final int HEAD = 2;
     private final Object lockObj;
-    private RemoteAPIDownloadCallback remoteAPIDownloadCallback;
+    private HTTPRequestCallback HTTPRequestCallback;
     private String url;
     private RequestBody body;
     private int requestType;
@@ -42,7 +42,7 @@ public class HTTPRequest implements Runnable {
     }
 
     public void setFetchDataObj(String url,
-                                RemoteAPIDownloadCallback remoteAPIDownloadCallback,
+                                HTTPRequestCallback HTTPRequestCallback,
                                 int requestType,
                                 HashMap<String, Object> params,
                                 OutputStream outputStream) throws Exception {
@@ -52,7 +52,7 @@ public class HTTPRequest implements Runnable {
         }
         new URL(url);
 
-        if (remoteAPIDownloadCallback == null) {
+        if (HTTPRequestCallback == null) {
             throw new Exception("The callback can't be null");
         }
 
@@ -119,7 +119,7 @@ public class HTTPRequest implements Runnable {
                 this.body = builder.build();
             }
             this.url = httpBuilder.toString();
-            this.remoteAPIDownloadCallback = remoteAPIDownloadCallback;
+            this.HTTPRequestCallback = HTTPRequestCallback;
             this.requestType = requestType;
             this.outputStream = outputStream;
             lockObj.notify();
@@ -181,7 +181,7 @@ public class HTTPRequest implements Runnable {
                     case GET:
                     case POST: {
                         if (outputStream == null) {
-                            remoteAPIDownloadCallback.displayData(response.body().bytes(), response.headers().getDate("Last-Modified"), response.code(),
+                            HTTPRequestCallback.displayData(response.body().bytes(), response.headers().getDate("Last-Modified"), response.code(),
                                     response.message(), requestType);
                         } else {
                             InputStream input = response.body().byteStream();
@@ -194,20 +194,20 @@ public class HTTPRequest implements Runnable {
                             outputStream.flush();
                             outputStream.close();
                             input.close();
-                            remoteAPIDownloadCallback.displayData(null, response.headers().getDate("Last-Modified"), response.code(),
+                            HTTPRequestCallback.displayData(null, response.headers().getDate("Last-Modified"), response.code(),
                                     response.message(), requestType);
                         }
                         break;
                     }
                     case HEAD: {
-                        remoteAPIDownloadCallback.displayData(null, response.headers().getDate("Last-Modified"),
+                        HTTPRequestCallback.displayData(null, response.headers().getDate("Last-Modified"),
                                 response.code(), response.message(), requestType);
                         break;
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                remoteAPIDownloadCallback.displayException(e);
+                HTTPRequestCallback.displayException(e);
             }
         }
     }

@@ -26,7 +26,7 @@ import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.HashMap;
 
-public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
+public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
     private ExpandableListView expandableListView;
     private EditText invisibleET;
     private String barcode;

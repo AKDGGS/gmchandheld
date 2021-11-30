@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
+public class Summary extends BaseActivity implements HTTPRequestCallback {
     private static LinkedList<String> summaryHistory;
     private static String lastAdded;
     private ListView listView;

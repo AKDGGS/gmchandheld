@@ -29,7 +29,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-public class Configuration extends BaseActivity implements RemoteAPIDownloadCallback {
+public class Configuration extends BaseActivity implements HTTPRequestCallback {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
     private EditText updateIntervalET, urlET;
 

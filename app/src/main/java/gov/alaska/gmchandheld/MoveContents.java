@@ -22,7 +22,7 @@ import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.HashMap;
 
-public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallback {
+public class MoveContents extends BaseActivity implements HTTPRequestCallback {
     private EditText moveContentsFromET, moveContentsToET;
 
     @Override

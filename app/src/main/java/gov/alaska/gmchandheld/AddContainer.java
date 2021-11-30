@@ -22,7 +22,7 @@ import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.HashMap;
 
-public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallback {
+public class AddContainer extends BaseActivity implements HTTPRequestCallback {
     private IntentIntegrator qrScan;
     private EditText addContainerBarcodeET, addContainerNameET, addContainerRemarkET;
 

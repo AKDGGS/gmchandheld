@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class Quality extends BaseActivity implements IssuesFragment.onMultiChoiceListener, RemoteAPIDownloadCallback {
+public class Quality extends BaseActivity implements IssuesFragment.onMultiChoiceListener, HTTPRequestCallback {
     private static ArrayList<String> selectedItems;
     private static boolean[] checkedItems;
     private static ArrayList<String> selectedItemsDisplayList;

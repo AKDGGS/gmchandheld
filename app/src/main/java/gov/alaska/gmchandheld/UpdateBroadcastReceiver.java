@@ -9,7 +9,7 @@ import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.HashMap;
 
-public class UpdateBroadcastReceiver extends BroadcastReceiver implements RemoteAPIDownloadCallback {
+public class UpdateBroadcastReceiver extends BroadcastReceiver implements HTTPRequestCallback {
     private static Thread t1, t2;
     private static HTTPRequest updateChecker, issuesChecker;
     private SharedPreferences sp;

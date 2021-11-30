@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
+public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
     private ArrayList<String> containerList;
     private ArrayAdapter<String> adapter;
     private EditText itemET, destinationET;

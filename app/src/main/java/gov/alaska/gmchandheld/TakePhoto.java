@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-public class TakePhoto extends BaseActivity implements RemoteAPIDownloadCallback {
+public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
     private static final int CAM_REQUEST = 1;
     private static final String PHOTO_PATH = "/sdcard/DCIM/Camera/";
     // 49374 return code is hardcoded into the Zxing file.

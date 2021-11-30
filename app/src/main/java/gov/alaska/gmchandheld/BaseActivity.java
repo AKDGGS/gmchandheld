@@ -27,7 +27,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.util.Date;
 
-public abstract class BaseActivity extends AppCompatActivity implements RemoteAPIDownloadCallback {
+public abstract class BaseActivity extends AppCompatActivity implements HTTPRequestCallback {
     protected static SharedPreferences sp;
     protected static SharedPreferences.Editor editor;
     protected static Intent intent;
@@ -97,7 +97,7 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
 
         if (thread == null) {
             HTTPRequest = new HTTPRequest();
-            thread = new Thread(HTTPRequest, "remoteAPIDownloadThread");
+            thread = new Thread(HTTPRequest, "HTTPRequestThread");
             thread.start();
         }
     }

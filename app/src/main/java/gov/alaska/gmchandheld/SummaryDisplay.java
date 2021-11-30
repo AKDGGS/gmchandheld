@@ -21,7 +21,7 @@ import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.HashMap;
 
-public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCallback {
+public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback {
     private ExpandableListView expandableListView;
     private EditText invisibleET;
     private String barcode;
