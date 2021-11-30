@@ -80,7 +80,7 @@ public class SummaryDisplay extends BaseActivity implements RemoteAPIDownloadCal
                         params.put("barcode", barcode);
 
                         try {
-                            getRemoteAPIDownload().setFetchDataObj(baseURL + "summary.json?",
+                            getHTTPRequest().setFetchDataObj(baseURL + "summary.json?",
                                     this,
                                     0,
                                     params,

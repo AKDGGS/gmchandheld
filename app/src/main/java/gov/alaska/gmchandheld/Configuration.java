@@ -200,9 +200,9 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
             try {
                 OutputStream outputStream = new FileOutputStream(
                         BaseActivity.sp.getString("apkSavePath", ""));
-                getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
+                getHTTPRequest().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
                         this,
-                        RemoteAPIDownload.GET,
+                        HTTPRequest.GET,
                         params,
                         outputStream);
             } catch (Exception e) {
@@ -216,7 +216,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     public void checkIssuesList() {
         HashMap<String, Object> params = new HashMap<>();
         try {
-            getRemoteAPIDownload().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
+            getHTTPRequest().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
                     this,
                     0,
                     params,
@@ -248,7 +248,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
     public void displayData(byte[] byteData, Date updateBuildDate, int responseCode, String responseMessage, int requestType) {
         if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
             switch (requestType) {
-                case RemoteAPIDownload.GET: {
+                case HTTPRequest.GET: {
                     if (byteData != null) {
                         editor = sp.edit();
                         editor.putString("issuesString", new String(byteData)).commit();
@@ -269,7 +269,7 @@ public class Configuration extends BaseActivity implements RemoteAPIDownloadCall
                     break;
 
                 }
-                case RemoteAPIDownload.HEAD: {
+                case HTTPRequest.HEAD: {
                     Date buildDate = new Date(BuildConfig.TIMESTAMP);
 
                     //gets the last refused modified date from shared preferences.

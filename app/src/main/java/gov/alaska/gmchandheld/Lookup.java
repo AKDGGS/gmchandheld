@@ -157,7 +157,7 @@ public class Lookup extends BaseActivity {
                 HashMap<String, Object> params = new HashMap<>();
                 params.put("barcode", barcode);
                 try {
-                    getRemoteAPIDownload().setFetchDataObj(baseURL + "inventory.json?",
+                    getHTTPRequest().setFetchDataObj(baseURL + "inventory.json?",
                             this,
                             0,
                             params,

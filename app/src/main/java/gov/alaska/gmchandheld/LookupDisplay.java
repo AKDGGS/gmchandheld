@@ -86,7 +86,7 @@ public class LookupDisplay extends BaseActivity implements RemoteAPIDownloadCall
                         HashMap<String, Object> params = new HashMap<>();
                         params.put("barcode", barcode);
                         try {
-                            getRemoteAPIDownload().setFetchDataObj(baseURL + "inventory.json?",
+                            getHTTPRequest().setFetchDataObj(baseURL + "inventory.json?",
                                     this,
                                     0,
                                     params,

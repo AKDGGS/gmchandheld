@@ -116,7 +116,7 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                     params.put("i", selectedItems);
                     try {
                         processingAlert(this, "Adding inventory.");
-                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventory.json?",
+                        getHTTPRequest().setFetchDataObj(baseURL + "addinventory.json?",
                                 this,
                                 0,
                                 params,

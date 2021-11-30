@@ -20,7 +20,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RemoteAPIDownload implements Runnable {
+public class HTTPRequest implements Runnable {
 
     public static final int GET = 0;
     public static final int POST = 1;
@@ -33,7 +33,7 @@ public class RemoteAPIDownload implements Runnable {
     private HashMap<String, Object> params;
     private OutputStream outputStream;
 
-    public RemoteAPIDownload() {
+    public HTTPRequest() {
         lockObj = new Object();
     }
 

@@ -103,7 +103,7 @@ public class Summary extends BaseActivity implements RemoteAPIDownloadCallback {
                     HashMap<String, Object> params = new HashMap<>();
                     params.put("barcode", barcode);
                     try {
-                        getRemoteAPIDownload().setFetchDataObj(
+                        getHTTPRequest().setFetchDataObj(
                                 baseURL + "summary.json?",
                                 this,
                                 0,

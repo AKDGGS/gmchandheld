@@ -81,7 +81,7 @@ public class Recode extends BaseActivity implements RemoteAPIDownloadCallback {
 
                 try {
                     processingAlert(this, "Recoding the barcode.");
-                    getRemoteAPIDownload().setFetchDataObj(baseURL + "recode.json?",
+                    getHTTPRequest().setFetchDataObj(baseURL + "recode.json?",
                             this,
                             0,
                             params,

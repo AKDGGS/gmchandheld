@@ -169,7 +169,7 @@ public class MoveDisplay extends BaseActivity implements RemoteAPIDownloadCallba
 
                 try {
                     processingAlert(this, "Moving the inventory.");
-                    getRemoteAPIDownload().setFetchDataObj(baseURL + "move.json?",
+                    getHTTPRequest().setFetchDataObj(baseURL + "move.json?",
                             this,
                             0,
                             params,

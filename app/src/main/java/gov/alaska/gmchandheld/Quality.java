@@ -114,7 +114,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
 
                     try {
                         processingAlert(this, "Updating the issues list.");
-                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addinventoryquality.json?",
+                        getHTTPRequest().setFetchDataObj(baseURL + "addinventoryquality.json?",
                                 this,
                                 0,
                                 params,

@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class UpdateBroadcastReceiver extends BroadcastReceiver implements RemoteAPIDownloadCallback {
     private static Thread t1, t2;
-    private static RemoteAPIDownload updateChecker, issuesChecker;
+    private static HTTPRequest updateChecker, issuesChecker;
     private SharedPreferences sp;
     private Context mContext;
 
@@ -19,7 +19,7 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
     public void onReceive(Context context, Intent intent) {
         sp = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         if (t1 == null) {
-            updateChecker = new RemoteAPIDownload();
+            updateChecker = new HTTPRequest();
             t1 = new Thread(updateChecker, "updateCheckerThread");
             t1.start();
         }
@@ -29,7 +29,7 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
         try {
             updateChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
                     this,
-                    RemoteAPIDownload.HEAD,
+                    HTTPRequest.HEAD,
                     params,
                     null);
         } catch (Exception e) {
@@ -37,7 +37,7 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
         }
 
         if (t2 == null) {
-            issuesChecker = new RemoteAPIDownload();
+            issuesChecker = new HTTPRequest();
             t2 = new Thread(issuesChecker, "updateCheckerThread");
             t2.start();
         }
@@ -45,7 +45,7 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
         try {
             issuesChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
                     this,
-                    RemoteAPIDownload.GET,
+                    HTTPRequest.GET,
                     params,
                     null);
         } catch (Exception e) {
@@ -57,13 +57,13 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements Remote
     public void displayData(byte[] byteData, Date updateBuildDate, int responseCode, String responseMessage, int requestType) {
         if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
             switch (requestType) {
-                case RemoteAPIDownload.GET:
+                case HTTPRequest.GET:
                     String data = new String(byteData);
                     SharedPreferences.Editor editor;
                     editor = sp.edit();
                     editor.putString("issuesString", data).apply();
                     break;
-                case RemoteAPIDownload.HEAD:
+                case HTTPRequest.HEAD:
                     Date buildDate = new Date(BuildConfig.TIMESTAMP);
 
                     //gets the last refused modified date from shared preferences.

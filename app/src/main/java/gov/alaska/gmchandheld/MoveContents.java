@@ -52,7 +52,7 @@ public class MoveContents extends BaseActivity implements RemoteAPIDownloadCallb
 
                 try {
                     processingAlert(this, "Moving the contents.");
-                    getRemoteAPIDownload().setFetchDataObj(baseURL + "movecontents.json?",
+                    getHTTPRequest().setFetchDataObj(baseURL + "movecontents.json?",
                             this,
                             0,
                             params,

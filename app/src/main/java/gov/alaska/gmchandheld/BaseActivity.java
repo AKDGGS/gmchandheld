@@ -37,7 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
     protected static Date updateAvailableBuildDate;
     private static String token = null;
     private static Thread thread;
-    private static RemoteAPIDownload remoteAPIDownload;
+    private static HTTPRequest HTTPRequest;
     protected IntentIntegrator qrScan;
     protected AlertDialog alert;
     protected Toolbar toolbar;
@@ -54,8 +54,8 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
         BaseActivity.token = token;
     }
 
-    public static RemoteAPIDownload getRemoteAPIDownload() {
-        return remoteAPIDownload;
+    public static HTTPRequest getHTTPRequest() {
+        return HTTPRequest;
     }
 
     @Override
@@ -96,8 +96,8 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
         baseURL = BaseActivity.sp.getString("urlText", "");
 
         if (thread == null) {
-            remoteAPIDownload = new RemoteAPIDownload();
-            thread = new Thread(remoteAPIDownload, "remoteAPIDownloadThread");
+            HTTPRequest = new HTTPRequest();
+            thread = new Thread(HTTPRequest, "remoteAPIDownloadThread");
             thread.start();
         }
     }
@@ -241,7 +241,7 @@ public abstract class BaseActivity extends AppCompatActivity implements RemoteAP
         alert = alertDialog.create();
         alert.show();
         thread.interrupt();
-        remoteAPIDownload.setUrl(null);
+        HTTPRequest.setUrl(null);
         alert.setCanceledOnTouchOutside(false);
     }
 

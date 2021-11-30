@@ -93,7 +93,7 @@ public class AddContainer extends BaseActivity implements RemoteAPIDownloadCallb
                     params.put("remark", addContainerRemarkET.getText().toString());
                     try {
                         processingAlert(this, "Adding container.");
-                        getRemoteAPIDownload().setFetchDataObj(baseURL + "addcontainer.json?",
+                        getHTTPRequest().setFetchDataObj(baseURL + "addcontainer.json?",
                                 this,
                                 0,
                                 params,
