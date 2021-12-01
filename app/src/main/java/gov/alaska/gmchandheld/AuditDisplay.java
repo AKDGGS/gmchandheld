@@ -283,7 +283,7 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
                     });
                 } else {
                     Toast.makeText(AuditDisplay.this,
-                            "There was a problem. The audit was not added.",
+                            "There was a problem. The audit was not added. " + responseCode,
                             Toast.LENGTH_SHORT).show();
                     remarkET.requestFocus();
                 }
