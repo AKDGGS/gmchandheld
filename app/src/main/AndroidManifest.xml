@@ -24,8 +24,8 @@
         android:theme="@style/AppTheme">
         <!-- From API 24, there is a known bug that prevents the app from having a different name from the launching activity https://stackoverflow.com/a/43544965 -->
         <activity
-            android:name=".Lookup"
-            android:label="@string/lookup"
+            android:name=".Summary"
+            android:label="@string/summary"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateAlwaysHidden">
@@ -70,6 +70,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name=".Lookup"
+            android:label="Lookup"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
             android:name=".LookupDisplay"
             android:parentActivityName=".Lookup"
             android:screenOrientation="portrait"
@@ -87,11 +92,6 @@
         <activity
             android:name=".Recode"
             android:label="Recode"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".Summary"
-            android:label="Summary"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity

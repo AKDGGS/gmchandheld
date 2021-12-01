@@ -8,12 +8,12 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/lookup"
-        android:title="@string/lookup"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/summary"
         android:title="@string/summary"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/lookup"
+        android:title="@string/lookup"
         app:showAsAction="never" />
     <item
         android:id="@+id/move"

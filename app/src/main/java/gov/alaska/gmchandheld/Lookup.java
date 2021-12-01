@@ -1,11 +1,7 @@
 package gov.alaska.gmchandheld;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,35 +14,19 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.io.File;
 import java.net.HttpURLConnection;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.net.ssl.SSLContext;
-
 
 public class Lookup extends BaseActivity {
-    // Storage Permissions
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static final String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.REQUEST_INSTALL_PACKAGES
-    };
     private static LinkedList<String> lookupHistory;
     private static String lastAdded;
     private ListView listView;
@@ -74,18 +54,6 @@ public class Lookup extends BaseActivity {
         Lookup.lastAdded = lastAdded;
     }
 
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // If we don't have permission so prompt the user
-            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
-    }
-
     @Override
     public int getLayoutResource() {
         return R.layout.lookup_main;
@@ -103,16 +71,8 @@ public class Lookup extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableTSL(this);
         barcodeET = findViewById(R.id.barcodeET);
         barcodeET.requestFocus();
-        verifyStoragePermissions(Lookup.this);
-        deleteApkFile();
-        Intent myIntent = new Intent(Lookup.this, UpdateBroadcastReceiver.class);
-        boolean isWorking = (PendingIntent.getBroadcast(Lookup.this, 101, myIntent, PendingIntent.FLAG_NO_CREATE) != null);
-        if (!isWorking) {
-            setAlarm();
-        }
         loadLookup();
 
         if (updatable) {
@@ -218,12 +178,6 @@ public class Lookup extends BaseActivity {
         return super.dispatchKeyEvent(event);
     }
 
-    private void deleteApkFile() {
-        File dir = getExternalCacheDir();
-        File file = new File(dir, "current.apk");
-        file.delete();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (Build.VERSION.SDK_INT <= 24) {
@@ -324,28 +278,6 @@ public class Lookup extends BaseActivity {
 
                 }
             });
-        }
-    }
-
-    public void enableTSL(Context mContext) {
-        try {
-            // enables TSL-1.2 if Google Play is updated on old devices.
-            // doesn't work with emulators
-            // https://stackoverflow.com/a/29946540
-            ProviderInstaller.installIfNeeded(mContext);
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-        SSLContext sslContext;
-        try {
-            sslContext = SSLContext.getInstance("TLSv1.2");
-            sslContext.init(null, null, null);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
         }
     }
 }
