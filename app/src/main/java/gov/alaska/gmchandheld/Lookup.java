@@ -234,7 +234,7 @@ public class Lookup extends BaseActivity {
             } else {
                 runOnUiThread(() -> Toast.makeText(Lookup.this,
                         "There was an error looking up " + barcode + ".\n" +
-                                "Does the barcode exist?", Toast.LENGTH_LONG).show());
+                                "Does the barcode exist? " + responseCode, Toast.LENGTH_LONG).show());
             }
         } else {
             LookupLogicForDisplay lookupLogicForDisplayObj;
