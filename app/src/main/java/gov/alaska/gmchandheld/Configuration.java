@@ -50,6 +50,11 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
     @Override
     protected void onPause() {
         super.onPause();
+        if (!sp.getString("interval", "60").equals(updateIntervalET.getText().toString())) {
+            cancelAlarm();
+            BaseActivity.editor.putString("interval", updateIntervalET.getText().toString()).apply();
+            setAlarm();
+        }
         saveData();
     }
 
