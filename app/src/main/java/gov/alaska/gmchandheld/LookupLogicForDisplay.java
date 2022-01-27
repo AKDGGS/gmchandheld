@@ -458,7 +458,7 @@ public class LookupLogicForDisplay {
                     radiationWarningFlag = true;
                 }
                 return new InventoryObject("Issue", o, 600);
-            case "keywords":r
+            case "keywords":
                 return new InventoryObject("Keywords", o, 600);
             case "measuredDepth": {
                 if (parent instanceof JSONObject) {
