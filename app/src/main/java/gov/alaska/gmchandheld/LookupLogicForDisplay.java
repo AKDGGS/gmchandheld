@@ -80,7 +80,7 @@ public class LookupLogicForDisplay {
 //*********************************************************************************************
 
     public void processRawJSON(String rawJSON) throws Exception {
-
+        System.out.println(rawJSON);
         if (rawJSON.trim().charAt(0) == '[') {
             JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
             InventoryObject root = parseTree(null, null, inputJson);
@@ -360,6 +360,11 @@ public class LookupLogicForDisplay {
             // Higher the displayWeight, the higher a priority an key has.
             // Items are sorted internally first, and the externally in processForDisplay()
             case "abbr":
+            case "current":
+            case "intervalUnit":
+            case "elevationUnit":
+            case "measuredDepthUnit":
+            case "unit":
                 return null;
             case "altNames":
                 return new InventoryObject("Alternative Names", o);
@@ -379,27 +384,15 @@ public class LookupLogicForDisplay {
                 return new InventoryObject("Container", o, 1000);
             case "coreNumber":
                 return new InventoryObject("Core Number", o, 900);
-            case "current":
-                return null;
             case "description":
                 return new InventoryObject("Description", o, 600);
             case "elevation": {
                 if (parent instanceof JSONObject) {
                     JSONObject pjo = (JSONObject) parent;
-
+                    System.out.println("Elevation Unit: " + pjo.optString("elevationUnit"));
                     if (o instanceof Double) {
-                        String val = nf.format(o);
-                        String abbr;
-
-                        JSONObject u = pjo.optJSONObject("elevationUnit");
-                        if (u == null) {
-                            u = pjo.optJSONObject("unit");
-                        }
-                        if (u != null) {
-                            abbr = u.optString("abbr");
-                            val += " " + abbr;
-                        }
-                        return new InventoryObject("Elevation", val, 75);
+                        return new InventoryObject("Elevation", nf.format(o) + " " +
+                                pjo.optString("unit"), 75);
                     }
                 }
                 return new InventoryObject("Elevation", o, 75);
@@ -440,15 +433,8 @@ public class LookupLogicForDisplay {
                         return null;
                     }
                     if (o instanceof Double) {
-                        String val = nf.format(o);
-                        String abbr;
-
-                        JSONObject iu = pjo.optJSONObject("intervalUnit");
-                        if (iu != null) {
-                            abbr = iu.optString("abbr");
-                            val += " " + abbr;
-                            return new InventoryObject("Interval Bottom", val, 902);
-                        }
+                        return new InventoryObject("Interval Bottom", nf.format(o) +
+                                " " + pjo.optJSONObject("intervalUnit"), 902);
                     }
                 }
                 return new InventoryObject("Interval Bottom", o, 902);
@@ -458,19 +444,9 @@ public class LookupLogicForDisplay {
                     JSONObject pjo = (JSONObject) parent;
                     if (o instanceof Double) {
                         String val = nf.format(o);
-                        String abbr = "";
-                        JSONObject iu = pjo.optJSONObject("intervalUnit");
-                        if (iu != null) {
-                            abbr = iu.optString("abbr");
-                            val += " " + abbr;
-                        }
                         Double ib = pjo.optDouble("intervalBottom");
                         if (!ib.isNaN()) {
-                            String valBot = nf.format(ib);
-                            val += " - " + valBot;
-                            if (!"".equals(abbr)) {
-                                val += " " + abbr;
-                            }
+                            val += " - " + nf.format(ib) + " " + pjo.optString("intervalUnit");
                         }
                         return new InventoryObject("Interval ", val, 902);
                     }
@@ -482,23 +458,19 @@ public class LookupLogicForDisplay {
                     radiationWarningFlag = true;
                 }
                 return new InventoryObject("Issue", o, 600);
-            case "keywords":
+            case "keywords":r
                 return new InventoryObject("Keywords", o, 600);
             case "measuredDepth": {
                 if (parent instanceof JSONObject) {
                     JSONObject pjo = (JSONObject) parent;
                     if (o instanceof Double) {
-                        String val = nf.format(o);
-                        String abbr;
-                        JSONObject u = pjo.optJSONObject("measuredDepthUnit");
-                        if (u == null) {
-                            u = pjo.optJSONObject("unit");
+                        if(pjo.has("measuredDepthUnit")) {
+                            return new InventoryObject("Measured Depth", nf.format(o) + " "
+                                    + pjo.optString("measuredDepthUnit"), 75);
+                        } else if (pjo.has("unit")){
+                            return new InventoryObject("Measured Depth", nf.format(o) + " "
+                                    + pjo.optString("unit"), 75);
                         }
-                        if (u != null) {
-                            abbr = u.optString("abbr");
-                            val += " " + abbr;
-                        }
-                        return new InventoryObject("Measured Depth", val, 75);
                     }
                 }
                 return new InventoryObject("Measured Depth", o, 75);
@@ -548,14 +520,8 @@ public class LookupLogicForDisplay {
                 if (parent instanceof JSONObject) {
                     JSONObject pjo = (JSONObject) parent;
                     if (o instanceof Double) {
-                        String val = nf.format(o);
-                        String abbr;
-                        JSONObject u = pjo.optJSONObject("unit");
-                        if (u != null) {
-                            abbr = u.optString("abbr");
-                            val += " " + abbr;
-                        }
-                        return new InventoryObject("Vertical Depth", val, 75);
+                        return new InventoryObject("Vertical Depth", nf.format(o) + " "
+                                + pjo.optString("unit"), 75);
                     }
                 }
                 return new InventoryObject("Vertical Depth", o, 75);
