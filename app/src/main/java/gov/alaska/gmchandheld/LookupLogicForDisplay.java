@@ -389,10 +389,14 @@ public class LookupLogicForDisplay {
             case "elevation": {
                 if (parent instanceof JSONObject) {
                     JSONObject pjo = (JSONObject) parent;
-                    System.out.println("Elevation Unit: " + pjo.optString("elevationUnit"));
                     if (o instanceof Double) {
-                        return new InventoryObject("Elevation", nf.format(o) + " " +
-                                pjo.optString("unit"), 75);
+                        if(pjo.has("elevationUnit")) {
+                            return new InventoryObject("Elevation", nf.format(o) + " "
+                                    + pjo.optString("elevationUnit"), 75);
+                        } else if (pjo.has("unit")){
+                            return new InventoryObject("Elevation", nf.format(o) + " "
+                                    + pjo.optString("unit"), 75);
+                        }
                     }
                 }
                 return new InventoryObject("Elevation", o, 75);
