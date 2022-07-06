@@ -291,9 +291,6 @@ public class LookupLogicForDisplay {
             String key = it.next();
             io.addChild(parseTree(o, key, o.get(key)));
         }
-        if (typeFlagList.isEmpty()) {
-            typeFlagList.add("No type");
-        }
         return io;
     }
 

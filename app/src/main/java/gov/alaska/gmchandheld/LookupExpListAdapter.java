@@ -89,6 +89,9 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
                 LookupLogicForDisplay obj = LookupDisplayObjInstance
                         .getInstance().lookupLogicForDisplayObj;
                 inventoryObjTypeSet = new HashSet<>(obj.getTypeFlagList());
+                if (inventoryObjTypeSet.isEmpty()){
+                    inventoryObjTypeSet.add("No type");
+                }
                 break;
             }
             case "SummaryDisplay": {
@@ -105,7 +108,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
                 && inventoryObjTypeSet.contains("Prospect"))) {
             setInventoryObjType("Borehole");
         } else {
-
             setInventoryObjType("No Type");
         }
         switch (getInventoryObjType()) {
