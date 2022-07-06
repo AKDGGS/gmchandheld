@@ -321,7 +321,7 @@ public class LookupLogicForDisplay {
                             if (sb.length() > 0) {
                                 sb.append(", ");
                             }
-                            sb.append(a.get(i));
+                            sb.append(((String) a.get(i)).replace('_', ' '));
                         }
                     }
                     return new InventoryObject("Issues", sb.toString(), 800);
