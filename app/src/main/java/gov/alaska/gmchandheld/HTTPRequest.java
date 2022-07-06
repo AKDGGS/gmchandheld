@@ -76,7 +76,6 @@ public class HTTPRequest implements Runnable {
                             }
                         }
                     } else if (entry.getValue() instanceof Integer) {
-                        System.out.println("Integer");
                         httpBuilder.addQueryParameter(entry.getKey(), String.valueOf(entry.getValue()));
                     } else if (entry.getValue() instanceof java.io.InputStream) {
                         StringBuilder textBuilder = new StringBuilder();
@@ -169,10 +168,11 @@ public class HTTPRequest implements Runnable {
             OkHttpClient client = new OkHttpClient.Builder()
                     .followRedirects(false)
                     .followSslRedirects(false)
+                    .connectTimeout(5, TimeUnit.SECONDS)
                     .callTimeout(15, TimeUnit.SECONDS)
-                    .connectTimeout(15, TimeUnit.SECONDS)
                     .writeTimeout(15, TimeUnit.SECONDS)
                     .readTimeout(15, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(false)
                     .build();
 
             try (Response response = client.newCall(request).execute()) {

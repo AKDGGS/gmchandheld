@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout-xlarge/exp_list_parent.xml" value="0.224609375" />
         <entry key="app/src/main/res/layout/activity_get_token.xml" value="0.2604166666666667" />
         <entry key="app/src/main/res/layout/activity_take_photo.xml" value="0.20677083333333332" />
         <entry key="app/src/main/res/layout/activity_take_photo_test.xml" value="0.1828125" />
@@ -12,8 +13,10 @@
         <entry key="app/src/main/res/layout/add_inventory.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/api_token_alert_layout.xml" value="0.2" />
         <entry key="app/src/main/res/layout/audit_display.xml" value="0.28072916666666664" />
+        <entry key="app/src/main/res/layout/base.xml" value="0.33645833333333336" />
         <entry key="app/src/main/res/layout/camera_to_scanner.xml" value="0.2125" />
         <entry key="app/src/main/res/layout/configuration.xml" value="0.21666666666666667" />
+        <entry key="app/src/main/res/layout/exp_list_parent.xml" value="0.2994791666666667" />
         <entry key="app/src/main/res/layout/lookup_display.xml" value="0.16822916666666668" />
         <entry key="app/src/main/res/layout/lookup_error_display.xml" value="0.196875" />
         <entry key="app/src/main/res/layout/lookup_main.xml" value="0.16822916666666668" />
