@@ -80,7 +80,6 @@ public class LookupLogicForDisplay {
 //*********************************************************************************************
 
     public void processRawJSON(String rawJSON) throws Exception {
-        System.out.println(rawJSON);
         if (rawJSON.trim().charAt(0) == '[') {
             JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
             InventoryObject root = parseTree(null, null, inputJson);
@@ -319,12 +318,20 @@ public class LookupLogicForDisplay {
                     }
                     return new InventoryObject("Keywords", sb.toString(), 800);
                 }
+                case "issues": {
+                    for (int i = 0; i < a.length(); i++) {
+                        if (a.get(i) instanceof String) {
+                            if (sb.length() > 0) {
+                                sb.append(", ");
+                            }
+                            sb.append(a.get(i));
+                        }
+                    }
+                    return new InventoryObject("Issues", sb.toString(), 800);
+                }
                 //Create these nodes
                 case "boreholes":
                     io = new InventoryObject("Boreholes", null, 100);
-                    break;
-                case "issues":
-                    io = new InventoryObject("Issues", null, 50);
                     break;
                 case "operators":
                     io = new InventoryObject("Operators", null, 50);
