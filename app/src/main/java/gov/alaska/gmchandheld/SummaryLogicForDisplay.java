@@ -198,18 +198,6 @@ public class SummaryLogicForDisplay {
                     setTypeFlag("Borehole");
                     break;
                 }
-                case "containers":
-                    if (o.has("container")) {
-                        return new InventoryObject("Container", o.get("container"),
-                                500);
-                    }
-                    return null;
-                case "collections":
-                    if (o.has("collection")) {
-                        return new InventoryObject("Collection", o.get("collection"),
-                                500);
-                    }
-                    return null;
                 case "outcrops": {
                     String id = o.optString("ID");
                     String newName = "Outcrop";
@@ -263,9 +251,6 @@ public class SummaryLogicForDisplay {
             String key = it.next();
             io.addChild(parseTree(o, key, o.get(key)));
         }
-        if (typeFlagList.isEmpty()) {
-            typeFlagList.add("No type");
-        }
         return io;
     }
 
@@ -273,25 +258,62 @@ public class SummaryLogicForDisplay {
 
     private InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
         InventoryObject io;
+        StringBuilder sb = new StringBuilder();
         if (name == null) {
             io = new InventoryObject(name);
         } else {
             switch (name) {
                 //Create these nodes
-                case "barcodes":
-                    io = new InventoryObject("Barcodes", null, 0);
-                    break;
+                case "barcodes": {
+                    for (int i = 0; i < a.length(); i++) {
+                        if (a.get(i) instanceof String) {
+                            if (sb.length() > 0) {
+                                sb.append(", ");
+                            }
+                            sb.append(a.get(i));
+                        }
+                    }
+                    return new InventoryObject("barcodes", sb.toString(), 0);
+                }
+                case "keywords": {
+                    for (int i = 0; i < a.length(); i++) {
+                        if (a.get(i) instanceof String) {
+                            if (sb.length() > 0) {
+                                sb.append(", ");
+                            }
+                            sb.append(a.get(i));
+                        }
+                    }
+                    return new InventoryObject("Keywords", sb.toString(), 800);
+                }
+                case "collections": {
+                    for (int i = 0; i < a.length(); i++) {
+                        if (a.get(i) instanceof JSONObject) {
+                            if (sb.length() > 0) {
+                                sb.append(", ");
+                            }
+                            if (((JSONObject)a.get(i)).has("collection")) {
+                                sb.append(((JSONObject) a.get(i)).get("collection"));
+                            }
+                        }
+                    }
+                    return new InventoryObject("Collection", sb.toString(), 800);
+                }
+                case "containers": {
+                    for (int i = 0; i < a.length(); i++) {
+                        if (a.get(i) instanceof JSONObject) {
+                            if (sb.length() > 0) {
+                                sb.append(", ");
+                            }
+                            if (((JSONObject)a.get(i)).has("container")) {
+                                sb.append(((JSONObject) a.get(i)).get("container"));
+                            }
+                        }
+                    }
+                    return new InventoryObject("Containers", null, 1000);
+                }
                 case "boreholes":
                     io = new InventoryObject("Boreholes", null, 50);
-                    break;
-                case "collections":
-                    io = new InventoryObject("Collections", null, 100);
-                    break;
-                case "containers":
-                    io = new InventoryObject("Containers", null, 1000);
-                    break;
-                case "keywords":
-                    io = new InventoryObject("Keywords", null, 1000);
                     break;
                 case "outcrops":
                     io = new InventoryObject("Outcrops", null, 50);

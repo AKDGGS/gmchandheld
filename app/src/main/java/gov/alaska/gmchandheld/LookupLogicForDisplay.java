@@ -304,6 +304,7 @@ public class LookupLogicForDisplay {
             io = new InventoryObject(name);
         } else {
             switch (name) {
+                //Create these nodes
                 case "keywords": {
                     for (int i = 0; i < a.length(); i++) {
                         if (a.get(i) instanceof String) {
@@ -326,7 +327,6 @@ public class LookupLogicForDisplay {
                     }
                     return new InventoryObject("Issues", sb.toString(), 800);
                 }
-                //Create these nodes
                 case "boreholes":
                     io = new InventoryObject("Boreholes", null, 100);
                     break;
