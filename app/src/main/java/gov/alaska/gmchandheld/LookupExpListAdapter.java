@@ -98,6 +98,9 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
                 SummaryLogicForDisplay obj = SummaryDisplayObjInstance
                         .getInstance().summaryLogicForDisplayObj;
                 inventoryObjTypeSet = new HashSet<>(obj.getTypeFlagList());
+                if (inventoryObjTypeSet.isEmpty()){
+                    inventoryObjTypeSet.add("No type");
+                }
                 break;
             }
         }
