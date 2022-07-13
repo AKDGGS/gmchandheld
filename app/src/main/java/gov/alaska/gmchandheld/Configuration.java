@@ -121,7 +121,7 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
 
         if (updatable & !sp.getBoolean("updateAccept", false)) {
             updateAPK();
-            BaseActivity.editor.putBoolean("updateAccept", true).apply();
+            BaseActivity.editor.putBoolean("updateAccept", false).apply();
         }
     }
 

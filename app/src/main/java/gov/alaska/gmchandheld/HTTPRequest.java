@@ -168,7 +168,7 @@ public class HTTPRequest implements Runnable {
             OkHttpClient client = new OkHttpClient.Builder()
                     .followRedirects(false)
                     .followSslRedirects(false)
-                    .connectTimeout(5, TimeUnit.SECONDS)
+                    .connectTimeout(15, TimeUnit.SECONDS)
                     .callTimeout(15, TimeUnit.SECONDS)
                     .writeTimeout(15, TimeUnit.SECONDS)
                     .readTimeout(15, TimeUnit.SECONDS)
