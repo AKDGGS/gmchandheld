@@ -1,6 +1,8 @@
 package gov.alaska.gmchandheld;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -30,6 +32,7 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
     private ExpandableListView expandableListView;
     private EditText invisibleET;
     private String barcode;
+    private ProgressDialog downloadingAlert;
 
     @Override
     public int getLayoutResource() {
@@ -46,18 +49,16 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
     @Override
     protected void onStop() {
         super.onStop();
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
     }
 
@@ -70,7 +71,6 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
         expandableListView = findViewById(R.id.expandableListView);
         invisibleET = findViewById(R.id.invisibleET);
         invisibleET.setInputType(InputType.TYPE_NULL);
-
         invisibleET.setFocusable(true);
         invisibleET.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_DEL) {
@@ -81,7 +81,17 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     invisibleET.setEnabled(false);
                     barcode = invisibleET.getText().toString();
-                    processingAlert(LookupDisplay.this, "Processing " + barcode);
+                    downloadingAlert = new ProgressDialog(this);
+                    downloadingAlert.setMessage("Loading...\n" + barcode);
+                    downloadingAlert.setCancelable(false);
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            thread.interrupt();
+                            downloadingAlert.dismiss();//dismiss dialog
+                        }
+                    });
+                    downloadingAlert.show();
                     if (!barcode.isEmpty()) {
                         HashMap<String, Object> params = new HashMap<>();
                         params.put("barcode", barcode);
@@ -194,9 +204,8 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
 
         String data = new String(byteData);
@@ -263,9 +272,8 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {

@@ -3,7 +3,9 @@ package gov.alaska.gmchandheld;
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
@@ -50,6 +52,7 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
     private ListView listView;
     private EditText barcodeET;
     private String barcode;
+    private ProgressDialog downloadingAlert;
 
     public Summary() {
         summaryHistory = SummaryDisplayObjInstance.getInstance().getSummaryHistory();
@@ -114,6 +117,10 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
         if (!isWorking) {
             setAlarm();
         }
+        PackageManager pm = this.getPackageManager();
+        if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            BaseActivity.editor.putBoolean("cameraOn", false).apply();
+        }
 
         // populates the history list
         listView = findViewById(R.id.listViewSummaryHistory);
@@ -144,7 +151,17 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
             submitBtn.setEnabled(false);
             if (!barcodeET.getText().toString().isEmpty()) {
                 barcode = barcodeET.getText().toString();
-                processingAlert(this, "Processing " + barcode);
+                downloadingAlert = new ProgressDialog(this);
+                downloadingAlert.setMessage("Loading...\n" + barcode);
+                downloadingAlert.setCancelable(false);
+                downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        thread.interrupt();
+                        downloadingAlert.dismiss();//dismiss dialog
+                    }
+                });
+                downloadingAlert.show();
                 if (!barcode.isEmpty()) {
                     HashMap<String, Object> params = new HashMap<>();
                     params.put("barcode", barcode);
@@ -242,9 +259,8 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         String data = new String(byteData);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
@@ -304,11 +320,9 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
-
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override

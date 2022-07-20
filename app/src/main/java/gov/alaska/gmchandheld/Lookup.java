@@ -1,6 +1,8 @@
 package gov.alaska.gmchandheld;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Build;
@@ -33,6 +35,7 @@ public class Lookup extends BaseActivity {
     private EditText barcodeET;
     private String barcode;
     private Button submitBtn;
+    private ProgressDialog downloadingAlert;
 
     public Lookup() {
         lookupHistory = LookupDisplayObjInstance.getInstance().getLookupHistory();
@@ -113,7 +116,17 @@ public class Lookup extends BaseActivity {
             submitBtn.setEnabled(false);
             barcode = barcodeET.getText().toString();
             if (!barcode.isEmpty()) {
-                processingAlert(this, "Processing " + barcode);
+                downloadingAlert = new ProgressDialog(this);
+                downloadingAlert.setMessage("Loading...\n" + barcode);
+                downloadingAlert.setCancelable(false);
+                downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        thread.interrupt();
+                        downloadingAlert.dismiss();
+                    }
+                });
+                downloadingAlert.show();
                 HashMap<String, Object> params = new HashMap<>();
                 params.put("barcode", barcode);
                 try {
@@ -123,7 +136,6 @@ public class Lookup extends BaseActivity {
                             params,
                             null);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     System.out.println("Lookup Exception: " + e.getMessage());
                 }
             }
@@ -202,9 +214,8 @@ public class Lookup extends BaseActivity {
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         String data = new String(byteData);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2) {
@@ -245,7 +256,7 @@ public class Lookup extends BaseActivity {
             try {
                 lookupLogicForDisplayObj.processRawJSON(data);
             } catch (Exception e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(Lookup.this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
             intent = new Intent(Lookup.this, LookupDisplay.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -264,9 +275,8 @@ public class Lookup extends BaseActivity {
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
 
         if (e.getMessage() != null) {

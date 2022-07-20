@@ -59,6 +59,8 @@ public class LookupLogicForDisplay {
         return radiationWarningFlag;
     }
 
+    public void setRadiationWarningFlag(boolean f) {radiationWarningFlag = f;}
+
     public ArrayList<String> getTypeFlagList() {
         return typeFlagList;
     }
@@ -324,6 +326,9 @@ public class LookupLogicForDisplay {
                             }
                             sb.append(((String) a.get(i)).replace('_', ' '));
                         }
+                    }
+                    if (sb.indexOf("radiation risk")!=-1) {
+                        setRadiationWarningFlag(true);
                     }
                     return new InventoryObject("Issues", sb.toString(), 800);
                 }

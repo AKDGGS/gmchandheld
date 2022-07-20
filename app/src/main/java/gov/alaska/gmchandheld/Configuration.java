@@ -1,6 +1,7 @@
 package gov.alaska.gmchandheld;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -90,8 +91,10 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         updateIntervalET = findViewById(R.id.updateIntervalET);
         cameraToScannerBtn = findViewById(R.id.cameraToScannerBtn);
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
-        if (!sp.getBoolean("cameraOn", false)) {
+        PackageManager pm = this.getPackageManager();
+        if (!sp.getBoolean("cameraOn", false) || (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA))) {
             urlCameraBtn.setVisibility(View.GONE);
+            cameraToScannerBtn.setEnabled(false);
         } else {
             qrScan = new IntentIntegrator(this);
             qrScan.setBeepEnabled(true);

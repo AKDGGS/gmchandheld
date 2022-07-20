@@ -8,15 +8,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
     //    protected static MutableLiveData<Boolean> updateAvailable = new MutableLiveData<>();
     protected static Date updateAvailableBuildDate;
     private static String token = null;
-    private static Thread thread;
+    protected static Thread thread;
     private static HTTPRequest HTTPRequest;
     protected IntentIntegrator qrScan;
     protected AlertDialog alert;
@@ -64,10 +61,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
         PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
         if (!pm.isScreenOn()) {
             token = "";
-        }
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
         }
     }
 
@@ -116,8 +109,14 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        PackageManager pm = this.getPackageManager();
+        if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.no_camera_menu, menu);
+        } else {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.main_menu, menu);
+        }
         return true;
     }
 
@@ -217,32 +216,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mContext.startActivity(intent);
         }
-    }
-
-    protected void processingAlert(Context mContext, String s) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-        LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-        View layout = inflater.inflate(R.layout.downloading_progress_dialog,
-                ((Activity) mContext).findViewById(R.id.downloading_alert_root));
-        alertDialog.setView(layout);
-        TextView title = new TextView(mContext);
-        String processingTitle = s;
-        title.setText(processingTitle);
-        title.setGravity(Gravity.CENTER);
-        title.setTextSize(16);
-        alertDialog.setCustomTitle(title);
-        alertDialog.setNegativeButton("Cancel", (dialogInterface, i) -> {
-            dialogInterface.cancel();
-            if (alert != null) {
-                alert.dismiss();
-                alert = null;
-            }
-        });
-        alert = alertDialog.create();
-        alert.show();
-        thread.interrupt();
-        HTTPRequest.setUrl(null);
-        alert.setCanceledOnTouchOutside(false);
     }
 
     public void setAlarm() {

@@ -1,5 +1,7 @@
 package gov.alaska.gmchandheld;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 
 public class Recode extends BaseActivity implements HTTPRequestCallback {
     private EditText oldBarcodeET, newBarcodeET;
+    private ProgressDialog downloadingAlert;
 
     @Override
     public int getLayoutResource() {
@@ -80,7 +83,17 @@ public class Recode extends BaseActivity implements HTTPRequestCallback {
                 params.put("new", newBarcodeET.getText().toString());
 
                 try {
-                    processingAlert(this, "Recoding the barcode.");
+                    downloadingAlert = new ProgressDialog(this);
+                    downloadingAlert.setMessage("Recoding..." );
+                    downloadingAlert.setCancelable(false);
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            thread.interrupt();
+                            downloadingAlert.dismiss();//dismiss dialog
+                        }
+                    });
+                    downloadingAlert.show();
                     getHTTPRequest().setFetchDataObj(baseURL + "recode.json?",
                             this,
                             0,
@@ -153,9 +166,8 @@ public class Recode extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         String data = new String(byteData);
         runOnUiThread(() -> {
@@ -200,9 +212,8 @@ public class Recode extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {

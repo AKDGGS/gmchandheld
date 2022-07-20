@@ -1,5 +1,7 @@
 package gov.alaska.gmchandheld;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import java.util.HashMap;
 public class AddContainer extends BaseActivity implements HTTPRequestCallback {
     private IntentIntegrator qrScan;
     private EditText addContainerBarcodeET, addContainerNameET, addContainerRemarkET;
+    private ProgressDialog downloadingAlert;
 
     @Override
     public int getLayoutResource() {
@@ -92,7 +95,17 @@ public class AddContainer extends BaseActivity implements HTTPRequestCallback {
                     params.put("name", addContainerNameET.getText().toString());
                     params.put("remark", addContainerRemarkET.getText().toString());
                     try {
-                        processingAlert(this, "Adding container.");
+                        downloadingAlert = new ProgressDialog(this);
+                        downloadingAlert.setMessage("Adding container...\n" + addContainerBarcodeET.getText().toString());
+                        downloadingAlert.setCancelable(false);
+                        downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                thread.interrupt();
+                                downloadingAlert.dismiss();//dismiss dialog
+                            }
+                        });
+                        downloadingAlert.show();
                         getHTTPRequest().setFetchDataObj(baseURL + "addcontainer.json?",
                                 this,
                                 0,
@@ -131,9 +144,8 @@ public class AddContainer extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayData(byte[] byteData, Date d, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
 
         String data = new String(byteData);
@@ -181,9 +193,8 @@ public class AddContainer extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {

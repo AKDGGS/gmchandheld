@@ -1,6 +1,8 @@
 package gov.alaska.gmchandheld;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -25,6 +27,7 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
     private ExpandableListView expandableListView;
     private EditText invisibleET;
     private String barcode;
+    private ProgressDialog downloadingAlert;
 
     @Override
     public int getLayoutResource() {
@@ -34,18 +37,16 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
     @Override
     protected void onStop() {
         super.onStop();
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
     }
 
@@ -74,7 +75,17 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     barcode = invisibleET.getText().toString();
-                    processingAlert(this, "Processing " + barcode);
+                    downloadingAlert = new ProgressDialog(this);
+                    downloadingAlert.setMessage("Loading...\n " + barcode);
+                    downloadingAlert.setCancelable(false);
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            thread.interrupt();
+                            downloadingAlert.dismiss();//dismiss dialog
+                        }
+                    });
+                    downloadingAlert.show();
                     if (!barcode.isEmpty()) {
                         HashMap<String, Object> params = new HashMap<>();
                         params.put("barcode", barcode);
@@ -180,9 +191,8 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         String data = new String(byteData);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
@@ -251,11 +261,9 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
-
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override

@@ -1,5 +1,7 @@
 package gov.alaska.gmchandheld;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 
 public class MoveContents extends BaseActivity implements HTTPRequestCallback {
     private EditText moveContentsFromET, moveContentsToET;
+    private ProgressDialog downloadingAlert;
 
     @Override
     public int getLayoutResource() {
@@ -51,7 +54,17 @@ public class MoveContents extends BaseActivity implements HTTPRequestCallback {
                 params.put("dest", moveContentsToET.getText().toString());
 
                 try {
-                    processingAlert(this, "Moving the contents.");
+                    downloadingAlert = new ProgressDialog(this);
+                    downloadingAlert.setMessage("Moving the contents.");
+                    downloadingAlert.setCancelable(false);
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            thread.interrupt();
+                            downloadingAlert.dismiss();//dismiss dialog
+                        }
+                    });
+                    downloadingAlert.show();
                     getHTTPRequest().setFetchDataObj(baseURL + "movecontents.json?",
                             this,
                             0,
@@ -152,11 +165,9 @@ public class MoveContents extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
-
         String data = new String(byteData);
         runOnUiThread(new Runnable() {
             @Override
@@ -204,9 +215,8 @@ public class MoveContents extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {

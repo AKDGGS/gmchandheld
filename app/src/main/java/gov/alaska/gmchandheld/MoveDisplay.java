@@ -1,5 +1,7 @@
 package gov.alaska.gmchandheld;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -35,6 +37,7 @@ public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
     private EditText itemET, destinationET;
     private TextView moveCountTV;
     private int clicks;  //used to count double clicks for deletion
+    private ProgressDialog downloadingAlert;
 
     public MoveDisplay() {
         clicks = 0;
@@ -168,7 +171,17 @@ public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
                 params.put("c", containerList);
 
                 try {
-                    processingAlert(this, "Moving the inventory.");
+                    downloadingAlert = new ProgressDialog(this);
+                    downloadingAlert.setMessage("Moving the inventory.");
+                    downloadingAlert.setCancelable(false);
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            thread.interrupt();
+                            downloadingAlert.dismiss();//dismiss dialog
+                        }
+                    });
+                    downloadingAlert.show();
                     getHTTPRequest().setFetchDataObj(baseURL + "move.json?",
                             this,
                             0,
@@ -243,9 +256,8 @@ public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         String data = new String(byteData);
         runOnUiThread(new Runnable() {
@@ -297,9 +309,8 @@ public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {

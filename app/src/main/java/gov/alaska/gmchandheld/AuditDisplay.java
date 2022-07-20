@@ -1,5 +1,7 @@
 package gov.alaska.gmchandheld;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -36,6 +38,7 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
     private Button clearAllBtn;
     private int clicks; //used to count double clicks for deletion
     private TextView countTV;
+    private ProgressDialog downloadingAlert;
 
     public AuditDisplay() {
         clicks = 0;
@@ -167,7 +170,17 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
                 params.put("c", containerList);
 
                 try {
-                    processingAlert(this, "Uploading the audit list to the database.");
+                    downloadingAlert = new ProgressDialog(this);
+                    downloadingAlert.setMessage("Uploading the audit list to the database.");
+                    downloadingAlert.setCancelable(false);
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            thread.interrupt();
+                            downloadingAlert.dismiss();//dismiss dialog
+                        }
+                    });
+                    downloadingAlert.show();
                     getHTTPRequest().setFetchDataObj(baseURL + "audit.json?",
                             this,
                             0,
@@ -250,11 +263,9 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
-
         String data = new String(byteData);
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
@@ -303,9 +314,8 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {

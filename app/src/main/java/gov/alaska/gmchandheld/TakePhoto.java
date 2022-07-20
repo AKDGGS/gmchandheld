@@ -1,7 +1,9 @@
 package gov.alaska.gmchandheld;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -46,6 +48,7 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
     private Uri image_uri;
     private boolean cameraOn;
     private ArrayList<File> fileList;
+    private ProgressDialog downloadingAlert;
 
     @Override
     public int getLayoutResource() {
@@ -147,7 +150,17 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
                 params.put("filename", file);
 
                 try {
-                    processingAlert(this, "Uploading the photo.");
+                    downloadingAlert = new ProgressDialog(this);
+                    downloadingAlert.setMessage("Uploading the photo.");
+                    downloadingAlert.setCancelable(false);
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            thread.interrupt();
+                            downloadingAlert.dismiss();//dismiss dialog
+                        }
+                    });
+                    downloadingAlert.show();
                     getHTTPRequest().setFetchDataObj(baseURL + "/upload.json",
                             this,
                             HTTPRequest.POST,
@@ -222,9 +235,8 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         String data = new String(byteData);
         runOnUiThread(() -> {
@@ -278,9 +290,8 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
 
     @Override
     public void displayException(Exception e) {
-        if (alert != null) {
-            alert.dismiss();
-            alert = null;
+        if (downloadingAlert != null) {
+            downloadingAlert.dismiss();
         }
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {

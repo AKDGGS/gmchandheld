@@ -105,8 +105,7 @@
                         android:nextFocusUp="@+id/remarkET"
                         android:nextFocusDown="@+id/remarkET"
                         android:scrollHorizontally="false"
-                        android:selectAllOnFocus="true"
-                        android:text="" />
+                        android:selectAllOnFocus="true" />
                 </LinearLayout>
 
                 <LinearLayout
