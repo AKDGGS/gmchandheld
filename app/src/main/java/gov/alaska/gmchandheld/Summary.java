@@ -89,7 +89,7 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
     private void deleteApkFile() {
         File dir = getExternalCacheDir();
         File file = new File(dir, "current.apk");
-        file.delete();
+//        file.delete();
     }
 
     @Override
@@ -109,7 +109,6 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = null;
-
         verifyStoragePermissions(Summary.this);
         deleteApkFile();
         Intent myIntent = new Intent(Summary.this, UpdateBroadcastReceiver.class);

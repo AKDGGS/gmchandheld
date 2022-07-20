@@ -65,7 +65,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements HTTPRe
                     break;
                 case HTTPRequest.HEAD:
                     Date buildDate = new Date(BuildConfig.TIMESTAMP);
-
                     //gets the last refused modified date from shared preferences.
                     // (The last refused modified date comes from UpdateDownloadAPKHandler
                     long lastRefusedUpdate = BaseActivity.sp.getLong("ignoreUpdateDateSP", 0);

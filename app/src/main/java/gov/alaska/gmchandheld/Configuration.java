@@ -1,11 +1,14 @@
 package gov.alaska.gmchandheld;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -29,10 +32,12 @@ import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Configuration extends BaseActivity implements HTTPRequestCallback {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
     private EditText updateIntervalET, urlET;
+    private ProgressDialog downloadingAlert;
 
     @Override
     public int getLayoutResource() {
@@ -64,7 +69,6 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         super.onCreate(savedInstanceState);
         urlET = findViewById(R.id.urlET);
         urlET.requestFocus();
-
         // KeyListener listens if enter is pressed
         urlET.setOnKeyListener((v, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -125,9 +129,9 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         cameraToScannerChangeWatcher();
         loadData();
 
-        if (updatable & !sp.getBoolean("updateAccept", false)) {
+        if (updatable & !sp.getBoolean("update", false)) {
             updateAPK();
-            BaseActivity.editor.putBoolean("updateAccept", false).apply();
+            BaseActivity.editor.putBoolean("update", false).apply();
         }
     }
 
@@ -207,8 +211,20 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
         sendBroadcast(intent);
         HashMap<String, Object> params = new HashMap<>();
+
         if (BaseActivity.getUpdatable()) {
             try {
+                downloadingAlert = new ProgressDialog(this);
+                downloadingAlert.setMessage("Updating...");
+                downloadingAlert.setCancelable(false);
+                downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        thread.interrupt();
+                        downloadingAlert.dismiss();//dismiss dialog
+                    }
+                });
+                downloadingAlert.show();
                 OutputStream outputStream = new FileOutputStream(
                         BaseActivity.sp.getString("apkSavePath", ""));
                 getHTTPRequest().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
