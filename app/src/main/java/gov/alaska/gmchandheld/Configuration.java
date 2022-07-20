@@ -92,9 +92,12 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         cameraToScannerBtn = findViewById(R.id.cameraToScannerBtn);
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
         PackageManager pm = this.getPackageManager();
-        if (!sp.getBoolean("cameraOn", false) || (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA))) {
+
+        if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)){
             urlCameraBtn.setVisibility(View.GONE);
             cameraToScannerBtn.setEnabled(false);
+        } else if (!sp.getBoolean("cameraOn", false)) {
+            urlCameraBtn.setVisibility(View.GONE);
         } else {
             qrScan = new IntentIntegrator(this);
             qrScan.setBeepEnabled(true);
