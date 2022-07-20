@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +31,6 @@ import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Configuration extends BaseActivity implements HTTPRequestCallback {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
@@ -211,7 +209,6 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
         sendBroadcast(intent);
         HashMap<String, Object> params = new HashMap<>();
-
         if (BaseActivity.getUpdatable()) {
             try {
                 downloadingAlert = new ProgressDialog(this);

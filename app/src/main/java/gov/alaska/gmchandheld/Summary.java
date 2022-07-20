@@ -89,7 +89,7 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
     private void deleteApkFile() {
         File dir = getExternalCacheDir();
         File file = new File(dir, "current.apk");
-//        file.delete();
+        file.delete();
     }
 
     @Override
