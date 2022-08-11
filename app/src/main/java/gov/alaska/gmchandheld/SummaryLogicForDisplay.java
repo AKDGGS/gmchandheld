@@ -310,7 +310,7 @@ public class SummaryLogicForDisplay {
                             }
                         }
                     }
-                    return new InventoryObject("Containers", null, 1000);
+                    return new InventoryObject("Containers", sb.toString(), 1000);
                 }
                 case "boreholes":
                     io = new InventoryObject("Boreholes", null, 50);
