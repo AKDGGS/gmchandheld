@@ -27,11 +27,11 @@
         <!-- From API 24, there is a known bug that prevents the app from having a different name from the launching activity https://stackoverflow.com/a/43544965 -->
         <activity
             android:name=".Summary"
-            android:label="@string/summary"
+            android:label="GMC Handheld"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateAlwaysHidden">
-            <intent-filter android:label="@string/app_name"> <!-- name of app -->
+            <intent-filter android:label="GMC Handheld"> <!-- name of app -->
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -45,7 +45,7 @@
         <activity android:name=".CameraToScanner" />
         <activity
             android:name=".GetToken"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AddContainer"
             android:label="Add Container"

@@ -108,6 +108,7 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Summary");
         SummaryDisplayObjInstance.getInstance().summaryLogicForDisplayObj = null;
         verifyStoragePermissions(Summary.this);
         deleteApkFile();

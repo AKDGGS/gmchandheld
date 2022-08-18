@@ -16,13 +16,15 @@
         <entry key="app/src/main/res/layout/base.xml" value="0.33645833333333336" />
         <entry key="app/src/main/res/layout/camera_to_scanner.xml" value="0.2125" />
         <entry key="app/src/main/res/layout/configuration.xml" value="0.21666666666666667" />
+        <entry key="app/src/main/res/layout/exp_list_child.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/exp_list_parent.xml" value="0.2994791666666667" />
         <entry key="app/src/main/res/layout/lookup_display.xml" value="0.16822916666666668" />
         <entry key="app/src/main/res/layout/lookup_error_display.xml" value="0.196875" />
         <entry key="app/src/main/res/layout/lookup_main.xml" value="0.16822916666666668" />
         <entry key="app/src/main/res/layout/move_display.xml" value="0.20625" />
         <entry key="app/src/main/res/layout/quality.xml" value="0.33645833333333336" />
-        <entry key="app/src/main/res/layout/summary_display.xml" value="0.1515625" />
+        <entry key="app/src/main/res/layout/summary_display.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/summary_get_barcode.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.15572916666666667" />
         <entry key="app/src/main/res/menu/main_menu.xml" value="0.21302083333333333" />
         <entry key="app/src/main/res/menu/no_camera_menu.xml" value="0.2578125" />
