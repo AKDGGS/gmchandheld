@@ -10,6 +10,7 @@ import android.text.style.StyleSpan;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -212,6 +213,18 @@ public class LookupLogicForDisplay {
                         return new InventoryObject("Collection", o.get("name"), 500);
                     }
                     return null;
+                case "files": {
+                    int size = o.optInt("size");
+                    String s = "";
+                    if(size > 0) {  //https://stackoverflow.com/a/5599842
+                        final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+                        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+                        s =  new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+                        s = " (" + s + ")";
+                    }
+                    io = new InventoryObject("Filename", o.optString("filename") + s , 1000);
+                    break;
+                }
                 case "operators": {
                     String newName = "Operator";
                     if (o.has("current")) {
@@ -335,6 +348,9 @@ public class LookupLogicForDisplay {
                 case "boreholes":
                     io = new InventoryObject("Boreholes", null, 100);
                     break;
+                case "files":
+                    io = new InventoryObject("Files", null, 50);
+                    break;
                 case "operators":
                     io = new InventoryObject("Operators", null, 50);
                     break;
@@ -370,9 +386,14 @@ public class LookupLogicForDisplay {
             // Items are sorted internally first, and the externally in processForDisplay()
             case "abbr":
             case "current":
+            case "filename":
             case "intervalUnit":
             case "elevationUnit":
             case "measuredDepthUnit":
+            case "mimeType":
+            case "simpleType":
+            case "size":
+            case "sizeString":
             case "unit":
                 return null;
             case "altNames":
@@ -544,6 +565,7 @@ public class LookupLogicForDisplay {
             case "year":
                 return new InventoryObject("Year", o);
             default:
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 return new InventoryObject(name, o);
         }
     }
