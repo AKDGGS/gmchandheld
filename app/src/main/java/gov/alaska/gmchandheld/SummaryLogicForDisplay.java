@@ -177,7 +177,7 @@ public class SummaryLogicForDisplay {
             if (!"".equals(o.optString("ID"))) {
                 String newName = "ID " + o.optInt("ID");
                 if (!"".equals(o.optString("barcode"))) {
-                    newName += " / " + o.optString("barcode");
+                    newName += " / " + o.optString("Barcode");
                 }
                 io = new InventoryObject(newName);
             } else {
@@ -273,7 +273,7 @@ public class SummaryLogicForDisplay {
                             sb.append(a.get(i));
                         }
                     }
-                    return new InventoryObject("barcodes", sb.toString(), 0);
+                    return new InventoryObject("Barcodes", sb.toString(), 0);
                 }
                 case "keywords": {
                     for (int i = 0; i < a.length(); i++) {
