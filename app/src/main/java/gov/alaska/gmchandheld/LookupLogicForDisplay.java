@@ -387,6 +387,7 @@ public class LookupLogicForDisplay {
             case "abbr":
             case "current":
             case "filename":
+            case "ID":
             case "intervalUnit":
             case "elevationUnit":
             case "measuredDepthUnit":
@@ -448,18 +449,6 @@ public class LookupLogicForDisplay {
                     }
                 }
                 return new InventoryObject(newName, o, 70);
-            case "ID":
-                if (parent instanceof JSONObject) {
-                    JSONObject pjo = (JSONObject) parent;
-                    //checks if ID is in top level.
-                    if (pjo.has("barcode") && o instanceof Integer) {
-                        if (o != null) {
-                            setID((Integer) o);
-                            return new InventoryObject("ID", o, 1000);
-                        }
-                    }
-                }
-                return null;
             case "intervalBottom": {
                 if (parent instanceof JSONObject) {
                     JSONObject pjo = (JSONObject) parent;
