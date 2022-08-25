@@ -151,7 +151,7 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
             return true; // This prevents the expander from being collapsed
         });
 
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) {
             downloadingAlert();
         }
     }

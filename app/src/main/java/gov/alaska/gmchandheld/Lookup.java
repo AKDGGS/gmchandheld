@@ -77,8 +77,7 @@ public class Lookup extends BaseActivity {
         barcodeET = findViewById(R.id.barcodeET);
         barcodeET.requestFocus();
         loadLookup();
-
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) {
             downloadingAlert();
         }
     }

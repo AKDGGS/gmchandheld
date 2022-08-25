@@ -152,7 +152,7 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
             return true; // Expander cannot be collapsed
         });
 
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) {
             downloadingAlert();
         }
     }

@@ -195,7 +195,7 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
             submitBtn.performClick();
         });
 
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) {
             downloadingAlert();
         }
     }
