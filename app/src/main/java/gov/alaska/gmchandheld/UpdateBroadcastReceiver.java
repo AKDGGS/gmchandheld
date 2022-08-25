@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
 import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements HTTPRe
     private static Thread t1, t2;
     private static HTTPRequest updateChecker, issuesChecker;
     private SharedPreferences sp;
-    private Context mContext;
 
     @Override
     public void onReceive(Context context, Intent intent) {
