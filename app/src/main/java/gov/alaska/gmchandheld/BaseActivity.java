@@ -1,6 +1,5 @@
 package gov.alaska.gmchandheld;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -30,7 +29,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
     protected static Intent intent;
     protected static String baseURL;
     protected static volatile boolean updatable;
-    //    protected static MutableLiveData<Boolean> updateAvailable = new MutableLiveData<>();
     protected static Date updateAvailableBuildDate;
     private static String token = null;
     protected static Thread thread;
@@ -67,6 +65,9 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
     @Override
     protected void onRestart() {
         super.onRestart();
+        if (null != alert){
+            alert.dismiss();
+        }
         checkAPIkeyExists(this);
         baseURL = BaseActivity.sp.getString("urlText", "");
     }
@@ -247,7 +248,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
                         Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
                                 .apply();
                         Intent intentConfiguration = new Intent(BaseActivity.this, Configuration.class);
-                        intentConfiguration.putExtra("update", true);
                         intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         BaseActivity.this.startActivity(intentConfiguration);
                     }
