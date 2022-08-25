@@ -1,5 +1,6 @@
 package gov.alaska.gmchandheld;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,7 +36,13 @@ import java.util.HashMap;
 public class Configuration extends BaseActivity implements HTTPRequestCallback {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
     private EditText updateIntervalET, urlET;
-    private ProgressDialog downloadingAlert;
+    private ProgressDialog downloadingAlert, updateCheckerAlert;
+    protected static Thread thread2;
+    private static HTTPRequest HTTPRequest2;
+
+    public static HTTPRequest getHTTPRequest2() {
+        return HTTPRequest2;
+    }
 
     @Override
     public int getLayoutResource() {
@@ -45,6 +52,9 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
     @Override
     public void onRestart() {
         super.onRestart();
+        if (null != downloadingAlert){
+            downloadingAlert.dismiss();
+        }
         updateViews();
         loadData();
         saveData();
@@ -65,6 +75,11 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (thread2 == null) {
+            HTTPRequest2 = new HTTPRequest();
+            thread2 = new Thread(HTTPRequest2, "HTTPRequestThread2");
+            thread2.start();
+        }
         urlET = findViewById(R.id.urlET);
         urlET.requestFocus();
         // KeyListener listens if enter is pressed
@@ -118,7 +133,20 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateAPK();
+                updateCheckerAlert = new ProgressDialog(Configuration.this);
+                updateCheckerAlert.setMessage("Checking for updates...");
+                updateCheckerAlert.setCancelable(false);
+                updateCheckerAlert.show();
+                HashMap<String, Object> params = new HashMap<>();
+                try {
+                    getHTTPRequest().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
+                            Configuration.this,
+                            HTTPRequest.HEAD,
+                            params,
+                            null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         updateViews();
@@ -127,9 +155,8 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         cameraToScannerChangeWatcher();
         loadData();
 
-        if (updatable & !sp.getBoolean("update", false)) {
+        if (BaseActivity.getUpdatable()) {
             updateAPK();
-            BaseActivity.editor.putBoolean("update", false).apply();
         }
     }
 
@@ -206,47 +233,83 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
     }
 
     public void updateAPK() {
-        Intent intent = new Intent(Configuration.this, UpdateBroadcastReceiver.class);
-        sendBroadcast(intent);
-        HashMap<String, Object> params = new HashMap<>();
-        if (BaseActivity.getUpdatable()) {
-            try {
-                downloadingAlert = new ProgressDialog(this);
-                downloadingAlert.setMessage("Updating...");
-                downloadingAlert.setCancelable(false);
-                downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        thread.interrupt();
-                        downloadingAlert.dismiss();//dismiss dialog
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                if (BaseActivity.getUpdatable()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Configuration.this);
+                    builder.setMessage("Update Available.");
+                    builder.setCancelable(true);
+                    builder.setPositiveButton(
+                            "Update",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
+                                            .apply();
+                                    downloadingAlert();
+                                }
+                            });
+                    builder.setNegativeButton(
+                            "Ignore the Update",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //If a user refuses an update, the last modified date for that update
+                                    // is saved in shared preferences,
+                                    Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
+                                            .apply();
+                                    BaseActivity.updatable = false;
+                                }
+                            });
+                    if (alert == null) {
+                        alert = builder.create();
+                        alert.show();
                     }
-                });
-                downloadingAlert.show();
-                OutputStream outputStream = new FileOutputStream(
-                        BaseActivity.sp.getString("apkSavePath", ""));
-                getHTTPRequest().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
-                        this,
-                        HTTPRequest.GET,
-                        params,
-                        outputStream);
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(getApplicationContext(), "No update available.", Toast.LENGTH_LONG).show();
+                }
             }
-        } else {
-            Toast.makeText(getApplicationContext(), "No update available.", Toast.LENGTH_LONG).show();
+        });
+    }
+
+    public void downloadingAlert() {
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            downloadingAlert = new ProgressDialog(this);
+            downloadingAlert.setMessage("Updating...");
+            downloadingAlert.setCancelable(false);
+            downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    thread.interrupt();
+                    downloadingAlert.dismiss();//dismiss dialog
+                }
+            });
+            downloadingAlert.show();
+            OutputStream outputStream = new FileOutputStream(
+                    BaseActivity.sp.getString("apkSavePath", ""));
+            getHTTPRequest().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
+                    this,
+                    HTTPRequest.GET,
+                    params,
+                    outputStream);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
     public void checkIssuesList() {
         HashMap<String, Object> params = new HashMap<>();
         try {
-            getHTTPRequest().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
+            getHTTPRequest2().setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
                     this,
                     0,
                     params,
                     null);
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
@@ -271,6 +334,7 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
     @Override
     public void displayData(byte[] byteData, Date updateBuildDate, int responseCode, String responseMessage, int requestType) {
         if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
+            updateCheckerAlert.dismiss();
             switch (requestType) {
                 case HTTPRequest.GET: {
                     if (byteData != null) {
@@ -295,14 +359,22 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
                 }
                 case HTTPRequest.HEAD: {
                     Date buildDate = new Date(BuildConfig.TIMESTAMP);
-
                     //gets the last refused modified date from shared preferences.
                     // (The last refused modified date comes from UpdateDownloadAPKHandler
                     long lastRefusedUpdate = BaseActivity.sp.getLong("ignoreUpdateDateSP", 0);
-
+                    BaseActivity.updateAvailableBuildDate = updateBuildDate;
                     BaseActivity.updatable = !(updateBuildDate.compareTo(
                             new Date(lastRefusedUpdate)) == 0) &
                             (buildDate.compareTo(updateBuildDate) < 0);
+                    if (BaseActivity.updatable){
+                        updateAPK();
+                    } else {
+                        Configuration.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "No update available.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                     checkIssuesList();
                     break;
                 }
@@ -334,7 +406,7 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
             });
         } else {
             Toast.makeText(Configuration.this,
-                    "Something went wrong.", Toast.LENGTH_LONG).show();
+                    "There is a problem, please report this to the app time.", Toast.LENGTH_LONG).show();
         }
     }
 
