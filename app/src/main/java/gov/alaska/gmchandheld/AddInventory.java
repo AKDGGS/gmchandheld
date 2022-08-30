@@ -24,11 +24,13 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
 public class AddInventory extends BaseActivity implements IssuesFragment.onMultiChoiceListener, HTTPRequestCallback {
     private static ArrayList<String> selectedItems;
+    private static String[] db_issues_list;
     private static boolean[] checkedItems;
     private static ArrayList<String> selectedItemsDisplayList;
     private IntentIntegrator qrScan;
@@ -42,7 +44,9 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         checkedItems = new boolean[10];
         selectedItems.add("needs_inventory");
         selectedItemsDisplayList.add("Needs Inventory");
-        checkedItems[0] = true;
+        db_issues_list = sp.getString("issuesString", "needs_invetory").replace("\"", "").split(",");
+        checkedItems = new boolean[db_issues_list.length];
+        checkedItems[Arrays.asList(db_issues_list).indexOf("needs_inventory")] = true;
     }
 
     public static ArrayList<String> getSelectedItems() {
@@ -243,8 +247,8 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                 showIssuesTV.setText("");
                 selectedItems.clear();
                 selectedItemsDisplayList.clear();
-                checkedItems = new boolean[10];
-                checkedItems[0] = true;
+                checkedItems = new boolean[db_issues_list.length];
+                checkedItems[Arrays.asList(db_issues_list).indexOf("needs_inventory")] = true;
                 selectedItems.add("needs_inventory");
                 selectedItemsDisplayList.add("Needs Inventory");
                 showIssuesTV.setText(listToString(selectedItemsDisplayList));
