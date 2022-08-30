@@ -416,7 +416,11 @@ public class LookupLogicForDisplay {
             case "coreNumber":
                 return new InventoryObject("Core Number", o, 900);
             case "description":
-                return new InventoryObject("Description", o, 600);
+                if (o.toString().isEmpty()){
+                    return null;
+                }else {
+                    return new InventoryObject("Description", o, 600);
+                }
             case "elevation": {
                 if (parent instanceof JSONObject) {
                     JSONObject pjo = (JSONObject) parent;
