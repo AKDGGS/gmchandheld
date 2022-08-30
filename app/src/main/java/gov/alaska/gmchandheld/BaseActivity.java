@@ -18,9 +18,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import org.conscrypt.Conscrypt;
+
+import java.security.Security;
 import java.util.Date;
 
 public abstract class BaseActivity extends AppCompatActivity implements HTTPRequestCallback {
@@ -77,6 +79,10 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
         configureToolbar();
+        if (android.os.Build.VERSION.SDK_INT < 17) {
+            Security.insertProviderAt(Conscrypt.newProvider(), 1);
+        }
+
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         editor = sp.edit();
 

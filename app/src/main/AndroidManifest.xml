@@ -27,6 +27,7 @@
         <!-- From API 24, there is a known bug that prevents the app from having a different name from the launching activity https://stackoverflow.com/a/43544965 -->
         <activity
             android:name=".Summary"
+            android:exported="true"
             android:label="GMC Handheld"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
