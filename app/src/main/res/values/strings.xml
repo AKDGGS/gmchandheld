@@ -45,7 +45,6 @@
     <string name="token">Token</string>
     <string name="click_to_add_image">Click to add image</string>
     <string name="needs_inventory">Needs Inventory</string>
-
     <string-array name="choice_items">
         <item>Needs Inventory</item>
         <item>Unsorted</item>
@@ -58,5 +57,4 @@
         <item>Label Obscured</item>
         <item>Insufficient Material</item>
     </string-array>
-
 </resources>

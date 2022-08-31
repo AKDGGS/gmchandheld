@@ -73,13 +73,9 @@ public class SummaryLogicForDisplay {
         return typeFlagList;
     }
 
-    //*********************************************************************************************
-
     public void setTypeFlag(String typeFlag) {
         this.typeFlagList.add(typeFlag);
     }
-
-//*********************************************************************************************
 
     public void processRawJSON(String rawJSON) throws Exception {
         if (rawJSON.trim().charAt(0) == '[') {
@@ -96,8 +92,6 @@ public class SummaryLogicForDisplay {
             }
         }
     }
-
-//*********************************************************************************************
 
     private void getStringForDisplay(InventoryObject o, int depth, String currKey,
                                      LinkedList<SpannableStringBuilder> displayList,
@@ -150,8 +144,6 @@ public class SummaryLogicForDisplay {
         }
     }
 
-    //*********************************************************************************************
-
     public InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
         switch (o.getClass().getName()) {
             case "org.json.JSONObject":
@@ -168,8 +160,6 @@ public class SummaryLogicForDisplay {
                 return null;
         }
     }
-
-//*********************************************************************************************
 
     private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
         InventoryObject io;
@@ -253,8 +243,6 @@ public class SummaryLogicForDisplay {
         }
         return io;
     }
-
-//*********************************************************************************************
 
     private InventoryObject handleArray(Object parent, String name, JSONArray a) throws Exception {
         InventoryObject io;

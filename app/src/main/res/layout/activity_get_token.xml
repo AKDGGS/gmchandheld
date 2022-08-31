@@ -9,11 +9,9 @@
     app:backgroundTint="@color/colorPrimary"
     tools:context=".GetToken"
     android:id="@+id/GetToken">
-
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-
     <TextView
         android:id="@+id/urlTV"
         android:layout_width="match_parent"
@@ -26,8 +24,6 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:paddingTop="20dp"/>
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +31,6 @@
         android:gravity="center_vertical"
         android:layout_marginTop="12dp"
         android:weightSum="8">
-
         <EditText
             android:id="@+id/urlET"
             android:layout_width="0dp"
@@ -55,7 +50,6 @@
             android:nextFocusLeft="@+id/apiTokenET"
             android:nextFocusRight="@+id/apiTokenET"
             tools:ignore="RtlSymmetry" />
-
         <Button
             android:id="@+id/urlCameraBtn"
             android:layout_width="0dp"
@@ -69,7 +63,6 @@
             android:nextFocusRight="@+id/cameraBtn"
             android:layout_marginEnd="5dp" />
     </LinearLayout>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -81,8 +74,6 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:paddingTop="20dp"/>
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -90,7 +81,6 @@
         android:gravity="center_vertical"
         android:layout_marginTop="12dp"
         android:weightSum="8">
-
         <EditText
             android:id="@+id/apiTokenET"
             android:layout_width="0dp"
@@ -110,7 +100,6 @@
             android:nextFocusLeft="@+id/apiTokenET"
             android:nextFocusRight="@+id/apiTokenET"
             tools:ignore="RtlSymmetry" />
-
         <Button
             android:id="@+id/cameraBtn"
             android:layout_width="0dp"
@@ -124,12 +113,10 @@
             android:nextFocusRight="@+id/cameraBtn"
             android:layout_marginEnd="5dp" />
     </LinearLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <Button
             android:id="@+id/submitBtn"
             android:layout_width="match_parent"

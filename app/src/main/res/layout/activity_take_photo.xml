@@ -7,24 +7,20 @@
     android:fillViewport="true"
     android:orientation="vertical"
     tools:context=".TakePhoto">
-
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:weightSum="10">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:weightSum="10">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="2.5"
@@ -37,7 +33,6 @@
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:gravity="center_vertical"/>
-
             <EditText
                 android:id="@+id/barcodeET"
                 android:layout_width="0dp"
@@ -57,7 +52,6 @@
                 android:nextFocusLeft="@+id/barcodeET"
                 android:nextFocusRight="@+id/barcodeET"
                 tools:ignore="RtlSymmetry" />
-
             <Button
                 android:id="@+id/cameraBtn"
                 android:layout_width="0dp"
@@ -72,7 +66,6 @@
                 android:nextFocusRight="@+id/cameraBtn"
                 android:layout_marginEnd="5dp" />
         </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,7 +75,6 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:weightSum="10">
-
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -93,7 +85,6 @@
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
                     android:textStyle="bold" />
-
                 <EditText
                     android:id="@+id/descriptionET"
                     android:layout_width="0dp"
@@ -107,15 +98,11 @@
                     android:nextFocusDown="@+id/descriptionET"
                     android:selectAllOnFocus="true"
                     app:backgroundTint="@color/colorPrimary" />
-
             </LinearLayout>
-
-
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="15dp">
-
                 <ImageView
                     android:id="@+id/imageToUploadIv"
                     android:layout_width="200dp"
@@ -123,7 +110,6 @@
                     android:layout_gravity="center_horizontal"
                     android:background="#000000"
                     android:tag="thisImage" />
-
                 <TextView
                     android:id="@+id/imageViewTv"
                     android:layout_width="match_parent"
@@ -133,13 +119,10 @@
                     android:text="Touch to add image"
                     android:textColor="@color/colorPrimary" />
             </FrameLayout>
-
     </LinearLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <ListView
             android:id="@+id/listViewGetContainersToAudit"
             android:layout_width="match_parent"
@@ -149,7 +132,6 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="60dp" />
-
         <Button
             android:id="@+id/submitBtn"
             android:layout_width="match_parent"

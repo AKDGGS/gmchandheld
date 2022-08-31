@@ -57,10 +57,9 @@ public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#e66101"));
-
+        //users requested color to differentiate Move from other activities
+        toolbar.setBackgroundColor(Color.parseColor("#e66101")); //Orange
         destinationET = findViewById(R.id.toET);
         itemET = findViewById(R.id.itemET);
         moveCountTV = findViewById(R.id.moveCountTV);
@@ -126,7 +125,6 @@ public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
             adapter.notifyDataSetChanged();
             moveCountTV.setText(String.valueOf(containerList.size()));
         });
-
         //double click to remove elements
         containerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
             clicks++;
@@ -141,7 +139,6 @@ public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
                 clicks = 0;
             }, 500);
         });
-
         // KeyListener listens if enter is pressed
         itemET.setOnKeyListener((v, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode ==
@@ -193,8 +190,7 @@ public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
                 }
             }
         });
-
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) { //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }

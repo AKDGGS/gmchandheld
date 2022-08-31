@@ -30,7 +30,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
     protected static SharedPreferences.Editor editor;
     protected static Intent intent;
     protected static String baseURL;
-    protected static volatile boolean updatable;
+    private static volatile boolean updatable; //Set in UpdateBroadcastReceiver and Configuration
     protected static Date updateAvailableBuildDate;
     private static String token = null;
     protected static Thread thread;
@@ -38,9 +38,14 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
     protected IntentIntegrator qrScan;
     protected AlertDialog alert;
     protected Toolbar toolbar;
+    protected abstract int getLayoutResource();
 
     public static boolean getUpdatable() {
         return updatable;
+    }
+
+    public static void setUpdatable(boolean value) {
+        updatable = value;
     }
 
     public static String getToken() {
@@ -79,30 +84,24 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
         configureToolbar();
+        //enables using HTTPS in the emulator for API 16
         if (android.os.Build.VERSION.SDK_INT < 17) {
             Security.insertProviderAt(Conscrypt.newProvider(), 1);
         }
-
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         editor = sp.edit();
-
         if (sp.getString("apkSavePath", "").isEmpty()) {
             String filename = "current.apk";
             editor.putString("apkSavePath", BaseActivity.this.getExternalCacheDir() + "/" + filename).apply();
         }
-
         checkAPIkeyExists(this);
-
         baseURL = BaseActivity.sp.getString("urlText", "");
-
         if (thread == null) {
             HTTPRequest = new HTTPRequest();
             thread = new Thread(HTTPRequest, "HTTPRequestThread");
             thread.start();
         }
     }
-
-    protected abstract int getLayoutResource();
 
     private void configureToolbar() {
         toolbar = findViewById(R.id.toolbar);
@@ -229,7 +228,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, UpdateBroadcastReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 101, intent, 0);
-
         am.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + 5000, // five second delay
                 Integer.parseInt(sp.getString("interval", "60")) * 60 * 1000L,
@@ -258,7 +256,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
                         BaseActivity.this.startActivity(intentConfiguration);
                     }
                 });
-
         builder.setNegativeButton(
                 "Ignore the Update",
                 new DialogInterface.OnClickListener() {

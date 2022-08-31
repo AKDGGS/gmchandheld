@@ -5,7 +5,6 @@
     android:orientation="horizontal"
     android:padding="8dp"
     android:id="@+id/lookup_error_root">
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

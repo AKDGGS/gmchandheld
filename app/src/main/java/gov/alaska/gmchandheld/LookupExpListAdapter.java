@@ -104,7 +104,6 @@ public class LookupExpListAdapter extends BaseExpandableListAdapter {
                 break;
             }
         }
-        assert inventoryObjTypeSet != null;
         if (inventoryObjTypeSet.size() == 1) {
             setInventoryObjType((String) inventoryObjTypeSet.toArray()[0]);
         } else if (inventoryObjTypeSet.size() == 2 && (inventoryObjTypeSet.contains("Borehole")

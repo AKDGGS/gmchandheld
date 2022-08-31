@@ -6,11 +6,9 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:orientation="vertical">
-
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +20,6 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="20dp"
         android:weightSum="10">
-
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -32,7 +29,6 @@
             android:textStyle="bold"
             android:textColor="@android:color/black"
             android:textSize="14sp" />
-
         <EditText
             android:id="@+id/fromET"
             android:layout_width="0dp"
@@ -45,7 +41,6 @@
             android:nextFocusUp="@+id/fromET"
             android:nextFocusLeft="@+id/fromET"
             android:nextFocusRight="@+id/fromET" />
-
         <Button
             android:id="@+id/fromCameraBtn"
             android:layout_width="0dp"
@@ -57,7 +52,6 @@
             android:nextFocusLeft="@+id/fromCameraBtn"
             android:nextFocusRight="@+id/fromCameraBtn" />
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -69,7 +63,6 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="20dp"
         android:weightSum="10">
-
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -79,7 +72,6 @@
             android:textStyle="bold"
             android:textColor="@android:color/black"
             android:textSize="14sp" />
-
         <EditText
             android:id="@+id/toET"
             android:layout_width="0dp"
@@ -92,7 +84,6 @@
             android:nextFocusUp="@+id/toET"
             android:nextFocusLeft="@+id/toET"
             android:nextFocusRight="@+id/toET" />
-
         <Button
             android:id="@+id/toCameraBtn"
             android:layout_width="0dp"
@@ -104,11 +95,9 @@
             android:nextFocusLeft="@+id/toCameraBtn"
             android:nextFocusRight="@+id/toCameraBtn" />
     </LinearLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <Button
             android:id="@+id/submitBtn"
             android:layout_width="match_parent"

@@ -18,42 +18,34 @@
         android:id="@+id/move"
         android:title="@string/move"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/audit"
         android:title="@string/audit"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/moveContent"
         android:title="@string/moveContent"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/add_container"
         android:title="@string/add_container"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/add_inventory"
         android:title="@string/add_inventory"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/quality"
         android:title="@string/quality"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/recode"
         android:title="@string/recode"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/photo"
         android:title="@string/photo"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/configuration"
         android:title="@string/configuration"

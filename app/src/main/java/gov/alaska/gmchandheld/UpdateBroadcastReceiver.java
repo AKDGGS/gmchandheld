@@ -21,9 +21,7 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements HTTPRe
             t1 = new Thread(updateChecker, "updateCheckerThread");
             t1.start();
         }
-
         HashMap<String, Object> params = new HashMap<>();
-
         try {
             updateChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "app/current.apk",
                     this,
@@ -33,13 +31,11 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements HTTPRe
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         if (t2 == null) {
             issuesChecker = new HTTPRequest();
             t2 = new Thread(issuesChecker, "updateCheckerThread");
             t2.start();
         }
-
         try {
             issuesChecker.setFetchDataObj(BaseActivity.sp.getString("urlText", "") + "qualitylist.json",
                     this,
@@ -69,11 +65,10 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements HTTPRe
                     if (!(updateBuildDate.compareTo(new Date(lastRefusedUpdate)) == 0) &
                             (buildDate.compareTo(updateBuildDate) < 0)) {
                         BaseActivity.updateAvailableBuildDate = updateBuildDate;
-                        BaseActivity.updatable = true;
-                        System.out.println("Update available");
+                        BaseActivity.setUpdatable(true);
                     } else {
-                        BaseActivity.updatable = false;
-                        System.out.println("No Update available");
+                        //no update available
+                        BaseActivity.setUpdatable(false);
                     }
                     break;
                 default:

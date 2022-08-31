@@ -74,13 +74,9 @@ public class LookupLogicForDisplay {
         return barcodeQuery;
     }
 
-    //*********************************************************************************************
-
     public void setBarcodeQuery(String barcodeQuery) {
         this.barcodeQuery = barcodeQuery;
     }
-
-//*********************************************************************************************
 
     public void processRawJSON(String rawJSON) throws Exception {
         if (rawJSON.trim().charAt(0) == '[') {
@@ -98,8 +94,6 @@ public class LookupLogicForDisplay {
             }
         }
     }
-
-//*********************************************************************************************
 
     private void getStringForDisplay(InventoryObject o, int depth, String currKey,
                                      LinkedList<SpannableStringBuilder> displayList,
@@ -146,15 +140,12 @@ public class LookupLogicForDisplay {
                 dict.put(currKey, displayList);
             }
         }
-
         for (InventoryObject child : o.getChildren()) {
             if (child.getName() != null) {
                 getStringForDisplay(child, depth + 1, currKey, displayList, dict);
             }
         }
     }
-
-    //*********************************************************************************************
 
     public InventoryObject parseTree(Object parent, String name, Object o) throws Exception {
         switch (o.getClass().getName()) {
@@ -172,8 +163,6 @@ public class LookupLogicForDisplay {
                 return null;
         }
     }
-
-//*********************************************************************************************
 
     private InventoryObject handleObject(Object parent, String name, JSONObject o) throws Exception {
         InventoryObject io;
@@ -308,8 +297,6 @@ public class LookupLogicForDisplay {
         }
         return io;
     }
-
-//*********************************************************************************************
 
     private InventoryObject handleArray(Object parent, String name, JSONArray a) throws
             Exception {

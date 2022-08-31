@@ -58,10 +58,9 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#5e3c99"));
-
+        //users requested color to differentiate Audit from other activities
+        toolbar.setBackgroundColor(Color.parseColor("#5e3c99")); // Purple
         itemET = findViewById(R.id.itemET);
         remarkET = findViewById(R.id.remarkET);
         countTV = findViewById(R.id.auditCountTV);
@@ -126,7 +125,6 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
             adapter.notifyDataSetChanged();
             countTV.setText(String.valueOf(containerList.size()));
         });
-
         //double click to remove elements
         auditContainerListLV.setOnItemClickListener((adapterView, view, position, l) -> {
             clicks++;
@@ -168,12 +166,12 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
                 HashMap<String, Object> params = new HashMap<>();
                 params.put("remark", remarkET.getText().toString());
                 params.put("c", containerList);
-
                 try {
                     downloadingAlert = new ProgressDialog(this);
                     downloadingAlert.setMessage("Uploading the audit list to the database.");
                     downloadingAlert.setCancelable(false);
-                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                            new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             thread.interrupt();
@@ -197,12 +195,10 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
                         Toast.LENGTH_LONG).show();
             }
         });
-
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) { //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -262,7 +258,8 @@ public class AuditDisplay extends BaseActivity implements HTTPRequestCallback {
     }
 
     @Override
-    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage,
+                            int requestType) {
         if (downloadingAlert != null) {
             downloadingAlert.dismiss();
         }

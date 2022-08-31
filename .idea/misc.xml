@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/layout/activity_translucent.xml" value="0.21927083333333333" />
         <entry key="app/src/main/res/layout/activity_update_apkhandler.xml" value="0.14583333333333334" />
         <entry key="app/src/main/res/layout/activity_update_app.xml" value="0.21614583333333334" />
+        <entry key="app/src/main/res/layout/add_container.xml" value="0.3265625" />
         <entry key="app/src/main/res/layout/add_inventory.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/api_token_alert_layout.xml" value="0.2" />
         <entry key="app/src/main/res/layout/audit_display.xml" value="0.28072916666666664" />
@@ -21,8 +22,10 @@
         <entry key="app/src/main/res/layout/lookup_display.xml" value="0.16822916666666668" />
         <entry key="app/src/main/res/layout/lookup_error_display.xml" value="0.196875" />
         <entry key="app/src/main/res/layout/lookup_main.xml" value="0.16822916666666668" />
+        <entry key="app/src/main/res/layout/move_contents.xml" value="0.3265625" />
         <entry key="app/src/main/res/layout/move_display.xml" value="0.20625" />
         <entry key="app/src/main/res/layout/quality.xml" value="0.33645833333333336" />
+        <entry key="app/src/main/res/layout/recode.xml" value="0.3265625" />
         <entry key="app/src/main/res/layout/summary_display.xml" value="0.33" />
         <entry key="app/src/main/res/layout/summary_get_barcode.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.15572916666666667" />

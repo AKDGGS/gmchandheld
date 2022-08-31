@@ -37,8 +37,8 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
     private ToggleButton autoUpdateBtn, cameraToScannerBtn;
     private EditText updateIntervalET, urlET;
     private ProgressDialog downloadingAlert, updateCheckerAlert;
-    protected static Thread thread2;
-    private static HTTPRequest HTTPRequest2;
+    protected static Thread thread2;  //used to asynchronously check issues
+    private static HTTPRequest HTTPRequest2; //used to asynchronously check issues
 
     public static HTTPRequest getHTTPRequest2() {
         return HTTPRequest2;
@@ -103,13 +103,11 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         TextView buildDateTV = findViewById(R.id.buildDateTV);
         buildDateTV.setText(DateFormat.getDateTimeInstance().format(buildDate));
-
         autoUpdateBtn = findViewById(R.id.autoUpdateBtn);
         updateIntervalET = findViewById(R.id.updateIntervalET);
         cameraToScannerBtn = findViewById(R.id.cameraToScannerBtn);
         Button urlCameraBtn = findViewById(R.id.urlCameraBtn);
         PackageManager pm = this.getPackageManager();
-
         if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)){
             urlCameraBtn.setVisibility(View.GONE);
             cameraToScannerBtn.setEnabled(false);
@@ -119,7 +117,6 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
             qrScan = new IntentIntegrator(this);
             qrScan.setBeepEnabled(true);
         }
-
         urlCameraBtn.setOnClickListener(view -> {
             if (Build.VERSION.SDK_INT <= 24) {
                 BaseActivity.intent = qrScan.createScanIntent();
@@ -128,7 +125,6 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
             }
             startActivityForResult(BaseActivity.intent, 1);
         });
-
         final Button updateBtn = findViewById(R.id.updateBtn);
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,8 +150,7 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         updateIntervalChangeFocusWatcher();
         cameraToScannerChangeWatcher();
         loadData();
-
-        if (BaseActivity.getUpdatable()) {
+        if (BaseActivity.getUpdatable()) {   //Set in UpdateBroadcastReceiver and Configuration
             updateAPK();
         }
     }
@@ -235,7 +230,7 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
     public void updateAPK() {
         this.runOnUiThread(new Runnable() {
             public void run() {
-                if (BaseActivity.getUpdatable()) {
+                if (BaseActivity.getUpdatable()) {   //Set in UpdateBroadcastReceiver and Configuration
                     AlertDialog.Builder builder = new AlertDialog.Builder(Configuration.this);
                     builder.setMessage("Update Available.");
                     builder.setCancelable(true);
@@ -256,7 +251,7 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
                                     // is saved in shared preferences,
                                     Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
                                             .apply();
-                                    BaseActivity.updatable = false;
+                                    BaseActivity.setUpdatable(false);
                                 }
                             });
                     if (alert == null) {
@@ -363,10 +358,10 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
                     // (The last refused modified date comes from UpdateDownloadAPKHandler
                     long lastRefusedUpdate = BaseActivity.sp.getLong("ignoreUpdateDateSP", 0);
                     BaseActivity.updateAvailableBuildDate = updateBuildDate;
-                    BaseActivity.updatable = !(updateBuildDate.compareTo(
+                    BaseActivity.setUpdatable(!(updateBuildDate.compareTo(
                             new Date(lastRefusedUpdate)) == 0) &
-                            (buildDate.compareTo(updateBuildDate) < 0);
-                    if (BaseActivity.updatable){
+                            (buildDate.compareTo(updateBuildDate) < 0));
+                    if (BaseActivity.getUpdatable()) { //Set in UpdateBroadcastReceiver and Configuration
                         updateAPK();
                     } else {
                         Configuration.this.runOnUiThread(new Runnable() {

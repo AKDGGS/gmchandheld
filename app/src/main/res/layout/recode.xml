@@ -6,11 +6,9 @@
     android:orientation="vertical"
     android:weightSum="10"
     app:backgroundTint="@color/colorPrimary">
-
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -18,20 +16,17 @@
         android:layout_marginLeft="5dp"
         android:layout_weight="8"
         android:orientation="vertical">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="75dp"
             android:orientation="vertical">
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/old_barcode"
                 android:textColor="#ff353535"
                 android:textStyle="bold" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -41,7 +36,6 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:weightSum="10">
-
                 <EditText
                     android:id="@+id/oldBarcodeET"
                     android:layout_width="0dp"
@@ -56,7 +50,6 @@
                     android:nextFocusUp="@+id/oldBarcodeET"
                     android:nextFocusLeft="@+id/oldBarcodeET"
                     android:nextFocusRight="@+id/oldBarcodeET"/>
-
                 <Button
                     android:id="@+id/oldBarcodeCameraBtn"
                     android:layout_width="0dp"
@@ -69,20 +62,17 @@
                     android:nextFocusRight="@+id/oldBarcodeCameraBtn"/>
             </LinearLayout>
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="65dp"
             android:orientation="vertical">
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/new_barcode"
                 android:textColor="#ff353535"
                 android:textStyle="bold" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -92,7 +82,6 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:weightSum="10">
-
                 <EditText
                     android:id="@+id/newBarcodeET"
                     android:layout_width="0dp"
@@ -107,7 +96,6 @@
                     android:nextFocusUp="@+id/newBarcodeET"
                     android:nextFocusLeft="@+id/newBarcodeET"
                     android:nextFocusRight="@+id/newBarcodeET"/>
-
                 <Button
                     android:id="@+id/newBarcodeCameraBtn"
                     android:layout_width="0dp"
@@ -121,13 +109,11 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
         android:orientation="vertical">
-
         <Button
             android:id="@+id/submitBtn"
             android:layout_width="match_parent"

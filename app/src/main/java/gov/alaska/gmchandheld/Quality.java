@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
-public class Quality extends BaseActivity implements IssuesFragment.onMultiChoiceListener, HTTPRequestCallback {
+public class Quality extends BaseActivity implements IssuesFragment.onMultiChoiceListener,
+        HTTPRequestCallback {
     private static ArrayList<String> selectedItems;
     private static String[] db_issues_list;
     private static boolean[] checkedItems;
@@ -43,7 +43,8 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
         selectedItems.add("needs_inventory");
         selectedItemsDisplayList = new ArrayList<>();
         selectedItemsDisplayList.add("Needs Inventory");
-        db_issues_list = sp.getString("issuesString", "needs_invetory").replace("\"", "").split(",");
+        db_issues_list = sp.getString("issuesString", "needs_invetory")
+                .replace("\"", "").split(",");
         checkedItems = new boolean[db_issues_list.length];
         checkedItems[Arrays.asList(db_issues_list).indexOf("needs_inventory")] = true;
     }
@@ -108,7 +109,6 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             }
             return false;
         });
-
         // onClickListener listens if the submit button is clicked
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
             if (!(TextUtils.isEmpty(barcodeET.getText()))) {
@@ -117,12 +117,12 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                     params.put("barcode", barcodeET.getText().toString());
                     params.put("remark", remarkET.getText().toString());
                     params.put("i", selectedItems);
-
                     try {
                         downloadingAlert = new ProgressDialog(this);
                         downloadingAlert.setMessage("Updating the issues list.");
                         downloadingAlert.setCancelable(false);
-                        downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                                new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 thread.interrupt();
@@ -142,7 +142,6 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                 }
             }
         });
-
         showIssuesTV = findViewById(R.id.showIssuesTV);
         Button issuesBtn = findViewById(R.id.issuesBtn);
         issuesBtn.setOnClickListener(view -> {
@@ -155,8 +154,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
             issueDialog.setCancelable(false);
             issueDialog.show(getSupportFragmentManager(), "Issues Dialog");
         });
-
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) { //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }
@@ -190,7 +188,7 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     public String listToString(ArrayList<String> arrList) {
         StringBuilder sb = new StringBuilder();
         //used to display the list in the app
-        sb.setLength(0); //clears the display list so unchecked items are removed
+        sb.setLength(0); //clears the display list so unchecked items get removed
         for (String s : arrList) {
             sb.append(s).append("\n");
         }
@@ -198,7 +196,8 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
     }
 
     @Override
-    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage,
+                            int requestType) {
         if (downloadingAlert != null) {
             downloadingAlert.dismiss();
         }
@@ -239,7 +238,6 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
                         Toast.LENGTH_SHORT).show();
                 barcodeET.requestFocus();
                 barcodeET.setText("");
-//                remarkET.setText("");
                 remarkET.setText(null);
                 barcodeET.requestFocus();
                 showIssuesTV.setText("");

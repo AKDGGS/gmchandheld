@@ -7,11 +7,9 @@
     android:fillViewport="true"
     android:orientation="vertical"
     android:id="@+id/moveDisplayLayout">
-
        <include
             android:id="@+id/toolbar"
             layout="@layout/toolbar" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -21,7 +19,6 @@
             android:layout_marginRight="5dp"
             android:layout_marginEnd="5dp"
             android:weightSum="10">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -31,7 +28,6 @@
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:layout_weight="1.25" />
-
             <EditText
                 android:id="@+id/toET"
                 android:layout_width="0dp"
@@ -44,7 +40,6 @@
                 android:nextFocusUp="@+id/toET"
                 android:nextFocusLeft="@+id/toET"
                 android:nextFocusRight="@+id/toET" />
-
             <Button
                 android:id="@+id/cameraBtn"
                 android:layout_width="0dp"
@@ -57,7 +52,6 @@
                 android:nextFocusLeft="@+id/cameraBtn"
                 android:nextFocusRight="@+id/cameraBtn" />
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,7 +61,6 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:weightSum="10">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -76,7 +69,6 @@
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:textSize="14sp" />
-
             <EditText
                 android:id="@+id/itemET"
                 android:layout_width="0dp"
@@ -89,7 +81,6 @@
                 android:nextFocusUp="@+id/itemET"
                 android:nextFocusLeft="@+id/itemET"
                 android:nextFocusRight="@+id/itemET"/>
-
             <Button
                 android:id="@+id/itemCameraBtn"
                 android:layout_width="0dp"
@@ -100,7 +91,6 @@
                 android:nextFocusUp="@+id/itemCameraBtn"
                 android:nextFocusLeft="@+id/itemCameraBtn"
                 android:nextFocusRight="@+id/itemCameraBtn"/>
-
             <Button
                 android:id="@+id/addContainerBtn"
                 android:layout_width="0dp"
@@ -113,7 +103,6 @@
                 android:nextFocusLeft="@+id/addContainerBtn"
                 android:nextFocusRight="@+id/addContainerBtn"/>
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,7 +110,6 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:weightSum="10">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -132,7 +120,6 @@
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:textSize="12sp" />
-
             <TextView
                 android:id="@+id/moveCountTV"
                 android:layout_width="0dp"
@@ -140,7 +127,6 @@
                 android:layout_marginTop="10dp"
                 android:selectAllOnFocus="true"
                 android:layout_weight="3.25"/>
-
             <Button
                 android:id="@+id/clearAllBtn"
                 android:layout_width="0dp"
@@ -154,7 +140,6 @@
                 android:nextFocusLeft="@+id/clearAllBtn"
                 android:nextFocusRight="@+id/clearAllBtn" />
         </LinearLayout>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -163,11 +148,9 @@
         android:text="@string/double_tap_to_remove_item"
         android:textColor="#ff353535"
         android:textSize="12sp" />
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <ListView
                 android:id="@+id/listViewContainersToMove"
                 android:layout_width="match_parent"
@@ -177,7 +160,6 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="60dp" />
-
             <Button
                 android:id="@+id/submitBtn"
                 android:layout_width="match_parent"

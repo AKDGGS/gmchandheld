@@ -45,14 +45,12 @@ public class MoveContents extends BaseActivity implements HTTPRequestCallback {
         moveContentsFromET = findViewById(R.id.fromET);
         moveContentsToET = findViewById(R.id.toET);
         // onClickListener listens if the submit button is clicked
-
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
             if (!(TextUtils.isEmpty(moveContentsFromET.getText())) &
                     !(TextUtils.isEmpty(moveContentsToET.getText()))) {
                 HashMap<String, Object> params = new HashMap<>();
                 params.put("src", moveContentsFromET.getText().toString());
                 params.put("dest", moveContentsToET.getText().toString());
-
                 try {
                     downloadingAlert = new ProgressDialog(this);
                     downloadingAlert.setMessage("Moving the contents.");
@@ -76,7 +74,6 @@ public class MoveContents extends BaseActivity implements HTTPRequestCallback {
                 }
             }
         });
-
         // KeyListener listens if enter is pressed
         moveContentsFromET.setOnKeyListener((v, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -115,8 +112,7 @@ public class MoveContents extends BaseActivity implements HTTPRequestCallback {
             }
             startActivityForResult(intent, 2);
         });
-
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) { //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }

@@ -130,7 +130,6 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
                 }
             }
         });
-
         // KeyListener listens if enter is pressed
         barcodeET.setOnKeyListener((v, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -139,7 +138,6 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
             }
             return false;
         });
-
         submitBtn = findViewById(R.id.submitBtn);
         submitBtn.setEnabled(false);
         submitBtn.setOnClickListener(view -> {
@@ -148,7 +146,6 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
                 params.put("barcode", barcodeET.getText().toString().trim());
                 params.put("description", descriptionET.getText().toString().trim());
                 params.put("filename", file);
-
                 try {
                     downloadingAlert = new ProgressDialog(this);
                     downloadingAlert.setMessage("Uploading the photo.");
@@ -172,8 +169,7 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
                 fileList.add(file);
             }
         });
-
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) { //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }
@@ -238,7 +234,6 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
         if (downloadingAlert != null) {
             downloadingAlert.dismiss();
         }
-        String data = new String(byteData);
         runOnUiThread(() -> {
             if (responseCode == 200 | responseCode == 302) {
                 Toast.makeText(TakePhoto.this, "The photo was uploaded.",

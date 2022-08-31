@@ -85,7 +85,6 @@ public class AddContainer extends BaseActivity implements HTTPRequestCallback {
             }
             return false;
         });
-
         // onClickListener listens if the submit button is clicked
         submit_button.setOnClickListener(v -> {
             if (!(TextUtils.isEmpty(addContainerBarcodeET.getText()))) {
@@ -118,8 +117,7 @@ public class AddContainer extends BaseActivity implements HTTPRequestCallback {
                 }
             }
         });
-
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) { //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }
@@ -147,7 +145,6 @@ public class AddContainer extends BaseActivity implements HTTPRequestCallback {
         if (downloadingAlert != null) {
             downloadingAlert.dismiss();
         }
-
         String data = new String(byteData);
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {

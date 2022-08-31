@@ -21,7 +21,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HTTPRequest implements Runnable {
-
     public static final int GET = 0;
     public static final int POST = 1;
     public static final int HEAD = 2;
@@ -30,7 +29,6 @@ public class HTTPRequest implements Runnable {
     private String url;
     private RequestBody body;
     private int requestType;
-    private HashMap<String, Object> params;
     private OutputStream outputStream;
 
     public HTTPRequest() {
@@ -46,22 +44,18 @@ public class HTTPRequest implements Runnable {
                                 int requestType,
                                 HashMap<String, Object> params,
                                 OutputStream outputStream) throws Exception {
-
         if (url == null) {
             throw new Exception("URL is null");
         }
         new URL(url);
-
         if (HTTPRequestCallback == null) {
             throw new Exception("The callback can't be null");
         }
-
         synchronized (lockObj) {
             if (this.url != null) {
                 throw new Exception("Processing. Give me a moment and then try again.");
             }
             HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
-            this.params = params;
             if (requestType != POST) {
                 for (Map.Entry<String, Object> entry : params.entrySet()) {
                     if (entry.getValue() instanceof String) {
@@ -164,7 +158,6 @@ public class HTTPRequest implements Runnable {
                     request = null;
                     continue;
             }
-
             OkHttpClient client = new OkHttpClient.Builder()
                     .followRedirects(false)
                     .followSslRedirects(false)
@@ -174,7 +167,6 @@ public class HTTPRequest implements Runnable {
                     .readTimeout(15, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(false)
                     .build();
-
             try (Response response = client.newCall(request).execute()) {
                 int count;
                 switch (requestType) {

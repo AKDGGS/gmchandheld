@@ -4,22 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="5dp">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -31,7 +27,6 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 tools:ignore="RtlSymmetry" />
-
             <TextView
                 android:id="@+id/buildDateTV"
                 android:layout_width="wrap_content"
@@ -39,25 +34,20 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.0">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="5dp">
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginHorizontal="10dp"
                     android:background="@android:color/darker_gray" />
-
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -67,7 +57,6 @@
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
                     android:textStyle="bold" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -77,7 +66,6 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:weightSum="10">
-
                     <EditText
                         android:id="@+id/urlET"
                         android:layout_width="0dp"
@@ -91,7 +79,6 @@
                         android:nextFocusUp="@+id/urlET"
                         android:nextFocusLeft="@+id/urlET"
                         android:nextFocusRight="@+id/urlET"/>
-
                     <Button
                         android:id="@+id/urlCameraBtn"
                         android:layout_width="0dp"
@@ -103,20 +90,17 @@
                         android:nextFocusLeft="@+id/urlCameraBtn"
                         android:nextFocusRight="@+id/urlCameraBtn"/>
                 </LinearLayout>
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginHorizontal="10dp"
                     android:background="@android:color/darker_gray" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="5dp"
                     android:weightSum="4">
-
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -127,7 +111,6 @@
                         android:textColor="@android:color/black"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-
                     <ToggleButton
                         android:id="@+id/cameraToScannerBtn"
                         android:layout_width="0dp"
@@ -140,20 +123,17 @@
                         android:nextFocusLeft="@+id/cameraToScannerBtn"
                         android:nextFocusRight="@+id/cameraToScannerBtn"/>
                 </LinearLayout>
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginHorizontal="10dp"
                     android:background="@android:color/darker_gray" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="5dp"
                     android:weightSum="4">
-
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -164,7 +144,6 @@
                         android:textColor="@android:color/black"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-
                     <ToggleButton
                         android:id="@+id/autoUpdateBtn"
                         android:layout_width="0dp"
@@ -177,7 +156,6 @@
                         android:nextFocusLeft="@+id/autoUpdateBtn"
                         android:nextFocusRight="@+id/autoUpdateBtn"/>
                 </LinearLayout>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -186,7 +164,6 @@
                     android:paddingRight="10dp"
                     android:paddingBottom="20dp"
                     android:weightSum="4">
-
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -197,7 +174,6 @@
                         android:textColor="@android:color/black"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-
                     <EditText
                         android:id="@+id/updateIntervalET"
                         android:layout_width="0dp"
@@ -213,17 +189,14 @@
                         android:selectAllOnFocus="true"
                         android:textSize="14sp" />
                 </LinearLayout>
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginHorizontal="10dp"
                     android:background="@android:color/darker_gray" />
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <Button
                         android:id="@+id/updateBtn"
                         android:layout_width="wrap_content"
@@ -237,14 +210,12 @@
                         android:text="@string/check_for_updates"
                         android:textSize="12sp" />
                 </RelativeLayout>
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginHorizontal="10dp"
                     android:background="@android:color/darker_gray" />
             </LinearLayout>
-
         </ScrollView>
     </LinearLayout>
 </LinearLayout>

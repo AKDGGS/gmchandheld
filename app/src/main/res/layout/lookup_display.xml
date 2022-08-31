@@ -10,7 +10,6 @@
         layout="@layout/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
         <EditText
             android:id="@+id/invisibleET"
             android:layout_width="match_parent"
@@ -24,7 +23,6 @@
             android:nextFocusRight="@+id/invisibleET">
             <requestFocus />
         </EditText>
-
     <ExpandableListView
         android:id="@+id/expandableListView"
         android:layout_width="match_parent"

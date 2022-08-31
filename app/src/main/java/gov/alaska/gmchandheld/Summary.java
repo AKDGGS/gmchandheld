@@ -121,7 +121,6 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
         if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             BaseActivity.editor.putBoolean("cameraOn", false).apply();
         }
-
         // populates the history list
         listView = findViewById(R.id.listViewSummaryHistory);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
@@ -146,7 +145,6 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
         });
         Button submitBtn = findViewById(R.id.submitBtn);
         barcodeET = findViewById(R.id.barcodeET);
-
         submitBtn.setOnClickListener(v -> {
             submitBtn.setEnabled(false);
             if (!barcodeET.getText().toString().isEmpty()) {
@@ -194,8 +192,7 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
             barcodeET.setText(listView.getItemAtPosition(position).toString());
             submitBtn.performClick();
         });
-
-        if (BaseActivity.getUpdatable()) {
+        if (BaseActivity.getUpdatable()) { //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }

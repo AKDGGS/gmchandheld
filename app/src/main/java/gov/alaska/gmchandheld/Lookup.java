@@ -77,7 +77,7 @@ public class Lookup extends BaseActivity {
         barcodeET = findViewById(R.id.barcodeET);
         barcodeET.requestFocus();
         loadLookup();
-        if (BaseActivity.getUpdatable()) {
+        if (BaseActivity.getUpdatable()) {  //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }
@@ -102,7 +102,6 @@ public class Lookup extends BaseActivity {
         });
         barcodeET = findViewById(R.id.barcodeET);
         submitBtn = findViewById(R.id.submitBtn);
-
         // populates the history list
         listView = findViewById(R.id.listViewBarcodeHistory);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
@@ -110,7 +109,6 @@ public class Lookup extends BaseActivity {
         adapter.addAll(lookupHistory);
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
-
         submitBtn.setOnClickListener(v -> {
             submitBtn.setEnabled(false);
             barcode = barcodeET.getText().toString();
@@ -277,14 +275,12 @@ public class Lookup extends BaseActivity {
         if (downloadingAlert != null) {
             downloadingAlert.dismiss();
         }
-
         if (e.getMessage() != null) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     barcodeET.setText("");
-
                 }
             });
         }

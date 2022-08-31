@@ -73,7 +73,6 @@ public class Recode extends BaseActivity implements HTTPRequestCallback {
             }
             startActivityForResult(intent, 2);
         });
-
         // onClickListener listens if the submit button is clicked
         findViewById(R.id.submitBtn).setOnClickListener(v -> {
             if ((!oldBarcodeET.getText().toString().isEmpty()) &&
@@ -81,7 +80,6 @@ public class Recode extends BaseActivity implements HTTPRequestCallback {
                 HashMap<String, Object> params = new HashMap<>();
                 params.put("old", oldBarcodeET.getText().toString());
                 params.put("new", newBarcodeET.getText().toString());
-
                 try {
                     downloadingAlert = new ProgressDialog(this);
                     downloadingAlert.setMessage("Recoding..." );
@@ -114,8 +112,7 @@ public class Recode extends BaseActivity implements HTTPRequestCallback {
             }
             return false;
         });
-
-        if (updatable) {
+        if (BaseActivity.getUpdatable()) {  //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }

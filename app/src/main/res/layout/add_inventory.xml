@@ -8,11 +8,9 @@
     app:backgroundTint="@color/colorPrimary"
     tools:context=".Lookup"
     android:weightSum="10">
-
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -21,24 +19,20 @@
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="8">
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fadeScrollbars="false">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:weightSum="10">
-
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="2.5"
@@ -49,7 +43,6 @@
                         android:textStyle="bold"
                         android:textSize="14sp"
                         android:gravity="center_vertical"/>
-
                     <EditText
                         android:id="@+id/barcodeET"
                         android:layout_width="0dp"
@@ -65,7 +58,6 @@
                         android:nextFocusLeft="@+id/barcodeET"
                         android:nextFocusRight="@+id/barcodeET"
                         tools:ignore="RtlSymmetry" />
-
                     <Button
                         android:id="@+id/cameraBtn"
                         android:layout_width="0dp"
@@ -78,14 +70,12 @@
                         android:nextFocusLeft="@+id/cameraBtn"
                         android:nextFocusRight="@+id/cameraBtn" />
                 </LinearLayout>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:weightSum="10">
-
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="2.5"
@@ -94,7 +84,6 @@
                         android:text="@string/remark"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-
                     <EditText
                         android:id="@+id/remarkET"
                         android:layout_width="0dp"
@@ -109,37 +98,29 @@
                         android:nextFocusLeft="@+id/remarkET"
                         android:nextFocusRight="@+id/remarkET"/>
                 </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center_vertical">
-
                 <Button
                     android:id="@+id/issuesBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Select Issues" />
-
                 <TextView
                     android:id="@+id/showIssuesTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
             </LinearLayout>
-
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="2">
-
         <Button
             android:id="@+id/submitBtn"
             android:layout_width="match_parent"

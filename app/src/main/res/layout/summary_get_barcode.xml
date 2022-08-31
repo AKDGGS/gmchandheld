@@ -8,18 +8,15 @@
     android:orientation="vertical"
     app:backgroundTint="@color/colorPrimary"
     tools:context=".Summary">
-
         <include
             android:id="@+id/toolbar"
             layout="@layout/toolbar" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:weightSum="8">
-
         <EditText
             android:id="@+id/barcodeET"
             android:layout_width="0dp"
@@ -39,7 +36,6 @@
             android:nextFocusUp="@+id/barcodeET"
             android:nextFocusLeft="@+id/barcodeET"
             android:nextFocusRight="@+id/barcodeET"/>
-
         <Button
             android:id="@+id/cameraBtn"
             android:layout_width="0dp"
@@ -54,8 +50,6 @@
             android:nextFocusRight="@+id/cameraBtn"
             android:layout_marginEnd="5dp" />
     </LinearLayout>
-
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,13 +60,10 @@
             android:textColor="#ff353535"
             android:textSize="16sp"
             android:textStyle="bold" />
-
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <ListView
                 android:id="@+id/listViewSummaryHistory"
                 android:layout_width="match_parent"
@@ -82,8 +73,6 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="60dp" />
-
-
             <Button
                 android:id="@+id/submitBtn"
                 android:layout_width="match_parent"

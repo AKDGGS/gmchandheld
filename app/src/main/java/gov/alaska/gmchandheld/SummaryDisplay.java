@@ -111,13 +111,11 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
         SpannableString title = new SpannableString(summaryLogicForDisplayObj.getBarcodeQuery());
         SpannableString subtitle = new SpannableString(
                 summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");
-
         if (getSupportActionBar() != null) {
             if ("GMC Handheld".contentEquals(getSupportActionBar().getTitle())) {
                 title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 this.getSupportActionBar().setTitle(title);
-
                 if (summaryLogicForDisplayObj.getNumberOfBoxes() > 0) {
                     subtitle.setSpan(new ForegroundColorSpan(Color.BLACK),
                             0,
@@ -151,8 +149,7 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
         expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             return true; // Expander cannot be collapsed
         });
-
-        if (BaseActivity.getUpdatable()) {
+        if (BaseActivity.getUpdatable()) { //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }
@@ -248,7 +245,6 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
                     | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.putExtra("barcode", barcode);
             startActivity(intent);
-
             if (!Summary.getSummaryHistory().isEmpty()) {
                 Summary.setLastAdded(Summary.getSummaryHistory().get(0));
             }

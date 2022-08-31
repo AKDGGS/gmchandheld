@@ -84,7 +84,8 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
                     downloadingAlert = new ProgressDialog(this);
                     downloadingAlert.setMessage("Loading...\n" + barcode);
                     downloadingAlert.setCancelable(false);
-                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                            new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             thread.interrupt();
@@ -112,7 +113,6 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
             }
             return false;
         });
-
         LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
                 .getInstance().lookupLogicForDisplayObj;
         SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
@@ -151,7 +151,7 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
             return true; // This prevents the expander from being collapsed
         });
 
-        if (BaseActivity.getUpdatable()) {
+        if (BaseActivity.getUpdatable()) {  //Set in UpdateBroadcastReceiver and Configuration
             downloadingAlert();
         }
     }
@@ -203,11 +203,11 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
     }
 
     @Override
-    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage, int requestType) {
+    public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage,
+                            int requestType) {
         if (downloadingAlert != null) {
             downloadingAlert.dismiss();
         }
-
         String data = new String(byteData);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null || data.length() <= 2) {
             if (responseCode == 403) {

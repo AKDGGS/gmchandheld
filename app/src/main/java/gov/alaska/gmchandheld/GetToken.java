@@ -43,7 +43,6 @@ public class GetToken extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("GMC Handheld");
         enableTSL(this);
-
         apiTokenET = findViewById(R.id.apiTokenET);
         TextView urlTV = findViewById(R.id.urlTV);
         urlET = findViewById(R.id.urlET);
