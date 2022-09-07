@@ -1,15 +1,11 @@
 ## GMCHandheld
-GMCHandheld is a warehouse scanner app customized for use with geological inventory.  
+GMCHandheld is a warehouse scanner app for use in geologic repositories and intended to interface with https://github.com/AKDGGS/igneous.
 
-##Development
-Built with Java.  Available for Android from Jelly Bean (API 16+).
+## Development
+Built with Java.  Available for Android from Jelly Bean (API 16+).  
 
-##Installation
-Clone this repository and import into Android Studio
-git clone https://github.com/AKDGGS/gmchandheld.git
-
-## Setup
-1. git clone https://github.com/AKDGGS/gmchandheld.git
-2. In Android Studio:
-	1. Goto Build menu
-	2. Generate Signed Bundled/APK
+## Testing Environment:
+* Android Studio Chipmunk | 2021.2.1 Patch 2
+* Honeywell Intermec CN51 Handheld computer
+* Zebra MC9300
+* Various consumer cell phones
