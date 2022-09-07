@@ -1,19 +1,15 @@
-## GMC Handheld
-GMC Handheld is an Android warehouse scanner app customized for use with geological inventory.  Built with Java.  Available for Android from Jelly Bean (API 16+).
+## GMCHandheld
+GMCHandheld is a warehouse scanner app customized for use with geological inventory.  
 
-## Features
-    * User log-in
-    * Customizable URL connection
-    * Scan or type barcodes to view and modify inventory items.
-    * Compatible with Android phones and Intermec handheld scanners.
-    
-## Get Involved
+##Development
+Built with Java.  Available for Android from Jelly Bean (API 16+).
 
-To request a feature or if you find a bug open an issue in GitHub.  
-To participate fork the repo and create a branch.
+##Installation
+Clone this repository and import into Android Studio
+git clone https://github.com/AKDGGS/gmchandheld.git
 
 ## Setup
-1. Clone the repo to your desktop.  
-2. Modify the yaml configuration file.
-3. Generate Signed Bundle or APK.
-4. Install APK on the device.
+1. git clone https://github.com/AKDGGS/gmchandheld.git
+2. In Android Studio:
+	1. Goto Build menu
+	2. Generate Signed Bundled/APK
