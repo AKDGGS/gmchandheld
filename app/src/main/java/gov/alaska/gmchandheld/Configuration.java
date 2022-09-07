@@ -151,7 +151,11 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
         cameraToScannerChangeWatcher();
         loadData();
         if (BaseActivity.getUpdatable()) {   //Set in UpdateBroadcastReceiver and Configuration
-            updateAPK();
+            if (BaseActivity.getUpdating() == true) {
+                downloadingAlert();
+            } else {
+                updateAPK();
+            }
         }
     }
 
@@ -275,6 +279,10 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     thread.interrupt();
+                    Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
+                            .apply();
+                    BaseActivity.setUpdatable(false);
+                    BaseActivity.setUpdating(false);
                     downloadingAlert.dismiss();//dismiss dialog
                 }
             });

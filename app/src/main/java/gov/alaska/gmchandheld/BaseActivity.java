@@ -31,6 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
     protected static Intent intent;
     protected static String baseURL;
     private static volatile boolean updatable; //Set in UpdateBroadcastReceiver and Configuration
+    private static volatile boolean updating; //Indicates that the user has already agreed to update
     protected static Date updateAvailableBuildDate;
     private static String token = null;
     protected static Thread thread;
@@ -42,6 +43,13 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
 
     public static boolean getUpdatable() {
         return updatable;
+    }
+
+    public static boolean getUpdating() {
+        return updating;
+    }
+    public static void setUpdating(boolean value) {
+        updating = value;
     }
 
     public static void setUpdatable(boolean value) {
@@ -249,6 +257,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
                 "Update",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        updating = true;
                         Configuration.editor.putLong("ignoreUpdateDateSP", BaseActivity.updateAvailableBuildDate.getTime())
                                 .apply();
                         Intent intentConfiguration = new Intent(BaseActivity.this, Configuration.class);
