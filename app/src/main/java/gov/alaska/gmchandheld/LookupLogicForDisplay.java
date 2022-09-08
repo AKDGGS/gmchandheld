@@ -79,6 +79,7 @@ public class LookupLogicForDisplay {
     }
 
     public void processRawJSON(String rawJSON) throws Exception {
+        System.out.println(rawJSON);
         if (rawJSON.trim().charAt(0) == '[') {
             JSONArray inputJson = new JSONArray((rawJSON));  // check for jsonarray
             InventoryObject root = parseTree(null, null, inputJson);
@@ -520,7 +521,9 @@ public class LookupLogicForDisplay {
                 }
                 return new InventoryObject("Radiation MSVH", o, 1200);
             case "remark":
-                if (o.toString().contains("\n")) {
+                if (o.toString().isEmpty()){
+                    return null;
+                } else if (o.toString().contains("\n")) {
                     o = o.toString().replace("\n", " ");
                 }
                 return new InventoryObject("Remark", o, 900);
