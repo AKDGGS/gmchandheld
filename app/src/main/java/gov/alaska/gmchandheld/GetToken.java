@@ -34,6 +34,8 @@ public class GetToken extends AppCompatActivity {
     private EditText apiTokenET, urlET;
     private IntentIntegrator qrScan;
     private Button submitBtn, urlCameraBtn;
+    StringBuilder sb = new StringBuilder();
+    String apiToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +109,6 @@ public class GetToken extends AppCompatActivity {
             }
         });
         submitBtn = findViewById(R.id.submitBtn);
-        submitBtn.setOnClickListener(v -> {
-            if (!apiTokenET.getText().toString().isEmpty()) {
-                BaseActivity.setToken(apiTokenET.getText().toString());
-                finish();
-            }
-        });
         apiTokenET.setOnKeyListener((v, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 submitBtn.performClick();
@@ -166,5 +162,21 @@ public class GetToken extends AppCompatActivity {
         } catch (KeyManagementException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if ((event.isPrintingKey()) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+            sb = sb.append((char)event.getUnicodeChar());
+        }
+        if ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)){
+            apiToken = sb.toString();
+            if (!apiToken.isEmpty()) {
+                apiTokenET.setText(apiToken);
+                BaseActivity.setToken(apiToken);
+                finish();
+            }
+        }
+        return super.onKeyDown(event.getKeyCode(), event);
     }
 }

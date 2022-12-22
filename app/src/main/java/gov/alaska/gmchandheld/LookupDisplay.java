@@ -30,9 +30,9 @@ import java.util.HashMap;
 
 public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
     private ExpandableListView expandableListView;
-    private EditText invisibleET;
     private String barcode;
     private ProgressDialog downloadingAlert;
+    private StringBuilder sb = new StringBuilder();
 
     @Override
     public int getLayoutResource() {
@@ -42,8 +42,7 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
     @Override
     protected void onRestart() {
         super.onRestart();
-        invisibleET = findViewById(R.id.invisibleET);
-        invisibleET.setText("");
+
     }
 
     @Override
@@ -69,50 +68,6 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         expandableListView = findViewById(R.id.expandableListView);
-        invisibleET = findViewById(R.id.invisibleET);
-        invisibleET.setInputType(InputType.TYPE_NULL);
-        invisibleET.setFocusable(true);
-        invisibleET.setOnKeyListener((v, keyCode, event) -> {
-            if (keyCode == KeyEvent.KEYCODE_DEL) {
-                invisibleET.setText("");
-            }
-            if (invisibleET.getText().toString().trim().length() != 0) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    invisibleET.setEnabled(false);
-                    barcode = invisibleET.getText().toString();
-                    downloadingAlert = new ProgressDialog(this);
-                    downloadingAlert.setMessage("Loading...\n" + barcode);
-                    downloadingAlert.setCancelable(false);
-                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-                            new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            thread.interrupt();
-                            downloadingAlert.dismiss();//dismiss dialog
-                        }
-                    });
-                    downloadingAlert.show();
-                    if (!barcode.isEmpty()) {
-                        HashMap<String, Object> params = new HashMap<>();
-                        params.put("barcode", barcode);
-                        try {
-                            getHTTPRequest().setFetchDataObj(baseURL + "inventory.json?",
-                                    this,
-                                    0,
-                                    params,
-                                    null);
-                        } catch (Exception e) {
-                            System.out.println("Lookup Exception: " + e.getMessage());
-                            e.printStackTrace();
-                        }
-                        invisibleET.setText("");
-                        invisibleET.setEnabled(true);
-                    }
-                }
-            }
-            return false;
-        });
         LookupLogicForDisplay lookupLogicForDisplayObj = LookupDisplayObjInstance
                 .getInstance().lookupLogicForDisplayObj;
         SpannableString title = new SpannableString(lookupLogicForDisplayObj.getBarcodeQuery());
@@ -170,37 +125,81 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
         return true;
     }
 
-    //makes the volume keys scroll up/down
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        int action = event.getAction();
-        AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
-        manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
-        switch (event.getKeyCode()) {
-            case KeyEvent.KEYCODE_DPAD_UP:
-            case KeyEvent.KEYCODE_VOLUME_UP: {
-                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                    expandableListView.smoothScrollToPosition(0, 0);
-                }
-                if (KeyEvent.ACTION_UP == action) {
-                    expandableListView.smoothScrollByOffset(-3);
-                }
-                return true;
+        if ((event.isPrintingKey()) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+            sb = sb.append((char)event.getUnicodeChar());
+        }
+
+        if(event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
+            if(sb.length()!=0) {
+                sb = new StringBuilder();
             }
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-            case KeyEvent.KEYCODE_VOLUME_DOWN: {
-                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                    expandableListView.smoothScrollToPosition(expandableListView.getCount());
-                }
-                if (KeyEvent.ACTION_UP == action) {
-                    expandableListView.smoothScrollByOffset(3);
+        }
+        if ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)){
+            barcode = sb.toString();
+            downloadingAlert = new ProgressDialog(this);
+            downloadingAlert.setMessage("Loading...\n" + barcode);
+            downloadingAlert.setCancelable(false);
+            downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            thread.interrupt();
+                            downloadingAlert.dismiss();//dismiss dialog
+                        }
+                    });
+            downloadingAlert.show();
+            if (!barcode.isEmpty()) {
+                HashMap<String, Object> params = new HashMap<>();
+                params.put("barcode", barcode);
+                try {
+                    getHTTPRequest().setFetchDataObj(baseURL + "inventory.json?",
+                            this,
+                            0,
+                            params,
+                            null);
+                } catch (Exception e) {
+                    System.out.println("Lookup Exception: " + e.getMessage());
+                    e.printStackTrace();
                 }
                 return true;
             }
         }
-        return super.dispatchKeyEvent(event);
+        return super.onKeyDown(event.getKeyCode(), event);
     }
+
+//    //makes the volume keys scroll up/down
+//    @Override
+//    public boolean dispatchKeyEvent(KeyEvent event) {
+//        int action = event.getAction();
+//        AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+//        manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
+//        manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
+//        switch (event.getKeyCode()) {
+//            case KeyEvent.KEYCODE_DPAD_UP:
+//            case KeyEvent.KEYCODE_VOLUME_UP: {
+//                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+//                    expandableListView.smoothScrollToPosition(0, 0);
+//                }
+//                if (KeyEvent.ACTION_UP == action) {
+//                    expandableListView.smoothScrollByOffset(-3);
+//                }
+//                return true;
+//            }
+//            case KeyEvent.KEYCODE_DPAD_DOWN:
+//            case KeyEvent.KEYCODE_VOLUME_DOWN: {
+//                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+//                    expandableListView.smoothScrollToPosition(expandableListView.getCount());
+//                }
+//                if (KeyEvent.ACTION_UP == action) {
+//                    expandableListView.smoothScrollByOffset(3);
+//                }
+//                return true;
+//            }
+//        }
+//        return super.dispatchKeyEvent(event);
+//    }
 
     @Override
     public void displayData(byte[] byteData, Date date, int responseCode, String responseMessage,
@@ -240,7 +239,8 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
                         Toast.makeText(LookupDisplay.this,
                                 "There was an error looking up " + barcode + ".\n" +
                                         "Is the barcode in inventory?", Toast.LENGTH_LONG).show();
-                        invisibleET.setText("");
+                        sb = new StringBuilder();
+                        barcode = "";
                     }
                 });
             }
@@ -280,7 +280,8 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    invisibleET.setText("");
+                    sb = new StringBuilder();
+                    barcode = "";
                 }
             });
         }

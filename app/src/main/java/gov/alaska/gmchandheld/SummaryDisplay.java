@@ -13,9 +13,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
@@ -26,8 +24,8 @@ import java.util.HashMap;
 
 public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback {
     private ExpandableListView expandableListView;
-//    private EditText invisibleET;
-    private String barcode, newBarcode;
+    private String barcode;
+    private StringBuilder sb = new StringBuilder();
     private ProgressDialog downloadingAlert;
 
     @Override
@@ -54,8 +52,6 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
     @Override
     protected void onRestart() {
         super.onRestart();
-//        invisibleET = findViewById(R.id.invisibleET);
-//        invisibleET.setText("");
     }
 
     @Override
@@ -64,53 +60,12 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        newBarcode = "";
         expandableListView = findViewById(R.id.expandableListView);
-//        invisibleET = findViewById(R.id.invisibleET);
-//        invisibleET.setInputType(InputType.TYPE_NULL);
-//        invisibleET.setFocusable(true);
-//        invisibleET.setOnKeyListener((v, keyCode, event) -> {
-//            if (keyCode == KeyEvent.KEYCODE_DEL) {
-//                invisibleET.setText("");
-//            }
-//            if (invisibleET.getText().toString().trim().length() != 0) {
-//                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-//                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-//                    barcode = invisibleET.getText().toString();
-//                    downloadingAlert = new ProgressDialog(this);
-//                    downloadingAlert.setMessage("Loading...\n " + barcode);
-//                    downloadingAlert.setCancelable(false);
-//                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            thread.interrupt();
-//                            downloadingAlert.dismiss();//dismiss dialog
-//                        }
-//                    });
-//                    downloadingAlert.show();
-//                    if (!barcode.isEmpty()) {
-//                        HashMap<String, Object> params = new HashMap<>();
-//                        params.put("barcode", barcode);
-//
-//                        try {
-//                            getHTTPRequest().setFetchDataObj(baseURL + "summary.json?",
-//                                    this,
-//                                    0,
-//                                    params,
-//                                    null);
-//                        } catch (Exception e) {
-//                            System.out.println("Summary Display Exception: " + e.getMessage());
-//                        }
-//                        return true;
-//                    }
-//                }
-//            }
-//            return false;
-//        });
         SummaryLogicForDisplay summaryLogicForDisplayObj;
         summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance()
                 .summaryLogicForDisplayObj;
         SpannableString title = new SpannableString(summaryLogicForDisplayObj.getBarcodeQuery());
+        System.out.println(title);
         SpannableString subtitle = new SpannableString(
                 summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");
         if (getSupportActionBar() != null) {
@@ -156,74 +111,71 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
         }
     }
 
-    //makes the volume keys scroll up/down
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         int action = event.getAction();
         AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
         manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
-                if (event.getAction()==KeyEvent.ACTION_DOWN  && event.getKeyCode() != KeyEvent.KEYCODE_ENTER ) {
-            char pressedKey = (char) event.getUnicodeChar();
-            if (('A' <= pressedKey && pressedKey <= 'Z') || 'a' <= pressedKey && pressedKey <= 'z' ||
-                    '0' <= pressedKey && pressedKey <= '9' ||
-                    '-' == pressedKey ||
-            '_' == pressedKey) {
-                newBarcode += pressedKey;
-            }
+        if ((event.isPrintingKey()) && (action == KeyEvent.ACTION_DOWN)) {
+            sb = sb.append((char)event.getUnicodeChar());
         }
-        if (event.getAction()==KeyEvent.ACTION_DOWN  && event.getKeyCode() == KeyEvent.KEYCODE_ENTER ) {
-            System.out.println("Test " +  newBarcode);
-            if (!barcode.isEmpty()) {
-                downloadingAlert = new ProgressDialog(this);
-                downloadingAlert.setMessage("Loading...\n " + newBarcode);
-                downloadingAlert.setCancelable(false);
-                downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        thread.interrupt();
-                        downloadingAlert.dismiss();//dismiss dialog
-                    }
-                });
-                downloadingAlert.show();
-                if (!newBarcode.isEmpty()) {
-                    HashMap<String, Object> params = new HashMap<>();
-                    params.put("barcode", newBarcode);
+        switch (event.getKeyCode()) {
+            case KeyEvent.KEYCODE_ENTER:
+                if (action == KeyEvent.ACTION_DOWN){
+                    barcode = sb.toString();
+                    System.out.println("Barcode: " + barcode);
+                    downloadingAlert = new ProgressDialog(this);
+                    downloadingAlert.setMessage("Loading...\n " + barcode);
+                    downloadingAlert.setCancelable(false);
+                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            thread.interrupt();
+                            downloadingAlert.dismiss();//dismiss dialog
+                        }
+                    });
+                    downloadingAlert.show();
+                    if (!barcode.isEmpty()) {
+                        HashMap<String, Object> params = new HashMap<>();
+                        params.put("barcode", barcode);
 
-                    try {
-                        getHTTPRequest().setFetchDataObj(baseURL + "summary.json?",
-                                this,
-                                0,
-                                params,
-                                null);
-                    } catch (Exception ex) {
-                        System.out.println("Summary Display Exception: " + ex);
+                        try {
+                            getHTTPRequest().setFetchDataObj(baseURL + "summary.json?",
+                                    this,
+                                    0,
+                                    params,
+                                    null);
+                        } catch (Exception e) {
+                            System.out.println("Summary Display Exception: " + e.getMessage());
+                        }
+                        return true;
                     }
                 }
+            case KeyEvent.KEYCODE_DEL:
+                System.out.println("Delete " + sb.toString());
+                if(sb.length()!=0) {
+                    sb = new StringBuilder();
+                }
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_VOLUME_UP: {
+                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+                    expandableListView.smoothScrollToPosition(0, 0);
+                }
+                if (KeyEvent.ACTION_UP == action) {
+                    expandableListView.smoothScrollByOffset(-3);
+                }
+                return true;
             }
-            newBarcode ="";
-        } else {
-            switch (event.getKeyCode()) {
-                case KeyEvent.KEYCODE_DPAD_UP:
-                case KeyEvent.KEYCODE_VOLUME_UP: {
-                    if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                        expandableListView.smoothScrollToPosition(0, 0);
-                    }
-                    if (KeyEvent.ACTION_UP == action) {
-                        expandableListView.smoothScrollByOffset(-3);
-                    }
-                    return true;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_DOWN: {
+                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+                    expandableListView.smoothScrollToPosition(expandableListView.getCount());
                 }
-                case KeyEvent.KEYCODE_DPAD_DOWN:
-                case KeyEvent.KEYCODE_VOLUME_DOWN: {
-                    if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                        expandableListView.smoothScrollToPosition(expandableListView.getCount());
-                    }
-                    if (KeyEvent.ACTION_UP == action) {
-                        expandableListView.smoothScrollByOffset(3);
-                    }
-                    return true;
+                if (KeyEvent.ACTION_UP == action) {
+                    expandableListView.smoothScrollByOffset(3);
                 }
+                return true;
             }
         }
         return super.dispatchKeyEvent(event);
@@ -264,9 +216,11 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
                     @Override
                     public void run() {
                         Toast.makeText(SummaryDisplay.this,
-                                "There was an error looking up " + newBarcode + ".\n" +
+                                "There was an error looking up " + barcode + ".\n" +
                                         "Is the barcode a container?", Toast.LENGTH_LONG).show();
-//                        invisibleET.setText("");
+                        sb = new StringBuilder();
+                        barcode = "";
+
                     }
                 });
             }
@@ -276,7 +230,7 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
             SummaryDisplayObjInstance.getInstance()
                     .summaryLogicForDisplayObj
                     = summaryLogicForDisplayObj;
-            summaryLogicForDisplayObj.setBarcodeQuery(newBarcode);
+            summaryLogicForDisplayObj.setBarcodeQuery(barcode);
             try {
                 summaryLogicForDisplayObj.processRawJSON(data);
             } catch (Exception e) {
@@ -286,14 +240,14 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
                     SummaryDisplay.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.putExtra("barcode", newBarcode);
+            intent.putExtra("barcode", barcode);
             startActivity(intent);
             if (!Summary.getSummaryHistory().isEmpty()) {
                 Summary.setLastAdded(Summary.getSummaryHistory().get(0));
             }
-            if (!newBarcode.equals(Lookup.getLastAdded())
-                    & !newBarcode.isEmpty()) {
-                Summary.getSummaryHistory().add(0, newBarcode);
+            if (!barcode.equals(Lookup.getLastAdded())
+                    & !barcode.isEmpty()) {
+                Summary.getSummaryHistory().add(0, barcode);
             }
         }
     }
@@ -308,7 +262,8 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-//                    invisibleET.setText("");
+                    sb = new StringBuilder();
+                    barcode = "";
                 }
             });
         }
