@@ -155,86 +155,38 @@ public class Lookup extends BaseActivity {
             submitBtn.performClick();
         });
     }
-
+    
+    //makes the volume keys scroll up/down
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if ((event.isPrintingKey()) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-            sb = sb.append((char)event.getUnicodeChar());
-            String s =  "" + (char)event.getUnicodeChar();
-            barcodeET.append(s);
-        }
-
-        if(event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
-            if(sb.length()!=0) {
-                sb = new StringBuilder(sb.substring(0, sb.length() - 1));
-                barcode = sb.toString();
-                barcodeET.setText(barcode);
-                barcodeET.setSelection(barcode.length());
-            }
-        }
-
-        if ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)){
-            barcode = sb.toString();
-            downloadingAlert = new ProgressDialog(this);
-            downloadingAlert.setMessage("Loading...\n" + barcode);
-            downloadingAlert.setCancelable(false);
-            downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    thread.interrupt();
-                    downloadingAlert.dismiss();
+        int action = event.getAction();
+        AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
+        manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
+        switch (event.getKeyCode()) {
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_VOLUME_UP: {
+                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+                    listView.smoothScrollToPosition(0, 0);
                 }
-            });
-            downloadingAlert.show();
-            HashMap<String, Object> params = new HashMap<>();
-            params.put("barcode", barcode);
-            try {
-                getHTTPRequest().setFetchDataObj(baseURL + "inventory.json?",
-                        this,
-                        0,
-                        params,
-                        null);
-            } catch (Exception e) {
-                System.out.println("Lookup Exception: " + e.getMessage());
-            }
-                barcodeET.setText("");
+                if (KeyEvent.ACTION_UP == action) {
+                    listView.smoothScrollByOffset(-3);
+                }
                 return true;
             }
-
-        return super.onKeyDown(event.getKeyCode(), event);
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_DOWN: {
+                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
+                    listView.smoothScrollToPosition(listView.getCount());
+                }
+                if (KeyEvent.ACTION_UP == action) {
+                    listView.smoothScrollByOffset(3);
+                }
+                return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
-
-//    //makes the volume keys scroll up/down
-//    @Override
-//    public boolean dispatchKeyEvent(KeyEvent event) {
-//        int action = event.getAction();
-//        AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-//        manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
-//        manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
-//        switch (event.getKeyCode()) {
-//            case KeyEvent.KEYCODE_DPAD_UP:
-//            case KeyEvent.KEYCODE_VOLUME_UP: {
-//                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-//                    listView.smoothScrollToPosition(0, 0);
-//                }
-//                if (KeyEvent.ACTION_UP == action) {
-//                    listView.smoothScrollByOffset(-3);
-//                }
-//                return true;
-//            }
-//            case KeyEvent.KEYCODE_DPAD_DOWN:
-//            case KeyEvent.KEYCODE_VOLUME_DOWN: {
-//                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-//                    listView.smoothScrollToPosition(listView.getCount());
-//                }
-//                if (KeyEvent.ACTION_UP == action) {
-//                    listView.smoothScrollByOffset(3);
-//                }
-//                return true;
-//            }
-//        }
-//        return super.dispatchKeyEvent(event);
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

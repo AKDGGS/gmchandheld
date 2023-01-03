@@ -65,7 +65,6 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
         summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance()
                 .summaryLogicForDisplayObj;
         SpannableString title = new SpannableString(summaryLogicForDisplayObj.getBarcodeQuery());
-        System.out.println(title);
         SpannableString subtitle = new SpannableString(
                 summaryLogicForDisplayObj.getNumberOfBoxes() + " Result(s)");
         if (getSupportActionBar() != null) {
@@ -124,7 +123,6 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
             case KeyEvent.KEYCODE_ENTER:
                 if (action == KeyEvent.ACTION_DOWN){
                     barcode = sb.toString();
-                    System.out.println("Barcode: " + barcode);
                     downloadingAlert = new ProgressDialog(this);
                     downloadingAlert.setMessage("Loading...\n " + barcode);
                     downloadingAlert.setCancelable(false);
@@ -139,7 +137,6 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
                     if (!barcode.isEmpty()) {
                         HashMap<String, Object> params = new HashMap<>();
                         params.put("barcode", barcode);
-
                         try {
                             getHTTPRequest().setFetchDataObj(baseURL + "summary.json?",
                                     this,
@@ -153,7 +150,6 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
                     }
                 }
             case KeyEvent.KEYCODE_DEL:
-                System.out.println("Delete " + sb.toString());
                 if(sb.length()!=0) {
                     sb = new StringBuilder();
                 }

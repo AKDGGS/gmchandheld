@@ -145,8 +145,9 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
                 startActivityForResult(intent, 0);
             }
         });
-        Button submitBtn = findViewById(R.id.submitBtn);
         barcodeET = findViewById(R.id.barcodeET);
+        barcodeET.requestFocus();
+        Button submitBtn = findViewById(R.id.submitBtn);
         submitBtn.setOnClickListener(v -> {
             submitBtn.setEnabled(false);
             if (!barcodeET.getText().toString().isEmpty()) {
@@ -231,46 +232,6 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
         manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
         manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
         switch (event.getKeyCode()) {
-            case KeyEvent.KEYCODE_ENTER:
-                if (action == KeyEvent.ACTION_DOWN){
-                    barcode = barcodeET.getText().toString();
-                    downloadingAlert = new ProgressDialog(this);
-                    downloadingAlert.setMessage("Loading...\n " + barcode);
-                    downloadingAlert.setCancelable(false);
-                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            thread.interrupt();
-                            downloadingAlert.dismiss();
-                        }
-                    });
-                    downloadingAlert.show();
-                    if (!barcode.isEmpty()) {
-                        HashMap<String, Object> params = new HashMap<>();
-                        params.put("barcode", barcode);
-
-                        try {
-                            getHTTPRequest().setFetchDataObj(baseURL + "summary.json?",
-                                    this,
-                                    0,
-                                    params,
-                                    null);
-                        } catch (Exception e) {
-                            System.out.println("Summary Display Exception: " + e.getMessage());
-                        }
-                        barcodeET.setText("");
-                        return true;
-                    }
-                }
-            case KeyEvent.KEYCODE_DEL:
-                String b = barcodeET.getText().toString();
-                if(b.length()!=0) {
-                    b = b.substring(0, b.length() - 1);
-                    barcodeET.setText(b);
-                    if (b.length() > 0){
-                        barcodeET.setSelection(b.length());  //Controls the cursor position
-                    }
-                }
             case KeyEvent.KEYCODE_DPAD_UP:
             case KeyEvent.KEYCODE_VOLUME_UP: {
                 if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
