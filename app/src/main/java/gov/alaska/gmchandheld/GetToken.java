@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
@@ -34,8 +37,7 @@ public class GetToken extends AppCompatActivity {
     private EditText apiTokenET, urlET;
     private IntentIntegrator qrScan;
     private Button submitBtn, urlCameraBtn;
-    StringBuilder sb = new StringBuilder();
-    String apiToken;
+    private StringBuilder sb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +47,10 @@ public class GetToken extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("GMC Handheld");
         enableTSL(this);
+        sb = new StringBuilder();
+        urlET = findViewById(R.id.urlET);
         apiTokenET = findViewById(R.id.apiTokenET);
         TextView urlTV = findViewById(R.id.urlTV);
-        urlET = findViewById(R.id.urlET);
         urlCameraBtn = findViewById(R.id.urlCameraBtn);
         sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         if (sp.getString("urlText", "").isEmpty()) {
@@ -81,7 +84,6 @@ public class GetToken extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    sp = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
                     editor = sp.edit();
                     editor.putString("urlText", urlET.getText().toString()).apply();
                     Intent intent = new Intent(GetToken.this, UpdateBroadcastReceiver.class);
@@ -166,15 +168,44 @@ public class GetToken extends AppCompatActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if ((event.isPrintingKey()) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-            sb = sb.append((char)event.getUnicodeChar());
-        }
-        if ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)){
-            apiToken = sb.toString();
-            if (!apiToken.isEmpty()) {
-                apiTokenET.setText(apiToken);
-                BaseActivity.setToken(apiToken);
-                finish();
+        if (event.getAction() == KeyEvent.ACTION_DOWN){
+                if (event.isPrintingKey()){
+                    sb = sb.append((char)event.getUnicodeChar());
+                }
+                if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                    if (urlET.hasFocus()){
+                        if (!sb.toString().isEmpty()) {
+                            urlET.setText(sb.toString());
+                            BaseActivity.setURL(sb.toString());
+                            sb.setLength(0);
+                            apiTokenET.requestFocus();
+                        }
+                    }
+                    if (apiTokenET.hasFocus()){
+                        if (!sb.toString().isEmpty()) {
+                            apiTokenET.setText(sb.toString());
+                            BaseActivity.setToken(sb.toString());
+                            sb.setLength(0);
+                            finish();
+                        }
+                    }
+                }
+
+            if (event.getKeyCode() == KeyEvent.KEYCODE_DEL){
+                if (urlET.hasFocus()){
+                    if (!sb.toString().isEmpty()) {
+                        urlET.setText("");
+                        sb.setLength(0);
+                        apiTokenET.requestFocus();
+                    }
+                }
+                if (apiTokenET.hasFocus()){
+                    if (!sb.toString().isEmpty()) {
+                        apiTokenET.setText("");
+                        sb.setLength(0);
+                        finish();
+                    }
+                }
             }
         }
         return super.onKeyDown(event.getKeyCode(), event);

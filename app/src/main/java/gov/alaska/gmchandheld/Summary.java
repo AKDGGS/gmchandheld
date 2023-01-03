@@ -263,34 +263,35 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
         }
         String data = new String(byteData);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
-            if (responseCode == 403) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Summary.this,
-                                "The token is not correct.", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(Summary.this, GetToken.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        Summary.this.startActivity(intent);
-                    }
-                });
-            } else if (responseCode == 404) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Summary.this,
-                                "The URL is not correct.", Toast.LENGTH_LONG).show();
-                        BaseActivity.editor.putString("urlText", "").apply();
-                        Intent intent = new Intent(Summary.this, GetToken.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        Summary.this.startActivity(intent);
-                    }
-                });
-            } else {
-                runOnUiThread(() -> Toast.makeText(Summary.this,
-                        "There was an error looking up " + barcode + ".\n" +
-                                "Is the barcode a container?", Toast.LENGTH_LONG).show());
-                sb = new StringBuilder();
+            switch (responseCode){
+                case 403:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Summary.this,
+                                    "The token is not correct.", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(Summary.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            Summary.this.startActivity(intent);
+                        }
+                    });
+                case 404:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Summary.this,
+                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
+                            BaseActivity.editor.putString("urlText", "").apply();
+                            Intent intent = new Intent(Summary.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            Summary.this.startActivity(intent);
+                        }
+                    });
+                default:
+                    runOnUiThread(() -> Toast.makeText(Summary.this,
+                            "There was an error looking up " + barcode + ".\n" +
+                                    "Is the barcode a container?", Toast.LENGTH_LONG).show());
+                    sb = new StringBuilder();
             }
         } else {
             SummaryLogicForDisplay summaryLogicForDisplayObj;

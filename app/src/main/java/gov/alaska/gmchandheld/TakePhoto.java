@@ -235,15 +235,16 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
             downloadingAlert.dismiss();
         }
         runOnUiThread(() -> {
-            if (responseCode == 200 | responseCode == 302) {
-                Toast.makeText(TakePhoto.this, "The photo was uploaded.",
-                        Toast.LENGTH_SHORT).show();
-                barcodeET.setText("");
-                descriptionET.setText("");
-                uploadImageIV.setImageDrawable(null);
-                imageViewTV.setText(R.string.click_to_add_image);
-            } else {
-                if (responseCode == 403) {
+            switch (responseCode){
+                case 200:
+                case 302:
+                    Toast.makeText(TakePhoto.this, "The photo was uploaded.",
+                            Toast.LENGTH_SHORT).show();
+                    barcodeET.setText("");
+                    descriptionET.setText("");
+                    uploadImageIV.setImageDrawable(null);
+                    imageViewTV.setText(R.string.click_to_add_image);
+                case 403:
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -257,7 +258,7 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
                             TakePhoto.this.startActivity(intent);
                         }
                     });
-                } else if (responseCode == 404) {
+                case 404:
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -272,13 +273,12 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
                             TakePhoto.this.startActivity(intent);
                         }
                     });
-                } else {
+                default:
                     Toast.makeText(TakePhoto.this,
                             "There was a problem finding the image. Please take it again.",
                             Toast.LENGTH_SHORT).show();
                     uploadImageIV.setImageDrawable(null);
                     barcodeET.requestFocus();
-                }
             }
         });
     }

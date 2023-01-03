@@ -155,35 +155,44 @@ public class Lookup extends BaseActivity {
             submitBtn.performClick();
         });
     }
-    
+
     //makes the volume keys scroll up/down
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        int action = event.getAction();
         AudioManager manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         manager.adjustVolume(AudioManager.ADJUST_RAISE, 0);
         manager.adjustVolume(AudioManager.ADJUST_LOWER, 0);
-        switch (event.getKeyCode()) {
-            case KeyEvent.KEYCODE_DPAD_UP:
-            case KeyEvent.KEYCODE_VOLUME_UP: {
-                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                    listView.smoothScrollToPosition(0, 0);
+        switch (event.getAction()) {
+            case KeyEvent.ACTION_DOWN:
+                switch (event.getKeyCode()) {
+                    case KeyEvent.KEYCODE_DPAD_UP:
+                    case KeyEvent.KEYCODE_VOLUME_UP: {
+                        if (event.isLongPress()) {
+                            listView.smoothScrollToPosition(0, 0);
+                        }
+                        return true;
+                    }
+                    case KeyEvent.KEYCODE_DPAD_DOWN:
+                    case KeyEvent.KEYCODE_VOLUME_DOWN: {
+                        if (event.isLongPress()) {
+                            listView.smoothScrollToPosition(listView.getCount());
+                        }
+                        return true;
+                    }
                 }
-                if (KeyEvent.ACTION_UP == action) {
-                    listView.smoothScrollByOffset(-3);
+            case KeyEvent.ACTION_UP:
+                switch (event.getKeyCode()) {
+                    case KeyEvent.KEYCODE_DPAD_UP:
+                    case KeyEvent.KEYCODE_VOLUME_UP: {
+                        listView.smoothScrollByOffset(-3);
+                        return true;
+                    }
+                    case KeyEvent.KEYCODE_DPAD_DOWN:
+                    case KeyEvent.KEYCODE_VOLUME_DOWN: {
+                        listView.smoothScrollByOffset(3);
+                        return true;
+                    }
                 }
-                return true;
-            }
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-            case KeyEvent.KEYCODE_VOLUME_DOWN: {
-                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                    listView.smoothScrollToPosition(listView.getCount());
-                }
-                if (KeyEvent.ACTION_UP == action) {
-                    listView.smoothScrollByOffset(3);
-                }
-                return true;
-            }
         }
         return super.dispatchKeyEvent(event);
     }

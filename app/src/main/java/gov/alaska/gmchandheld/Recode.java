@@ -169,33 +169,34 @@ public class Recode extends BaseActivity implements HTTPRequestCallback {
         String data = new String(byteData);
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
-                if (responseCode == 403) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(Recode.this,
-                                    "The token is not correct.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(Recode.this, GetToken.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            Recode.this.startActivity(intent);
-                        }
-                    });
-                } else if (responseCode == 404) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(Recode.this,
-                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
-                            BaseActivity.editor.putString("urlText", "").apply();
-                            Intent intent = new Intent(Recode.this, GetToken.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            Recode.this.startActivity(intent);
-                        }
-                    });
-                } else {
-                    Toast.makeText(Recode.this, "There was a problem.  " +
-                            "Nothing was changed.", Toast.LENGTH_SHORT).show();
-                    oldBarcodeET.requestFocus();
+                switch (responseCode){
+                    case 403:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(Recode.this,
+                                        "The token is not correct.", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(Recode.this, GetToken.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                Recode.this.startActivity(intent);
+                            }
+                        });
+                    case 404:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(Recode.this,
+                                        "The URL is not correct.", Toast.LENGTH_LONG).show();
+                                BaseActivity.editor.putString("urlText", "").apply();
+                                Intent intent = new Intent(Recode.this, GetToken.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                Recode.this.startActivity(intent);
+                            }
+                        });
+                    default:
+                        Toast.makeText(Recode.this, "There was a problem.  " +
+                                "Nothing was changed.", Toast.LENGTH_SHORT).show();
+                        oldBarcodeET.requestFocus();
                 }
             } else if (data.contains("success")) {
                 Toast.makeText(Recode.this, "The recode was successful.",

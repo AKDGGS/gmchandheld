@@ -169,33 +169,34 @@ public class MoveContents extends BaseActivity implements HTTPRequestCallback {
             @Override
             public void run() {
                 if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
-                    if (responseCode == 403) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MoveContents.this,
-                                        "The token is not correct.", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(MoveContents.this, GetToken.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                MoveContents.this.startActivity(intent);
-                            }
-                        });
-                    } else if (responseCode == 404) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MoveContents.this,
-                                        "The URL is not correct.", Toast.LENGTH_LONG).show();
-                                BaseActivity.editor.putString("urlText", "").apply();
-                                Intent intent = new Intent(MoveContents.this, GetToken.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                MoveContents.this.startActivity(intent);
-                            }
-                        });
-                    } else {
-                        Toast.makeText(MoveContents.this, "There was a problem. Nothing was moved.",
-                                Toast.LENGTH_LONG).show();
-                        moveContentsFromET.requestFocus();
+                    switch (responseCode){
+                        case 403:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MoveContents.this,
+                                            "The token is not correct.", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(MoveContents.this, GetToken.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    MoveContents.this.startActivity(intent);
+                                }
+                            });
+                        case 404:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MoveContents.this,
+                                            "The URL is not correct.", Toast.LENGTH_LONG).show();
+                                    BaseActivity.editor.putString("urlText", "").apply();
+                                    Intent intent = new Intent(MoveContents.this, GetToken.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    MoveContents.this.startActivity(intent);
+                                }
+                            });
+                        default:
+                            Toast.makeText(MoveContents.this, "There was a problem. Nothing was moved.",
+                                    Toast.LENGTH_LONG).show();
+                            moveContentsFromET.requestFocus();
                     }
                 } else if (data.contains("success")) {
                     Toast.makeText(MoveContents.this, "The contents were moved.",

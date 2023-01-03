@@ -384,32 +384,35 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
                 default:
                     System.out.println("Configure Exception: the request type isn't GET, POST, HEAD, or APK ");
             }
-        } else if (responseCode == 403) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Configuration.this,
-                            "The token is not correct.", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(Configuration.this, GetToken.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    Configuration.this.startActivity(intent);
-                }
-            });
-        } else if (responseCode == 404) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Configuration.this,
-                            "The URL is not correct.", Toast.LENGTH_LONG).show();
-                    BaseActivity.editor.putString("urlText", "").apply();
-                    Intent intent = new Intent(Configuration.this, GetToken.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    Configuration.this.startActivity(intent);
-                }
-            });
         } else {
-            Toast.makeText(Configuration.this,
-                    "There is a problem, please report this to the app time.", Toast.LENGTH_LONG).show();
+            switch (responseCode) {
+                case 403:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Configuration.this,
+                                    "The token is not correct.", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(Configuration.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            Configuration.this.startActivity(intent);
+                        }
+                    });
+                case 404:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Configuration.this,
+                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
+                            BaseActivity.editor.putString("urlText", "").apply();
+                            Intent intent = new Intent(Configuration.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            Configuration.this.startActivity(intent);
+                        }
+                    });
+                default:
+                    Toast.makeText(Configuration.this,
+                            "There is a problem, please report this to the app team.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 

@@ -63,6 +63,9 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
     public static void setToken(String token) {
         BaseActivity.token = token;
     }
+    public static void setURL(String url) {
+        BaseActivity.baseURL = url;
+    }
 
     public static HTTPRequest getHTTPRequest() {
         return HTTPRequest;
@@ -136,81 +139,90 @@ public abstract class BaseActivity extends AppCompatActivity implements HTTPRequ
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == (R.id.lookup)) {
-            LookupLogicForDisplay lookupLogicForDisplayObj;
-            lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance()
-                    .lookupLogicForDisplayObj;
-            if (lookupLogicForDisplayObj == null) {
-                Intent intentGetBarcode = new Intent(this, Lookup.class);
-                intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intentGetBarcode);
-            } else {
-                Intent intentLookup = new Intent(this, LookupDisplay.class);
-                intentLookup.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intentLookup);
+        switch (item.getItemId()){
+            case R.id.lookup:
+                LookupLogicForDisplay lookupLogicForDisplayObj;
+                lookupLogicForDisplayObj = LookupDisplayObjInstance.getInstance()
+                        .lookupLogicForDisplayObj;
+                if (lookupLogicForDisplayObj == null) {
+                    Intent intentGetBarcode = new Intent(this, Lookup.class);
+                    intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intentGetBarcode);
+                } else {
+                    Intent intentLookup = new Intent(this, LookupDisplay.class);
+                    intentLookup.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intentLookup);
+                }
+                return true;
+            case R.id.summary:
+                SummaryLogicForDisplay summaryLogicForDisplayObj;
+                summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance()
+                        .summaryLogicForDisplayObj;
+                if (summaryLogicForDisplayObj == null) {
+                    Intent intentGetBarcode = new Intent(this, Summary.class);
+                    intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intentGetBarcode);
+                } else {
+                    Intent intentSummary = new Intent(this, SummaryDisplay.class);
+                    intentSummary.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intentSummary);
+                }
+                return true;
+            case R.id.configuration:
+                Intent intentConfiguration = new Intent(this, Configuration.class);
+                intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                this.startActivity(intentConfiguration);
+                return true;
+            case R.id.move: {
+                Intent intentMove = new Intent(this, MoveDisplay.class);
+                intentMove.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                this.startActivity(intentMove);
+                return true;
             }
-            return true;
-        } else if (item.getItemId() == (R.id.summary)) {
-            SummaryLogicForDisplay summaryLogicForDisplayObj;
-            summaryLogicForDisplayObj = SummaryDisplayObjInstance.getInstance()
-                    .summaryLogicForDisplayObj;
-            if (summaryLogicForDisplayObj == null) {
-                Intent intentGetBarcode = new Intent(this, Summary.class);
-                intentGetBarcode.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intentGetBarcode);
-            } else {
-                Intent intentSummary = new Intent(this, SummaryDisplay.class);
-                intentSummary.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intentSummary);
+            case R.id.moveContent: {
+                Intent intentMove = new Intent(this, MoveContents.class);
+                intentMove.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                this.startActivity(intentMove);
+                return true;
             }
-            return true;
-        } else if (item.getItemId() == (R.id.configuration)) {
-            Intent intentConfiguration = new Intent(this, Configuration.class);
-            intentConfiguration.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentConfiguration);
-            return true;
-        } else if (item.getItemId() == (R.id.move)) {
-            Intent intentMove = new Intent(this, MoveDisplay.class);
-            intentMove.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentMove);
-            return true;
-        } else if (item.getItemId() == (R.id.moveContent)) {
-            Intent intentMove = new Intent(this, MoveContents.class);
-            intentMove.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentMove);
-            return true;
-        } else if (item.getItemId() == (R.id.add_container)) {
-            Intent intentAddContainer = new Intent(this, AddContainer.class);
-            intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentAddContainer);
-            return true;
-        } else if (item.getItemId() == (R.id.add_inventory)) {
-            Intent intentAddInventory = new Intent(this, AddInventory.class);
-            intentAddInventory.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentAddInventory);
-            return true;
-        } else if (item.getItemId() == (R.id.quality)) {
-            Intent intentQuality = new Intent(this, Quality.class);
-            intentQuality.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentQuality);
-            return true;
-        } else if (item.getItemId() == (R.id.audit)) {
-            Intent intentAddContainer = new Intent(this, AuditDisplay.class);
-            intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentAddContainer);
-            return true;
-        } else if (item.getItemId() == (R.id.recode)) {
-            Intent intentAddContainer = new Intent(this, Recode.class);
-            intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentAddContainer);
-            return true;
-        } else if (item.getItemId() == (R.id.photo)) {
-            Intent intentAddContainer = new Intent(this, TakePhoto.class);
-            intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            this.startActivity(intentAddContainer);
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
+            case R.id.add_container: {
+                Intent intentAddContainer = new Intent(this, AddContainer.class);
+                intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                this.startActivity(intentAddContainer);
+                return true;
+            }
+            case R.id.add_inventory: {
+                Intent intentAddInventory = new Intent(this, AddInventory.class);
+                intentAddInventory.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                this.startActivity(intentAddInventory);
+                return true;
+            }
+            case R.id.quality: {
+                Intent intentQuality = new Intent(this, Quality.class);
+                intentQuality.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                this.startActivity(intentQuality);
+                return true;
+            }
+            case R.id.audit: {
+                Intent intentAddContainer = new Intent(this, AuditDisplay.class);
+                intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                this.startActivity(intentAddContainer);
+                return true;
+            }
+            case R.id.recode: {
+                Intent intentAddContainer = new Intent(this, Recode.class);
+                intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                this.startActivity(intentAddContainer);
+                return true;
+            }
+            case R.id.photo: {
+                Intent intentAddContainer = new Intent(this, TakePhoto.class);
+                intentAddContainer.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                this.startActivity(intentAddContainer);
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

@@ -45,10 +45,10 @@
             android:paddingLeft="16dp"
             android:text=""
             android:selectAllOnFocus="true"
-            android:nextFocusDown="@+id/apiTokenET"
-            android:nextFocusUp="@+id/apiTokenET"
-            android:nextFocusLeft="@+id/apiTokenET"
-            android:nextFocusRight="@+id/apiTokenET"
+            android:nextFocusDown="@+id/urlET"
+            android:nextFocusUp="@+id/urlET"
+            android:nextFocusLeft="@+id/urlET"
+            android:nextFocusRight="@+id/urlET"
             tools:ignore="RtlSymmetry" />
         <Button
             android:id="@+id/urlCameraBtn"

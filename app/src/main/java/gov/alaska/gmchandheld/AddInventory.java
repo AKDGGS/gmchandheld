@@ -209,34 +209,35 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
         String data = new String(byteData);
         runOnUiThread(() -> {
             if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
-                if (responseCode == 403) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(AddInventory.this,
-                                    "The token is not correct.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(AddInventory.this, GetToken.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            AddInventory.this.startActivity(intent);
-                        }
-                    });
-                } else if (responseCode == 404) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(AddInventory.this,
-                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
-                            BaseActivity.editor.putString("urlText", "").apply();
-                            Intent intent = new Intent(AddInventory.this, GetToken.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            AddInventory.this.startActivity(intent);
-                        }
-                    });
-                } else {
-                    Toast.makeText(AddInventory.this,
-                            "There was a problem. The inventory was not added.",
-                            Toast.LENGTH_SHORT).show();
-                    barcodeET.requestFocus();
+                switch (responseCode){
+                    case 403:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(AddInventory.this,
+                                        "The token is not correct.", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(AddInventory.this, GetToken.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                AddInventory.this.startActivity(intent);
+                            }
+                        });
+                    case 404:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(AddInventory.this,
+                                        "The URL is not correct.", Toast.LENGTH_LONG).show();
+                                BaseActivity.editor.putString("urlText", "").apply();
+                                Intent intent = new Intent(AddInventory.this, GetToken.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                AddInventory.this.startActivity(intent);
+                            }
+                        });
+                    default:
+                        Toast.makeText(AddInventory.this,
+                                "There was a problem. The inventory was not added.",
+                                Toast.LENGTH_SHORT).show();
+                        barcodeET.requestFocus();
                 }
             } else if (data.contains("success")) {
                 Toast.makeText(AddInventory.this, "The inventory was added.",

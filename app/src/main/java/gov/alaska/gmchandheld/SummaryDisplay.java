@@ -119,59 +119,68 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
         if ((event.isPrintingKey()) && (action == KeyEvent.ACTION_DOWN)) {
             sb = sb.append((char)event.getUnicodeChar());
         }
-        switch (event.getKeyCode()) {
-            case KeyEvent.KEYCODE_ENTER:
-                if (action == KeyEvent.ACTION_DOWN){
-                    barcode = sb.toString();
-                    downloadingAlert = new ProgressDialog(this);
-                    downloadingAlert.setMessage("Loading...\n " + barcode);
-                    downloadingAlert.setCancelable(false);
-                    downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            thread.interrupt();
-                            downloadingAlert.dismiss();//dismiss dialog
+
+        switch (event.getAction()){
+            case KeyEvent.ACTION_DOWN:{
+                switch (event.getKeyCode()){
+                    case KeyEvent.KEYCODE_ENTER:
+                        barcode = sb.toString();
+                        downloadingAlert = new ProgressDialog(this);
+                        downloadingAlert.setMessage("Loading...\n " + barcode);
+                        downloadingAlert.setCancelable(false);
+                        downloadingAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                thread.interrupt();
+                                downloadingAlert.dismiss();//dismiss dialog
+                            }
+                        });
+                        downloadingAlert.show();
+                        if (!barcode.isEmpty()) {
+                            HashMap<String, Object> params = new HashMap<>();
+                            params.put("barcode", barcode);
+                            try {
+                                getHTTPRequest().setFetchDataObj(baseURL + "summary.json?",
+                                        this,
+                                        0,
+                                        params,
+                                        null);
+                            } catch (Exception e) {
+                                System.out.println("Summary Display Exception: " + e.getMessage());
+                            }
+                            return true;
                         }
-                    });
-                    downloadingAlert.show();
-                    if (!barcode.isEmpty()) {
-                        HashMap<String, Object> params = new HashMap<>();
-                        params.put("barcode", barcode);
-                        try {
-                            getHTTPRequest().setFetchDataObj(baseURL + "summary.json?",
-                                    this,
-                                    0,
-                                    params,
-                                    null);
-                        } catch (Exception e) {
-                            System.out.println("Summary Display Exception: " + e.getMessage());
+                    case KeyEvent.KEYCODE_DEL:
+                        sb.setLength(0);
+                    case KeyEvent.KEYCODE_DPAD_UP:
+                    case KeyEvent.KEYCODE_VOLUME_UP: {
+                        if (event.isLongPress()) {
+                            expandableListView.smoothScrollToPosition(0, 0);
+                        }
+                        return true;
+                    }
+                    case KeyEvent.KEYCODE_DPAD_DOWN:
+                    case KeyEvent.KEYCODE_VOLUME_DOWN: {
+                        if (event.isLongPress()) {
+                            expandableListView.smoothScrollToPosition(expandableListView.getCount());
                         }
                         return true;
                     }
                 }
-            case KeyEvent.KEYCODE_DEL:
-                if(sb.length()!=0) {
-                    sb = new StringBuilder();
-                }
-            case KeyEvent.KEYCODE_DPAD_UP:
-            case KeyEvent.KEYCODE_VOLUME_UP: {
-                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                    expandableListView.smoothScrollToPosition(0, 0);
-                }
-                if (KeyEvent.ACTION_UP == action) {
-                    expandableListView.smoothScrollByOffset(-3);
-                }
-                return true;
             }
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-            case KeyEvent.KEYCODE_VOLUME_DOWN: {
-                if (action == KeyEvent.ACTION_DOWN && event.isLongPress()) {
-                    expandableListView.smoothScrollToPosition(expandableListView.getCount());
+            case KeyEvent.ACTION_UP:{
+                switch (event.getKeyCode()){
+                    case KeyEvent.KEYCODE_DPAD_UP:
+                    case KeyEvent.KEYCODE_VOLUME_UP: {
+                        expandableListView.smoothScrollByOffset(-3);
+                        return true;
+                    }
+                    case KeyEvent.KEYCODE_DPAD_DOWN:
+                    case KeyEvent.KEYCODE_VOLUME_DOWN: {
+                        expandableListView.smoothScrollByOffset(3);
+                        return true;
+                    }
                 }
-                if (KeyEvent.ACTION_UP == action) {
-                    expandableListView.smoothScrollByOffset(3);
-                }
-                return true;
             }
         }
         return super.dispatchKeyEvent(event);
@@ -183,42 +192,43 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
             downloadingAlert.dismiss();
         }
         String data = new String(byteData);
+        System.out.println("Response Code: " + responseCode);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
-            if (responseCode == 403) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(SummaryDisplay.this,
-                                "The token is not correct.", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(SummaryDisplay.this, GetToken.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        SummaryDisplay.this.startActivity(intent);
-                    }
-                });
-            } else if (responseCode == 404) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(SummaryDisplay.this,
-                                "The URL is not correct.", Toast.LENGTH_LONG).show();
-                        BaseActivity.editor.putString("urlText", "").apply();
-                        Intent intent = new Intent(SummaryDisplay.this, GetToken.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        SummaryDisplay.this.startActivity(intent);
-                    }
-                });
-            } else {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(SummaryDisplay.this,
-                                "There was an error looking up " + barcode + ".\n" +
-                                        "Is the barcode a container?", Toast.LENGTH_LONG).show();
-                        sb = new StringBuilder();
-                        barcode = "";
-
-                    }
-                });
+            switch (responseCode){
+                case 403:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SummaryDisplay.this,
+                                    "The token is not correct.", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(SummaryDisplay.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            SummaryDisplay.this.startActivity(intent);
+                        }
+                    });
+                case 404:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SummaryDisplay.this,
+                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
+                            BaseActivity.editor.putString("urlText", "").apply();
+                            Intent intent = new Intent(SummaryDisplay.this, GetToken.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            SummaryDisplay.this.startActivity(intent);
+                        }
+                    });
+                default:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SummaryDisplay.this,
+                                    "There was an error looking up " + barcode + ".\n" +
+                                            "Is the barcode a container?", Toast.LENGTH_LONG).show();
+                            sb = new StringBuilder();
+                            barcode = "";
+                        }
+                    });
             }
         } else {
             SummaryLogicForDisplay summaryLogicForDisplayObj =
