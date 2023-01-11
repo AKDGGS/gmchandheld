@@ -99,6 +99,12 @@ public class Recode extends BaseActivity implements HTTPRequestCallback {
                             null);
                 } catch (Exception e) {
                     System.out.println("Recode Exception: " + e.getMessage());
+                    Toast.makeText(Recode.this,
+                            "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    thread.interrupt();
+                    if (downloadingAlert != null) {
+                        downloadingAlert.dismiss();
+                    }
                 }
 
             }

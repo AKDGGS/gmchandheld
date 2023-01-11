@@ -138,6 +138,12 @@ public class Quality extends BaseActivity implements IssuesFragment.onMultiChoic
 
                     } catch (Exception e) {
                         System.out.println("Quality Exception: " + e.getMessage());
+                        Toast.makeText(Quality.this,
+                                "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        thread.interrupt();
+                        if (downloadingAlert != null) {
+                            downloadingAlert.dismiss();
+                        }
                     }
                 }
             }

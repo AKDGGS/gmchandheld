@@ -112,7 +112,12 @@ public class AddContainer extends BaseActivity implements HTTPRequestCallback {
                                 null);
                     } catch (Exception e) {
                         System.out.println("Add Container Exception: " + e.getMessage());
-                        e.printStackTrace();
+                        Toast.makeText(AddContainer.this,
+                                "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        thread.interrupt();
+                        if (downloadingAlert != null) {
+                            downloadingAlert.dismiss();
+                        }
                     }
                 }
             }

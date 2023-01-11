@@ -4,7 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.widget.Toast;
+
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -28,6 +31,10 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements HTTPRe
                     HTTPRequest.HEAD,
                     params,
                     null);
+        } catch (MalformedURLException e) {
+            Toast.makeText(context.getApplicationContext(),
+                    "The URL is not correct.", Toast.LENGTH_LONG).show();
+            BaseActivity.editor.putString("urlText", "").apply();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,6 +50,9 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver implements HTTPRe
                     params,
                     null);
         } catch (Exception e) {
+            Toast.makeText(context.getApplicationContext(),
+                    "The URL is not correct.", Toast.LENGTH_LONG).show();
+            BaseActivity.editor.putString("urlText", "").apply();
             e.printStackTrace();
         }
     }

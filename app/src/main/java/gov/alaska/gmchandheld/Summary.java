@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.BaseInputConnection;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +32,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -102,6 +102,7 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
     @Override
     public void onRestart() {
         super.onRestart();
+        checkUrlUsesHttps(this);
         EditText barcodeET = findViewById(R.id.barcodeET);
         barcodeET.selectAll();
         this.recreate();
@@ -175,6 +176,13 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
                                 null);
                     } catch (Exception e) {
                         System.out.println("Summary Exception: " + e.getMessage());
+                        e.printStackTrace();
+                        Toast.makeText(Summary.this,
+                                "There is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        thread.interrupt();
+                        if (downloadingAlert != null) {
+                            downloadingAlert.dismiss();
+                        }
                     }
                 }
             }
@@ -329,8 +337,9 @@ public class Summary extends BaseActivity implements HTTPRequestCallback {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    thread.interrupt();
                     barcodeET.setText("");
-                    sb = new StringBuilder();
+                    sb.setLength(0);
                 }
             });
         }

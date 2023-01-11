@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -19,6 +18,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -119,7 +119,6 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
         if ((event.isPrintingKey()) && (action == KeyEvent.ACTION_DOWN)) {
             sb = sb.append((char)event.getUnicodeChar());
         }
-
         switch (event.getAction()){
             case KeyEvent.ACTION_DOWN:{
                 switch (event.getKeyCode()){
@@ -147,6 +146,12 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
                                         null);
                             } catch (Exception e) {
                                 System.out.println("Summary Display Exception: " + e.getMessage());
+                                Toast.makeText(SummaryDisplay.this,
+                                        "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                thread.interrupt();
+                                if (downloadingAlert != null) {
+                                    downloadingAlert.dismiss();
+                                }
                             }
                             return true;
                         }
@@ -192,7 +197,6 @@ public class SummaryDisplay extends BaseActivity implements HTTPRequestCallback 
             downloadingAlert.dismiss();
         }
         String data = new String(byteData);
-        System.out.println("Response Code: " + responseCode);
         if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST) || data == null) {
             switch (responseCode){
                 case 403:

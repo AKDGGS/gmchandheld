@@ -135,6 +135,12 @@ public class Lookup extends BaseActivity {
                             null);
                 } catch (Exception e) {
                     System.out.println("Lookup Exception: " + e.getMessage());
+                    Toast.makeText(Lookup.this,
+                            "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    thread.interrupt();
+                    if (downloadingAlert != null) {
+                        downloadingAlert.dismiss();
+                    }
                 }
             }
             barcodeET.setText("");

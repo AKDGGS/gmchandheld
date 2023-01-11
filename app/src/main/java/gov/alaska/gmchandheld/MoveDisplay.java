@@ -186,7 +186,12 @@ public class MoveDisplay extends BaseActivity implements HTTPRequestCallback {
                             null);
                 } catch (Exception e) {
                     System.out.println("Move Display Exception: " + e.getMessage());
-                    e.printStackTrace();
+                    Toast.makeText(MoveDisplay.this,
+                            "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    thread.interrupt();
+                    if (downloadingAlert != null) {
+                        downloadingAlert.dismiss();
+                    }
                 }
             }
         });

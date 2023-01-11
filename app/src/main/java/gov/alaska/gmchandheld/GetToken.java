@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,7 +25,6 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
@@ -91,6 +88,7 @@ public class GetToken extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     public void loadGetToken() {
@@ -111,6 +109,12 @@ public class GetToken extends AppCompatActivity {
             }
         });
         submitBtn = findViewById(R.id.submitBtn);
+        submitBtn.setOnClickListener(v -> {
+            if (!apiTokenET.getText().toString().isEmpty()) {
+                BaseActivity.setToken(apiTokenET.getText().toString());
+                finish();
+            }
+        });
         apiTokenET.setOnKeyListener((v, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 submitBtn.performClick();
@@ -122,11 +126,15 @@ public class GetToken extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        urlET = findViewById(R.id.urlET);
         apiTokenET = findViewById(R.id.apiTokenET);
         if (Build.VERSION.SDK_INT <= 24) {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-            apiTokenET.setText(result.getContents());
-            if (!apiTokenET.getText().toString().isEmpty()) {
+            if (urlET.hasFocus()){
+                urlET.setText(result.getContents());
+            }
+            if ((apiTokenET.hasFocus()) && (!apiTokenET.getText().toString().isEmpty())){
+                apiTokenET.setText(result.getContents());
                 BaseActivity.setToken(apiTokenET.getText().toString());
                 Intent intent = new Intent(GetToken.this, Lookup.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -136,7 +144,12 @@ public class GetToken extends AppCompatActivity {
             if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
                 Barcode barcode = data.getParcelableExtra("barcode");
                 if (barcode != null) {
-                    apiTokenET.setText(barcode.displayValue);
+                    if (urlET.hasFocus()){
+                        urlET.setText(barcode.displayValue);
+                    }
+                    if (apiTokenET.hasFocus()){
+                        apiTokenET.setText(barcode.displayValue);
+                    }
                 }
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
@@ -178,7 +191,6 @@ public class GetToken extends AppCompatActivity {
                             urlET.setText(sb.toString());
                             BaseActivity.setURL(sb.toString());
                             sb.setLength(0);
-                            apiTokenET.requestFocus();
                         }
                     }
                     if (apiTokenET.hasFocus()){
@@ -193,18 +205,19 @@ public class GetToken extends AppCompatActivity {
 
             if (event.getKeyCode() == KeyEvent.KEYCODE_DEL){
                 if (urlET.hasFocus()){
-                    if (!sb.toString().isEmpty()) {
                         urlET.setText("");
                         sb.setLength(0);
-                        apiTokenET.requestFocus();
-                    }
                 }
                 if (apiTokenET.hasFocus()){
-                    if (!sb.toString().isEmpty()) {
                         apiTokenET.setText("");
                         sb.setLength(0);
                         finish();
-                    }
+                }
+            }
+
+            if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                if (urlET.hasFocus()){
+                    apiTokenET.requestFocus();
                 }
             }
         }

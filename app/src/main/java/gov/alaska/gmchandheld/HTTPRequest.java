@@ -1,6 +1,8 @@
 package gov.alaska.gmchandheld;
 
+import android.content.Intent;
 import android.net.Uri;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;

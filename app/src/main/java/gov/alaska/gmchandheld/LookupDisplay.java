@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -163,6 +164,12 @@ public class LookupDisplay extends BaseActivity implements HTTPRequestCallback {
                                         null);
                             } catch (Exception e) {
                                 System.out.println("Lookup Display Exception: " + e.getMessage());
+                                Toast.makeText(LookupDisplay.this,
+                                        "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                thread.interrupt();
+                                if (downloadingAlert != null) {
+                                    downloadingAlert.dismiss();
+                                }
                             }
                             return true;
                         }

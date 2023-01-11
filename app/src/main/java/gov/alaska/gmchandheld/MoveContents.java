@@ -70,7 +70,12 @@ public class MoveContents extends BaseActivity implements HTTPRequestCallback {
                             null);
                 } catch (Exception e) {
                     System.out.println("Move Contents Exception: " + e.getMessage());
-                    e.printStackTrace();
+                    Toast.makeText(MoveContents.this,
+                            "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    thread.interrupt();
+                    if (downloadingAlert != null) {
+                        downloadingAlert.dismiss();
+                    }
                 }
             }
         });

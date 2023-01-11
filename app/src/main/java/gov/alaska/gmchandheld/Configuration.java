@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -140,8 +142,16 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
                             HTTPRequest.HEAD,
                             params,
                             null);
+                } catch (MalformedURLException e) {
+                    Toast.makeText(Configuration.this,
+                            "The URL is not correct.", Toast.LENGTH_LONG).show();
+                    BaseActivity.editor.putString("urlText", "").apply();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Toast.makeText(Configuration.this,
+                            "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    thread.interrupt();
+                    downloadingAlert.dismiss();//dismiss dialog
                 }
             }
         });
@@ -296,6 +306,10 @@ public class Configuration extends BaseActivity implements HTTPRequestCallback {
                     outputStream);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            thread.interrupt();
+            if (downloadingAlert != null) {
+                downloadingAlert.dismiss();
+            }
         }
     }
 

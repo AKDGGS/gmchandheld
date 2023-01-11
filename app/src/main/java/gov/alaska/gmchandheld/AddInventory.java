@@ -142,7 +142,12 @@ public class AddInventory extends BaseActivity implements IssuesFragment.onMulti
                                 null);
                     } catch (Exception e) {
                         System.out.println("Add Inventory Exception: " + e.getMessage());
-                        e.printStackTrace();
+                        Toast.makeText(AddInventory.this,
+                                "The there is a problem. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        thread.interrupt();
+                        if (downloadingAlert != null) {
+                            downloadingAlert.dismiss();
+                        }
                     }
                 }
             }
