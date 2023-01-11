@@ -1,5 +1,7 @@
 package gov.alaska.gmchandheld;
 
+import android.net.Uri;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -55,22 +57,22 @@ public class HTTPRequest implements Runnable {
             if (this.url != null) {
                 throw new Exception("Processing. Give me a moment and then try again.");
             }
-            HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
+            final Uri.Builder URLbuilder = Uri.parse(url).buildUpon();
             if (requestType != POST) {
                 for (Map.Entry<String, Object> entry : params.entrySet()) {
                     if (entry.getValue() instanceof String) {
-                        httpBuilder.addQueryParameter(entry.getKey(), (String) entry.getValue());
+                        URLbuilder.appendQueryParameter(entry.getKey(), (String) entry.getValue());
                     } else if (entry.getValue() instanceof ArrayList) {
                         ArrayList arrList = (ArrayList<String>) entry.getValue();
                         if (entry.getValue() != null && arrList.size() > 0) {
                             int i = 0;
                             while (i < arrList.size()) {
-                                httpBuilder.addQueryParameter(entry.getKey(), (String) arrList.get(i));
+                                URLbuilder.appendQueryParameter(entry.getKey(), (String) arrList.get(i));
                                 i++;
                             }
                         }
                     } else if (entry.getValue() instanceof Integer) {
-                        httpBuilder.addQueryParameter(entry.getKey(), String.valueOf(entry.getValue()));
+                        URLbuilder.appendQueryParameter(entry.getKey(), String.valueOf(entry.getValue()));
                     } else if (entry.getValue() instanceof java.io.InputStream) {
                         StringBuilder textBuilder = new StringBuilder();
                         try (Reader reader = new BufferedReader(new InputStreamReader
@@ -80,7 +82,7 @@ public class HTTPRequest implements Runnable {
                                 textBuilder.append((char) c);
                             }
                         }
-                        httpBuilder.addQueryParameter(entry.getKey(), textBuilder.toString());
+                        URLbuilder.appendQueryParameter(entry.getKey(), textBuilder.toString());
                     } else {
                         System.out.println("Input not recognized.  Add it. " +
                                 entry.getValue().getClass());
@@ -111,7 +113,7 @@ public class HTTPRequest implements Runnable {
                 }
                 this.body = builder.build();
             }
-            this.url = httpBuilder.toString();
+            this.url = URLbuilder.build().toString();
             this.HTTPRequestCallback = HTTPRequestCallback;
             this.requestType = requestType;
             this.outputStream = outputStream;
@@ -161,10 +163,10 @@ public class HTTPRequest implements Runnable {
             OkHttpClient client = new OkHttpClient.Builder()
                     .followRedirects(false)
                     .followSslRedirects(false)
-                    .connectTimeout(15, TimeUnit.SECONDS)
-                    .callTimeout(15, TimeUnit.SECONDS)
-                    .writeTimeout(15, TimeUnit.SECONDS)
-                    .readTimeout(15, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .callTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(false)
                     .build();
             try (Response response = client.newCall(request).execute()) {
@@ -198,6 +200,7 @@ public class HTTPRequest implements Runnable {
                     }
                 }
             } catch (Exception e) {
+                System.out.println("HTTP EXCEPTION: " + e.getMessage());
                 e.printStackTrace();
                 HTTPRequestCallback.displayException(e);
             }
