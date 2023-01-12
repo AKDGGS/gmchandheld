@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,10 +23,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
+import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,6 +101,7 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
             }
         });
         barcodeET = findViewById(R.id.barcodeET);
+        barcodeET.requestFocus();
         descriptionET = findViewById(R.id.descriptionET);
         uploadImageIV = findViewById(R.id.imageToUploadIv);
         imageViewTV = findViewById(R.id.imageViewTv);
@@ -173,7 +177,6 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
             downloadingAlert();
         }
     }
-
     private void openCamera(File f) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DATA, f.getAbsolutePath());
@@ -209,16 +212,17 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
                 }
                 break;
             case SCAN_BARCODE_REQUEST:
+                barcodeET = findViewById(R.id.barcodeET);
                 if (Build.VERSION.SDK_INT <= 24) {
-                    barcodeET = findViewById(R.id.barcodeET);
                     IntentResult result = IntentIntegrator.parseActivityResult(requestCode,
                             resultCode, data);
                     barcodeET.setText(result.getContents());
                 } else {
                     if (resultCode == CommonStatusCodes.SUCCESS) {
                         if (data != null) {
+                            Barcode barcode = data.getParcelableExtra("barcode");
                             if (data.getParcelableExtra("barcode") != null) {
-                                barcodeET.setText(data.getParcelableExtra("barcode"));
+                                barcodeET.setText(barcode.displayValue);
                             }
                         }
                     } else {
@@ -235,50 +239,53 @@ public class TakePhoto extends BaseActivity implements HTTPRequestCallback {
             downloadingAlert.dismiss();
         }
         runOnUiThread(() -> {
-            switch (responseCode){
-                case 200:
-                case 302:
-                    Toast.makeText(TakePhoto.this, "The photo was uploaded.",
-                            Toast.LENGTH_SHORT).show();
-                    barcodeET.setText("");
-                    descriptionET.setText("");
-                    uploadImageIV.setImageDrawable(null);
-                    imageViewTV.setText(R.string.click_to_add_image);
-                case 403:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            barcodeET.setText("");
-                            descriptionET.setText("");
-                            uploadImageIV.setImageDrawable(null);
+            if (responseCode == 200 | responseCode == 302) {
+                Toast.makeText(TakePhoto.this, "The photo was uploaded.",
+                        Toast.LENGTH_SHORT).show();
+                barcodeET.setText("");
+                descriptionET.setText("");
+                uploadImageIV.setImageDrawable(null);
+                imageViewTV.setText(R.string.click_to_add_image);
+            } else {
+                if (!(responseCode < HttpURLConnection.HTTP_BAD_REQUEST)) {
+                    switch (responseCode) {
+                        case 403:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    barcodeET.setText("");
+                                    descriptionET.setText("");
+                                    uploadImageIV.setImageDrawable(null);
+                                    Toast.makeText(TakePhoto.this,
+                                            "The token is not correct.", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(TakePhoto.this, GetToken.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    TakePhoto.this.startActivity(intent);
+                                }
+                            });
+                        case 404:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    barcodeET.setText("");
+                                    descriptionET.setText("");
+                                    uploadImageIV.setImageDrawable(null);
+                                    Toast.makeText(TakePhoto.this,
+                                            "The URL is not correct.", Toast.LENGTH_LONG).show();
+                                    BaseActivity.editor.putString("urlText", "").apply();
+                                    Intent intent = new Intent(TakePhoto.this, GetToken.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    TakePhoto.this.startActivity(intent);
+                                }
+                            });
+                        default:
                             Toast.makeText(TakePhoto.this,
-                                    "The token is not correct.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(TakePhoto.this, GetToken.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            TakePhoto.this.startActivity(intent);
-                        }
-                    });
-                case 404:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            barcodeET.setText("");
-                            descriptionET.setText("");
+                                    "There was a problem finding the image. Please take it again.",
+                                    Toast.LENGTH_SHORT).show();
                             uploadImageIV.setImageDrawable(null);
-                            Toast.makeText(TakePhoto.this,
-                                    "The URL is not correct.", Toast.LENGTH_LONG).show();
-                            BaseActivity.editor.putString("urlText", "").apply();
-                            Intent intent = new Intent(TakePhoto.this, GetToken.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            TakePhoto.this.startActivity(intent);
-                        }
-                    });
-                default:
-                    Toast.makeText(TakePhoto.this,
-                            "There was a problem finding the image. Please take it again.",
-                            Toast.LENGTH_SHORT).show();
-                    uploadImageIV.setImageDrawable(null);
-                    barcodeET.requestFocus();
+                            barcodeET.requestFocus();
+                    }
+                }
             }
         });
     }
